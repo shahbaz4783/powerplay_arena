@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model WaitlistUser {
+  id String @id @default(uuid())
+  email String @unique
+  createdAt DateTime @default(now())
+}
+
+model User {
+  telegramId       BigInt @unique
+  firstName        String @unique
+  lastName         String?
+  username         String? @unique
+  languageCode     String
+  isPremium        Boolean?
+  wallet           Wallet?
+}
+
+model Wallet {
+  id               String @id @default(cuid())
+  balance          Int
+  user             User @relation(fields: [userId], references: [telegramId])
+  userId           BigInt @unique
+}

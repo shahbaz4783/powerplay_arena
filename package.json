@@ -12,8 +12,7 @@
 		"prisma:generate": "prisma generate"
 	},
 	"prisma": {
-		"schema": "./src/prisma/schema.prisma",
-		"seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} /src/prisma/seed.ts"
+		"schema": "./src/prisma/schema.prisma"
 	},
 	"dependencies": {
 		"@prisma/client": "^5.18.0",
@@ -22,19 +21,19 @@
 		"@telegram-apps/sdk-react": "^1.0.0",
 		"@telegram-apps/telegram-ui": "^2.1.5",
 		"@tonconnect/ui-react": "^2.0.5",
+		"class-variance-authority": "^0.7.0",
+		"clsx": "^2.1.1",
 		"eruda": "^3.0.1",
+		"framer-motion": "^11.3.21",
+		"lucide-react": "^0.424.0",
 		"next": "14.2.4",
 		"normalize.css": "^8.0.1",
 		"react": "^18",
 		"react-dom": "^18",
+		"react-icons": "^5.2.1",
 		"tailwind-merge": "^2.4.0",
 		"tailwindcss-animate": "^1.0.7",
-		"zod": "^3.23.8",
-		"lucide-react": "^0.424.0",
-		"class-variance-authority": "^0.7.0",
-		"clsx": "^2.1.1",
-		"framer-motion": "^11.3.21",
-		"react-icons": "^5.2.1"
+		"zod": "^3.23.8"
 	},
 	"devDependencies": {
 		"@types/node": "^20",
