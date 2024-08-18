@@ -1,5 +1,11 @@
+import UserInfo from './userInfo';
+
 const MiniAppHomePage = async () => {
-	return <div>Mini App</div>;
+	return (
+		<div>
+			<UserInfo />
+		</div>
+	);
 };
 
 export default MiniAppHomePage;
