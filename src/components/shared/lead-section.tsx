@@ -3,7 +3,7 @@
 import SparklesText from '../magicui/sparkles-text';
 import Image from 'next/image';
 import HeroImage from '@/public/hero-image.svg';
-import { addEmailToWaitlist } from '@/src/actions/waitlist.action';
+import { addEmailToWaitlist } from '@/src/app/actions/waitlist.action';
 import { useFormState } from 'react-dom';
 import SubmitButton from './submit-button';
 import FormFeedback from '../feedback/form-feedback';
@@ -32,7 +32,7 @@ const LeadSection = () => {
 				<div className='space-y-6'>
 					<form
 						action={formAction}
-						className='lg:grid lg:grid-cols-7 space-y-4 gap-4 justify-between'
+						className='lg:grid lg:grid-cols-7 gap-4 justify-between'
 					>
 						<input
 							name='email'

@@ -1,7 +1,7 @@
 'use server';
 
-import { db } from '../lib/db';
-import { waitlistSchema } from '../validators/user.schema';
+import { db } from '@/src/lib/db';
+import { waitlistSchema } from '@/src/validators/user.schema';
 
 interface WaitlistState {
 	message: {
