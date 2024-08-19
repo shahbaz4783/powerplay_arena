@@ -1,4 +1,4 @@
-import Navigation from '@/components/shared/navigation';
+import Navigation from '@/src/components/shared/navigation';
 
 const layout = ({ children }: { children: React.ReactNode }) => {
 	return (
