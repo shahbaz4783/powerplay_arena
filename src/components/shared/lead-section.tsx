@@ -32,11 +32,11 @@ const LeadSection = () => {
 				<div className='space-y-6'>
 					<form
 						action={formAction}
-						className='lg:grid lg:grid-cols-7 gap-4 justify-between'
+						className='lg:grid lg:grid-cols-7 space-y-4 lg:space-y-0 gap-4 justify-between'
 					>
 						<input
 							name='email'
-							className='flex-grow col-span-5 w-full bg-slate-800 text-slate-400 rounded-xl p-4 outline-none font-light'
+							className='col-span-5 w-full bg-slate-800 text-slate-400 rounded-xl p-4 outline-none font-light'
 							placeholder='Enter your email'
 						/>
 						<div className='col-span-2 w-full'>
