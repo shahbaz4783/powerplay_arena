@@ -1,10 +1,10 @@
 'use server';
 
-import { getUserById } from '../data/user';
-import { db } from '../lib/db';
-import { UserData } from '../lib/types';
+import { getUserById } from '@/src/data/user';
+import { db } from '@/src/lib/db';
+import { User } from '@telegram-apps/sdk-react';
 
-export const saveOrUpdateUser = async (user: UserData) => {
+export const saveOrUpdateUser = async (user: User) => {
 	try {
 		const existingUser = await getUserById(user.id);
 
@@ -13,10 +13,10 @@ export const saveOrUpdateUser = async (user: UserData) => {
 				where: { telegramId: user.id },
 				data: {
 					username: user.username,
-					firstName: user.first_name,
-					lastName: user.last_name,
-					languageCode: user.language_code,
-					isPremium: user.is_premium,
+					firstName: user.firstName,
+					lastName: user.lastName,
+					languageCode: user.languageCode,
+					isPremium: user.isPremium,
 				},
 			});
 		} else {
@@ -25,10 +25,10 @@ export const saveOrUpdateUser = async (user: UserData) => {
 					data: {
 						telegramId: user.id,
 						username: user.username,
-						firstName: user.first_name,
-						lastName: user.last_name,
-						languageCode: user.language_code,
-						isPremium: user.is_premium,
+						firstName: user.firstName,
+						lastName: user.lastName,
+						languageCode: user.languageCode || '',
+						isPremium: user.isPremium,
 					},
 				});
 

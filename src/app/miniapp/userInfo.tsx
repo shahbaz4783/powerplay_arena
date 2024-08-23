@@ -2,10 +2,25 @@
 
 import { useInitData } from '@telegram-apps/sdk-react';
 import { CircleUserRound, Gem } from 'lucide-react';
+import { useEffect } from 'react';
+import { saveOrUpdateUser } from '../actions/user.action';
 
 const UserInfo = () => {
 	const initData = useInitData();
 	const user = initData?.user;
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				if (!user) return null;
+				await saveOrUpdateUser(user);
+			} catch (error) {
+				console.error('Error fetching user data:', error);
+			}
+		};
+
+		fetchData();
+	}, []);
 
 	return (
 		<header className='bg-slate-800 p-1 rounded-xl flex justify-between'>
@@ -15,7 +30,7 @@ const UserInfo = () => {
 			</div>
 			<div className='bg-sky-800 px-4 py-2 flex gap-2 items-center rounded-xl'>
 				<Gem className='text-blue-200' size={20} strokeWidth={2} />
-				<p className='font-bold'>{234}</p>
+				<p className='font-bold'>{133}</p>
 			</div>
 		</header>
 	);
