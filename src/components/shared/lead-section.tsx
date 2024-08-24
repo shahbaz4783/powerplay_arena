@@ -3,7 +3,7 @@
 import SparklesText from '../magicui/sparkles-text';
 import Image from 'next/image';
 import HeroImage from '@/public/hero-image.svg';
-import { addEmailToWaitlist } from '@/src/app/actions/waitlist.action';
+import { addEmailToWaitlist } from '@/src/actions/waitlist.action';
 import { useFormState } from 'react-dom';
 import SubmitButton from './submit-button';
 import FormFeedback from '../feedback/form-feedback';

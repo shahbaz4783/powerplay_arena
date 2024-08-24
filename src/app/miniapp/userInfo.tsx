@@ -1,13 +1,17 @@
 'use client';
 
-import { useInitData } from '@telegram-apps/sdk-react';
+
 import { CircleUserRound, Gem } from 'lucide-react';
 import { useEffect } from 'react';
-import { saveOrUpdateUser } from '../actions/user.action';
+import { saveOrUpdateUser } from '../../actions/user.action';
+import { useGetWalletBalance } from '@/src/hooks/useGetWalletBalance';
+import { useInitData } from '@telegram-apps/sdk-react';
 
 const UserInfo = () => {
 	const initData = useInitData();
 	const user = initData?.user;
+
+	const { data } = useGetWalletBalance(user?.id!);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -30,7 +34,7 @@ const UserInfo = () => {
 			</div>
 			<div className='bg-sky-800 px-4 py-2 flex gap-2 items-center rounded-xl'>
 				<Gem className='text-blue-200' size={20} strokeWidth={2} />
-				<p className='font-bold'>{133}</p>
+				<p className='font-bold'>{data?.balance}</p>
 			</div>
 		</header>
 	);

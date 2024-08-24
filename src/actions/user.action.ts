@@ -1,6 +1,6 @@
 'use server';
 
-import { getUserById } from '@/src/data/user';
+import { getUserById, getWalletBalanceById } from '@/src/data/user';
 import { db } from '@/src/lib/db';
 import { User } from '@telegram-apps/sdk-react';
 
@@ -20,14 +20,14 @@ export const saveOrUpdateUser = async (user: User) => {
 				},
 			});
 		} else {
-			await db.$transaction(async (db) => {
+			await db.$transaction(async (db: any) => {
 				await db.user.create({
 					data: {
 						telegramId: user.id,
 						username: user.username,
 						firstName: user.firstName,
 						lastName: user.lastName,
-						languageCode: user.languageCode || '',
+						languageCode: user.languageCode || 'en',
 						isPremium: user.isPremium,
 					},
 				});
@@ -51,11 +51,9 @@ export const saveOrUpdateUser = async (user: User) => {
 	}
 };
 
-
 export const getUserInfoById = async (userId: number) => {
-	if (!userId) return null;
-
-	return await db.wallet.findUnique({
+	return db.wallet.findUnique({
 		where: { userId },
+		select: { balance: true },
 	});
 };

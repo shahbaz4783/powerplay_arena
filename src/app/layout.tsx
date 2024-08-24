@@ -6,6 +6,7 @@ import { Root } from '@/src/components/Root/Root';
 import '@telegram-apps/telegram-ui/dist/styles.css';
 import 'normalize.css/normalize.css';
 import './_assets/globals.css';
+import TanstackProvider from '../providers/tanstack-provider';
 
 export const metadata: Metadata = {
   title: 'Your Application Title Goes Here',
@@ -17,8 +18,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
 		<html lang='en'>
 			<body>
 				<Root>
-					
-					{children}
+					<TanstackProvider>{children}</TanstackProvider>
 				</Root>
 			</body>
 		</html>
