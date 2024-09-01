@@ -23,7 +23,7 @@ const UserInfo = () => {
 		};
 
 		fetchData();
-	}, []);
+	});
 
 	return (
 		<header className='bg-slate-800 p-1 rounded-xl flex justify-between'>

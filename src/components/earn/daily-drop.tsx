@@ -6,14 +6,18 @@ import SectionHeading from "../shared/section-heading";
 import ShinyButton from "../magicui/shiny-button";
 import { dailyDrop } from "@/src/actions/tasks.action";
 import { useInitData } from "@telegram-apps/sdk-react";
+import { useFormState } from "react-dom";
+import FormFeedback from "../feedback/form-feedback";
 
 const DailyDrop = () => {
   const initData = useInitData();
   const user = initData?.user;
 
-  const dailyDropAction = dailyDrop.bind(null, user?.id!);
-  
- return (
+  const [response, action] = useFormState(dailyDrop.bind(null, user?.id!), {
+    message: {},
+  });
+
+  return (
     <section className="space-y-5">
       <SectionHeading
         title="Daily Tasks"
@@ -29,13 +33,14 @@ const DailyDrop = () => {
             Get a daily dose of coins!
           </p>
         </div>
-        <form className="w-full" action={dailyDropAction}>
-        <ShinyButton
-          className="p-3 col-span-3"
-          text={"Claim"}
-        />
+        <form className="w-full border" action={action}>
+          <ShinyButton className="p-3 col-span-3" text={"Claim"} />
         </form>
       </article>
+      <FormFeedback
+        error={response.message.error}
+        success={response.message.success}
+      />
     </section>
   );
 };
