@@ -9,7 +9,7 @@ export function InviteLink() {
           <Share size={34} />
           <div>
             <h3 className="text-xl font-bold">Invite Link</h3>
-            <p className="text-slate-400">Invite your frens and get bonuses!</p>
+            <p className="text-slate-400 font-light">Invite your frens and get bonuses!</p>
           </div>
         </menu>
         <div className="flex items-center gap-3">
