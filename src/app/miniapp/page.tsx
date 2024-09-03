@@ -3,7 +3,7 @@ import UserInfo from "./userInfo";
 
 const MiniAppHomePage = async () => {
   return (
-    <div>
+    <div className=" border">
       <UserInfo />
       <Game />
     </div>

@@ -8,6 +8,7 @@ import { dailyDrop } from "@/src/actions/tasks.action";
 import { useInitData } from "@telegram-apps/sdk-react";
 import { useFormState } from "react-dom";
 import FormFeedback from "../feedback/form-feedback";
+import { ClaimButton } from "../feedback/claim-button";
 
 const DailyDrop = () => {
   const initData = useInitData();
@@ -33,8 +34,8 @@ const DailyDrop = () => {
             Get a daily dose of coins!
           </p>
         </div>
-        <form className="w-full border" action={action}>
-          <ShinyButton className="p-3 col-span-3" text={"Claim"} />
+        <form className="w-full col-span-3 border" action={action}>
+          <ClaimButton title="Claim" loadingTitle="Claiming..." />
         </form>
       </article>
       <FormFeedback

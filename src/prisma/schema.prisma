@@ -20,6 +20,7 @@ model User {
   username         String? @unique
   languageCode     String
   isPremium        Boolean?
+  lastClaimed      DateTime?
   wallet           Wallet?
 }
 
