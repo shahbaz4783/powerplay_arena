@@ -3,7 +3,7 @@ import { InviteLink } from "@/src/components/earn/invite-link";
 import { InviteList } from "@/src/components/earn/invite-list";
 import GradualSpacing from "@/src/components/magicui/gradual-spacing";
 
-const StatsPage = () => {
+const InvitePage = () => {
   return (
     <div className="space-y-5">
       <div className="min-h-[20svh] flex justify-center items-center">
@@ -19,4 +19,4 @@ const StatsPage = () => {
   );
 };
 
-export default StatsPage;
+export default InvitePage;

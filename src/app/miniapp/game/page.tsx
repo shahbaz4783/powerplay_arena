@@ -1,4 +1,4 @@
-const StatsPage = () => {
+const GamePage = () => {
   return (
     <div>
       <h2>This is game Page</h2>
@@ -29,4 +29,4 @@ const StatsPage = () => {
   );
 };
 
-export default StatsPage;
+export default GamePage;

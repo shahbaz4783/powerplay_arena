@@ -1,4 +1,6 @@
 import {
+  Award,
+  Badge,
   ChartNoAxesColumn,
   ClipboardList,
   House,
@@ -19,9 +21,9 @@ export const NAVIGATION_LINKS = [
     icon: House,
   },
   {
-    title: "Cards",
-    href: "/miniapp/cards",
-    icon: Pickaxe,
+    title: "Achievements",
+    href: "/miniapp/achievements",
+    icon: Award,
   },
   {
     title: "Tasks",

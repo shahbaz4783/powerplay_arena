@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { saveOrUpdateUser } from "../../actions/user.action";
 import { useGetWalletBalance } from "@/src/hooks/useGetWalletBalance";
 import { useInitData } from "@telegram-apps/sdk-react";
+import { Skeleton } from "@/src/components/ui/skeleton";
 
 const UserInfo = () => {
   const initData = useInitData();
@@ -33,7 +34,13 @@ const UserInfo = () => {
       </div>
       <div className="bg-sky-800 px-4 py-2 flex gap-2 items-center rounded-xl">
         <Gem className="text-blue-200" size={20} strokeWidth={2} />
-        <p className="font-bold">{isLoading ? 100 : data?.balance}</p>
+        <p className="font-bold">
+          {isLoading ? (
+            <Skeleton className="h-6 w-[28px] bg-sky-300 rounded-xl" />
+          ) : (
+            data?.balance
+          )}
+        </p>
       </div>
     </header>
   );
