@@ -1,4 +1,5 @@
-import { Button } from "@/src/components/ui/button";
+import MilestonesPage from "@/src/components/achievements/game-milestones";
+import { InviteMilestones } from "@/src/components/achievements/invite-milestones";
 import {
   Tabs,
   TabsContent,
@@ -9,15 +10,19 @@ import {
 export default function AchievementPage() {
   return (
     <>
-      <Tabs defaultValue="awards">
+      <Tabs defaultValue="challenges">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="awards">Awards</TabsTrigger>
           <TabsTrigger value="challenges">Challenges</TabsTrigger>
+          <TabsTrigger value="awards">Awards</TabsTrigger>
           <TabsTrigger value="invites">Invites</TabsTrigger>
         </TabsList>
-        <TabsContent value="awards">hello 1</TabsContent>
-        <TabsContent value="challenges">hello 2</TabsContent>
-        <TabsContent value="invites">hello 3</TabsContent>
+        <TabsContent value="challenges">
+          <MilestonesPage />
+        </TabsContent>
+        <TabsContent value="awards">Your awards will display here.</TabsContent>
+        <TabsContent value="invites">
+          <InviteMilestones />
+        </TabsContent>
       </Tabs>
     </>
   );
