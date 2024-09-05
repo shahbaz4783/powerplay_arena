@@ -8,6 +8,7 @@ import {
   MessageCircle,
   Pickaxe,
   Twitter,
+  UserPlus,
   Users,
   WalletMinimal,
 } from "lucide-react";
@@ -21,7 +22,7 @@ export const NAVIGATION_LINKS = [
     icon: House,
   },
   {
-    title: "Achievements",
+    title: "Milestones",
     href: "/miniapp/achievements",
     icon: Award,
   },
@@ -33,7 +34,7 @@ export const NAVIGATION_LINKS = [
   {
     title: "Invite",
     href: "/miniapp/invite",
-    icon: Users,
+    icon: UserPlus,
   },
   {
     title: "Wallet",
