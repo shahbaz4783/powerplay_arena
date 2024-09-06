@@ -23,7 +23,7 @@ export const NAVIGATION_LINKS = [
   },
   {
     title: "Milestones",
-    href: "/miniapp/achievemen",
+    href: "/miniapp/achievements",
     icon: Award,
   },
   {

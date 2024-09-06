@@ -11,7 +11,6 @@ const TaskPage = () => {
 					text='Earn more coins'
 				/>
 			</div>
-			<DailyDrop />
 			<TasksList />
 		</div>
 	);

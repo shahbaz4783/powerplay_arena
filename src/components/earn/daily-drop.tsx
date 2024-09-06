@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useActionState } from "react";
 import { Gem } from "lucide-react";
 import SectionHeading from "../shared/section-heading";
 import ShinyButton from "../magicui/shiny-button";
