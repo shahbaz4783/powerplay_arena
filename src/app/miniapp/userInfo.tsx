@@ -5,8 +5,6 @@ import { useEffect } from "react";
 import { saveOrUpdateUser } from "../../actions/user.action";
 import { useGetWalletBalance } from "@/src/hooks/useGetWalletBalance";
 import { useInitData } from "@telegram-apps/sdk-react";
-import { Card, CardContent } from "@/src/components/ui/card";
-import { Progress } from "@/src/components/ui/progress";
 import {
   Avatar,
   AvatarFallback,
@@ -33,45 +31,38 @@ const UserInfo = () => {
   });
 
   return (
-    <Card className="bg-slate-800/50 backdrop-blur-md rounded-xl">
-      <CardContent className="p-3">
-        <div className="flex items-center mb-4">
-          <Avatar className="h-16 w-16 border-2 border-blue-400">
+    <header className="flex justify-between items-center">
+      <div className="flex items-center space-x-3">
+        <div className="relative">
+          <Avatar className="h-14 w-14 ring-2 ring-blue-500">
             <AvatarImage src="/placeholder.svg" />
             <AvatarFallback>CM</AvatarFallback>
           </Avatar>
-          <div className="ml-4">
-            <h2 className="text-xl font-bold text-blue-300">
-              {user?.firstName}
-            </h2>
-            <div className="flex items-center mt-1">
-              <Star className="h-5 w-4  mr-1" />
-                <span className="font-semibold text-sm">Level 5</span>
-            </div>
-          </div>
-          <div className="ml-auto text-right">
-            <div className="flex items-center justify-end mb-1">
-              <Gem className="h-5 w-5 text-sky-400 mr-2" />
-              <span className="font-bold text-lg text-sky-300">
-                {data?.balance}
-              </span>
-            </div>
+          <div className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-1">
+            <Zap className="h-4 w-4 text-yellow-300" />
           </div>
         </div>
-        <div className="space-y-2">
-          <Progress value={23} className="h-2 bg-blue-900" />
-          <div className="flex justify-between">
-            <div className="flex items-center justify-end">
-              <Zap className="h-5 w-4 text-blue-400 mr-2" />
-              <span className="text-sm text-blue-300">{234} XP</span>
-            </div>
-            <p className="text-xs text-blue-300">
-              {1000 - (239 % 1000)} XP to next level
-            </p>
+        <div>
+          <h2 className="text-xl font-bold text-blue-100">{user?.firstName}</h2>
+          <div className="flex items-center">
+            <Star className="h-4 w-4 text-yellow-300 mr-1" />
+            <span className="text-sm text-blue-300">Master Blaster</span>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+      <div className="flex items-center space-x-2 bg-blue-800 rounded-full px-3 py-1">
+        <svg
+          className="h-5 w-5 text-yellow-300"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+        </svg>
+        <span className="text-lg font-bold text-yellow-300">
+          {isLoading ? "100" : data?.balance}
+        </span>
+      </div>
+    </header>
   );
 };
 

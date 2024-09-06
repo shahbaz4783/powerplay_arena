@@ -11,7 +11,7 @@ export default function AchievementPage() {
   return (
     <>
       <Tabs defaultValue="challenges">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-3 rounded-xl p-2 h-auto">
           <TabsTrigger value="challenges">Challenges</TabsTrigger>
           <TabsTrigger value="awards">Awards</TabsTrigger>
           <TabsTrigger value="invites">Invites</TabsTrigger>
