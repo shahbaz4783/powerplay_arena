@@ -16,17 +16,16 @@ const Navigation = () => {
             className={cn(
               "flex text-xs flex-col justify-center text-slate-300 gap-1 items-center",
               {
-                "text-blue-300": pathname === item.href,
+                "text-yellow-300": pathname === item.href,
               },
             )}
           >
-          <item.icon className="h-6 w-6" />
-          <span className="text-xs mt-1">{item.title}</span>
+            <item.icon className="h-6 w-6" />
+            <span className="text-xs mt-1">{item.title}</span>
           </div>
         </Link>
       ))}
     </nav>
   );
 };
-
 export default Navigation;

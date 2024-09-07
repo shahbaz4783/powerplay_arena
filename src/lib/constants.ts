@@ -7,6 +7,7 @@ import {
   Instagram,
   MessageCircle,
   Pickaxe,
+  ShoppingBag,
   Twitter,
   UserPlus,
   Users,
@@ -27,9 +28,9 @@ export const NAVIGATION_LINKS = [
     icon: Award,
   },
   {
-    title: "Tasks",
-    href: "/miniapp/tasks",
-    icon: ClipboardList,
+    title: "Shop",
+    href: "/miniapp/shop",
+    icon: ShoppingBag,
   },
   {
     title: "Invite",

@@ -8,8 +8,8 @@ const MiniAppHomePage = () => {
     <div className="space-y-5 min-h-[84svh] flex flex-col justify-between">
       <UserInfo />
       <GameModes />
-      <NavCards />
       <DailyBonus />
+      <NavCards />
     </div>
   );
 };
