@@ -8,15 +8,11 @@ import { Coins } from "lucide-react";
 
 interface TossProps {
   gameState: GameState;
-  updateGameState: (newState: Partial<GameState>) => void;
-  addCommentary: (text: string) => void;
+  updateGameState: any;
+  addCommentary: any;
 }
 
-export function Toss({
-  gameState,
-  updateGameState,
-  addCommentary,
-}: TossProps) {
+export function Toss({ gameState, updateGameState, addCommentary }: TossProps) {
   const [isCoinSpinning, setIsCoinSpinning] = useState(false);
   const [showTossResult, setShowTossResult] = useState(false);
 

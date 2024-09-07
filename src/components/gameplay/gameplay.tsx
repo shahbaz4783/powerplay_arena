@@ -1,5 +1,5 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/src/components/ui/card";
-import { Button } from "@/src/components/ui/button";
 import { Progress } from "@/src/components/ui/progress";
 import { Badge } from "@/src/components/ui/badge";
 import {
@@ -8,6 +8,7 @@ import {
   calculateRunsScored,
 } from "@/src/lib/game-logics";
 import { GameState } from "@/src/lib/types";
+import { GameControls } from "./game-controls";
 
 interface GameplayProps {
   gameState: GameState;
@@ -20,6 +21,9 @@ export function Gameplay({
   updateGameState,
   addCommentary,
 }: GameplayProps) {
+  const [showInningsMessage, setShowInningsMessage] = useState(false);
+  const [inningsMessage, setInningsMessage] = useState("");
+
   const handleBatting = (option: "normal" | "aggressive" | "defensive") => {
     const runsScored = calculateRunsScored(option);
     if (runsScored === -1) {
@@ -39,7 +43,7 @@ export function Gameplay({
   };
 
   const handleBowling = (option: "normal" | "yorker" | "bouncer") => {
-    const runsScored = calculateRunsScored("normal"); // Simplification: computer always bats 'normal'
+    const runsScored = calculateRunsScored("normal");
     if (runsScored === -1) {
       updateGameState({ wickets: gameState.wickets + 1 });
       addCommentary("Out!");
@@ -64,8 +68,45 @@ export function Gameplay({
     }
   };
 
+  useEffect(() => {
+    const { overs, wickets, currentInnings, gamePhase, playerScore, computerScore, target } = gameState;
+
+    // Check for end of innings or game
+    if (overs === 5 || wickets === 5 || (target && (gamePhase === "batting" ? playerScore >= target : computerScore >= target))) {
+      if (currentInnings === 1) {
+        const newTarget = gamePhase === "batting" ? playerScore + 1 : computerScore + 1;
+        setInningsMessage(`First innings over. ${newTarget} runs needed to win.`);
+        setShowInningsMessage(true);
+        setTimeout(() => {
+          setShowInningsMessage(false);
+          updateGameState({
+            currentInnings: 2,
+            target: newTarget,
+            overs: 0,
+            balls: 0,
+            wickets: 0,
+            gamePhase: gamePhase === "batting" ? "bowling" : "batting",
+          });
+        }, 5000);
+      } else {
+        // Game over
+        updateGameState({ gamePhase: "result" });
+      }
+    }
+  }, [gameState, updateGameState]);
+
+  if (showInningsMessage) {
+    return (
+      <Card className="bg-yellow-900">
+        <CardContent className="p-6 flex items-center justify-center h-64">
+          <p className="text-2xl font-bold text-center">{inningsMessage}</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="bg-gradient-to-br from-green-900 to-blue-900 border-none shadow-lg">
+    <Card className="bg-yellow-900">
       <CardContent className="p-6 space-y-6">
         <div className="flex justify-between items-center">
           <div>
@@ -117,51 +158,11 @@ export function Gameplay({
             })}
           </span>
         </div>
-        <div className="grid grid-cols-3 gap-4">
-          {gameState.gamePhase === "batting" ? (
-            <>
-              <Button
-                onClick={() => handleBatting("normal")}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                Normal Shot
-              </Button>
-              <Button
-                onClick={() => handleBatting("aggressive")}
-                className="bg-red-600 hover:bg-red-700"
-              >
-                Aggressive Shot
-              </Button>
-              <Button
-                onClick={() => handleBatting("defensive")}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                Defensive Shot
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                onClick={() => handleBowling("normal")}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                Normal Ball
-              </Button>
-              <Button
-                onClick={() => handleBowling("yorker")}
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                Yorker
-              </Button>
-              <Button
-                onClick={() => handleBowling("bouncer")}
-                className="bg-orange-600 hover:bg-orange-700"
-              >
-                Bouncer
-              </Button>
-            </>
-          )}
-        </div>
+        <GameControls
+          gameState={gameState}
+          handleBatting={handleBatting}
+          handleBowling={handleBowling}
+        />
       </CardContent>
     </Card>
   );

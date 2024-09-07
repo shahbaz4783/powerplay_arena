@@ -1,24 +1,12 @@
 "use client";
+
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/src/components/ui/card";
-import { Button } from "@/src/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/src/components/ui/alert-dialog";
-import { X } from "lucide-react";
 import { Gameplay } from "./gameplay";
 import { Result } from "./result";
 import { Commentary } from "./commentary";
 import { Toss } from "./toss";
 import { GameState } from "@/src/lib/types";
+import { QuitGame } from "./quit-game";
 
 export default function CricketGame() {
   const [gameState, setGameState] = useState<GameState>({
@@ -73,29 +61,9 @@ export default function CricketGame() {
 
   return (
     <div className="min-h-[100svh] bg-gray-900 text-gray-100 p-4 flex flex-col">
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button variant="outline" className="self-end mb-4">
-            <X className="mr-2 h-4 w-4" /> Quit Game
-          </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to quit?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Your current game progress will be lost. This action cannot be
-              undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => window.location.reload()}>
-              Quit Game
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      <div className="flex-grow overflow-auto">
+      <QuitGame />
+      <Commentary commentary={commentary} />
+      <main className="flex-grow overflow-auto border-red-400 border">
         {gameState.gamePhase === "toss" && (
           <Toss
             gameState={gameState}
@@ -112,8 +80,7 @@ export default function CricketGame() {
           />
         )}
         {gameState.gamePhase === "result" && <Result gameState={gameState} />}
-      </div>
-      <Commentary commentary={commentary} />
+      </main>
     </div>
   );
 }

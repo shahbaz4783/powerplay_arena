@@ -1,7 +1,7 @@
-import { GameModes } from "@/src/components/game/game-modes";
-import { NavCards } from "@/src/components/game/navs";
-import { DailyBonus } from "@/src/components/game/daily-bonus";
-import UserInfo from "@/src/components/game/userInfo";
+import { GameModes } from "@/src/components/home/game-modes";
+import { NavCards } from "@/src/components/home/navs";
+import { DailyBonus } from "@/src/components/home/daily-bonus";
+import UserInfo from "@/src/components/home/userInfo";
 
 const MiniAppHomePage = () => {
   return (
