@@ -6,10 +6,10 @@ import { UserInfoHeader } from "@/src/components/home/user-info-header";
 
 const MiniAppHomePage = () => {
   return (
-    <div className="space-y-5 min-h-[84svh] flex flex-col justify-between">
+    <div className="space-y-5 min-h-[84svh]">
       <UserInfoHeader />
       <GameModes />
-      <DailyBonus />
+      <NavCards />
     </div>
   );
 };

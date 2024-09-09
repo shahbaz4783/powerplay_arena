@@ -21,7 +21,9 @@ import {
 } from "@/src/components/ui/dialog";
 import { Button } from "@/src/components/ui/button";
 import { Progress } from "@/src/components/ui/progress";
-import { AvatarDialog } from "./avatar-dialog";
+
+import { token } from "@/src/lib/constants";
+import { AvatarDialog } from "../dialog/avatar-dialog";
 
 const levelTitles = [
   "Rookie Batsman",
@@ -90,12 +92,12 @@ export function UserInfoHeader() {
 
   return (
     <motion.div
-      className="border bg-gray-800/50 rounded-xl p-4"
+      className="border bg-gray-800/50 rounded-xl p-4 space-y-5"
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.2 }}
     >
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="relative">
             <Dialog>
@@ -120,27 +122,20 @@ export function UserInfoHeader() {
               {user?.firstName}
             </h2>
             <div className="flex items-center">
-              <Star className="h-4 w-4 text-yellow-300 mr-1" />
-              <span className="text-sm text-blue-300">
+              <span className="text-sm text-yellow-300">
                 {getLevelTitle(level)}
               </span>
             </div>
           </div>
         </div>
-        <div className="flex items-center space-x-2 bg-blue-800 rounded-full px-3 py-1">
-          <svg
-            className="h-5 w-5 text-yellow-300"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-          </svg>
-          <span className="text-lg font-bold text-yellow-300">
-            {isLoading ? "100" : data?.balance}
-          </span>
+        <div className="text-right">
+          <p className="text-sm text-yellow-300">Level {level}</p>
+          <p className="text-2xl font-bold">
+            {data?.balance} <span className="text-sm">{token.symbol}</span>
+          </p>
         </div>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-3 ">
         <Progress value={xp} className="w-full" />
         <div className="flex justify-between text-sm text-blue-300">
           <span>XP: {xp}/100</span>

@@ -1,11 +1,19 @@
+"use client";
+
 import { Card, CardContent } from "@/src/components/ui/card";
 import batsmanImg from "@/assets/batsman.png";
 import trophyImg from "@/assets/trophy.png";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export function GameModes() {
   return (
-    <section className="grid grid-cols-2 min-h-40 gap-4 mb-6">
+    <motion.section
+      className="grid grid-cols-2 min-h-40 gap-4 mb-6"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+    >
       <Card
         className="bg-blue-700 rounded-xl overflow-hidden"
         style={{
@@ -38,6 +46,6 @@ export function GameModes() {
           </CardContent>
         </Link>
       </Card>
-    </section>
+    </motion.section>
   );
 }

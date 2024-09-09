@@ -12,8 +12,8 @@ const FormFeedback = ({
 		return (
 			<>
 				<div
-					className={cn('p-3 rounded-xl bg-emerald-800', {
-						'bg-red-800': error,
+					className={cn(' text-cyan-300', {
+						'text-red-400': error,
 					})}
 				>
 					<BlurIn word={error ?? success} />
