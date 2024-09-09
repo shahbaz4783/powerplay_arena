@@ -11,15 +11,15 @@ export function Result({ gameState }: ResultProps) {
     <Card className="bg-gradient-to-br from-purple-900 to-indigo-900 border-none shadow-lg">
       <CardContent className="p-6 space-y-6 text-center">
         <h2 className="text-3xl font-bold">
-          {gameState.playerScore > gameState.computerScore
+          {gameState.playerScore > gameState.cricketAIScore
             ? "You win!"
-            : gameState.playerScore < gameState.computerScore
+            : gameState.playerScore < gameState.cricketAIScore
               ? "Computer wins!"
               : "It's a tie!"}
         </h2>
         <div className="text-xl">
           <p>Your Score: {gameState.playerScore}</p>
-          <p>Computer Score: {gameState.computerScore}</p>
+          <p>Computer Score: {gameState.cricketAIScore}</p>
         </div>
         <Button
           onClick={() => window.location.reload()}

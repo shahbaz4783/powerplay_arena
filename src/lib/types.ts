@@ -14,17 +14,25 @@ export interface FormResponse {
   };
 }
 
-export type GamePhase = "toss" | "batting" | "bowling" | "result";
-
 export interface GameState {
-  gamePhase: GamePhase;
-  tossWinner: "player" | "computer" | null;
-  tossChoice: "bat" | "bowl" | null;
+  gamePhase: 'toss' | 'batting' | 'bowling' | 'superOver' | 'result';
+  tossWinner: 'player' | 'computerScore' | null;
+  tossChoice: 'bat' | 'bowl' | null;
   currentInnings: 1 | 2;
   playerScore: number;
-  computerScore: number;
+  cricketAIScore: number;
   wickets: number;
   overs: number;
   balls: number;
   target: number | null;
+  superOverBattingFirst?: 'player' | 'cricketAI';
+}
+
+export interface PowerUp {
+  id: string;
+  name: string;
+  description: string;
+  effect: (gameState: GameState) => Partial<GameState>;
+  duration: number; // in balls
+  cost: number;
 }

@@ -21,33 +21,48 @@ export default function TournamentScreen() {
 
   const tournaments = [
     {
-      name: "Power Play Cup",
-      teams: [
-        "Thunderbolts",
-        "Royal Strikers",
-        "Golden Eagles",
-        "Mighty Titans",
-        "Silver Wolves",
-        "Crimson Dragons",
-        "Emerald Knights",
-        "Shadow Assassins",
-      ],
-      duration: "3 days",
-      entryFee: 500,
-      prize: 5000,
-      matches: [
-        {
-          round: "Quarter Finals",
-          teams: [
-            "Thunderbolts vs Royal Strikers",
-            "Golden Eagles vs Mighty Titans",
-            "Silver Wolves vs Crimson Dragons",
-            "Emerald Knights vs Shadow Assassins",
-          ],
-        },
-        { round: "Semi Finals", teams: ["TBD vs TBD", "TBD vs TBD"] },
-        { round: "Final", teams: ["TBD vs TBD"] },
-      ],
+      name: "Classic Cup",
+      description:
+        "A traditional knockout tournament where players compete to be the last team standing.",
+      structure: {
+        rounds: ["Quarter-finals", "Semi-finals", "Finals"],  
+      },
+      rewards:
+        "Increasing rewards with each round, culminating in a grand prize for the winner",
+    },
+    {
+      name: "Super Sixes Showdown",
+      description:
+        "A tournament focused on aggressive batting and high scores.",
+      structure: {
+        rounds: ["Group stage", "Knockout rounds"],
+        specialRules: "Bonus points for hitting sixes",
+      },
+      rewards:
+        "Special rewards for the highest number of sixes in addition to the tournament prize",
+    },
+    {
+      name: "Wicket Warriors League",
+      description:
+        "A tournament emphasizing bowling skills and taking wickets.",
+      structure: {
+        rounds: ["Round-robin stage", "Knockout rounds"],
+        specialRules: "Bonus points for taking wickets",
+      },
+      rewards:
+        "Special rewards for the most wickets taken in addition to the tournament prize",
+    },
+    {
+      name: "PowerPlay Championship",
+      description:
+        "A balanced tournament that tests both batting and bowling skills.",
+      structure: {
+        rounds:
+          "Double elimination format, giving players a second chance if they lose a match",
+        specialRules: "PowerPlay overs where runs and wickets count double",
+      },
+      rewards:
+        "Enhanced rewards during PowerPlay overs and a grand prize for the winner",
     },
   ];
 
@@ -93,19 +108,19 @@ export default function TournamentScreen() {
                 <div className="grid grid-cols-2 gap-2 mb-4">
                   <div className="flex items-center">
                     <Users className="w-5 h-5 mr-2 text-blue-500" />
-                    <span>{tournament.teams.length} teams</span>
+                    <span>8 teams</span>
                   </div>
                   <div className="flex items-center">
                     <Calendar className="w-5 h-5 mr-2 text-green-500" />
-                    <span>{tournament.duration}</span>
+                    <span>{5}</span>
                   </div>
                   <div className="flex items-center">
                     <DollarSign className="w-5 h-5 mr-2 text-purple-500" />
-                    <span>{tournament.entryFee} PWR entry</span>
+                    <span>{456} PWR entry</span>
                   </div>
                   <div className="flex items-center">
                     <Star className="w-5 h-5 mr-2 text-yellow-500" />
-                    <span>{tournament.prize} PWR prize</span>
+                    <span>{5675} PWR prize</span>
                   </div>
                 </div>
 

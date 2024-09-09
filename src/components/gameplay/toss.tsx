@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
 import { GameState } from "@/src/lib/types";
-import { Coins } from "lucide-react";
+import { Coins, HandCoins } from "lucide-react";
 
 interface TossProps {
   gameState: GameState;
@@ -47,7 +47,7 @@ export function Toss({ gameState, updateGameState, addCommentary }: TossProps) {
   };
 
   return (
-    <Card className="bg-gradient-to-br from-blue-900 to-purple-900 border-none shadow-lg">
+    <Card className="border-none shadow-lg">
       <CardContent className="p-6 flex flex-col items-center justify-center h-[60vh]">
         {isCoinSpinning ? (
           <div className="animate-spin">
@@ -87,7 +87,7 @@ export function Toss({ gameState, updateGameState, addCommentary }: TossProps) {
             onClick={performToss}
             className="bg-yellow-600 hover:bg-yellow-700 text-xl py-6 px-8"
           >
-            <Coins className="mr-2 h-6 w-6" /> Toss Coin
+            <HandCoins className="mr-2 h-6 w-6" /> Toss Coin
           </Button>
         )}
       </CardContent>
