@@ -3,6 +3,7 @@ import { NavCards } from "@/src/components/home/navs";
 import { DailyBonus } from "@/src/components/home/daily-bonus";
 import UserInfo from "@/src/components/home/userInfo";
 import { UserInfoHeader } from "@/src/components/home/user-info-header";
+import { DailyChallenge } from "@/src/components/home/daily-challenge";
 
 const MiniAppHomePage = () => {
   return (
@@ -10,6 +11,7 @@ const MiniAppHomePage = () => {
       <UserInfoHeader />
       <GameModes />
       <NavCards />
+      <DailyChallenge />
     </div>
   );
 };

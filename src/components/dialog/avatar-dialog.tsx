@@ -8,13 +8,14 @@ import {
   DialogTitle,
 } from "@/src/components/ui/dialog";
 import { Button } from "@/src/components/ui/button";
+import { token } from "@/src/lib/constants";
 
 const avatars = [
   {
     id: 1,
     name: "Classic",
     free: true,
-    url: "/placeholder.svg?height=100&width=100",
+    url: "../components/",
   },
   {
     id: 2,
@@ -76,11 +77,11 @@ export function AvatarDialog({
             alt={avatars[currentAvatar - 1].name}
             height={80}
             width={80}
-            className="w-24 h-24 rounded-full bg-red-400"
+            className="w-24 h-24 rounded-full"
           />
           {!avatars[currentAvatar - 1].free && (
             <div className="absolute top-0 right-0 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full">
-              {avatars[currentAvatar - 1].price} PWR
+              {avatars[currentAvatar - 1].price} {token.symbol}
             </div>
           )}
         </div>
@@ -93,11 +94,10 @@ export function AvatarDialog({
         </Button>
       </div>
       <p className="text-center mb-4">{avatars[currentAvatar - 1].name}</p>
-      {!avatars[currentAvatar - 1].free && (
-        <Button className="w-full" variant="default">
-          Purchase Avatar
-        </Button>
-      )}
+
+      <Button className="w-full rounded-xl" variant="default">
+        Choose Avatar
+      </Button>
     </DialogContent>
   );
 }
