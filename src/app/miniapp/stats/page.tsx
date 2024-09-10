@@ -7,109 +7,222 @@ import {
   CardHeader,
   CardTitle,
 } from "@/src/components/ui/card";
-import {
-  Target,
-  Trophy,
-  Zap,
-  Activity,
-  Crosshair,
-  BarChart2,
-} from "lucide-react";
+import { Progress } from "@/src/components/ui/progress";
+import { Trophy, Activity, Users } from "lucide-react";
 
-const mainStats = [
-  { icon: Zap, title: "Total Runs", value: 3456 },
-  { icon: Zap, title: "Highest Score", value: 156 },
-  { icon: Target, title: "Strike Rate", value: 145.67 },
-  { icon: Trophy, title: "Tournaments Won", value: 5 },
-  { icon: Activity, title: "Average", value: 80.37 },
-  { icon: Crosshair, title: "Centuries", value: 3 },
+const battingStats = [
+  {
+    title: "Total Runs",
+    value: 3456,
+    color: "from-blue-500 to-cyan-300",
+  },
+  {
+    title: "Highest Score",
+    value: 156,
+    color: "from-yellow-500 to-orange-300",
+  },
+  {
+    title: "Average",
+    value: 45.67,
+    color: "from-green-500 to-emerald-300",
+  },
+  {
+    title: "Strike Rate",
+    value: 135.78,
+    color: "from-purple-500 to-pink-300",
+  },
 ];
 
-const detailedStats = [
-  { title: "Matches Played", value: 50 },
-  { title: "Innings Batted", value: 48 },
-  { title: "Not Outs", value: 5 },
-  { title: "Fours", value: 286 },
-  { title: "Sixes", value: 72 },
-  { title: "Fifties", value: 15 },
-  { title: "Dot Ball %", value: "30%" },
-  { title: "Boundary %", value: "58%" },
+const matchStats = [
+  { title: "Matches Played", value: 80, won: 50, lost: 25, draw: 5 },
+  { title: "Tournaments", value: 10, won: 3, lost: 5, draw: 2 },
 ];
 
-const HolographicCard = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative group">
-    <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-    <div className="relative bg-gray-900 rounded-lg p-4">{children}</div>
+const bowlingStats = [
+  {
+    title: "Wickets",
+    value: 102,
+    color: "from-red-500 to-pink-300",
+  },
+  {
+    title: "Best Figures",
+    value: "5/23",
+    color: "from-indigo-500 to-blue-300",
+  },
+  {
+    title: "Economy",
+    value: 6.78,
+    color: "from-green-500 to-teal-300",
+  },
+  {
+    title: "Average",
+    value: 25.34,
+    icon: Activity,
+    color: "from-yellow-500 to-amber-300",
+  },
+];
+
+const StatCard = ({
+  title,
+  value,
+  color,
+}: {
+  title: string;
+  value: number;
+  color: string;
+}) => (
+  <Card className="bg-gray-800 border-none overflow-hidden">
+    <CardContent className="p-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm text-gray-400">{title}</p>
+          <p
+            className={`text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${color}`}
+          >
+            {value}
+          </p>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
+
+const MatchStatCard = ({ title, value, won, lost, draw }) => (
+  <Card className="bg-gray-800 border-none overflow-hidden">
+    <CardContent className="p-6">
+      <h3 className="text-lg font-semibold text-gray-300 mb-2">{title}</h3>
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-sm text-gray-400">Total</span>
+        <span className="text-2xl font-bold text-cyan-400">{value}</span>
+      </div>
+      <div className="space-y-2">
+        <ProgressBar
+          label="Won"
+          value={won}
+          total={value}
+          color="bg-green-500"
+        />
+        <ProgressBar
+          label="Lost"
+          value={lost}
+          total={value}
+          color="bg-red-500"
+        />
+        <ProgressBar
+          label="Draw"
+          value={draw}
+          total={value}
+          color="bg-yellow-500"
+        />
+      </div>
+    </CardContent>
+  </Card>
+);
+
+const ProgressBar = ({ label, value, total, color }) => (
+  <div>
+    <div className="flex justify-between text-sm text-gray-400 mb-1">
+      <span>{label}</span>
+      <span>
+        {value}/{total}
+      </span>
+    </div>
+    <Progress value={(value / total) * 100} className={`h-2 ${color}`} />
   </div>
 );
 
-export default function Stats() {
+export default function StatsPage() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
-      <motion.h1
-        className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        Holographic Stats Dashboard
-      </motion.h1>
+    <div>
+      <div className="space-y-3">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Card className="bg-gray-800 rounded-xl">
+            <CardHeader>
+              <CardTitle className="text-lg font-medium text-cyan-400 flex items-center">
+                <Trophy className="w-5 h-5 mr-2" />
+                Batting Statistics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                {battingStats.map((stat, index) => (
+                  <motion.div
+                    key={stat.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                  >
+                    <StatCard {...stat} />
+                  </motion.div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-        {mainStats.map((stat, index) => (
-          <motion.div
-            key={stat.title}
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              delay: index * 0.1,
-              type: "spring",
-              stiffness: 260,
-              damping: 20,
-            }}
-          >
-            <HolographicCard>
-              <Card className="bg-transparent border-none">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-cyan-400 flex items-center">
-                    <stat.icon className="w-4 h-4 mr-2" />
-                    {stat.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-blue-400">
-                    {stat.value}
-                  </div>
-                </CardContent>
-              </Card>
-            </HolographicCard>
-          </motion.div>
-        ))}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <Card className="bg-gray-800 border-none h-full">
+            <CardHeader>
+              <CardTitle className="text-lg font-medium text-cyan-400 flex items-center">
+                <Users className="w-5 h-5 mr-2" />
+                Match Statistics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {matchStats.map((stat, index) => (
+                  <motion.div
+                    key={stat.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
+                  >
+                    <MatchStatCard {...stat} />
+                  </motion.div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div
+          className="lg:col-span-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          <Card className="bg-gray-800 border-none">
+            <CardHeader>
+              <CardTitle className="text-lg font-medium text-cyan-400 flex items-center">
+                <Trophy className="w-5 h-5 mr-2" />
+                Bowling Statistics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {bowlingStats.map((stat, index) => (
+                  <motion.div
+                    key={stat.title}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
+                  >
+                    <StatCard {...stat} />
+                  </motion.div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
-
-      <motion.div
-        className="grid grid-cols-2 md:grid-cols-4 gap-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
-      >
-        {detailedStats.map((stat, index) => (
-          <HolographicCard key={stat.title}>
-            <Card className="bg-transparent border-none">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-xs font-medium text-cyan-400">
-                  {stat.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-blue-400">
-                  {stat.value}
-                </div>
-              </CardContent>
-            </Card>
-          </HolographicCard>
-        ))}
-      </motion.div>
     </div>
   );
 }
