@@ -9,3 +9,9 @@ export async function updateGameState(currentState: GameState, newState: Partial
 export async function addCommentary(currentCommentary: string[], newComment: string): Promise<string[]> {
   return [newComment, ...currentCommentary.slice(0, 2)];
 }
+
+
+export async function startQuickMatch(feeData: any) {
+  console.log('Starting quick match with fee data:', feeData);
+
+}

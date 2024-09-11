@@ -41,7 +41,7 @@ export function DailyRewardDialog() {
     <Dialog>
       <DialogTrigger className="bg-slate-800/50 bg-opacity-70 backdrop-blur-xl border border-white p-4 rounded-xl flex flex-col items-center justify-center">
         <Gift size={32} className="mb-2 text-cyan-300" />
-        <span>Daily Claim</span>
+        <span>Reward</span>
       </DialogTrigger>
       <DialogContent className="space-y-2">
         <DialogHeader className="space-y-6">
