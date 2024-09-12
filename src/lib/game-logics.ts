@@ -40,27 +40,27 @@ export const calculateRunsScored = (
 };
 
 export const calculateRunRate = (gameState: GameState): string => {
-  const { playerScore, cricketAIScore, overs, balls, gamePhase } = gameState;
-  const score = gameState.gamePhase === "batting" ? playerScore : cricketAIScore;
+  const { playerScore, computerAIScore, overs, balls, gamePhase } = gameState;
+  const score = gameState.gamePhase === "batting" ? playerScore : computerAIScore;
   const totalOvers = overs + balls / 6;
   return totalOvers > 0 ? (score / totalOvers).toFixed(2) : "0.00";
 };
 
 export const calculateRequiredRunRate = (gameState: GameState): string => {
-  const { target, playerScore, cricketAIScore, overs, balls, gamePhase } = gameState;
+  const { target, playerScore, computerAIScore, overs, balls, gamePhase } = gameState;
   if (target === null) return "0.00";
-  const remainingRuns = target - (gamePhase === "batting" ? playerScore : cricketAIScore);
+  const remainingRuns = target - (gamePhase === "batting" ? playerScore : computerAIScore);
   const remainingBalls = 5 * 6 - (overs * 6 + balls);
   const remainingOvers = remainingBalls / 6;
   return remainingOvers > 0 ? (remainingRuns / remainingOvers).toFixed(2) : "∞";
 };
 
 export const getCricketAIBattingStrategy = (gameState: GameState, bowlingType: "normal" | "yorker" | "bouncer"): "normal" | "aggressive" | "defensive" => {
-  const { target, cricketAIScore, overs, balls } = gameState;
+  const { target, computerAIScore, overs, balls } = gameState;
   const remainingBalls = 5 * 6 - (overs * 6 + balls);
-  const requiredRunRate = target ? (target - cricketAIScore) / (remainingBalls / 6) : 0;
+  const requiredRunRate = target ? (target - computerAIScore) / (remainingBalls / 6) : 0;
 
-  if (requiredRunRate > 10 || (remainingBalls <= 12 && target && cricketAIScore < target)) {
+  if (requiredRunRate > 10 || (remainingBalls <= 12 && target && computerAIScore < target)) {
     return "aggressive";
   } else if (requiredRunRate < 4 || (overs < 2 && balls < 3)) {
     return "defensive";

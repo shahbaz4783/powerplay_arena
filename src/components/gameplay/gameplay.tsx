@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { Progress } from "@/src/components/ui/progress";
@@ -28,10 +30,37 @@ export function Gameplay({
   const handleBatting = (option: "normal" | "aggressive" | "defensive") => {
     const runsScored = calculateRunsScored(option);
     if (runsScored === -1) {
-      updateGameState({ wickets: gameState.wickets + 1 });
+      updateGameState({
+        wickets: gameState.wickets + 1,
+        playerStats: {
+          ...gameState.playerStats,
+          ballsFaced: gameState.playerStats.ballsFaced + 1,
+        },
+        bowlingStats: {
+          ...gameState.bowlingStats,
+          wicketsTaken: gameState.bowlingStats.wicketsTaken + 1,
+        },
+      });
       addCommentary("Out!");
     } else {
-      updateGameState({ playerScore: gameState.playerScore + runsScored });
+      updateGameState({
+        playerScore: gameState.playerScore + runsScored,
+        playerStats: {
+          ...gameState.playerStats,
+          runs: gameState.playerStats.runs + runsScored,
+          ballsFaced: gameState.playerStats.ballsFaced + 1,
+          fours:
+            runsScored === 4
+              ? gameState.playerStats.fours + 1
+              : gameState.playerStats.fours,
+          sixes:
+            runsScored === 6
+              ? gameState.playerStats.sixes + 1
+              : gameState.playerStats.sixes,
+        },
+        dotBalls:
+          runsScored === 0 ? gameState.dotBalls + 1 : gameState.dotBalls,
+      });
       addCommentary(`${runsScored} runs scored`);
     }
     updateOversBalls();
@@ -41,11 +70,23 @@ export function Gameplay({
     const cricketAIStrategy = getCricketAIBattingStrategy(gameState, option);
     const runsScored = calculateRunsScored(cricketAIStrategy, option);
     if (runsScored === -1) {
-      updateGameState({ wickets: gameState.wickets + 1 });
+      updateGameState({
+        wickets: gameState.wickets + 1,
+        bowlingStats: {
+          ...gameState.bowlingStats,
+          wicketsTaken: gameState.bowlingStats.wicketsTaken + 1,
+        },
+      });
       addCommentary("CricketAI is out!");
     } else {
       updateGameState({
-        cricketAIScore: gameState.cricketAIScore + runsScored,
+        computerAIScore: gameState.computerAIScore + runsScored,
+        bowlingStats: {
+          ...gameState.bowlingStats,
+          runsConceded: gameState.bowlingStats.runsConceded + runsScored,
+        },
+        dotBalls:
+          runsScored === 0 ? gameState.dotBalls + 1 : gameState.dotBalls,
       });
       addCommentary(`CricketAI scored ${runsScored} runs`);
     }
@@ -54,7 +95,14 @@ export function Gameplay({
 
   const updateOversBalls = () => {
     if (gameState.balls === 5) {
-      updateGameState({ overs: gameState.overs + 1, balls: 0 });
+      updateGameState({
+        overs: gameState.overs + 1,
+        balls: 0,
+        bowlingStats: {
+          ...gameState.bowlingStats,
+          oversBowled: gameState.bowlingStats.oversBowled + 1,
+        },
+      });
     } else {
       updateGameState({ balls: gameState.balls + 1 });
     }
@@ -67,22 +115,22 @@ export function Gameplay({
       currentInnings,
       gamePhase,
       playerScore,
-      cricketAIScore,
+      computerAIScore,
       target,
     } = gameState;
 
     // Check for end of innings or game
     if (
       overs === 5 ||
-      wickets === 5 ||
+      wickets === 10 ||
       (target &&
         (gamePhase === "batting"
           ? playerScore >= target
-          : cricketAIScore >= target))
+          : computerAIScore >= target))
     ) {
       if (currentInnings === 1) {
         const newTarget =
-          gamePhase === "batting" ? playerScore + 1 : cricketAIScore + 1;
+          gamePhase === "batting" ? playerScore + 1 : computerAIScore + 1;
         setInningsMessage(
           `First innings over. ${newTarget} runs needed to win.`,
         );
@@ -96,11 +144,54 @@ export function Gameplay({
             balls: 0,
             wickets: 0,
             gamePhase: gamePhase === "batting" ? "bowling" : "batting",
+            playerStats: {
+              runs: 0,
+              ballsFaced: 0,
+              fours: 0,
+              sixes: 0,
+              strikeRate: 0,
+            },
+            bowlingStats: {
+              wicketsTaken: 0,
+              oversBowled: 0,
+              runsConceded: 0,
+              economy: 0,
+            },
+            dotBalls: 0,
           });
         }, 5000);
       } else {
         // Game over
-        updateGameState({ gamePhase: "result" });
+        let matchResult: "win" | "loss" | "tie";
+        let winMargin = { runs: 0, wickets: 0 };
+
+        if (gamePhase === "batting") {
+          if (playerScore > computerAIScore) {
+            matchResult = "win";
+            winMargin.wickets = 10 - wickets;
+          } else if (playerScore < computerAIScore) {
+            matchResult = "loss";
+            winMargin.runs = computerAIScore - playerScore;
+          } else {
+            matchResult = "tie";
+          }
+        } else {
+          if (computerAIScore > playerScore) {
+            matchResult = "loss";
+            winMargin.wickets = 10 - wickets;
+          } else if (computerAIScore < playerScore) {
+            matchResult = "win";
+            winMargin.runs = playerScore - computerAIScore;
+          } else {
+            matchResult = "tie";
+          }
+        }
+
+        updateGameState({
+          gamePhase: "result",
+          matchResult,
+          winMargin,
+        });
       }
     }
   }, [gameState, updateGameState]);
@@ -123,7 +214,7 @@ export function Gameplay({
             <p className="text-4xl font-bold">
               {gameState.gamePhase === "batting"
                 ? gameState.playerScore
-                : gameState.cricketAIScore}
+                : gameState.computerAIScore}
               /{gameState.wickets}
             </p>
             <p className="text-lg text-gray-300">
@@ -145,7 +236,7 @@ export function Gameplay({
               {gameState.target -
                 (gameState.gamePhase === "batting"
                   ? gameState.playerScore
-                  : gameState.cricketAIScore)}{" "}
+                  : gameState.computerAIScore)}{" "}
               runs from {5 * 6 - (gameState.overs * 6 + gameState.balls)} balls
             </p>
             <p className="text-gray-300">
@@ -159,13 +250,13 @@ export function Gameplay({
         />
         <div className="flex justify-between text-sm text-gray-300">
           <span>Run Rate: {calculateRunRate(gameState)}</span>
+          <span>Economy: {gameState.bowlingStats.economy.toFixed(2)}</span>
+        </div>
+        <div className="flex justify-between text-sm text-gray-300">
+          <span>Dot Balls: {gameState.dotBalls}</span>
           <span>
-            Economy:{" "}
-            {calculateRunRate({
-              ...gameState,
-              gamePhase:
-                gameState.gamePhase === "batting" ? "bowling" : "batting",
-            })}
+            Boundaries:{" "}
+            {gameState.playerStats.fours + gameState.playerStats.sixes}
           </span>
         </div>
         <GameControls

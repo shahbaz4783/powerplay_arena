@@ -22,6 +22,39 @@ model User {
   isPremium        Boolean?
   lastClaimed      DateTime?
   wallet           Wallet?
+  matches   Match[]
+  stats     Stats?
+}
+
+model Match {
+  id           String   @id @default(cuid())
+  userId       BigInt
+  user         User     @relation(fields: [userId], references: [telegramId])
+  entryFee     Int
+  reward       Int?
+  status       MatchStatus @default(PENDING)
+  score        Json?
+  createdAt    DateTime @default(now())
+}
+
+model Stats {
+  id            String @id @default(cuid())
+  userId        BigInt @unique
+  user          User   @relation(fields: [userId], references: [telegramId])
+  matchesPlayed Int    @default(0)
+  matchesWon    Int    @default(0)
+  matchesLost   Int    @default(0)
+  runsScored    Int    @default(0)
+  wicketsTaken  Int    @default(0)
+  sixes         Int    @default(0)
+  fours         Int    @default(0)
+}
+
+enum MatchStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CLAIMED
 }
 
 model Wallet {

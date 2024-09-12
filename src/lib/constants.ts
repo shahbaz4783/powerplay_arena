@@ -95,3 +95,36 @@ export const TIPS_AND_QUOTES = [
   "The only way to prove that you’re a good sport is to lose.",
   "Winning isn’t everything, but wanting to win is.",
 ];
+
+export const QUICK_PLAY_ENTRY_FEES = [
+  {
+    amount: 50,
+    rewards: {
+      six: 6,
+      four: 4,
+      wicket: 10,
+      runMargin: 3,
+      wicketMargin: 10,
+    },
+  },
+  {
+    amount: 100,
+    rewards: {
+      six: 12,
+      four: 8,
+      wicket: 20,
+      runMargin: 6,
+      wicketMargin: 20,
+    },
+  },
+  {
+    amount: 200,
+    rewards: {
+      six: 24,
+      four: 16,
+      wicket: 40,
+      runMargin: 12,
+      wicketMargin: 40,
+    },
+  },
+];
