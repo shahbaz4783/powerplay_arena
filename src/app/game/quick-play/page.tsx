@@ -19,36 +19,37 @@ import { Coins, Zap, Target, Trophy, Award } from "lucide-react";
 import { startQuickMatch } from "@/src/actions/game.action";
 import { IconType } from "react-icons/lib";
 import { token } from "@/src/lib/constants";
+import { SubmitButton } from "@/src/components/feedback/submit-button";
 
 const entryFees = [
   {
     amount: 50,
     rewards: {
-      six: 5,
-      four: 2,
-      wicket: 10,
-      runMargin: 1.5,
-      wicketMargin: 5,
-    },
-  },
-  {
-    amount: 100,
-    rewards: {
-      six: 10,
+      six: 6,
       four: 4,
-      wicket: 20,
+      wicket: 10,
       runMargin: 3,
       wicketMargin: 10,
     },
   },
   {
-    amount: 200,
+    amount: 100,
     rewards: {
-      six: 20,
+      six: 12,
       four: 8,
-      wicket: 40,
+      wicket: 20,
       runMargin: 6,
       wicketMargin: 20,
+    },
+  },
+  {
+    amount: 200,
+    rewards: {
+      six: 24,
+      four: 16,
+      wicket: 40,
+      runMargin: 12,
+      wicketMargin: 40,
     },
   },
 ];
@@ -63,10 +64,12 @@ const RewardItem = ({
   value: number | string;
 }) => (
   <div className="flex items-center space-x-4 bg-gray-800 p-3 rounded-xl">
-    <Icon className="w-8 h-8 text-cyan-400" />
+    <Icon className="w-6 h-6 text-cyan-400" />
     <div>
       <p className="text-sm text-gray-300">{label}</p>
-      <p className="text-lg font-bold">{value} coins</p>
+      <p className=" font-bold">
+        {value} {token.symbol}
+      </p>
     </div>
   </div>
 );
@@ -117,7 +120,7 @@ export default function QuickMatchPage() {
                 <h4 className="text-lg font-semibold mb-4 text-center">
                   Reward Structure
                 </h4>
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-4">
                   <RewardItem icon={Zap} label="Six" value={fee.rewards.six} />
                   <RewardItem
                     icon={Target}
@@ -135,21 +138,17 @@ export default function QuickMatchPage() {
                     value={fee.rewards.runMargin}
                   />
                 </div>
-                <div className="mt-4 text-sm text-gray-300">
-                  <p>Win by runs: {fee.rewards.runMargin} coins per run</p>
-                  <p>
-                    Win by wickets: {fee.rewards.wicketMargin} coins per wicket
-                  </p>
-                </div>
               </div>
             </TabsContent>
           ))}
         </Tabs>
       </CardContent>
       <CardFooter className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6">
-        <Button onClick={handleContinue} className="w-full rounded-xl">
-          Pay {selectedFee} {token.symbol} and Start match
-        </Button>
+        <SubmitButton
+          onClick={handleContinue}
+          title={`Pay ${selectedFee} ${token.symbol} & Start match`}
+          loadingTitle="Creating the game..."
+        />
       </CardFooter>
     </Card>
   );

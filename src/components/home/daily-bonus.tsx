@@ -8,7 +8,7 @@ import { dailyDrop } from "@/src/actions/tasks.action";
 import { useInitData } from "@telegram-apps/sdk-react";
 import { useFormState } from "react-dom";
 import FormFeedback from "../feedback/form-feedback";
-import { ClaimButton } from "../feedback/claim-button";
+import { SubmitButton } from "../feedback/submit-button";
 
 export function DailyBonus() {
   const initData = useInitData();
@@ -27,7 +27,7 @@ export function DailyBonus() {
         Score big with your daily bonus!
       </p>
       <form className="w-full col-span-3 border" action={action}>
-        <ClaimButton title="Claim" loadingTitle="Claiming..." />
+        <SubmitButton title="Claim" loadingTitle="Claiming..." />
       </form>
       <FormFeedback
         error={response.message.error}

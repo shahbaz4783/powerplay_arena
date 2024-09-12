@@ -5,17 +5,20 @@ interface ClaimButtonProps {
   title: string;
   loadingTitle: string;
   className?: string;
+  onClick?: () => void;
 }
 
-export function ClaimButton({
+export function SubmitButton({
   title,
   loadingTitle,
   className,
+  onClick,
 }: ClaimButtonProps) {
   const { pending } = useFormStatus();
   return (
     <>
       <ShinyButton
+        onClick={onClick}
         className={className}
         text={pending ? loadingTitle : title}
       />

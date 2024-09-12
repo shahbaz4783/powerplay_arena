@@ -10,12 +10,12 @@ import {
   DialogTrigger,
 } from "@/src/components/ui/dialog";
 import { Gift } from "lucide-react";
-import { ClaimButton } from "../feedback/claim-button";
 import FormFeedback from "../feedback/form-feedback";
 import { dailyDrop } from "@/src/actions/tasks.action";
 import { useInitData } from "@telegram-apps/sdk-react";
 import { useFormState } from "react-dom";
 import { useEffect, useState } from "react";
+import { SubmitButton } from "../feedback/submit-button";
 
 export function DailyRewardDialog() {
   const initData = useInitData();
@@ -61,7 +61,7 @@ export function DailyRewardDialog() {
         </DialogHeader>
         <DialogFooter>
           <form className="w-4/5 m-auto" action={action}>
-            <ClaimButton title="Claim" loadingTitle="Claiming..." />
+            <SubmitButton title="Claim" loadingTitle="Claiming..." />
           </form>
         </DialogFooter>
       </DialogContent>
