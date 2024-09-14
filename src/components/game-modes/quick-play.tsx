@@ -21,6 +21,7 @@ import { SubmitButton } from "@/src/components/feedback/submit-button";
 import { useInitData } from "@telegram-apps/sdk-react";
 import { useFormState } from "react-dom";
 import { RewardItem } from "../cards/reward-card";
+import FormFeedback from "../feedback/form-feedback";
 
 export function QuickPlayMode() {
   const [selectedFee, setSelectedFee] = useState("50");
@@ -89,6 +90,7 @@ export function QuickPlayMode() {
             </TabsContent>
           ))}
         </Tabs>
+        <FormFeedback error={response.message.error} />
       </CardContent>
       <CardFooter className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6">
         <form action={action} className="w-full">

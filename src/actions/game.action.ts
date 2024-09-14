@@ -21,8 +21,20 @@ export async function startQuickMatch(
   telegramId: number,
   prevState: FormResponse,
   feeData: any,
-) {
-  console.log("id " + telegramId);
-  console.log("Starting quick match with fee data:", feeData);
+): Promise<FormResponse> {
+  try {
+    console.log("id " + telegramId);
+    console.log("Starting quick match with fee data:", feeData);
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        message: { error: error.message },
+      };
+    } else {
+      return {
+        message: { error: "Something went wrong" },
+      };
+    }
+  }
   redirect("/game");
 }

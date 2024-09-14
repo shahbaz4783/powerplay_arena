@@ -26,6 +26,7 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
   const [inningsMessage, setInningsMessage] = useState("");
   const [commentary, setCommentary] = useState<CommentaryEvent>("start");
   const [score, setScore] = useState<number | null>(null);
+  const [lastSixBalls, setLastSixBalls] = useState<(number | "W")[]>([]);
 
   const computerBowling = (): BowlingType => {
     const chance = Math.random();
@@ -40,6 +41,7 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
 
   const handleBatting = (option: "normal" | "aggressive" | "defensive") => {
     const runsScored = calculateRunsScored(option, computerBowling());
+    updateLastSixBalls(runsScored);
     if (runsScored === -1) {
       updateGameState({
         wickets: gameState.wickets + 1,
@@ -102,6 +104,7 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
   const handleBowling = (option: "normal" | "yorker" | "bouncer") => {
     const cricketAIStrategy = getCricketAIBattingStrategy(gameState, option);
     const runsScored = calculateRunsScored(cricketAIStrategy, option);
+    updateLastSixBalls(runsScored);
     if (runsScored === -1) {
       updateGameState({
         wickets: gameState.wickets + 1,
@@ -144,6 +147,13 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
       }
     }
     updateOversBalls();
+  };
+
+  const updateLastSixBalls = (runsScored: number | "W") => {
+    setLastSixBalls((prev) => {
+      const newBalls = [...prev, runsScored === -1 ? "W" : runsScored];
+      return newBalls.slice(-6);
+    });
   };
 
   const updateOversBalls = () => {
@@ -221,7 +231,7 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
         if (gamePhase === "batting") {
           if (playerScore > computerAIScore) {
             matchResult = "win";
-            winMargin.wickets = 10 - wickets;
+            winMargin.wickets = 5 - wickets;
           } else if (playerScore < computerAIScore) {
             matchResult = "loss";
             winMargin.runs = computerAIScore - playerScore;
@@ -260,9 +270,9 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
   }
 
   return (
-    <Card className="bg-yellow-900">
-      <CardContent className="p-6 space-y-6">
-        <div className="flex justify-between items-center">
+    <Card className="bg-sky-900">
+      <CardContent className="space-y-6">
+        <div className="flex justify-between items-center border ">
           <div>
             <p className="text-4xl font-bold">
               {gameState.gamePhase === "batting"
@@ -320,18 +330,27 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
       </CardContent>
       <Commentary event={commentary} />
 
-      <AnimatePresence>
+      {/**<AnimatePresence>
         {score !== null && (
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            className="fixed inset-0 flex items-center justify-center pointer-events-none"
+            className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none"
           >
-            <span className="text-9xl font-bold text-yellow-400">{score}</span>
+            <div className="flex space-x-2">
+              {lastSixBalls.map((ball, index) => (
+                <span
+                  key={index}
+                  className={`text-2xl font-semibold bg-red-300 p-3 rounded-xl`}
+                >
+                  {ball}
+                </span>
+              ))}
+            </div>
           </motion.div>
         )}
-      </AnimatePresence>
+        </AnimatePresence>**/}
     </Card>
   );
 }
