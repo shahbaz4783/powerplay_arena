@@ -9,26 +9,37 @@ import {
   calculateRequiredRunRate,
   calculateRunsScored,
   getCricketAIBattingStrategy,
+  BowlingType,
 } from "@/src/lib/game-logics";
-import { GameState } from "@/src/lib/types";
+import { CommentaryEvent, GameState } from "@/src/lib/types";
 import { GameControls } from "./game-controls";
+import { Commentary } from "./commentary";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface GameplayProps {
   gameState: GameState;
-  updateGameState: (newState: Partial<GameState>) => void;
-  addCommentary: (text: string) => void;
+  updateGameState: any;
 }
 
-export function Gameplay({
-  gameState,
-  updateGameState,
-  addCommentary,
-}: GameplayProps) {
+export function Gameplay({ gameState, updateGameState }: GameplayProps) {
   const [showInningsMessage, setShowInningsMessage] = useState(false);
   const [inningsMessage, setInningsMessage] = useState("");
+  const [commentary, setCommentary] = useState<CommentaryEvent>("start");
+  const [score, setScore] = useState<number | null>(null);
+
+  const computerBowling = (): BowlingType => {
+    const chance = Math.random();
+    if (chance < 0.3) {
+      return "normal";
+    } else if (chance < 0.7 && chance > 0.3) {
+      return "bouncer";
+    } else {
+      return "yorker";
+    }
+  };
 
   const handleBatting = (option: "normal" | "aggressive" | "defensive") => {
-    const runsScored = calculateRunsScored(option);
+    const runsScored = calculateRunsScored(option, computerBowling());
     if (runsScored === -1) {
       updateGameState({
         wickets: gameState.wickets + 1,
@@ -41,10 +52,11 @@ export function Gameplay({
           wicketsTaken: gameState.bowlingStats.wicketsTaken + 1,
         },
       });
-      addCommentary("Out!");
+      setCommentary("wicket");
     } else {
       updateGameState({
         playerScore: gameState.playerScore + runsScored,
+
         playerStats: {
           ...gameState.playerStats,
           runs: gameState.playerStats.runs + runsScored,
@@ -61,7 +73,28 @@ export function Gameplay({
         dotBalls:
           runsScored === 0 ? gameState.dotBalls + 1 : gameState.dotBalls,
       });
-      addCommentary(`${runsScored} runs scored`);
+
+      if (runsScored === 0) {
+        setScore(runsScored);
+        setCommentary("dot");
+      } else if (runsScored === 1) {
+        setScore(runsScored);
+        setCommentary("single");
+      } else if (runsScored === 2) {
+        setScore(runsScored);
+        setCommentary("double");
+      } else if (runsScored === 3) {
+        setScore(runsScored);
+        setCommentary("triple");
+      } else if (runsScored === 4) {
+        setScore(runsScored);
+        setCommentary("four");
+      } else if (runsScored === 6) {
+        setScore(runsScored);
+        setCommentary("six");
+      } else {
+        setScore(runsScored);
+      }
     }
     updateOversBalls();
   };
@@ -77,7 +110,7 @@ export function Gameplay({
           wicketsTaken: gameState.bowlingStats.wicketsTaken + 1,
         },
       });
-      addCommentary("CricketAI is out!");
+      setCommentary("wicket");
     } else {
       updateGameState({
         computerAIScore: gameState.computerAIScore + runsScored,
@@ -88,7 +121,27 @@ export function Gameplay({
         dotBalls:
           runsScored === 0 ? gameState.dotBalls + 1 : gameState.dotBalls,
       });
-      addCommentary(`CricketAI scored ${runsScored} runs`);
+      if (runsScored === 0) {
+        setScore(runsScored);
+        setCommentary("dot");
+      } else if (runsScored === 1) {
+        setScore(runsScored);
+        setCommentary("single");
+      } else if (runsScored === 2) {
+        setScore(runsScored);
+        setCommentary("double");
+      } else if (runsScored === 3) {
+        setScore(runsScored);
+        setCommentary("triple");
+      } else if (runsScored === 4) {
+        setScore(runsScored);
+        setCommentary("four");
+      } else if (runsScored === 6) {
+        setScore(runsScored);
+        setCommentary("six");
+      } else {
+        setScore(runsScored);
+      }
     }
     updateOversBalls();
   };
@@ -122,7 +175,7 @@ export function Gameplay({
     // Check for end of innings or game
     if (
       overs === 5 ||
-      wickets === 10 ||
+      wickets === 5 ||
       (target &&
         (gamePhase === "batting"
           ? playerScore >= target
@@ -265,6 +318,20 @@ export function Gameplay({
           handleBowling={handleBowling}
         />
       </CardContent>
+      <Commentary event={commentary} />
+
+      <AnimatePresence>
+        {score !== null && (
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center pointer-events-none"
+          >
+            <span className="text-9xl font-bold text-yellow-400">{score}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Card>
   );
 }

@@ -35,41 +35,28 @@ export default function CricketGame() {
     },
     matchResult: null,
     winMargin: null,
-    entryFee: 50, // Default entry fee, adjust as needed
-    potentialReward: 0,
-    bonusMultiplier: 1,
+    entryFee: 50,
     dotBalls: 0,
-    boundaries: 0,
-    highestPartnership: 0,
-    fastestBall: 0,
-    longestSix: 0,
     achievements: [],
   });
-  const [commentary, setCommentary] = useState<string[]>([]);
-
-  const addCommentary = (text: string) => {
-    setCommentary((prev) => [text, ...prev.slice(0, 2)]);
-  };
 
   const updateGameState = (newState: Partial<GameState>) => {
     setGameState((prevState) => {
       const updatedState = { ...prevState, ...newState };
-      
-      // Update derived statistics
-      if ('playerStats' in newState || 'bowlingStats' in newState) {
-        updatedState.playerStats.strikeRate = 
-          updatedState.playerStats.ballsFaced > 0
-            ? (updatedState.playerStats.runs / updatedState.playerStats.ballsFaced) * 100
-            : 0;
-        updatedState.bowlingStats.economy = 
-          updatedState.bowlingStats.oversBowled > 0
-            ? updatedState.bowlingStats.runsConceded / updatedState.bowlingStats.oversBowled
-            : 0;
-      }
 
-      // Update boundaries count
-      if ('playerStats' in newState) {
-        updatedState.boundaries = updatedState.playerStats.fours + updatedState.playerStats.sixes;
+      // Update derived statistics
+      if ("playerStats" in newState || "bowlingStats" in newState) {
+        updatedState.playerStats.strikeRate =
+          updatedState.playerStats.ballsFaced > 0
+            ? (updatedState.playerStats.runs /
+                updatedState.playerStats.ballsFaced) *
+              100
+            : 0;
+        updatedState.bowlingStats.economy =
+          updatedState.bowlingStats.oversBowled > 0
+            ? updatedState.bowlingStats.runsConceded /
+              updatedState.bowlingStats.oversBowled
+            : 0;
       }
 
       return updatedState;
@@ -89,7 +76,8 @@ export default function CricketGame() {
 
     if (overs === 5 || wickets === 10) {
       if (currentInnings === 1) {
-        const newTarget = gamePhase === "batting" ? playerScore + 1 : computerAIScore + 1;
+        const newTarget =
+          gamePhase === "batting" ? playerScore + 1 : computerAIScore + 1;
         updateGameState({
           currentInnings: 2,
           target: newTarget,
@@ -109,32 +97,30 @@ export default function CricketGame() {
             runsConceded: 0,
           },
         });
-        addCommentary(`Innings over. Target: ${newTarget}`);
       } else {
         // Determine match result
-        let matchResult: 'win' | 'loss' | 'tie';
+        let matchResult: "win" | "loss" | "tie";
         let winMargin = null;
 
         if (playerScore > computerAIScore) {
-          matchResult = 'win';
+          matchResult = "win";
           winMargin = { runs: playerScore - computerAIScore };
         } else if (playerScore < computerAIScore) {
-          matchResult = 'loss';
+          matchResult = "loss";
           winMargin = { runs: computerAIScore - playerScore };
         } else {
-          matchResult = 'tie';
+          matchResult = "tie";
         }
 
         // Calculate potential reward
         const basePotentialReward = gameState.entryFee * 2;
-        const performanceBonus = (gameState.playerStats.fours * 5) + (gameState.playerStats.sixes * 10);
-        const potentialReward = (basePotentialReward + performanceBonus) * gameState.bonusMultiplier;
+        const performanceBonus =
+          gameState.playerStats.fours * 5 + gameState.playerStats.sixes * 10;
 
-        updateGameState({ 
+        updateGameState({
           gamePhase: "result",
           matchResult,
           winMargin,
-          potentialReward,
         });
       }
     }
@@ -143,27 +129,13 @@ export default function CricketGame() {
   return (
     <div className="min-h-svh text-gray-100">
       <div className="flex flex-col justify-between min-h-[85svh]">
-        {gameState.gamePhase !== "result" && (
-          <>
-            <QuitGame />
-            <Commentary commentary={commentary} />
-          </>
-        )}
         <main className="flex-grow overflow-auto">
           {gameState.gamePhase === "toss" && (
-            <Toss
-              gameState={gameState}
-              updateGameState={updateGameState}
-              addCommentary={addCommentary}
-            />
+            <Toss gameState={gameState} updateGameState={updateGameState} />
           )}
           {(gameState.gamePhase === "batting" ||
             gameState.gamePhase === "bowling") && (
-            <Gameplay
-              gameState={gameState}
-              updateGameState={updateGameState}
-              addCommentary={addCommentary}
-            />
+            <Gameplay gameState={gameState} updateGameState={updateGameState} />
           )}
           {gameState.gamePhase === "result" && <Result gameState={gameState} />}
         </main>

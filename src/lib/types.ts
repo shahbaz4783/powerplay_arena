@@ -16,21 +16,23 @@ export interface FormResponse {
 
 export interface GameState {
   // Game flow
-  gamePhase: 'toss' | 'batting' | 'bowling' | 'superOver' | 'result';
-  tossWinner: 'player' | 'computerAI' | null;
-  tossChoice: 'bat' | 'bowl' | null;
+  gamePhase: "toss" | "batting" | "bowling" | "result";
+  tossWinner: "player" | "computerAI" | null;
+  tossChoice: "bat" | "bowl" | null;
   currentInnings: 1 | 2;
-  
+  entryFee: number;
+
   // Scores
   playerScore: number;
   computerAIScore: number;
   target: number | null;
-  
+
   // Current innings details
   wickets: number;
   overs: number;
   balls: number;
-  
+  dotBalls: number;
+
   // Detailed statistics for reward calculation
   playerStats: {
     runs: number;
@@ -45,32 +47,15 @@ export interface GameState {
     runsConceded: number;
     economy: number;
   };
-  
+
   // Match result details
-  matchResult: 'win' | 'loss' | 'tie' | null;
+  matchResult: "win" | "loss" | "tie" | null;
   winMargin: {
     runs?: number;
     wickets?: number;
   } | null;
-  
-  // Super over details
-  superOverBattingFirst?: 'player' | 'computerAI';
-  superOverPlayerScore?: number;
-  superOverComputerAIScore?: number;
-  
-  // Reward calculation fields
-  entryFee: number;
-  potentialReward: number;
-  bonusMultiplier: number;
-  
-  // Additional game statistics
-  dotBalls: number;
-  boundaries: number;
-  highestPartnership: number;
-  fastestBall: number;
-  longestSix: number;
-  
-  // Special achievements
+
+  // Achievements
   achievements: string[];
 }
 
@@ -82,3 +67,14 @@ export interface PowerUp {
   duration: number; // in balls
   cost: number;
 }
+
+export type CommentaryEvent =
+  | "start"
+  | "secondInnings"
+  | "dot"
+  | "single"
+  | "double"
+  | "triple"
+  | "four"
+  | "six"
+  | "wicket";
