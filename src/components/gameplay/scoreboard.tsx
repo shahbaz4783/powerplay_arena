@@ -8,7 +8,7 @@ interface ScoreBoardProps {
 
 export function ScoreBoard({ gameState }: ScoreBoardProps) {
   return (
-    <section className="space-y-4">
+    <section className="space-y-4 bg-slate-800/50 backdrop-blur-md rounded-xl p-4">
       <div className="flex justify-between items-center">
         <div>
           <p className="text-4xl font-bold">

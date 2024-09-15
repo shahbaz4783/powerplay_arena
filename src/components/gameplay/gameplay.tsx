@@ -301,24 +301,8 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
   }
 
   return (
-    <Card className="bg-sky-900 min-h-svh flex flex-col justify-between py-6">
-      <CardContent className="space-y-6">
-        {gameState.target && (
-          <div className="bg-gray-800 bg-opacity-50 rounded-lg p-4">
-            <p className="text-lg font-semibold">Target: {gameState.target}</p>
-            <p className="text-gray-300">
-              Need{" "}
-              {gameState.target -
-                (gameState.gamePhase === "batting"
-                  ? gameState.playerScore
-                  : gameState.computerAIScore)}{" "}
-              runs from {5 * 6 - (gameState.overs * 6 + gameState.balls)} balls
-            </p>
-            <p className="text-gray-300">
-              Required Run Rate: {calculateRequiredRunRate(gameState)}
-            </p>
-          </div>
-        )}
+    <main className="min-h-svh flex flex-col justify-between">
+      <section className="space-y-6">
         <ScoreBoard gameState={gameState} />
         <div className="flex justify-between text-sm text-gray-300">
           <span>Run Rate: {calculateRunRate(gameState)}</span>
@@ -345,35 +329,34 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
           ))}
         </div>
 
-        <Commentary event={commentary} />
-        <AnimatePresence>
-          {ballResult && (
-            <motion.div
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0, opacity: 0 }}
-              className="flex flex-col items-center justify-center pointer-events-none"
-            >
-              <motion.p
-                initial={{ y: -50 }}
-                animate={{ y: 0 }}
-                exit={{ y: 50 }}
-                className="text-6xl font-bold text-yellow-400 mb-4"
-              >
-                {ballResult}
-              </motion.p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </CardContent>
-      <CardFooter>
+        {gameState.target && (
+          <div className="bg-gray-800 bg-opacity-50 rounded-xl p-4">
+            <p className="text-lg font-semibold">Target: {gameState.target}</p>
+            <p className="text-gray-300">
+              Need{" "}
+              {gameState.target -
+                (gameState.gamePhase === "batting"
+                  ? gameState.playerScore
+                  : gameState.computerAIScore)}{" "}
+              runs from {5 * 6 - (gameState.overs * 6 + gameState.balls)} balls
+            </p>
+            <p className="text-gray-300">
+              Required Run Rate: {calculateRequiredRunRate(gameState)}
+            </p>
+          </div>
+        )}
+
+        <Commentary event={commentary} ballResult={ballResult} />
+      </section>
+
+      <section>
         <GameControls
           gameState={gameState}
           handleBatting={handleBatting}
           handleBowling={handleBowling}
           disabled={disableControls}
         />
-      </CardFooter>
-    </Card>
+      </section>
+    </main>
   );
 }
