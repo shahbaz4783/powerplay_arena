@@ -26,9 +26,9 @@ export function Commentary({ event }: CommentaryProps) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.5 }}
-        className="bg-gray-800 rounded-lg p-4 shadow-lg"
+        className="bg-gray-800 rounded-xl p-3 shadow-lg"
       >
-        <p className="text-lg text-white">{commentary}</p>
+        <p className="text-white">{commentary}</p>
       </motion.div>
     </AnimatePresence>
   );

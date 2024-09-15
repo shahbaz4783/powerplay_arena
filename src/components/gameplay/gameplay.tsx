@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/src/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/src/components/ui/card";
 import { Progress } from "@/src/components/ui/progress";
 import { Badge } from "@/src/components/ui/badge";
 import {
@@ -15,6 +15,7 @@ import { CommentaryEvent, GameState } from "@/src/lib/types";
 import { GameControls } from "./game-controls";
 import { Commentary } from "./commentary";
 import { AnimatePresence, motion } from "framer-motion";
+import { ScoreBoard } from "./scoreboard";
 
 interface GameplayProps {
   gameState: GameState;
@@ -27,6 +28,8 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
   const [commentary, setCommentary] = useState<CommentaryEvent>("start");
   const [score, setScore] = useState<number | null>(null);
   const [lastSixBalls, setLastSixBalls] = useState<(number | "W")[]>([]);
+  const [disableControls, setDisableControls] = useState(false);
+  const [ballResult, setBallResult] = useState<string | null>(null);
 
   const computerBowling = (): BowlingType => {
     const chance = Math.random();
@@ -40,9 +43,13 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
   };
 
   const handleBatting = (option: "normal" | "aggressive" | "defensive") => {
+    setDisableControls(true);
     const runsScored = calculateRunsScored(option, computerBowling());
     updateLastSixBalls(runsScored);
+
+    let result: string;
     if (runsScored === -1) {
+      result = "OUT!";
       updateGameState({
         wickets: gameState.wickets + 1,
         playerStats: {
@@ -56,9 +63,20 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
       });
       setCommentary("wicket");
     } else {
+      result =
+        runsScored === 0
+          ? "Dot Ball"
+          : runsScored === 1
+            ? "Single"
+            : runsScored === 2
+              ? "Two Runs"
+              : runsScored === 3
+                ? "Three Runs"
+                : runsScored === 4
+                  ? "FOUR!"
+                  : "SIX!";
       updateGameState({
         playerScore: gameState.playerScore + runsScored,
-
         playerStats: {
           ...gameState.playerStats,
           runs: gameState.playerStats.runs + runsScored,
@@ -75,37 +93,40 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
         dotBalls:
           runsScored === 0 ? gameState.dotBalls + 1 : gameState.dotBalls,
       });
-
-      if (runsScored === 0) {
-        setScore(runsScored);
-        setCommentary("dot");
-      } else if (runsScored === 1) {
-        setScore(runsScored);
-        setCommentary("single");
-      } else if (runsScored === 2) {
-        setScore(runsScored);
-        setCommentary("double");
-      } else if (runsScored === 3) {
-        setScore(runsScored);
-        setCommentary("triple");
-      } else if (runsScored === 4) {
-        setScore(runsScored);
-        setCommentary("four");
-      } else if (runsScored === 6) {
-        setScore(runsScored);
-        setCommentary("six");
-      } else {
-        setScore(runsScored);
-      }
+      setScore(runsScored);
+      setCommentary(
+        runsScored === 0
+          ? "dot"
+          : runsScored === 1
+            ? "single"
+            : runsScored === 2
+              ? "double"
+              : runsScored === 3
+                ? "triple"
+                : runsScored === 4
+                  ? "four"
+                  : "six",
+      );
     }
+
+    setBallResult(result);
     updateOversBalls();
+
+    setTimeout(() => {
+      setBallResult(null);
+      setDisableControls(false);
+    }, 2000);
   };
 
   const handleBowling = (option: "normal" | "yorker" | "bouncer") => {
+    setDisableControls(true);
     const cricketAIStrategy = getCricketAIBattingStrategy(gameState, option);
     const runsScored = calculateRunsScored(cricketAIStrategy, option);
     updateLastSixBalls(runsScored);
+
+    let result: string;
     if (runsScored === -1) {
+      result = "OUT!";
       updateGameState({
         wickets: gameState.wickets + 1,
         bowlingStats: {
@@ -115,6 +136,18 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
       });
       setCommentary("wicket");
     } else {
+      result =
+        runsScored === 0
+          ? "Dot Ball"
+          : runsScored === 1
+            ? "Single"
+            : runsScored === 2
+              ? "Two Runs"
+              : runsScored === 3
+                ? "Three Runs"
+                : runsScored === 4
+                  ? "FOUR!"
+                  : "SIX!";
       updateGameState({
         computerAIScore: gameState.computerAIScore + runsScored,
         bowlingStats: {
@@ -124,29 +157,29 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
         dotBalls:
           runsScored === 0 ? gameState.dotBalls + 1 : gameState.dotBalls,
       });
-      if (runsScored === 0) {
-        setScore(runsScored);
-        setCommentary("dot");
-      } else if (runsScored === 1) {
-        setScore(runsScored);
-        setCommentary("single");
-      } else if (runsScored === 2) {
-        setScore(runsScored);
-        setCommentary("double");
-      } else if (runsScored === 3) {
-        setScore(runsScored);
-        setCommentary("triple");
-      } else if (runsScored === 4) {
-        setScore(runsScored);
-        setCommentary("four");
-      } else if (runsScored === 6) {
-        setScore(runsScored);
-        setCommentary("six");
-      } else {
-        setScore(runsScored);
-      }
+      setScore(runsScored);
+      setCommentary(
+        runsScored === 0
+          ? "dot"
+          : runsScored === 1
+            ? "single"
+            : runsScored === 2
+              ? "double"
+              : runsScored === 3
+                ? "triple"
+                : runsScored === 4
+                  ? "four"
+                  : "six",
+      );
     }
+
+    setBallResult(result);
     updateOversBalls();
+
+    setTimeout(() => {
+      setBallResult(null);
+      setDisableControls(false);
+    }, 2000);
   };
 
   const updateLastSixBalls = (runsScored: number | "W") => {
@@ -182,7 +215,6 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
       target,
     } = gameState;
 
-    // Check for end of innings or game
     if (
       overs === 5 ||
       wickets === 5 ||
@@ -224,7 +256,6 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
           });
         }, 5000);
       } else {
-        // Game over
         let matchResult: "win" | "loss" | "tie";
         let winMargin = { runs: 0, wickets: 0 };
 
@@ -270,27 +301,8 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
   }
 
   return (
-    <Card className="bg-sky-900">
+    <Card className="bg-sky-900 min-h-svh flex flex-col justify-between py-6">
       <CardContent className="space-y-6">
-        <div className="flex justify-between items-center border ">
-          <div>
-            <p className="text-4xl font-bold">
-              {gameState.gamePhase === "batting"
-                ? gameState.playerScore
-                : gameState.computerAIScore}
-              /{gameState.wickets}
-            </p>
-            <p className="text-lg text-gray-300">
-              ({gameState.overs}.{gameState.balls} overs)
-            </p>
-          </div>
-          <Badge
-            variant="outline"
-            className="text-yellow-400 border-yellow-400 text-lg py-1 px-3"
-          >
-            {gameState.currentInnings === 1 ? "1st Innings" : "2nd Innings"}
-          </Badge>
-        </div>
         {gameState.target && (
           <div className="bg-gray-800 bg-opacity-50 rounded-lg p-4">
             <p className="text-lg font-semibold">Target: {gameState.target}</p>
@@ -307,10 +319,7 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
             </p>
           </div>
         )}
-        <Progress
-          value={((gameState.overs * 6 + gameState.balls) / (5 * 6)) * 100}
-          className="h-3"
-        />
+        <ScoreBoard gameState={gameState} />
         <div className="flex justify-between text-sm text-gray-300">
           <span>Run Rate: {calculateRunRate(gameState)}</span>
           <span>Economy: {gameState.bowlingStats.economy.toFixed(2)}</span>
@@ -322,35 +331,49 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
             {gameState.playerStats.fours + gameState.playerStats.sixes}
           </span>
         </div>
+        <div className="">
+          {lastSixBalls.map((ball, index) => (
+            <motion.span
+              key={index}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: index * 0.1 }}
+              className={`font-semibold p-3 rounded-xl`}
+            >
+              {ball}
+            </motion.span>
+          ))}
+        </div>
+
+        <Commentary event={commentary} />
+        <AnimatePresence>
+          {ballResult && (
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              className="flex flex-col items-center justify-center pointer-events-none"
+            >
+              <motion.p
+                initial={{ y: -50 }}
+                animate={{ y: 0 }}
+                exit={{ y: 50 }}
+                className="text-6xl font-bold text-yellow-400 mb-4"
+              >
+                {ballResult}
+              </motion.p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </CardContent>
+      <CardFooter>
         <GameControls
           gameState={gameState}
           handleBatting={handleBatting}
           handleBowling={handleBowling}
+          disabled={disableControls}
         />
-      </CardContent>
-      <Commentary event={commentary} />
-
-      {/**<AnimatePresence>
-        {score !== null && (
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none"
-          >
-            <div className="flex space-x-2">
-              {lastSixBalls.map((ball, index) => (
-                <span
-                  key={index}
-                  className={`text-2xl font-semibold bg-red-300 p-3 rounded-xl`}
-                >
-                  {ball}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        )}
-        </AnimatePresence>**/}
+      </CardFooter>
     </Card>
   );
 }
