@@ -16,6 +16,7 @@ import { GameControls } from "./game-controls";
 import { Commentary } from "./commentary";
 import { AnimatePresence, motion } from "framer-motion";
 import { ScoreBoard } from "./scoreboard";
+import { OverInfo } from "./over-info";
 
 interface GameplayProps {
   gameState: GameState;
@@ -301,33 +302,17 @@ export function Gameplay({ gameState, updateGameState }: GameplayProps) {
   }
 
   return (
-    <main className="min-h-svh flex flex-col justify-between">
+    <main className="min-h-svh flex flex-col justify-between p-4">
       <section className="space-y-6">
         <ScoreBoard gameState={gameState} />
         <div className="flex justify-between text-sm text-gray-300">
           <span>Run Rate: {calculateRunRate(gameState)}</span>
-          <span>Economy: {gameState.bowlingStats.economy.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between text-sm text-gray-300">
-          <span>Dot Balls: {gameState.dotBalls}</span>
           <span>
             Boundaries:{" "}
             {gameState.playerStats.fours + gameState.playerStats.sixes}
           </span>
         </div>
-        <div className="">
-          {lastSixBalls.map((ball, index) => (
-            <motion.span
-              key={index}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: index * 0.1 }}
-              className={`font-semibold p-3 rounded-xl`}
-            >
-              {ball}
-            </motion.span>
-          ))}
-        </div>
+        <OverInfo currentOverData={lastSixBalls} />
 
         {gameState.target && (
           <div className="bg-gray-800 bg-opacity-50 rounded-xl p-4">

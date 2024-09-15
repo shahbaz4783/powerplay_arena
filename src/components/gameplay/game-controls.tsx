@@ -4,6 +4,7 @@ import { Button } from "@/src/components/ui/button";
 import { GameState } from "@/src/lib/types";
 import { motion } from "framer-motion";
 import ShinyButton from "../magicui/shiny-button";
+import { cn } from "@/src/lib/utils";
 
 interface GameControlsProps {
   gameState: GameState;
@@ -51,13 +52,13 @@ export function GameControls({
           />
           <ShinyButton
             onClick={() => handleBowling("bouncer")}
-            className="w-full bg-purple-300"
+            className="w-full bg-purple-300 "
             text="Bouncer"
             disabled={disabled}
           />
           <ShinyButton
             onClick={() => handleBowling("yorker")}
-            className="w-full bg-green-300"
+            className="w-full bg-green-300 "
             text="Yorker"
             disabled={disabled}
           />
