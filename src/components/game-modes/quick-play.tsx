@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Tabs,
   TabsContent,
@@ -22,9 +22,12 @@ import { useInitData } from "@telegram-apps/sdk-react";
 import { useFormState } from "react-dom";
 import { RewardItem } from "../cards/reward-card";
 import FormFeedback from "../feedback/form-feedback";
+import { useCricketGameState } from "@/src/lib/store";
 
 export function QuickPlayMode() {
   const [selectedFee, setSelectedFee] = useState("50");
+
+  const { gameState, updateGameState } = useCricketGameState();
 
   const initData = useInitData();
   const user = initData?.user;
@@ -36,6 +39,14 @@ export function QuickPlayMode() {
     },
   );
 
+  useEffect(() => {
+    updateGameState({ entryFee: parseInt(selectedFee, 10) });
+  }, [selectedFee, updateGameState]);
+
+  const handleFeeChange = (fee: string) => {
+    setSelectedFee(fee);
+  };
+
   return (
     <Card className="min-h-svh flex flex-col justify-between">
       <CardHeader className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6">
@@ -46,7 +57,7 @@ export function QuickPlayMode() {
       <CardContent className="p-6">
         <Tabs
           value={selectedFee}
-          onValueChange={setSelectedFee}
+          onValueChange={handleFeeChange}
           className="w-full"
         >
           <TabsList className="grid grid-cols-3 mb-8 gap-4 rounded-xl bg-slate-400 h-auto">

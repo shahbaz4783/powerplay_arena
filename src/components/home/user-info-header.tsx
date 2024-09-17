@@ -24,6 +24,7 @@ import { Progress } from "@/src/components/ui/progress";
 
 import { token } from "@/src/lib/constants";
 import { AvatarDialog } from "../dialog/avatar-dialog";
+import { useCricketGameState } from "@/src/lib/store";
 
 const levelTitles = [
   "Rookie Batsman",

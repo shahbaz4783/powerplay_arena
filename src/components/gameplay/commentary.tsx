@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CommentaryEvent } from "@/src/lib/types";
 import { commentaryTexts } from "@/src/lib/commentary";
 import { cn } from "@/src/lib/utils";
+import { useCricketGameState } from "@/src/lib/store";
 
 type CommentaryProps = {
   event: CommentaryEvent;
@@ -19,6 +20,7 @@ export function Commentary({ event, ballResult }: CommentaryProps) {
     const randomIndex = Math.floor(Math.random() * texts.length);
     setCommentary(texts[randomIndex]);
   }, [event]);
+  const { gameState } = useCricketGameState();
 
   return (
     <AnimatePresence mode="wait">
