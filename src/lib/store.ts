@@ -50,11 +50,11 @@ const getGameState = (): GameState => {
   return initialState;
 };
 
-const setGameState = (state: GameState): GameState => {
+const setGameState = (state: GameState): Promise<GameState> => {
   if (typeof window !== "undefined") {
     localStorage.setItem(GAME_STATE_KEY, JSON.stringify(state));
   }
-  return state;
+  return Promise.resolve(state);
 };
 
 export const useCricketGameState = () => {

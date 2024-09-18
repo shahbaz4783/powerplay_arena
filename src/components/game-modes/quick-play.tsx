@@ -27,7 +27,7 @@ import { useCricketGameState } from "@/src/lib/store";
 export function QuickPlayMode() {
   const [selectedFee, setSelectedFee] = useState("50");
 
-  const { gameState, updateGameState } = useCricketGameState();
+  const { updateGameState } = useCricketGameState();
 
   const initData = useInitData();
   const user = initData?.user;
