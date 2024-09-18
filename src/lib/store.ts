@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { GameState, PlayerStats, BowlingStats } from "../types/gameState";
+import { GameState, InningsInterface } from "../types/gameState";
 
 const GAME_STATE_KEY = "cricketGameState";
 
@@ -8,37 +8,29 @@ const initialState: GameState = {
   tossWinner: null,
   tossChoice: null,
   currentInnings: 1,
-  entryFee: 0,
-  playerScore: 0,
-  computerAIScore: 0,
   target: null,
-  playerWickets: 0,
-  computerAIWickets: 0,
-  overs: 0,
-  balls: 0,
-  dotBalls: 0,
-  playerStats: { runs: 0, ballsFaced: 0, fours: 0, sixes: 0, strikeRate: 0 },
-  computerAIStats: {
+  entryFee: 0,
+
+  playerInnings: {
     runs: 0,
+    wickets: 0,
     ballsFaced: 0,
     fours: 0,
     sixes: 0,
-    strikeRate: 0,
+    runRate: 0,
   },
-  playerBowlingStats: {
-    wicketsTaken: 0,
-    oversBowled: 0,
-    runsConceded: 0,
-    economy: 0,
+
+  opponentInnings: {
+    runs: 0,
+    wickets: 0,
+    ballsFaced: 0,
+    fours: 0,
+    sixes: 0,
+    runRate: 0,
   },
-  computerAIBowlingStats: {
-    wicketsTaken: 0,
-    oversBowled: 0,
-    runsConceded: 0,
-    economy: 0,
-  },
+
   matchResult: null,
-  winMargin: null,
+  resultMargin: null,
   achievements: [],
 };
 
@@ -76,88 +68,57 @@ export const useCricketGameState = () => {
     },
   });
 
-  const updatePlayerStats = (runs: number, isFour: boolean, isSix: boolean) => {
-    const newStats: PlayerStats = {
-      ...gameState.playerStats,
-      runs: gameState.playerStats.runs + runs,
-      ballsFaced: gameState.playerStats.ballsFaced + 1,
-      fours: isFour
-        ? gameState.playerStats.fours + 1
-        : gameState.playerStats.fours,
-      sixes: isSix
-        ? gameState.playerStats.sixes + 1
-        : gameState.playerStats.sixes,
-    };
-    newStats.strikeRate = (newStats.runs / newStats.ballsFaced) * 100;
-    updateGameState.mutate({
-      playerScore: gameState.playerScore + runs,
-      playerStats: newStats,
-      balls: gameState.balls + 1,
-      overs: Math.floor((gameState.balls + 1) / 6),
-      dotBalls: runs === 0 ? gameState.dotBalls + 1 : gameState.dotBalls,
-    });
-  };
-
-  const updateComputerAIStats = (
+  const updatePlayerInnings = (
     runs: number,
+    wickets: number,
     isFour: boolean,
     isSix: boolean,
   ) => {
-    const newStats: PlayerStats = {
-      ...gameState.computerAIStats,
-      runs: gameState.computerAIStats.runs + runs,
-      ballsFaced: gameState.computerAIStats.ballsFaced + 1,
+    const newStats: InningsInterface = {
+      ...gameState.playerInnings,
+      runs: gameState.playerInnings.runs + runs,
+      wickets: gameState.playerInnings.wickets + wickets,
+      ballsFaced: gameState.playerInnings.ballsFaced + 1,
       fours: isFour
-        ? gameState.computerAIStats.fours + 1
-        : gameState.computerAIStats.fours,
+        ? gameState.playerInnings.fours + 1
+        : gameState.playerInnings.fours,
       sixes: isSix
-        ? gameState.computerAIStats.sixes + 1
-        : gameState.computerAIStats.sixes,
+        ? gameState.playerInnings.sixes + 1
+        : gameState.playerInnings.sixes,
     };
-    newStats.strikeRate = (newStats.runs / newStats.ballsFaced) * 100;
+
     updateGameState.mutate({
-      computerAIScore: gameState.computerAIScore + runs,
-      computerAIStats: newStats,
-      balls: gameState.balls + 1,
-      overs: Math.floor((gameState.balls + 1) / 6),
-      dotBalls: runs === 0 ? gameState.dotBalls + 1 : gameState.dotBalls,
+      playerInnings: newStats,
     });
   };
 
-  const updatePlayerBowlingStats = (wickets: number, runs: number) => {
-    const newStats: BowlingStats = {
-      ...gameState.playerBowlingStats,
-      wicketsTaken: gameState.playerBowlingStats.wicketsTaken + wickets,
-      oversBowled: (gameState.balls + 1) / 6,
-      runsConceded: gameState.playerBowlingStats.runsConceded + runs,
+  const updateOpponentInnings = (
+    runs: number,
+    wickets: number,
+    isFour: boolean,
+    isSix: boolean,
+  ) => {
+    const newStats: InningsInterface = {
+      ...gameState.opponentInnings,
+      runs: gameState.opponentInnings.runs + runs,
+      wickets: gameState.opponentInnings.wickets + wickets,
+      ballsFaced: gameState.opponentInnings.ballsFaced + 1,
+      fours: isFour
+        ? gameState.opponentInnings.fours + 1
+        : gameState.opponentInnings.fours,
+      sixes: isSix
+        ? gameState.opponentInnings.sixes + 1
+        : gameState.opponentInnings.sixes,
     };
-    newStats.economy = newStats.runsConceded / newStats.oversBowled;
     updateGameState.mutate({
-      computerAIWickets: gameState.computerAIWickets + wickets,
-      playerBowlingStats: newStats,
-    });
-  };
-
-  const updateComputerAIBowlingStats = (wickets: number, runs: number) => {
-    const newStats: BowlingStats = {
-      ...gameState.computerAIBowlingStats,
-      wicketsTaken: gameState.computerAIBowlingStats.wicketsTaken + wickets,
-      oversBowled: (gameState.balls + 1) / 6,
-      runsConceded: gameState.computerAIBowlingStats.runsConceded + runs,
-    };
-    newStats.economy = newStats.runsConceded / newStats.oversBowled;
-    updateGameState.mutate({
-      playerWickets: gameState.playerWickets + wickets,
-      computerAIBowlingStats: newStats,
+      opponentInnings: newStats,
     });
   };
 
   return {
     gameState,
     updateGameState: updateGameState.mutate,
-    updatePlayerStats,
-    updateComputerAIStats,
-    updatePlayerBowlingStats,
-    updateComputerAIBowlingStats,
+    updatePlayerInnings,
+    updateOpponentInnings,
   };
 };

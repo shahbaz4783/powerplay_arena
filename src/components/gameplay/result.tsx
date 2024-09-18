@@ -11,12 +11,11 @@ import { GameState } from "@/src/lib/types";
 import { RewardItem } from "../cards/reward-card";
 import { Trophy, Award, Zap, Target } from "lucide-react";
 import { SubmitButton } from "../feedback/submit-button";
+import { useCricketGameState } from "@/src/lib/store";
 
-interface ResultProps {
-  gameState: GameState;
-}
+export function Result() {
+  const { gameState } = useCricketGameState();
 
-export function Result({ gameState }: ResultProps) {
   const isWin = gameState.playerScore > gameState.computerAIScore;
   const runDifference = Math.abs(
     gameState.playerScore - gameState.computerAIScore,

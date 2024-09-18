@@ -1,38 +1,46 @@
 "use client";
 
 import { useState } from "react";
-import { GameState } from "@/src/lib/types";
 import ShinyButton from "../magicui/shiny-button";
 import { motion } from "framer-motion";
 import { PiCoinThin } from "react-icons/pi";
+import { useCricketGameState } from "@/src/lib/store";
 
-interface TossProps {
-  gameState: GameState;
-  updateGameState: any;
-}
-
-export function Toss({ gameState, updateGameState }: TossProps) {
+export function Toss() {
   const [isCoinSpinning, setIsCoinSpinning] = useState(false);
   const [showTossResult, setShowTossResult] = useState(false);
+
+  const { gameState, updateGameState } = useCricketGameState();
 
   const performToss = () => {
     setIsCoinSpinning(true);
 
     setTimeout(() => {
-      const result = Math.random() < 0.5 ? "player" : "computer";
+      const random = Math.floor(Math.random() * 1000);
+      let result: "opponent" | "player";
+      console.log(random);
+
+      if (random % 2 === 0) {
+        result = "opponent";
+        console.log(result);
+      } else {
+        result = "player";
+        console.log(result);
+      }
 
       updateGameState({ tossWinner: result });
+      console.log("Main result " + result);
+
       setIsCoinSpinning(false);
       setShowTossResult(true);
 
-      if (result === "computer") {
-        const computerChoice = Math.random() < 0.5 ? "bat" : "bowl";
-
-        updateGameState({ tossChoice: computerChoice });
+      if (result === "opponent") {
+        const opponentChoice = Math.random() < 0.5 ? "bat" : "bowl";
+        updateGameState({ tossChoice: opponentChoice });
         setTimeout(() => {
           setShowTossResult(false);
           updateGameState({
-            gamePhase: computerChoice === "bat" ? "bowling" : "batting",
+            gamePhase: opponentChoice === "bat" ? "bowling" : "batting",
           });
         }, 3000);
       }
@@ -57,7 +65,7 @@ export function Toss({ gameState, updateGameState }: TossProps) {
         </div>
       );
     } else {
-      return <p>Computer chose to {gameState.tossChoice}.</p>;
+      return <p>Opponent chose to {gameState.tossChoice}</p>;
     }
   };
 
@@ -84,7 +92,7 @@ export function Toss({ gameState, updateGameState }: TossProps) {
           <h2 className="text-2xl font-bold mb-4">
             {gameState.tossWinner === "player"
               ? "You won the toss!"
-              : "Computer won the toss!"}
+              : "Opponent won the toss!"}
           </h2>
           {renderTossResult()}
         </div>

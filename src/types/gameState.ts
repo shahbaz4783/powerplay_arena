@@ -1,51 +1,45 @@
-export interface PlayerStats {
+export interface BattingInterface {
   runs: number;
   ballsFaced: number;
   fours: number;
   sixes: number;
-  strikeRate: number;
 }
 
-export interface BowlingStats {
+export interface BowlingInterface {
   wicketsTaken: number;
-  oversBowled: number;
+  ballsBowled: number;
   runsConceded: number;
-  economy: number;
+}
+
+export interface InningsInterface {
+  runs: number;
+  wickets: number;
+  ballsFaced: number;
+  fours: number;
+  sixes: number;
+  runRate: number;
 }
 
 export interface GameState {
   // Game flow
-  gamePhase: "toss" | "batting" | "bowling" | "result";
-  tossWinner: "player" | "computerAI" | null;
+  gamePhase: "toss" | "batting" | "bowling" | "inningsOver" | "result";
+  tossWinner: "player" | "opponent" | null;
   tossChoice: "bat" | "bowl" | null;
   currentInnings: 1 | 2;
   entryFee: number;
 
-  // Scores
-  playerScore: number;
-  computerAIScore: number;
+  // Innings
+  playerInnings: InningsInterface;
+  opponentInnings: InningsInterface;
+
+  // Match result and target
   target: number | null;
-
-  // Current innings details
-  playerWickets: number;
-  computerAIWickets: number;
-  overs: number;
-  balls: number;
-  dotBalls: number;
-
-  // Detailed statistics
-  playerStats: PlayerStats;
-  computerAIStats: PlayerStats;
-  playerBowlingStats: BowlingStats;
-  computerAIBowlingStats: BowlingStats;
-
-  // Match result details
   matchResult: "win" | "loss" | "tie" | null;
-  winMargin: {
+  resultMargin: {
     runs?: number;
     wickets?: number;
   } | null;
 
-  // Achievements
+  // Achievements unlocked
   achievements: string[];
 }

@@ -1,24 +1,26 @@
 import { GameState } from "@/src/lib/types";
 import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
+import { useCricketGameState } from "@/src/lib/store";
 
-interface ScoreBoardProps {
-  gameState: GameState;
-}
+export function ScoreBoard() {
+  const { gameState } = useCricketGameState();
 
-export function ScoreBoard({ gameState }: ScoreBoardProps) {
   return (
     <section className="space-y-4 bg-slate-800/50 backdrop-blur-md rounded-xl p-4">
       <div className="flex justify-between items-center">
         <div>
           <p className="text-4xl font-bold">
             {gameState.gamePhase === "batting"
-              ? gameState.playerScore
-              : gameState.computerAIScore}
-            /{gameState.wickets}
+              ? gameState.playerInnings.runs
+              : gameState.opponentInnings.runs}
+            /
+            {gameState.gamePhase === "batting"
+              ? gameState.playerInnings.wickets
+              : gameState.opponentInnings.wickets}
           </p>
           <p className="text-lg text-gray-300">
-            ({gameState.overs}.{gameState.balls} overs)
+            ({gameState.playerInnings.ballsFaced} overs)
           </p>
         </div>
         <Badge
@@ -29,7 +31,7 @@ export function ScoreBoard({ gameState }: ScoreBoardProps) {
         </Badge>
       </div>
       <Progress
-        value={((gameState.overs * 6 + gameState.balls) / (5 * 6)) * 100}
+        value={(gameState.playerInnings.ballsFaced / (5 * 6)) * 100}
         className="h-3"
       />
     </section>

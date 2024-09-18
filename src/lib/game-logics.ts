@@ -1,4 +1,4 @@
-import { GameState } from "./types";
+import { GameState } from "../types/gameState";
 
 type BattingStyle = "normal" | "aggressive" | "defensive";
 export type BowlingType = "normal" | "yorker" | "bouncer";
@@ -110,27 +110,33 @@ export const calculateRequiredRunRate = (gameState: GameState): string => {
   return remainingOvers > 0 ? (remainingRuns / remainingOvers).toFixed(2) : "∞";
 };
 
-export const getCricketAIBattingStrategy = (
+export const getOpponentBattingStrategy = (
   gameState: GameState,
   bowlingType: "normal" | "yorker" | "bouncer",
 ): "normal" | "aggressive" | "defensive" => {
-  const { target, computerAIScore, overs, balls } = gameState;
-  const remainingBalls = 5 * 6 - (overs * 6 + balls);
+  const { target, opponentInnings } = gameState;
+  const remainingBalls = 30 - opponentInnings.ballsFaced;
   const requiredRunRate = target
-    ? (target - computerAIScore) / (remainingBalls / 6)
+    ? (target - opponentInnings.runs) / (remainingBalls / 6)
     : 0;
 
   if (
-    requiredRunRate > 10 ||
-    (remainingBalls <= 12 && target && computerAIScore < target)
+    requiredRunRate > 12 ||
+    (remainingBalls <= 12 && target && opponentInnings.runs < target)
   ) {
     return "aggressive";
-  } else if (requiredRunRate < 4 || (overs < 2 && balls < 3)) {
+  } else if (requiredRunRate < 4 || remainingBalls < 18) {
     return "defensive";
   } else {
-    // Adjust strategy based on bowling type
-    if (bowlingType === "yorker") return "defensive";
+    if (bowlingType === "yorker") return "aggressive";
     if (bowlingType === "bouncer") return "aggressive";
     return "normal";
   }
+};
+
+export const computerBowling = (): BowlingType => {
+  const chance = Math.random();
+  if (chance < 0.3) return "normal";
+  else if (chance < 0.7) return "bouncer";
+  else return "yorker";
 };
