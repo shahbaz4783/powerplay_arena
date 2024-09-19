@@ -15,18 +15,20 @@ const initialState: GameState = {
     runs: 0,
     wickets: 0,
     ballsFaced: 0,
+    oversPlayed: "0.0",
     fours: 0,
     sixes: 0,
-    runRate: 0,
+    runRate: "0.00",
   },
 
   opponentInnings: {
     runs: 0,
     wickets: 0,
     ballsFaced: 0,
+    oversPlayed: "0.0",
     fours: 0,
     sixes: 0,
-    runRate: 0,
+    runRate: "0.00",
   },
 
   matchResult: null,
@@ -79,6 +81,11 @@ export const useCricketGameState = () => {
       runs: gameState.playerInnings.runs + runs,
       wickets: gameState.playerInnings.wickets + wickets,
       ballsFaced: gameState.playerInnings.ballsFaced + 1,
+      runRate: (
+        (gameState.playerInnings.runs + runs) /
+        ((gameState.playerInnings.ballsFaced + 1) / 6)
+      ).toFixed(2),
+      oversPlayed: `${Math.floor((gameState.playerInnings.ballsFaced + 1) / 6)}.${(gameState.playerInnings.ballsFaced + 1) % 6}`,
       fours: isFour
         ? gameState.playerInnings.fours + 1
         : gameState.playerInnings.fours,
@@ -103,6 +110,11 @@ export const useCricketGameState = () => {
       runs: gameState.opponentInnings.runs + runs,
       wickets: gameState.opponentInnings.wickets + wickets,
       ballsFaced: gameState.opponentInnings.ballsFaced + 1,
+      runRate: (
+        (gameState.opponentInnings.runs + runs) /
+        ((gameState.opponentInnings.ballsFaced + 1) / 6)
+      ).toFixed(2),
+      oversPlayed: `${Math.floor((gameState.opponentInnings.ballsFaced + 1) / 6)}.${(gameState.opponentInnings.ballsFaced + 1) % 6}`,
       fours: isFour
         ? gameState.opponentInnings.fours + 1
         : gameState.opponentInnings.fours,

@@ -1,23 +1,11 @@
-export interface BattingInterface {
-  runs: number;
-  ballsFaced: number;
-  fours: number;
-  sixes: number;
-}
-
-export interface BowlingInterface {
-  wicketsTaken: number;
-  ballsBowled: number;
-  runsConceded: number;
-}
-
 export interface InningsInterface {
   runs: number;
   wickets: number;
   ballsFaced: number;
+  oversPlayed: string;
   fours: number;
   sixes: number;
-  runRate: number;
+  runRate: string;
 }
 
 export interface GameState {

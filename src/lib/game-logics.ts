@@ -1,8 +1,9 @@
-import { GameState } from "../types/gameState";
+import { GameState, InningsInterface } from "../types/gameState";
+import { useCricketGameState } from "./store";
 
 type BattingStyle = "normal" | "aggressive" | "defensive";
 export type BowlingType = "normal" | "yorker" | "bouncer";
-type RunOutcome = -1 | 0 | 1 | 2 | 3 | 4 | 6;
+export type RunOutcome = -1 | 0 | 1 | 2 | 3 | 4 | 6;
 
 interface OutcomeChances {
   [key: string]: { [key in RunOutcome]: number };
@@ -91,25 +92,6 @@ export const calculateRunsScored = (
   return 0;
 };
 
-export const calculateRunRate = (gameState: GameState): string => {
-  const { playerScore, computerAIScore, overs, balls, gamePhase } = gameState;
-  const score =
-    gameState.gamePhase === "batting" ? playerScore : computerAIScore;
-  const totalOvers = overs + balls / 6;
-  return totalOvers > 0 ? (score / totalOvers).toFixed(2) : "0.00";
-};
-
-export const calculateRequiredRunRate = (gameState: GameState): string => {
-  const { target, playerScore, computerAIScore, overs, balls, gamePhase } =
-    gameState;
-  if (target === null) return "0.00";
-  const remainingRuns =
-    target - (gamePhase === "batting" ? playerScore : computerAIScore);
-  const remainingBalls = 5 * 6 - (overs * 6 + balls);
-  const remainingOvers = remainingBalls / 6;
-  return remainingOvers > 0 ? (remainingRuns / remainingOvers).toFixed(2) : "∞";
-};
-
 export const getOpponentBattingStrategy = (
   gameState: GameState,
   bowlingType: "normal" | "yorker" | "bouncer",
@@ -139,4 +121,16 @@ export const computerBowling = (): BowlingType => {
   if (chance < 0.3) return "normal";
   else if (chance < 0.7) return "bouncer";
   else return "yorker";
+};
+
+export const getCurrentInningsData = (
+  gameState: GameState,
+): InningsInterface => {
+  return gameState.currentInnings === 1
+    ? gameState.gamePhase === "batting"
+      ? gameState.playerInnings
+      : gameState.opponentInnings
+    : gameState.gamePhase === "batting"
+      ? gameState.playerInnings
+      : gameState.opponentInnings;
 };

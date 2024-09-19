@@ -7,30 +7,30 @@ import {
   CardHeader,
   CardTitle,
 } from "@/src/components/ui/card";
-import { GameState } from "@/src/lib/types";
 import { RewardItem } from "../cards/reward-card";
-import { Trophy, Award, Zap, Target } from "lucide-react";
+import {  Zap, Target } from "lucide-react";
 import { SubmitButton } from "../feedback/submit-button";
 import { useCricketGameState } from "@/src/lib/store";
 
 export function Result() {
   const { gameState } = useCricketGameState();
+  const { playerInnings, opponentInnings } = gameState;
 
-  const isWin = gameState.playerScore > gameState.computerAIScore;
-  const runDifference = Math.abs(
-    gameState.playerScore - gameState.computerAIScore,
+  const isWin = playerInnings.runs > opponentInnings.runs;
+  const runDifference = Math.abs(playerInnings.runs - opponentInnings.runs);
+  const wicketDifference = Math.abs(
+    playerInnings.wickets - opponentInnings.wickets,
   );
-  const wicketDifference = gameState.wickets - gameState.wickets;
 
   const getResultMessage = () => {
     if (isWin) {
-      return gameState.wickets < gameState.wickets
+      return playerInnings.wickets < opponentInnings.wickets
         ? `Won by ${wicketDifference} wicket${wicketDifference > 1 ? "s" : ""}`
         : `Won by ${runDifference} run${runDifference > 1 ? "s" : ""}`;
     } else {
-      return gameState.wickets === gameState.wickets
+      return playerInnings.wickets === opponentInnings.wickets
         ? `Lost by ${runDifference} run${runDifference > 1 ? "s" : ""}`
-        : `Lost by ${gameState.wickets - gameState.wickets} wicket${gameState.wickets - gameState.wickets > 1 ? "s" : ""}`;
+        : `Lost by ${playerInnings.wickets - opponentInnings.wickets} wicket${playerInnings.wickets - opponentInnings.wickets > 1 ? "s" : ""}`;
     }
   };
 
@@ -50,13 +50,15 @@ export function Result() {
             <div className="text-center">
               <p className="text-sm text-gray-400">Your Score</p>
               <p className="text-2xl font-bold">
-                {gameState.playerScore}/{gameState.wickets}
+                {playerInnings.runs}/{playerInnings.wickets}
               </p>
             </div>
             <div className="text-4xl font-bold text-gray-400">vs</div>
             <div className="text-center">
               <p className="text-sm text-gray-400">Opponent's Score</p>
-              <p className="text-2xl font-bold">{gameState.computerAIScore}</p>
+              <p className="text-2xl font-bold">
+                {opponentInnings.runs}/{opponentInnings.wickets}
+              </p>
             </div>
           </div>
         </div>
@@ -78,17 +80,15 @@ export function Result() {
           </h4>
           <div className="grid grid-cols-2 gap-4">
             <RewardItem
-              icon={Trophy}
-              label="Runs"
-              value={gameState.playerScore}
+              icon={Zap}
+              label="Sixes"
+              value={playerInnings.sixes * 6}
             />
             <RewardItem
-              icon={Award}
-              label="Wickets"
-              value={gameState.wickets}
+              icon={Target}
+              label="Fours"
+              value={playerInnings.fours * 4}
             />
-            <RewardItem icon={Zap} label="Sixes" value={gameState.entryFee} />
-            <RewardItem icon={Target} label="Fours" value={gameState.wickets} />
           </div>
         </div>
 
@@ -97,7 +97,7 @@ export function Result() {
             Your Rewards
           </h4>
           <p className="text-3xl font-bold text-center text-cyan-400">
-            435 PWR
+            {(playerInnings.sixes * 6) + (playerInnings.fours * 4)} PWR
           </p>
         </div>
       </CardContent>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { CommentaryEvent } from "@/src/lib/types";
 import { GameControls } from "./game-controls";
@@ -8,20 +8,80 @@ import { Commentary } from "./commentary";
 import { ScoreBoard } from "./scoreboard";
 import { OverInfo } from "./over-info";
 import { useCricketGameState } from "@/src/lib/store";
+import { InningsInterface } from "@/src/types/gameState";
 
 export function Gameplay() {
   const [showInningsMessage, setShowInningsMessage] = useState(false);
   const [inningsMessage, setInningsMessage] = useState("");
   const [commentary, setCommentary] = useState<CommentaryEvent>("start");
-  const [disableControls, setDisableControls] = useState(false);
   const [ballResult, setBallResult] = useState<string | null>(null);
 
   const { gameState, updateGameState } = useCricketGameState();
 
-  const { currentInnings, gamePhase, target } = gameState;
+  const { currentInnings, gamePhase, target, playerInnings, opponentInnings } =
+    gameState;
 
-  const totalOvers = 5;
   const maxWickets = 5;
+  const maxBalls = 30;
+
+  useEffect(() => {
+    checkInningsEnd();
+  });
+
+  const checkInningsEnd = () => {
+    const currentInningsData =
+      gamePhase === "batting" ? playerInnings : opponentInnings;
+
+    if (
+      currentInningsData.ballsFaced >= maxBalls ||
+      currentInningsData.wickets >= maxWickets
+    ) {
+      if (currentInnings === 1) {
+        endFirstInnings();
+      } else {
+        endSecondInnings();
+      }
+    }
+  };
+
+  const endFirstInnings = () => {
+    const target =
+      (gamePhase === "batting" ? playerInnings.runs : opponentInnings.runs) + 1;
+    setInningsMessage(`First innings over. Target: ${target} runs`);
+    setShowInningsMessage(true);
+
+    setTimeout(() => {
+      setShowInningsMessage(false);
+      updateGameState({
+        currentInnings: 2,
+        target: target,
+        gamePhase: gamePhase === "batting" ? "bowling" : "batting",
+      });
+    }, 5000);
+  };
+
+  const endSecondInnings = () => {
+    const playerWon = playerInnings.runs > opponentInnings.runs;
+    const margin = Math.abs(playerInnings.runs - opponentInnings.runs);
+    const result = playerWon
+      ? "win"
+      : playerInnings.runs === opponentInnings.runs
+        ? "tie"
+        : "loss";
+
+    updateGameState({
+      gamePhase: "result",
+      matchResult: result,
+      resultMargin: { runs: margin },
+    });
+
+    setInningsMessage(
+      result === "tie"
+        ? "The match ended in a tie!"
+        : `You ${result} by ${margin} runs!`,
+    );
+    setShowInningsMessage(true);
+  };
 
   if (showInningsMessage) {
     return (
@@ -37,9 +97,6 @@ export function Gameplay() {
     <main className="min-h-svh flex flex-col justify-between p-4">
       <section className="space-y-6">
         <ScoreBoard />
-        <div className="flex justify-between text-sm text-gray-300">
-          <span>Run Rate: </span>
-        </div>
         <OverInfo currentOverData={[]} />
         <Commentary event={commentary} ballResult={ballResult} />
       </section>
