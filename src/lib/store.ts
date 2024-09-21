@@ -1,17 +1,26 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { GameState, InningsInterface } from "../types/gameState";
+import {
+  GameParticipant,
+  GameState,
+  InningsInterface,
+  RunOutcome,
+} from "../types/gameState";
 
 const GAME_STATE_KEY = "cricketGameState";
 
 const initialState: GameState = {
   gamePhase: "toss",
-  tossWinner: null,
-  tossChoice: null,
   currentInnings: 1,
   target: null,
   entryFee: 0,
 
-  playerInnings: {
+  toss: {
+    winner: null,
+    choice: null,
+    playMode: null,
+  },
+
+  player: {
     runs: 0,
     wickets: 0,
     ballsFaced: 0,
@@ -19,9 +28,10 @@ const initialState: GameState = {
     fours: 0,
     sixes: 0,
     runRate: "0.00",
+    overInfo: [],
   },
 
-  opponentInnings: {
+  opponent: {
     runs: 0,
     wickets: 0,
     ballsFaced: 0,
@@ -29,10 +39,15 @@ const initialState: GameState = {
     fours: 0,
     sixes: 0,
     runRate: "0.00",
+    overInfo: [],
   },
 
-  matchResult: null,
-  resultMargin: null,
+  matchResult: {
+    winner: null,
+    margin: null,
+    marginType: null,
+  },
+
   achievements: [],
 };
 
@@ -49,6 +64,13 @@ const setGameState = (state: GameState): Promise<GameState> => {
     localStorage.setItem(GAME_STATE_KEY, JSON.stringify(state));
   }
   return Promise.resolve(state);
+};
+
+const clearGameState = (): Promise<void> => {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(GAME_STATE_KEY);
+  }
+  return Promise.resolve();
 };
 
 export const useCricketGameState = () => {
@@ -70,67 +92,62 @@ export const useCricketGameState = () => {
     },
   });
 
-  const updatePlayerInnings = (
-    runs: number,
-    wickets: number,
-    isFour: boolean,
-    isSix: boolean,
+  const updateInnings = (
+    inningsType: GameParticipant,
+    runOutcome: RunOutcome,
   ) => {
+    const currentInnings = gameState[inningsType];
+    const newBallsFaced = currentInnings.ballsFaced + 1;
+    const newOversPlayed = `${Math.floor(newBallsFaced / 6)}.${newBallsFaced % 6}`;
+
+    const newOverInfo = [...currentInnings.overInfo];
+    newOverInfo.push(runOutcome);
+
     const newStats: InningsInterface = {
-      ...gameState.playerInnings,
-      runs: gameState.playerInnings.runs + runs,
-      wickets: gameState.playerInnings.wickets + wickets,
-      ballsFaced: gameState.playerInnings.ballsFaced + 1,
+      ...currentInnings,
+      runs:
+        runOutcome > 0 ? currentInnings.runs + runOutcome : currentInnings.runs,
+      wickets:
+        runOutcome === -1 ? currentInnings.wickets + 1 : currentInnings.wickets,
+      ballsFaced: newBallsFaced,
       runRate: (
-        (gameState.playerInnings.runs + runs) /
-        ((gameState.playerInnings.ballsFaced + 1) / 6)
+        (currentInnings.runs + (runOutcome > 0 ? runOutcome : 0)) /
+        (newBallsFaced / 6)
       ).toFixed(2),
-      oversPlayed: `${Math.floor((gameState.playerInnings.ballsFaced + 1) / 6)}.${(gameState.playerInnings.ballsFaced + 1) % 6}`,
-      fours: isFour
-        ? gameState.playerInnings.fours + 1
-        : gameState.playerInnings.fours,
-      sixes: isSix
-        ? gameState.playerInnings.sixes + 1
-        : gameState.playerInnings.sixes,
+      oversPlayed: newOversPlayed,
+      fours: runOutcome === 4 ? currentInnings.fours + 1 : currentInnings.fours,
+      sixes: runOutcome === 6 ? currentInnings.sixes + 1 : currentInnings.sixes,
+      overInfo: newOverInfo,
     };
 
     updateGameState.mutate({
-      playerInnings: newStats,
+      [inningsType]: newStats,
     });
   };
 
-  const updateOpponentInnings = (
-    runs: number,
-    wickets: number,
-    isFour: boolean,
-    isSix: boolean,
-  ) => {
-    const newStats: InningsInterface = {
-      ...gameState.opponentInnings,
-      runs: gameState.opponentInnings.runs + runs,
-      wickets: gameState.opponentInnings.wickets + wickets,
-      ballsFaced: gameState.opponentInnings.ballsFaced + 1,
-      runRate: (
-        (gameState.opponentInnings.runs + runs) /
-        ((gameState.opponentInnings.ballsFaced + 1) / 6)
-      ).toFixed(2),
-      oversPlayed: `${Math.floor((gameState.opponentInnings.ballsFaced + 1) / 6)}.${(gameState.opponentInnings.ballsFaced + 1) % 6}`,
-      fours: isFour
-        ? gameState.opponentInnings.fours + 1
-        : gameState.opponentInnings.fours,
-      sixes: isSix
-        ? gameState.opponentInnings.sixes + 1
-        : gameState.opponentInnings.sixes,
-    };
-    updateGameState.mutate({
-      opponentInnings: newStats,
-    });
+  const endMatchAndClaimReward = async () => {
+    try {
+      // await saveMatchDataToDatabase(gameState);
+      await clearGameState();
+
+      // Reset query cache
+      queryClient.setQueryData([GAME_STATE_KEY], initialState);
+
+      // You might want to trigger a notification or redirect here
+      console.log("Match ended, reward claimed, and state cleared");
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      } else {
+        console.error("Error ending match and claiming reward:");
+      }
+    }
   };
 
   return {
     gameState,
     updateGameState: updateGameState.mutate,
-    updatePlayerInnings,
-    updateOpponentInnings,
+    updateInnings,
+    endMatchAndClaimReward,
   };
 };

@@ -8,7 +8,8 @@ import { Commentary } from "./commentary";
 import { ScoreBoard } from "./scoreboard";
 import { OverInfo } from "./over-info";
 import { useCricketGameState } from "@/src/lib/store";
-import { InningsInterface } from "@/src/types/gameState";
+import { ChaseSummary } from "./chase-summary";
+import { GameParticipant, MarginType } from "@/src/types/gameState";
 
 export function Gameplay() {
   const [showInningsMessage, setShowInningsMessage] = useState(false);
@@ -18,8 +19,7 @@ export function Gameplay() {
 
   const { gameState, updateGameState } = useCricketGameState();
 
-  const { currentInnings, gamePhase, target, playerInnings, opponentInnings } =
-    gameState;
+  const { currentInnings, gamePhase, target, player, opponent } = gameState;
 
   const maxWickets = 5;
   const maxBalls = 30;
@@ -29,8 +29,7 @@ export function Gameplay() {
   });
 
   const checkInningsEnd = () => {
-    const currentInningsData =
-      gamePhase === "batting" ? playerInnings : opponentInnings;
+    const currentInningsData = gamePhase === "batting" ? player : opponent;
 
     if (
       currentInningsData.ballsFaced >= maxBalls ||
@@ -45,8 +44,7 @@ export function Gameplay() {
   };
 
   const endFirstInnings = () => {
-    const target =
-      (gamePhase === "batting" ? playerInnings.runs : opponentInnings.runs) + 1;
+    const target = (gamePhase === "batting" ? player.runs : opponent.runs) + 1;
     setInningsMessage(`First innings over. Target: ${target} runs`);
     setShowInningsMessage(true);
 
@@ -61,19 +59,62 @@ export function Gameplay() {
   };
 
   const endSecondInnings = () => {
-    const playerWon = playerInnings.runs > opponentInnings.runs;
-    const margin = Math.abs(playerInnings.runs - opponentInnings.runs);
+    let winner: GameParticipant;
+    const playerWon = player.runs > opponent.runs;
+    const margin = Math.abs(player.runs - opponent.runs);
     const result = playerWon
       ? "win"
-      : playerInnings.runs === opponentInnings.runs
+      : player.runs === opponent.runs
         ? "tie"
         : "loss";
 
-    updateGameState({
-      gamePhase: "result",
-      matchResult: result,
-      resultMargin: { runs: margin },
-    });
+    const playMode = gameState.toss.playMode;
+
+    if (playMode === "chase") {
+      gameState.player.runs > gameState.opponent.runs &&
+        updateGameState({
+          gamePhase: "result",
+          matchResult: {
+            winner: "player",
+            marginType: "wickets",
+            margin: 5 - gameState.player.wickets,
+          },
+        });
+
+      gameState.player.ballsFaced === 30 ||
+        (gameState.player.wickets === 5 &&
+          updateGameState({
+            gamePhase: "result",
+            matchResult: {
+              winner: "opponent",
+              marginType: "runs",
+              margin: gameState.opponent.runs - gameState.player.runs,
+            },
+          }));
+    }
+
+    if (playMode === "defend") {
+      gameState.opponent.runs > gameState.player.runs &&
+        updateGameState({
+          gamePhase: "result",
+          matchResult: {
+            winner: "opponent",
+            marginType: "wickets",
+            margin: 5 - gameState.opponent.wickets,
+          },
+        });
+
+      gameState.opponent.ballsFaced === 30 ||
+        (gameState.opponent.wickets === 5 &&
+          updateGameState({
+            gamePhase: "result",
+            matchResult: {
+              winner: "player",
+              marginType: "runs",
+              margin: gameState.player.runs - gameState.opponent.runs,
+            },
+          }));
+    }
 
     setInningsMessage(
       result === "tie"
@@ -100,6 +141,8 @@ export function Gameplay() {
         <OverInfo currentOverData={[]} />
         <Commentary event={commentary} ballResult={ballResult} />
       </section>
+
+      <ChaseSummary />
 
       <section>
         <GameControls />

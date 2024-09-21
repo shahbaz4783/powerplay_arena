@@ -1,9 +1,10 @@
-import { GameState, InningsInterface } from "../types/gameState";
-import { useCricketGameState } from "./store";
-
-type BattingStyle = "normal" | "aggressive" | "defensive";
-export type BowlingType = "normal" | "yorker" | "bouncer";
-export type RunOutcome = -1 | 0 | 1 | 2 | 3 | 4 | 6;
+import {
+  BattingStyle,
+  BowlingType,
+  GameState,
+  InningsInterface,
+  RunOutcome,
+} from "../types/gameState";
 
 interface OutcomeChances {
   [key: string]: { [key in RunOutcome]: number };
@@ -94,17 +95,19 @@ export const calculateRunsScored = (
 
 export const getOpponentBattingStrategy = (
   gameState: GameState,
-  bowlingType: "normal" | "yorker" | "bouncer",
-): "normal" | "aggressive" | "defensive" => {
-  const { target, opponentInnings } = gameState;
-  const remainingBalls = 30 - opponentInnings.ballsFaced;
+  bowlingType: BowlingType,
+): BattingStyle => {
+  const { target, opponent } = gameState;
+
+  const remainingBalls = 30 - opponent.ballsFaced;
+  const remainingWickets = 5 - opponent.wickets;
   const requiredRunRate = target
-    ? (target - opponentInnings.runs) / (remainingBalls / 6)
+    ? (target - opponent.runs) / (remainingBalls / 6)
     : 0;
 
   if (
     requiredRunRate > 12 ||
-    (remainingBalls <= 12 && target && opponentInnings.runs < target)
+    (remainingBalls <= 12 && target && opponent.runs < target)
   ) {
     return "aggressive";
   } else if (requiredRunRate < 4 || remainingBalls < 18) {
@@ -128,9 +131,9 @@ export const getCurrentInningsData = (
 ): InningsInterface => {
   return gameState.currentInnings === 1
     ? gameState.gamePhase === "batting"
-      ? gameState.playerInnings
-      : gameState.opponentInnings
+      ? gameState.player
+      : gameState.opponent
     : gameState.gamePhase === "batting"
-      ? gameState.playerInnings
-      : gameState.opponentInnings;
+      ? gameState.player
+      : gameState.opponent;
 };

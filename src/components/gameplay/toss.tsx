@@ -5,56 +5,64 @@ import ShinyButton from "../magicui/shiny-button";
 import { motion } from "framer-motion";
 import { PiCoinThin } from "react-icons/pi";
 import { useCricketGameState } from "@/src/lib/store";
+import { GameParticipant, TossChoice } from "@/src/types/gameState";
 
 export function Toss() {
   const [isCoinSpinning, setIsCoinSpinning] = useState(false);
   const [showTossResult, setShowTossResult] = useState(false);
 
   const { gameState, updateGameState } = useCricketGameState();
+  let tossChoice: TossChoice;
 
   const performToss = () => {
     setIsCoinSpinning(true);
 
     setTimeout(() => {
       const random = Math.floor(Math.random() * 1000);
-      let result: "opponent" | "player";
-      console.log(random);
+      let result: GameParticipant;
 
       if (random % 2 === 0) {
         result = "opponent";
-        console.log(result);
       } else {
         result = "player";
-        console.log(result);
       }
-
-      updateGameState({ tossWinner: result });
-      console.log("Main result " + result);
 
       setIsCoinSpinning(false);
       setShowTossResult(true);
 
       if (result === "opponent") {
-        const opponentChoice = Math.random() < 0.5 ? "bat" : "bowl";
-        updateGameState({ tossChoice: opponentChoice });
+        tossChoice = Math.random() < 0.5 ? "bat" : "bowl";
+        updateGameState({
+          toss: {
+            winner: "opponent",
+            choice: tossChoice,
+            playMode: tossChoice === "bat" ? "chase" : "defend",
+          },
+        });
         setTimeout(() => {
           setShowTossResult(false);
           updateGameState({
-            gamePhase: opponentChoice === "bat" ? "bowling" : "batting",
+            gamePhase: tossChoice === "bat" ? "bowling" : "batting",
           });
         }, 3000);
       }
     }, 3000);
   };
 
-  const handleTossChoice = (choice: "bat" | "bowl") => {
-    updateGameState({ tossChoice: choice });
+  const handleTossChoice = (choice: TossChoice) => {
+    updateGameState({
+      toss: {
+        winner: "player",
+        choice: choice,
+        playMode: choice === "bat" ? "defend" : "chase",
+      },
+    });
     setShowTossResult(false);
     updateGameState({ gamePhase: choice === "bat" ? "batting" : "bowling" });
   };
 
   const renderTossResult = () => {
-    if (gameState.tossWinner === "player") {
+    if (gameState.toss.winner === "player") {
       return (
         <div className="space-y-4">
           <p className="text-slate-400">What do you choose?</p>
@@ -65,7 +73,7 @@ export function Toss() {
         </div>
       );
     } else {
-      return <p>Opponent chose to {gameState.tossChoice}</p>;
+      return <p>Opponent chose to {gameState.toss.choice}</p>;
     }
   };
 
@@ -90,7 +98,7 @@ export function Toss() {
       return (
         <div className="text-center w-full space-y-6">
           <h2 className="text-2xl font-bold mb-4">
-            {gameState.tossWinner === "player"
+            {gameState.toss.winner === "player"
               ? "You won the toss!"
               : "Opponent won the toss!"}
           </h2>

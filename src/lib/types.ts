@@ -14,6 +14,7 @@ export interface FormResponse {
   };
 }
 
+
 export interface GameState {
   // Game flow
   gamePhase: "toss" | "batting" | "bowling" | "result";

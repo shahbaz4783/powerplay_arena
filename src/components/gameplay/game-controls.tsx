@@ -8,6 +8,7 @@ import {
 } from "@/src/lib/game-logics";
 import ShinyButton from "../magicui/shiny-button";
 import { useCricketGameState } from "@/src/lib/store";
+import { GameParticipant } from "@/src/types/gameState";
 
 // Define types for the game actions
 type BattingAction = "aggressive" | "normal" | "defensive";
@@ -16,8 +17,7 @@ type GameAction = BattingAction | BowlingAction;
 
 export function GameControls() {
   const [disableControls, setDisableControls] = useState(false);
-  const { gameState, updatePlayerInnings, updateOpponentInnings } =
-    useCricketGameState();
+  const { gameState, updateInnings } = useCricketGameState();
 
   const handleAction = (action: GameAction) => {
     setDisableControls(true);
@@ -29,15 +29,9 @@ export function GameControls() {
           action as BowlingAction,
         );
 
-    const updateInnings = isBatting
-      ? updatePlayerInnings
-      : updateOpponentInnings;
+    const battingTeam: GameParticipant = isBatting ? "player" : "opponent";
 
-    if (runsScored === -1) {
-      updateInnings(0, 1, false, false);
-    } else {
-      updateInnings(runsScored, 0, runsScored === 4, runsScored === 6);
-    }
+    updateInnings(battingTeam, runsScored);
 
     setTimeout(() => setDisableControls(false), 2000);
   };

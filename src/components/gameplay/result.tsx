@@ -8,29 +8,30 @@ import {
   CardTitle,
 } from "@/src/components/ui/card";
 import { RewardItem } from "../cards/reward-card";
-import {  Zap, Target } from "lucide-react";
+import { Zap, Target } from "lucide-react";
 import { SubmitButton } from "../feedback/submit-button";
 import { useCricketGameState } from "@/src/lib/store";
+import { InningsInterface } from "@/src/types/gameState";
+import { cn } from "@/src/lib/utils";
 
 export function Result() {
   const { gameState } = useCricketGameState();
-  const { playerInnings, opponentInnings } = gameState;
+  const { margin, winner, marginType } = gameState.matchResult;
+  const { player, opponent } = gameState;
 
-  const isWin = playerInnings.runs > opponentInnings.runs;
-  const runDifference = Math.abs(playerInnings.runs - opponentInnings.runs);
-  const wicketDifference = Math.abs(
-    playerInnings.wickets - opponentInnings.wickets,
-  );
+  const isWin = player.runs > opponent.runs;
+  const runDifference = Math.abs(player.runs - opponent.runs);
+  const wicketDifference = Math.abs(player.wickets - opponent.wickets);
 
   const getResultMessage = () => {
     if (isWin) {
-      return playerInnings.wickets < opponentInnings.wickets
+      return player.wickets < opponent.wickets
         ? `Won by ${wicketDifference} wicket${wicketDifference > 1 ? "s" : ""}`
         : `Won by ${runDifference} run${runDifference > 1 ? "s" : ""}`;
     } else {
-      return playerInnings.wickets === opponentInnings.wickets
+      return player.wickets === opponent.wickets
         ? `Lost by ${runDifference} run${runDifference > 1 ? "s" : ""}`
-        : `Lost by ${playerInnings.wickets - opponentInnings.wickets} wicket${playerInnings.wickets - opponentInnings.wickets > 1 ? "s" : ""}`;
+        : `Lost by ${player.wickets - opponent.wickets} wicket${player.wickets - opponent.wickets > 1 ? "s" : ""}`;
     }
   };
 
@@ -47,19 +48,9 @@ export function Result() {
             Match Summary
           </h4>
           <div className="flex justify-between items-center">
-            <div className="text-center">
-              <p className="text-sm text-gray-400">Your Score</p>
-              <p className="text-2xl font-bold">
-                {playerInnings.runs}/{playerInnings.wickets}
-              </p>
-            </div>
+            <ScoreDisplay innings={player} title="Your Innings" />
             <div className="text-4xl font-bold text-gray-400">vs</div>
-            <div className="text-center">
-              <p className="text-sm text-gray-400">Opponent's Score</p>
-              <p className="text-2xl font-bold">
-                {opponentInnings.runs}/{opponentInnings.wickets}
-              </p>
-            </div>
+            <ScoreDisplay innings={opponent} title="Opponent's Innings" />
           </div>
         </div>
         <div
@@ -68,10 +59,11 @@ export function Result() {
           <h4
             className={`text-2xl font-bold mb-2 text-center ${isWin ? "text-green-400" : "text-red-400"}`}
           >
-            {isWin ? "Victory!" : "Defeat"}
+            {winner === "player" ? "Victory!" : "Defeat"}
           </h4>
           <p className="text-lg text-center text-gray-300">
-            {getResultMessage()}
+            {winner === "player" ? "You" : "Opponent"} won by {margin}{" "}
+            {marginType}
           </p>
         </div>
         <div className="bg-gray-700 p-6 rounded-xl mb-6">
@@ -79,16 +71,8 @@ export function Result() {
             Your Performance
           </h4>
           <div className="grid grid-cols-2 gap-4">
-            <RewardItem
-              icon={Zap}
-              label="Sixes"
-              value={playerInnings.sixes * 6}
-            />
-            <RewardItem
-              icon={Target}
-              label="Fours"
-              value={playerInnings.fours * 4}
-            />
+            <RewardItem icon={Zap} label="Sixes" value={player.sixes * 6} />
+            <RewardItem icon={Target} label="Fours" value={player.fours * 4} />
           </div>
         </div>
 
@@ -97,7 +81,7 @@ export function Result() {
             Your Rewards
           </h4>
           <p className="text-3xl font-bold text-center text-cyan-400">
-            {(playerInnings.sixes * 6) + (playerInnings.fours * 4)} PWR
+            {player.sixes * 6 + player.fours * 4} PWR
           </p>
         </div>
       </CardContent>
@@ -107,3 +91,23 @@ export function Result() {
     </Card>
   );
 }
+
+const ScoreDisplay = ({
+  innings,
+  title,
+}: {
+  innings: InningsInterface;
+  title: string;
+}) => {
+  return (
+    <div className="text-center">
+      <p className="text-sm text-gray-400">{title}</p>
+      <div className="text-2xl font-bold space-x-1">
+        <span>{innings.runs}</span>
+        <span>/</span>
+        <span className="text-slate-200">{innings.wickets}</span>
+      </div>
+      <p className="text-slate-400 text-xs">({innings.oversPlayed})</p>
+    </div>
+  );
+};
