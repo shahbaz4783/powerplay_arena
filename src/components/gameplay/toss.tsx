@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import ShinyButton from "../magicui/shiny-button";
 import { motion } from "framer-motion";
 import { PiCoinThin } from "react-icons/pi";
@@ -12,26 +12,18 @@ export function Toss() {
   const [showTossResult, setShowTossResult] = useState(false);
 
   const { gameState, updateGameState } = useCricketGameState();
-  let tossChoice: TossChoice;
 
-  const performToss = () => {
+  const performToss = useCallback(() => {
     setIsCoinSpinning(true);
 
     setTimeout(() => {
       const random = Math.floor(Math.random() * 1000);
-      let result: GameParticipant;
-
-      if (random % 2 === 0) {
-        result = "opponent";
-      } else {
-        result = "player";
-      }
-
+      const result: GameParticipant = random % 2 === 0 ? "opponent" : "player";
       setIsCoinSpinning(false);
       setShowTossResult(true);
 
       if (result === "opponent") {
-        tossChoice = Math.random() < 0.5 ? "bat" : "bowl";
+        const tossChoice: TossChoice = Math.random() < 0.5 ? "bat" : "bowl";
         updateGameState({
           toss: {
             winner: "opponent",
@@ -45,21 +37,29 @@ export function Toss() {
             gamePhase: tossChoice === "bat" ? "bowling" : "batting",
           });
         }, 3000);
+      } else {
+        updateGameState({
+          toss: {
+            winner: "player",
+            choice: null,
+            playMode: null,
+          },
+        });
       }
     }, 3000);
-  };
+  }, [updateGameState]);
 
-  const handleTossChoice = (choice: TossChoice) => {
+  const handleTossChoice = useCallback((choice: TossChoice) => {
     updateGameState({
       toss: {
-        winner: "player",
+        ...gameState.toss,
         choice: choice,
         playMode: choice === "bat" ? "defend" : "chase",
       },
+      gamePhase: choice === "bat" ? "batting" : "bowling",
     });
     setShowTossResult(false);
-    updateGameState({ gamePhase: choice === "bat" ? "batting" : "bowling" });
-  };
+  }, [gameState.toss, updateGameState]);
 
   const renderTossResult = () => {
     if (gameState.toss.winner === "player") {
@@ -72,9 +72,10 @@ export function Toss() {
           </div>
         </div>
       );
-    } else {
+    } else if (gameState.toss.winner === "opponent" && gameState.toss.choice) {
       return <p>Opponent chose to {gameState.toss.choice}</p>;
     }
+    return null;
   };
 
   const renderContent = () => {
@@ -82,9 +83,9 @@ export function Toss() {
       return (
         <motion.div
           animate={{
-            rotateX: isCoinSpinning && 1800,
-            rotateZ: isCoinSpinning && -10,
-            rotateY: isCoinSpinning && 10,
+            rotateX: 1800,
+            rotateZ: -10,
+            rotateY: 10,
           }}
           transition={{ duration: 3, ease: "easeInOut" }}
           className="w-40 h-40 rounded-full flex items-center justify-center mb-8"
