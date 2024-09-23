@@ -15,25 +15,13 @@ import { InningsInterface } from "@/src/types/gameState";
 import { cn } from "@/src/lib/utils";
 
 export function Result() {
-  const { gameState } = useCricketGameState();
+  const { gameState, endMatchAndClaimReward } = useCricketGameState();
   const { margin, winner, marginType } = gameState.matchResult;
   const { player, opponent } = gameState;
 
   const isWin = player.runs > opponent.runs;
   const runDifference = Math.abs(player.runs - opponent.runs);
   const wicketDifference = Math.abs(player.wickets - opponent.wickets);
-
-  const getResultMessage = () => {
-    if (isWin) {
-      return player.wickets < opponent.wickets
-        ? `Won by ${wicketDifference} wicket${wicketDifference > 1 ? "s" : ""}`
-        : `Won by ${runDifference} run${runDifference > 1 ? "s" : ""}`;
-    } else {
-      return player.wickets === opponent.wickets
-        ? `Lost by ${runDifference} run${runDifference > 1 ? "s" : ""}`
-        : `Lost by ${player.wickets - opponent.wickets} wicket${player.wickets - opponent.wickets > 1 ? "s" : ""}`;
-    }
-  };
 
   return (
     <Card className="flex flex-col justify-between border-none">
@@ -86,7 +74,7 @@ export function Result() {
         </div>
       </CardContent>
       <CardFooter className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6 flex flex-col space-y-4">
-        <SubmitButton title="Claim Rewards" loadingTitle="Claiming..." />
+        <SubmitButton onClick={endMatchAndClaimReward} title="Claim Rewards" loadingTitle="Claiming..." />
       </CardFooter>
     </Card>
   );

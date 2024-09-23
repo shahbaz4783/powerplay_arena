@@ -138,8 +138,8 @@ export function Gameplay() {
     <main className="min-h-svh flex flex-col justify-between p-4">
       <section className="space-y-6">
         <ScoreBoard />
-        <OverInfo currentOverData={[]} />
-        <Commentary event={commentary} ballResult={ballResult} />
+        <OverInfo />
+        <Commentary />
       </section>
 
       <ChaseSummary />

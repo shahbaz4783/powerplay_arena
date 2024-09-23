@@ -1,3 +1,5 @@
+"use client";
+
 import { motion, AnimatePresence } from "framer-motion";
 import {
   PiNumberSixBold,
@@ -5,12 +7,11 @@ import {
   PiNumberZeroBold,
 } from "react-icons/pi";
 import { FaW } from "react-icons/fa6";
+import { getCurrentInningsData } from "@/src/lib/game-logics";
+import { useCricketGameState } from "@/src/lib/store";
+import { RunOutcome } from "@/src/types/gameState";
 
-interface OverInfoProps {
-  currentOverData: (number | "W")[];
-}
-
-const BallResult = ({ result }: { result: number | "W" }) => {
+const BallResult = ({ result }: { result: RunOutcome }) => {
   let bgColor = "bg-gray-700";
   let textColor = "text-white";
   let icon = null;
@@ -33,7 +34,7 @@ const BallResult = ({ result }: { result: number | "W" }) => {
       bgColor = "bg-yellow-400";
       icon = <PiNumberSixBold className="w-4 h-4 font-bold" />;
       break;
-    case "W":
+    case -1:
       bgColor = "bg-red-600";
       icon = <FaW className="w-4 h-4" />;
       break;
@@ -51,28 +52,35 @@ const BallResult = ({ result }: { result: number | "W" }) => {
   );
 };
 
-export function OverInfo({ currentOverData }: OverInfoProps) {
+export function OverInfo() {
+  const { gameState } = useCricketGameState();
+  const { overInfo, ballsFaced, oversPlayed } = getCurrentInningsData(gameState);
+
+  const currentOverIndex = Math.floor(ballsFaced / 6);
+  const ballsInCurrentOver = ballsFaced % 6;
+  const startIndex = currentOverIndex * 6;
+  const currentOverInfo = overInfo.slice(
+    startIndex,
+    startIndex + ballsInCurrentOver,
+  );
+
   return (
-    <section className="bg-gray-800 border-gray-700 rounded-xl">
-      <div className="p-4">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-semibold text-white">Last 6 balls</h3>
-        </div>
-        <div className="flex gap-2">
-          <AnimatePresence>
-            {currentOverData.map((result, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-              >
-                <BallResult result={result} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+    <section className="bg-gray-800 p-4 border-gray-700 rounded-xl">
+      <h3 className="font-semibold text-white mb-2">Current Over</h3>
+      <div className="flex gap-2">
+        <AnimatePresence>
+          {currentOverInfo.map((result, index) => (
+            <motion.div
+              key={`current-${index}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+            >
+              <BallResult result={result} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
     </section>
   );
