@@ -54,7 +54,7 @@ const BallResult = ({ result }: { result: RunOutcome }) => {
 
 export function OverInfo() {
   const { gameState } = useCricketGameState();
-  const { overInfo, ballsFaced, oversPlayed } = getCurrentInningsData(gameState);
+  const { overInfo, ballsFaced } = getCurrentInningsData(gameState);
 
   const currentOverIndex = Math.floor(ballsFaced / 6);
   const ballsInCurrentOver = ballsFaced % 6;
@@ -63,10 +63,22 @@ export function OverInfo() {
     startIndex,
     startIndex + ballsInCurrentOver,
   );
+  
+  const runsInCurrentOver = currentOverInfo.filter(
+    (run) => run !== -1 && run !== null,
+  ) as number[];
+
+  const totalRunsInCurrentOver = runsInCurrentOver.reduce(
+    (sum, run) => sum + run,
+    0,
+  );
 
   return (
-    <section className="bg-gray-800 p-4 border-gray-700 rounded-xl">
-      <h3 className="font-semibold text-white mb-2">Current Over</h3>
+    <section className="bg-gray-800 p-4 border-gray-700 rounded-xl space-y-2">
+      <div className="flex justify-between">
+        <h3 className="font-semibold text-white mb-2">This Over</h3>
+        <p className="text-sm">Runs: {totalRunsInCurrentOver}</p>
+      </div>
       <div className="flex gap-2">
         <AnimatePresence>
           {currentOverInfo.map((result, index) => (

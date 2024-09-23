@@ -23,7 +23,7 @@ export function GameControls() {
     setDisableControls(true);
     const isBatting = gameState.gamePhase === "batting";
     const runsScored = isBatting
-      ? calculateRunsScored(action as BattingAction, computerBowling())
+      ? calculateRunsScored(action as BattingAction, computerBowling(gameState))
       : calculateRunsScored(
           getOpponentBattingStrategy(gameState, action as BowlingAction),
           action as BowlingAction,

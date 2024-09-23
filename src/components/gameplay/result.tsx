@@ -12,7 +12,6 @@ import { Zap, Target } from "lucide-react";
 import { SubmitButton } from "../feedback/submit-button";
 import { useCricketGameState } from "@/src/lib/store";
 import { InningsInterface } from "@/src/types/gameState";
-import { cn } from "@/src/lib/utils";
 
 export function Result() {
   const { gameState, endMatchAndClaimReward } = useCricketGameState();
@@ -20,8 +19,6 @@ export function Result() {
   const { player, opponent } = gameState;
 
   const isWin = player.runs > opponent.runs;
-  const runDifference = Math.abs(player.runs - opponent.runs);
-  const wicketDifference = Math.abs(player.wickets - opponent.wickets);
 
   return (
     <Card className="flex flex-col justify-between border-none">
@@ -74,7 +71,11 @@ export function Result() {
         </div>
       </CardContent>
       <CardFooter className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6 flex flex-col space-y-4">
-        <SubmitButton onClick={endMatchAndClaimReward} title="Claim Rewards" loadingTitle="Claiming..." />
+        <SubmitButton
+          onClick={endMatchAndClaimReward}
+          title="Claim Rewards"
+          loadingTitle="Claiming..."
+        />
       </CardFooter>
     </Card>
   );

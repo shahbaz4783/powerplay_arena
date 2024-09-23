@@ -16,7 +16,7 @@ export function ScoreBoard() {
           <p className="text-4xl font-bold">
             {runs}/{wickets}
           </p>
-          <p className="text-lg text-gray-300">{oversPlayed}</p>
+          <p className="text-gray-300">{oversPlayed}</p>
         </div>
         <Badge
           variant="outline"
@@ -25,7 +25,9 @@ export function ScoreBoard() {
           {gameState.currentInnings === 1 ? "1st Innings" : "2nd Innings"}
         </Badge>
       </div>
-      <div>Run Rate: {runRate}</div>
+      <div>
+        <p className="text-sm">Run Rate: {runRate}</p>
+      </div>
       <Progress value={(ballsFaced / (5 * 6)) * 100} className="h-3" />
     </section>
   );

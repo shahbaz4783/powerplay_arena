@@ -38,7 +38,7 @@ export function Commentary() {
 
       const timer = setTimeout(() => {
         setShowCommentary(false);
-      }, 3000);
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
