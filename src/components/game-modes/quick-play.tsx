@@ -32,7 +32,7 @@ export function QuickPlayMode() {
   const initData = useInitData();
   const user = initData?.user;
 
-  const [response, action] = useFormState(
+  const [response, formAction] = useFormState(
     startQuickMatch.bind(null, user?.id!),
     {
       message: {},
@@ -45,6 +45,11 @@ export function QuickPlayMode() {
 
   const handleFeeChange = (fee: string) => {
     setSelectedFee(fee);
+  };
+
+  const handleSubmit = (formData: FormData) => {
+    formData.append('entryFee', selectedFee);
+    formAction(formData);
   };
 
   return (
@@ -104,7 +109,7 @@ export function QuickPlayMode() {
         <FormFeedback error={response.message.error} />
       </CardContent>
       <CardFooter className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6">
-        <form action={action} className="w-full">
+        <form action={handleSubmit} className="w-full">
           <SubmitButton
             title={`Pay ${selectedFee} ${token.symbol} & Start match`}
             loadingTitle="Creating the game..."

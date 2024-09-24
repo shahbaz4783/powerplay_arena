@@ -5,6 +5,8 @@ import {
   InningsInterface,
   RunOutcome,
 } from "../types/gameState";
+import { saveMatchDataToDatabase } from "../actions/game.action";
+import { useInitData } from "@telegram-apps/sdk-react";
 
 const GAME_STATE_KEY = "cricketGameState";
 
@@ -75,6 +77,8 @@ const clearGameState = (): Promise<void> => {
 
 export const useCricketGameState = () => {
   const queryClient = useQueryClient();
+  const initData = useInitData();
+  const userId = initData?.user?.id;
 
   const { data: gameState } = useQuery({
     queryKey: [GAME_STATE_KEY],
@@ -127,7 +131,8 @@ export const useCricketGameState = () => {
 
   const endMatchAndClaimReward = async () => {
     try {
-      // await saveMatchDataToDatabase(gameState);
+      if (!userId) throw new Error("User ID not found");
+      await saveMatchDataToDatabase(gameState, BigInt(userId));
       await clearGameState();
 
       // Reset query cache
