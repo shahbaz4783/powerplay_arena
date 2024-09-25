@@ -97,9 +97,9 @@ export const MATCH_FORMATS: Record<MatchFormat, MatchSetup> = {
     entryFee: 100,
     totalWickets: 5,
     rewards: {
-      six: 12,
-      four: 8,
-      wicket: 20,
+      six: 6,
+      four: 4,
+      wicket: 10,
       runMargin: 4,
     },
   },

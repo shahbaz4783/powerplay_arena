@@ -8,12 +8,12 @@ import {
   TabsTrigger,
 } from "@/src/components/ui/tabs";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+} from "@/src/components/ui/table";
+
 import { Zap, Target, Trophy, Award, Clock, Bolt, Shield } from "lucide-react";
 import { startQuickMatch } from "@/src/actions/game.action";
 import { token } from "@/src/lib/constants";
@@ -28,7 +28,7 @@ import { MatchFormat, MATCH_FORMATS } from "@/src/types/gameState";
 export function QuickPlayMode() {
   const [selectedFormat, setSelectedFormat] = useState<MatchFormat>("blitz");
 
-  const { gameState, updateGameState } = useCricketGameState();
+  const { updateGameState } = useCricketGameState();
 
   const initData = useInitData();
   const user = initData?.user;
@@ -73,13 +73,12 @@ export function QuickPlayMode() {
   };
 
   return (
-    <Card className="min-h-svh flex flex-col justify-between">
-      <CardHeader className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6">
-        <CardTitle className="text-2xl font-bold text-center">
-          Quick Match Setup
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-6">
+    <main className="min-h-svh flex flex-col justify-between">
+      <section className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6">
+        <h2 className="text-2xl font-bold text-center">Quick Match Setup</h2>
+      </section>
+
+      <section className="p-6">
         <Tabs
           value={selectedFormat}
           onValueChange={handleFormatChange}
@@ -93,33 +92,49 @@ export function QuickPlayMode() {
                 className="flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900"
               >
                 <FormatIcon format={format.format} className="w-6 h-6 mb-2" />
-                <span className="text-lg font-bold">{format.format}</span>
-                <span className="text-sm">{format.overs} overs</span>
+                <span className="font-bold uppercase">{format.format}</span>
               </TabsTrigger>
             ))}
           </TabsList>
           {Object.entries(MATCH_FORMATS).map(([key, format]) => (
-            <TabsContent key={key} value={key}>
-              <div className="bg-gray-700 p-6 rounded-xl">
+            <TabsContent key={key} value={key} className="space-y-6">
+              <div className="bg-slate-800/50 backdrop-blur-md p-6 rounded-xl">
                 <h4 className="text-lg font-semibold mb-4 text-center">
                   Match Details
                 </h4>
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="text-center">
-                    <p className="font-semibold">Entry Fee</p>
-                    <p>
-                      {format.entryFee} {token.symbol}
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <p className="font-semibold">Overs</p>
-                    <p>{format.overs}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="font-semibold">Wickets</p>
-                    <p>{format.totalWickets}</p>
-                  </div>
-                </div>
+                <Table className="rounded-xl">
+                  <TableBody className="space-y-2 bg-muted/50 rounded-xl">
+                    <TableRow>
+                      <TableCell className="font-medium text-gray-300 rounded-tl-xl">
+                        Max Overs
+                      </TableCell>
+                      <TableCell className="text-right font-bold rounded-tr-xl">
+                        {format.overs}
+                      </TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell className="font-medium text-gray-300">
+                        Max wickets
+                      </TableCell>
+                      <TableCell className="text-right font-bold">
+                        {format.totalWickets}
+                      </TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell className="font-medium text-gray-300 rounded-bl-xl">
+                        Entry Fees
+                      </TableCell>
+                      <TableCell className="text-right font-bold rounded-br-xl">
+                        {format.entryFee} {token.symbol}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+
+              <div>
                 <h4 className="text-lg font-semibold mb-4 text-center">
                   Reward Structure
                 </h4>
@@ -150,16 +165,16 @@ export function QuickPlayMode() {
           ))}
         </Tabs>
         <FormFeedback error={response.message.error} />
-      </CardContent>
-      <CardFooter className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6">
+      </section>
+      <section className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6 sticky bottom-0">
         <form action={handleSubmit} className="w-full">
           <SubmitButton
             title={`Pay ${MATCH_FORMATS[selectedFormat].entryFee} ${token.symbol} & Start ${selectedFormat} match`}
             loadingTitle="Creating the game..."
           />
         </form>
-      </CardFooter>
-    </Card>
+      </section>
+    </main>
   );
 }
 

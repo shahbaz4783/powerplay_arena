@@ -5,12 +5,15 @@ import { useCricketGameState } from "@/src/lib/store";
 import { Card, Button } from "@telegram-apps/telegram-ui";
 import { motion } from "framer-motion";
 import { CardHeader, CardTitle, CardContent, CardFooter } from "../ui/card";
-import { useEffect, useState } from "react"; 
+import { useEffect, useState } from "react";
 
 export function MidInnings() {
   const { gameState, updateGameState } = useCricketGameState();
   const { target, currentInnings, toss } = gameState;
   const { runs, wickets, oversPlayed } = getCurrentInningsData(gameState);
+  const {
+    matchSetup: { overs, totalWickets },
+  } = gameState;
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -70,7 +73,8 @@ export function MidInnings() {
               Need{" "}
               <span className="text-xl font-bold text-white">{target}</span>{" "}
               runs from{" "}
-              <span className="text-xl font-bold text-white">{30}</span> balls
+              <span className="text-xl font-bold text-white">{overs * 6}</span>{" "}
+              balls
             </p>
           </motion.div>
         </CardContent>

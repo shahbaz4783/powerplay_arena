@@ -12,10 +12,12 @@ import { getCurrentInningsData } from "@/src/lib/game-logics";
 
 export function Gameplay() {
   const { gameState, updateGameState } = useCricketGameState();
-  const { currentInnings, gamePhase, player, opponent } = gameState;
+  const {
+    currentInnings,
+    matchSetup: { overs, totalWickets },
+  } = gameState;
 
-  const maxWickets = 2;
-  const maxBalls = 12;
+  const maxBalls = overs * 6;
 
   useEffect(() => {
     checkInningsEnd();
@@ -26,7 +28,7 @@ export function Gameplay() {
 
     if (
       currentInningsData.ballsFaced >= maxBalls ||
-      currentInningsData.wickets >= maxWickets
+      currentInningsData.wickets >= totalWickets
     ) {
       if (currentInnings === 1) {
         updateGameState({
@@ -59,7 +61,7 @@ export function Gameplay() {
           matchResult: {
             winner: "player",
             marginType: "wickets",
-            margin: 5 - gameState.player.wickets,
+            margin: totalWickets - gameState.player.wickets,
           },
         });
 

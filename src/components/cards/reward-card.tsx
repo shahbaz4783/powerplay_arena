@@ -5,7 +5,7 @@ export function RewardItem({
   label,
   value,
 }: {
-  icon: any;
+  icon?: any;
   label: string;
   value: number | string;
 }) {

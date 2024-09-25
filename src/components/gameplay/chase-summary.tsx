@@ -8,6 +8,10 @@ export function ChaseSummary() {
   if (gameState.currentInnings === 1) return null;
   if (!gameState.target) return null;
 
+  const {
+    matchSetup: { overs, totalWickets },
+  } = gameState;
+
   const { ballsFaced, runs } = getCurrentInningsData(gameState);
 
   return (
@@ -20,7 +24,10 @@ export function ChaseSummary() {
         <div className="space-x-1">
           <span className="text-xs text-slate-400">Req. Run Rate:</span>
           <span className="text-2xl font-bold">
-            {((gameState.target - runs) / ((30 - ballsFaced) / 6)).toFixed(2)}
+            {(
+              (gameState.target - runs) /
+              ((overs * 6 - ballsFaced) / 6)
+            ).toFixed(2)}
           </span>
         </div>
       </div>
@@ -30,7 +37,9 @@ export function ChaseSummary() {
           {gameState.target - runs}
         </span>{" "}
         runs from{" "}
-        <span className="text-xl font-bold text-white">{30 - ballsFaced}</span>{" "}
+        <span className="text-xl font-bold text-white">
+          {overs * 6 - ballsFaced}
+        </span>{" "}
         balls
       </p>
     </section>
