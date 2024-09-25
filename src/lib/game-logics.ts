@@ -185,7 +185,7 @@ export const getCurrentInningsData = (
   gameState: GameState,
 ): InningsInterface => {
   return gameState.currentInnings === 1
-    ? gameState.gamePhase === "batting" || "inningsOver"
+    ? gameState.gamePhase === "batting"
       ? gameState.player
       : gameState.opponent
     : gameState.gamePhase === "batting"

@@ -21,13 +21,11 @@ export function Result() {
   const isWin = player.runs > opponent.runs;
 
   return (
-    <Card className="flex flex-col justify-between border-none">
-      <CardHeader className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6">
-        <CardTitle className="text-2xl font-bold text-center">
-          Match Result
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-6">
+    <main className="flex flex-col justify-between border-none">
+      <section className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6">
+        <h2 className="text-2xl font-bold text-center">Match Result</h2>
+      </section>
+      <section className="p-6">
         <div className="bg-gray-700 p-3 rounded-xl mb-6">
           <h4 className="text-lg font-semibold mb-4 text-center">
             Match Summary
@@ -69,15 +67,15 @@ export function Result() {
             {player.sixes * 6 + player.fours * 4} PWR
           </p>
         </div>
-      </CardContent>
-      <CardFooter className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6 flex flex-col space-y-4">
+      </section>
+      <section className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6 flex flex-col space-y-4">
         <SubmitButton
           onClick={endMatchAndClaimReward}
           title="Claim Rewards"
           loadingTitle="Claiming..."
         />
-      </CardFooter>
-    </Card>
+      </section>
+    </main>
   );
 }
 

@@ -5,6 +5,9 @@ import { getCurrentInningsData } from "@/src/lib/game-logics";
 
 export function ScoreBoard() {
   const { gameState } = useCricketGameState();
+  const {
+    matchSetup: { overs },
+  } = gameState;
 
   const { runs, runRate, wickets, oversPlayed, ballsFaced } =
     getCurrentInningsData(gameState);
@@ -16,7 +19,6 @@ export function ScoreBoard() {
           <p className="text-4xl font-bold">
             {runs}/{wickets}
           </p>
-          <p className="text-gray-300">{oversPlayed}</p>
         </div>
         <Badge
           variant="outline"
@@ -25,8 +27,16 @@ export function ScoreBoard() {
           {gameState.currentInnings === 1 ? "1st Innings" : "2nd Innings"}
         </Badge>
       </div>
-      <div>
-        <p className="text-sm">Run Rate: {runRate}</p>
+      <div className="flex justify-between">
+        <div className="space-x-1">
+          <span className="text-sm text-slate-400">Over:</span>
+          <span className="text-gray-300">{oversPlayed}</span>
+          <span className="text-gray-300">({overs})</span>
+        </div>
+        <div className="space-x-1">
+          <span className="text-sm text-slate-400">Run Rate:</span>
+          <span className="text-gray-300">{runRate}</span>
+        </div>
       </div>
       <Progress value={(ballsFaced / (5 * 6)) * 100} className="h-3" />
     </section>
