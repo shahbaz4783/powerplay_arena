@@ -1,7 +1,6 @@
 "use server";
 
 import { FormResponse } from "@/src/lib/types";
-import { redirect } from "next/navigation";
 import { db } from "../lib/db";
 import { GameState } from "../types/gameState";
 
@@ -45,6 +44,9 @@ export async function startQuickMatch(
         },
       });
     });
+
+    // Instead of redirecting, return a success message
+    return { message: { success: "Match started successfully" } };
   } catch (error) {
     if (error instanceof Error) {
       return { message: { error: error.message } };
@@ -52,7 +54,6 @@ export async function startQuickMatch(
       return { message: { error: "Something went wrong" } };
     }
   }
-  redirect("/game");
 }
 
 export async function saveMatchDataToDatabase(

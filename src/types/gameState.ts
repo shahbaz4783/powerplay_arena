@@ -6,11 +6,28 @@ export type BowlingType = "normal" | "yorker" | "bouncer";
 export type RunOutcome = -1 | 0 | 1 | 2 | 3 | 4 | 6;
 export type MarginType = "runs" | "wickets";
 export type GamePhase =
+  | "quick-setup"
+  | "tournament-setup"
   | "toss"
   | "batting"
   | "bowling"
   | "inningsOver"
   | "result";
+
+export type MatchFormat = "blitz" | "classic" | "extended";
+
+export interface MatchSetup {
+  format: MatchFormat;
+  overs: 2 | 5 | 10;
+  entryFee: number;
+  totalWickets: 2 | 5 | 10;
+  rewards: {
+    six: number;
+    four: number;
+    wicket: number;
+    runMargin: number;
+  };
+}
 
 export interface InningsData {
   totalBalls: 30 | 60;
@@ -44,7 +61,7 @@ export interface GameState {
   // Game flow
   gamePhase: GamePhase;
   currentInnings: 1 | 2;
-  entryFee: number;
+  matchSetup: MatchSetup;
 
   // Toss
   toss: TossInterface;
@@ -60,3 +77,42 @@ export interface GameState {
   // Achievements unlocked
   achievements: string[];
 }
+
+export const MATCH_FORMATS: Record<MatchFormat, MatchSetup> = {
+  blitz: {
+    format: "blitz",
+    overs: 2,
+    entryFee: 50,
+    totalWickets: 2,
+    rewards: {
+      six: 6,
+      four: 4,
+      wicket: 10,
+      runMargin: 2,
+    },
+  },
+  classic: {
+    format: "classic",
+    overs: 5,
+    entryFee: 100,
+    totalWickets: 5,
+    rewards: {
+      six: 12,
+      four: 8,
+      wicket: 20,
+      runMargin: 4,
+    },
+  },
+  extended: {
+    format: "extended",
+    overs: 10,
+    entryFee: 200,
+    totalWickets: 10,
+    rewards: {
+      six: 18,
+      four: 12,
+      wicket: 30,
+      runMargin: 6,
+    },
+  },
+};

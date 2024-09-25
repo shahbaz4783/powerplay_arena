@@ -11,10 +11,22 @@ import { useInitData } from "@telegram-apps/sdk-react";
 const GAME_STATE_KEY = "cricketGameState";
 
 const initialState: GameState = {
-  gamePhase: "toss",
+  gamePhase: "quick-setup",
   currentInnings: 1,
   target: null,
-  entryFee: 0,
+
+  matchSetup: {
+    format: "blitz",
+    entryFee: 50,
+    overs: 2,
+    totalWickets: 2,
+    rewards: {
+      four: 4,
+      six: 6,
+      runMargin: 10,
+      wicket: 20,
+    },
+  },
 
   toss: {
     winner: null,

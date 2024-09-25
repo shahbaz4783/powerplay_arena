@@ -123,12 +123,18 @@ export const getOpponentBattingStrategy = (
   // Chasing strategy
   if (target) {
     const runsDifference = target - opponent.runs;
-    
+
     if (runsDifference <= 0) {
       return "defensive";
-    } else if (requiredRunRate > 12 || (remainingBalls <= 6 && runsDifference > 12)) {
+    } else if (
+      requiredRunRate > 12 ||
+      (remainingBalls <= 6 && runsDifference > 12)
+    ) {
       return "aggressive";
-    } else if (requiredRunRate > 8 || (remainingBalls <= 12 && runsDifference > 20)) {
+    } else if (
+      requiredRunRate > 8 ||
+      (remainingBalls <= 12 && runsDifference > 20)
+    ) {
       return Math.random() < 0.7 ? "aggressive" : "normal";
     } else if (requiredRunRate < 4 && remainingBalls > 12) {
       return Math.random() < 0.7 ? "defensive" : "normal";
@@ -152,7 +158,7 @@ export const computerBowling = (gameState: GameState): BowlingType => {
 
   if (currentInnings === 2 && target) {
     const requiredRunRate = (target - battingTeam.runs) / (remainingBalls / 6);
-    
+
     if (requiredRunRate > 10 || remainingBalls <= 6) {
       return Math.random() < 0.6 ? "yorker" : "bouncer";
     } else if (requiredRunRate < 6 && remainingWickets <= 2) {
@@ -179,7 +185,7 @@ export const getCurrentInningsData = (
   gameState: GameState,
 ): InningsInterface => {
   return gameState.currentInnings === 1
-    ? gameState.gamePhase === "batting"
+    ? gameState.gamePhase === "batting" || "inningsOver"
       ? gameState.player
       : gameState.opponent
     : gameState.gamePhase === "batting"

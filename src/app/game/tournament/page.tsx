@@ -15,6 +15,7 @@ import {
   TabsTrigger,
 } from "@/src/components/ui/tabs";
 import { Trophy, Users, Calendar, DollarSign, Star } from "lucide-react";
+import TournamentPage from "@/src/components/game-modes/tournament";
 
 export default function TournamentScreen() {
   const [activeTab, setActiveTab] = useState("upcoming");
@@ -25,7 +26,7 @@ export default function TournamentScreen() {
       description:
         "A traditional knockout tournament where players compete to be the last team standing.",
       structure: {
-        rounds: ["Quarter-finals", "Semi-finals", "Finals"],  
+        rounds: ["Quarter-finals", "Semi-finals", "Finals"],
       },
       rewards:
         "Increasing rewards with each round, culminating in a grand prize for the winner",
@@ -73,29 +74,29 @@ export default function TournamentScreen() {
       <Tabs defaultValue="upcoming" className="w-full mb-6">
         <TabsList className="grid w-full grid-cols-3 mb-6 bg-gray-800">
           <TabsTrigger
-            value="upcoming"
+            value="series"
             onClick={() => setActiveTab("upcoming")}
             className="data-[state=active]:bg-yellow-500 data-[state=active]:text-gray-900"
           >
-            Upcoming
+            Series
+          </TabsTrigger>
+          <TabsTrigger
+            value="leagues"
+            onClick={() => setActiveTab("ongoing")}
+            className="data-[state=active]:bg-yellow-500 data-[state=active]:text-gray-900"
+          >
+            Leagues
           </TabsTrigger>
           <TabsTrigger
             value="ongoing"
-            onClick={() => setActiveTab("ongoing")}
+            onClick={() => setActiveTab("completed")}
             className="data-[state=active]:bg-yellow-500 data-[state=active]:text-gray-900"
           >
             Ongoing
           </TabsTrigger>
-          <TabsTrigger
-            value="completed"
-            onClick={() => setActiveTab("completed")}
-            className="data-[state=active]:bg-yellow-500 data-[state=active]:text-gray-900"
-          >
-            Completed
-          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="upcoming">
+        <TabsContent value="series">
           {tournaments.map((tournament, index) => (
             <Card key={index} className="bg-gray-800 border-gray-700 mb-4">
               <CardHeader>
@@ -132,15 +133,15 @@ export default function TournamentScreen() {
           ))}
         </TabsContent>
 
-        <TabsContent value="ongoing">
+        <TabsContent value="leagues">
           <div className="text-center text-gray-400">
-            <p>No ongoing tournaments at the moment.</p>
+            <TournamentPage />
           </div>
         </TabsContent>
 
-        <TabsContent value="completed">
+        <TabsContent value="ongoing">
           <div className="text-center text-gray-400">
-            <p>No completed tournaments yet.</p>
+            <p>There are no ongoing tournaments yet.</p>
           </div>
         </TabsContent>
       </Tabs>

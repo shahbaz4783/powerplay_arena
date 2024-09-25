@@ -14,20 +14,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/src/components/ui/card";
-import { Zap, Target, Trophy, Award } from "lucide-react";
+import { Zap, Target, Trophy, Award, Clock, Bolt, Shield } from "lucide-react";
 import { startQuickMatch } from "@/src/actions/game.action";
-import { QUICK_PLAY_ENTRY_FEES, token } from "@/src/lib/constants";
+import { token } from "@/src/lib/constants";
 import { SubmitButton } from "@/src/components/feedback/submit-button";
 import { useInitData } from "@telegram-apps/sdk-react";
 import { useFormState } from "react-dom";
 import { RewardItem } from "../cards/reward-card";
 import FormFeedback from "../feedback/form-feedback";
 import { useCricketGameState } from "@/src/lib/store";
+import { MatchFormat, MATCH_FORMATS } from "@/src/types/gameState";
 
 export function QuickPlayMode() {
-  const [selectedFee, setSelectedFee] = useState("50");
+  const [selectedFormat, setSelectedFormat] = useState<MatchFormat>("blitz");
 
-  const { updateGameState } = useCricketGameState();
+  const { gameState, updateGameState } = useCricketGameState();
 
   const initData = useInitData();
   const user = initData?.user;
@@ -40,15 +41,34 @@ export function QuickPlayMode() {
   );
 
   useEffect(() => {
-    updateGameState({ entryFee: parseInt(selectedFee, 10) });
-  }, [selectedFee, updateGameState]);
+    const format = MATCH_FORMATS[selectedFormat];
+    if (format) {
+      updateGameState({
+        matchSetup: format,
+      });
+    }
+  }, [selectedFormat, updateGameState]);
 
-  const handleFeeChange = (fee: string) => {
-    setSelectedFee(fee);
+  useEffect(() => {
+    if (response.message.success) {
+      updateGameState({
+        gamePhase: "toss",
+        matchSetup: MATCH_FORMATS[selectedFormat],
+      });
+    }
+  }, [response.message.success, selectedFormat, updateGameState]);
+
+  const handleFormatChange = (format: string) => {
+    setSelectedFormat(format as MatchFormat);
   };
 
   const handleSubmit = (formData: FormData) => {
-    formData.append('entryFee', selectedFee);
+    const format = MATCH_FORMATS[selectedFormat];
+    if (format) {
+      formData.append("entryFee", format.entryFee.toString());
+      formData.append("overs", format.overs.toString());
+      formData.append("format", format.format);
+    }
     formAction(formData);
   };
 
@@ -61,45 +81,68 @@ export function QuickPlayMode() {
       </CardHeader>
       <CardContent className="p-6">
         <Tabs
-          value={selectedFee}
-          onValueChange={handleFeeChange}
+          value={selectedFormat}
+          onValueChange={handleFormatChange}
           className="w-full"
         >
           <TabsList className="grid grid-cols-3 mb-8 gap-4 rounded-xl bg-slate-400 h-auto">
-            {QUICK_PLAY_ENTRY_FEES.map((fee) => (
+            {Object.entries(MATCH_FORMATS).map(([key, format]) => (
               <TabsTrigger
-                key={fee.amount}
-                value={fee.amount.toString()}
-                className={
-                  "flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900"
-                }
+                key={key}
+                value={key}
+                className="flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900"
               >
-                <span className="text-lg font-bold">{fee.amount} PWR</span>
+                <FormatIcon format={format.format} className="w-6 h-6 mb-2" />
+                <span className="text-lg font-bold">{format.format}</span>
+                <span className="text-sm">{format.overs} overs</span>
               </TabsTrigger>
             ))}
           </TabsList>
-          {QUICK_PLAY_ENTRY_FEES.map((fee) => (
-            <TabsContent key={fee.amount} value={fee.amount.toString()}>
+          {Object.entries(MATCH_FORMATS).map(([key, format]) => (
+            <TabsContent key={key} value={key}>
               <div className="bg-gray-700 p-6 rounded-xl">
+                <h4 className="text-lg font-semibold mb-4 text-center">
+                  Match Details
+                </h4>
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  <div className="text-center">
+                    <p className="font-semibold">Entry Fee</p>
+                    <p>
+                      {format.entryFee} {token.symbol}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-semibold">Overs</p>
+                    <p>{format.overs}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-semibold">Wickets</p>
+                    <p>{format.totalWickets}</p>
+                  </div>
+                </div>
                 <h4 className="text-lg font-semibold mb-4 text-center">
                   Reward Structure
                 </h4>
                 <div className="grid grid-cols-2 gap-4">
-                  <RewardItem icon={Zap} label="Six" value={fee.rewards.six} />
+                  <RewardItem
+                    icon={Zap}
+                    label="Six"
+                    value={format.rewards.six}
+                  />
                   <RewardItem
                     icon={Target}
                     label="Four"
-                    value={fee.rewards.four}
+                    value={format.rewards.four}
                   />
                   <RewardItem
                     icon={Award}
                     label="Wicket"
-                    value={fee.rewards.wicket}
+                    value={format.rewards.wicket}
                   />
                   <RewardItem
                     icon={Trophy}
                     label="Run Margin"
-                    value={fee.rewards.runMargin}
+                    value={format.rewards.runMargin}
                   />
                 </div>
               </div>
@@ -111,11 +154,30 @@ export function QuickPlayMode() {
       <CardFooter className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6">
         <form action={handleSubmit} className="w-full">
           <SubmitButton
-            title={`Pay ${selectedFee} ${token.symbol} & Start match`}
+            title={`Pay ${MATCH_FORMATS[selectedFormat].entryFee} ${token.symbol} & Start ${selectedFormat} match`}
             loadingTitle="Creating the game..."
           />
         </form>
       </CardFooter>
     </Card>
   );
+}
+
+function FormatIcon({
+  format,
+  className,
+}: {
+  format: MatchFormat;
+  className?: string;
+}) {
+  switch (format) {
+    case "blitz":
+      return <Bolt className={className} />;
+    case "classic":
+      return <Trophy className={className} />;
+    case "extended":
+      return <Shield className={className} />;
+    default:
+      return <Clock className={className} />;
+  }
 }
