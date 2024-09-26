@@ -19,82 +19,91 @@ export default function CricketGame() {
 
   useEffect(() => {
     checkInningsEnd();
-  });
+  }, [gameState.player, gameState.opponent]);
+
+  const currentInningsData = getCurrentInningsData(gameState);
+
+  const isInningsOver =
+    currentInningsData.ballsFaced >= overs * 6 ||
+    currentInningsData.wickets >= totalWickets;
 
   const checkInningsEnd = () => {
-    const currentInningsData = getCurrentInningsData(gameState);
-
-    const isInningsOver =
-      currentInningsData.ballsFaced >= overs * 6 ||
-      currentInningsData.wickets >= totalWickets;
-
-    if (isInningsOver) {
-      if (currentInnings === 1) {
+    if (currentInnings === 1) {
+      if (isInningsOver) {
         updateGameState({
           target: currentInningsData.runs + 1,
           gamePhase: "inningsOver",
         });
-      } else {
-        checkMatchResult();
       }
+    } else {
+      checkMatchResult();
     }
   };
 
   const checkMatchResult = () => {
-    gameState.player.runs === gameState.opponent.runs &&
-      updateGameState({
-        gamePhase: "result",
-        matchResult: {
-          winner: "tie",
-          marginType: null,
-          margin: null,
-        },
-      });
+    const { player, opponent, target } = gameState;
+
+    // Check for Tie
+    if (isInningsOver) {
+      if (player.runs === opponent.runs) {
+        updateGameState({
+          gamePhase: "result",
+          matchResult: {
+            winner: "tie",
+            marginType: null,
+            margin: null,
+          },
+        });
+        return;
+      }
+    }
 
     if (playMode === "chase") {
-      gameState.player.runs > gameState.opponent.runs &&
+      if (player.runs > opponent.runs) {
         updateGameState({
           gamePhase: "result",
           matchResult: {
             winner: "player",
             marginType: "wickets",
-            margin: totalWickets - gameState.player.wickets,
+            margin: totalWickets - player.wickets,
           },
         });
-
-      gameState.player.ballsFaced === overs * 6 ||
-        (gameState.player.wickets === totalWickets &&
-          updateGameState({
-            gamePhase: "result",
-            matchResult: {
-              winner: "opponent",
-              marginType: "runs",
-              margin: gameState.opponent.runs - gameState.player.runs,
-            },
-          }));
-    }
-
-    if (playMode === "defend") {
-      gameState.opponent.runs > gameState.player.runs &&
+      } else if (
+        player.ballsFaced === overs * 6 ||
+        player.wickets === totalWickets
+      ) {
+        updateGameState({
+          gamePhase: "result",
+          matchResult: {
+            winner: "opponent",
+            marginType: "runs",
+            margin: opponent.runs - player.runs,
+          },
+        });
+      }
+    } else if (playMode === "defend") {
+      if (opponent.runs > target! - 1) {
         updateGameState({
           gamePhase: "result",
           matchResult: {
             winner: "opponent",
             marginType: "wickets",
-            margin: 5 - gameState.opponent.wickets,
+            margin: totalWickets - opponent.wickets,
           },
         });
-
-      gameState.opponent.ballsFaced === overs * 6 ||
-        (gameState.opponent.wickets === totalWickets &&
-          updateGameState({
-            gamePhase: "result",
-            matchResult: {
-              winner: "player",
-              marginType: "runs",
-              margin: gameState.player.runs - gameState.opponent.runs,
-            },
-          }));
+      } else if (
+        opponent.ballsFaced === overs * 6 ||
+        opponent.wickets === totalWickets
+      ) {
+        updateGameState({
+          gamePhase: "result",
+          matchResult: {
+            winner: "player",
+            marginType: "runs",
+            margin: target! - 1 - opponent.runs,
+          },
+        });
+      }
     }
   };
 
@@ -104,12 +113,9 @@ export default function CricketGame() {
         <main className="flex-grow overflow-auto">
           {gameState.gamePhase === "quick-setup" && <QuickPlayMode />}
           {gameState.gamePhase === "toss" && <Toss />}
-
           {(gameState.gamePhase === "batting" ||
             gameState.gamePhase === "bowling") && <Gameplay />}
-
           {gameState.gamePhase === "inningsOver" && <MidInnings />}
-
           {gameState.gamePhase === "result" && <Result />}
         </main>
       </div>
