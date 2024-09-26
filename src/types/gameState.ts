@@ -85,10 +85,10 @@ export const MATCH_FORMATS: Record<MatchFormat, MatchSetup> = {
     entryFee: 50,
     totalWickets: 2,
     rewards: {
-      six: 6,
-      four: 4,
-      wicket: 10,
-      runMargin: 2,
+      six: 12,
+      four: 6,
+      wicket: 20,
+      runMargin: 5,
     },
   },
   classic: {
@@ -99,7 +99,7 @@ export const MATCH_FORMATS: Record<MatchFormat, MatchSetup> = {
     rewards: {
       six: 6,
       four: 4,
-      wicket: 10,
+      wicket: 15,
       runMargin: 4,
     },
   },
@@ -109,10 +109,10 @@ export const MATCH_FORMATS: Record<MatchFormat, MatchSetup> = {
     entryFee: 200,
     totalWickets: 10,
     rewards: {
-      six: 18,
-      four: 12,
-      wicket: 30,
-      runMargin: 6,
+      six: 6,
+      four: 4,
+      wicket: 10,
+      runMargin: 3,
     },
   },
 };

@@ -147,10 +147,8 @@ export const useCricketGameState = () => {
       await saveMatchDataToDatabase(gameState, BigInt(userId));
       await clearGameState();
 
-      // Reset query cache
       queryClient.setQueryData([GAME_STATE_KEY], initialState);
 
-      // You might want to trigger a notification or redirect here
       console.log("Match ended, reward claimed, and state cleared");
     } catch (error) {
       if (error instanceof Error) {

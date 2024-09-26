@@ -1,17 +1,12 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
 import { RewardItem } from "../cards/reward-card";
 import { Zap, Target } from "lucide-react";
 import { SubmitButton } from "../feedback/submit-button";
 import { useCricketGameState } from "@/src/lib/store";
 import { InningsInterface } from "@/src/types/gameState";
+import { calculateRewards } from "@/src/lib/game-logics";
+import { useFormState } from "react-dom";
 
 export function Result() {
   const { gameState, endMatchAndClaimReward } = useCricketGameState();
@@ -19,6 +14,13 @@ export function Result() {
   const { player, opponent } = gameState;
 
   const isWin = player.runs > opponent.runs;
+  const { fourReward, sixerReward, wicketTakenReward, winMarginReward } =
+    calculateRewards(gameState);
+
+  const [response, formAction] = useFormState(
+    endMatchAndClaimReward,
+    undefined,
+  );
 
   return (
     <main className="flex flex-col justify-between border-none">
@@ -54,8 +56,18 @@ export function Result() {
             Your Performance
           </h4>
           <div className="grid grid-cols-2 gap-4">
-            <RewardItem icon={Zap} label="Sixes" value={player.sixes * 6} />
-            <RewardItem icon={Target} label="Fours" value={player.fours * 4} />
+            <RewardItem icon={Zap} label="Sixes" value={sixerReward} />
+            <RewardItem icon={Target} label="Fours" value={fourReward} />
+            <RewardItem
+              icon={Target}
+              label="Wickets Taken"
+              value={wicketTakenReward}
+            />
+            <RewardItem
+              icon={Target}
+              label="Win Margin"
+              value={winMarginReward}
+            />
           </div>
         </div>
 
@@ -64,16 +76,14 @@ export function Result() {
             Your Rewards
           </h4>
           <p className="text-3xl font-bold text-center text-cyan-400">
-            {player.sixes * 6 + player.fours * 4} PWR
+            {fourReward + sixerReward + wicketTakenReward + winMarginReward} PWR
           </p>
         </div>
       </section>
       <section className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6 flex flex-col space-y-4">
-        <SubmitButton
-          onClick={endMatchAndClaimReward}
-          title="Claim Rewards"
-          loadingTitle="Claiming..."
-        />
+        <form action={formAction}>
+          <SubmitButton title="Claim Rewards" loadingTitle="Claiming..." />
+        </form>
       </section>
     </main>
   );

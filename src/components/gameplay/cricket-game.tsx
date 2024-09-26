@@ -19,7 +19,7 @@ export default function CricketGame() {
 
   useEffect(() => {
     checkInningsEnd();
-  }, [gameState.player, gameState.opponent]);
+  });
 
   const currentInningsData = getCurrentInningsData(gameState);
 

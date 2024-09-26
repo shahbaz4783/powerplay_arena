@@ -192,3 +192,30 @@ export const getCurrentInningsData = (
       ? gameState.player
       : gameState.opponent;
 };
+
+export const calculateRewards = (gameState: GameState) => {
+  const { player, opponent } = gameState;
+  const { margin, marginType } = gameState.matchResult;
+  const {
+    rewards: { four, runMargin, six, wicket },
+  } = gameState.matchSetup;
+
+  let winMarginReward = 0;
+  const fourReward = player.fours * four;
+  const sixerReward = player.sixes * six;
+  const wicketTakenReward = opponent.wickets * wicket;
+
+  if (margin && marginType === "runs") {
+    winMarginReward = runMargin * margin;
+  }
+  if (margin && marginType === "wickets") {
+    winMarginReward = wicket * margin;
+  }
+
+  return {
+    winMarginReward,
+    fourReward,
+    sixerReward,
+    wicketTakenReward,
+  };
+};
