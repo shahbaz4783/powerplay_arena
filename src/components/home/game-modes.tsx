@@ -22,7 +22,7 @@ export function GameModes() {
           backgroundPosition: "center",
         }}
       >
-        <Link href={"/game"}>
+        <Link href={"/game/quickplay"}>
           <CardContent className="h-full flex flex-col items-center justify-end bg-sky-200 bg-opacity-15">
             <h3 className="text-lg font-bold bg-stone-300 text-sky-900 px-3 bg-opacity-80 rounded">
               Quick Match

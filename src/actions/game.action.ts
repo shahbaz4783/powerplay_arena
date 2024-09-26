@@ -3,6 +3,7 @@
 import { FormResponse } from "@/src/lib/types";
 import { db } from "../lib/db";
 import { GameState } from "../types/gameState";
+import { redirect } from "next/navigation";
 
 export async function startQuickMatch(
   telegramId: number,
@@ -44,9 +45,6 @@ export async function startQuickMatch(
         },
       });
     });
-
-    // Instead of redirecting, return a success message
-    return { message: { success: "Match started successfully" } };
   } catch (error) {
     if (error instanceof Error) {
       return { message: { error: error.message } };
@@ -54,6 +52,7 @@ export async function startQuickMatch(
       return { message: { error: "Something went wrong" } };
     }
   }
+  redirect("/game");
 }
 
 export async function saveMatchDataToDatabase(

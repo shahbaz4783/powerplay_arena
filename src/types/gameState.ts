@@ -6,8 +6,6 @@ export type BowlingType = "normal" | "yorker" | "bouncer";
 export type RunOutcome = -1 | 0 | 1 | 2 | 3 | 4 | 6;
 export type MarginType = "runs" | "wickets";
 export type GamePhase =
-  | "quick-setup"
-  | "tournament-setup"
   | "toss"
   | "batting"
   | "bowling"

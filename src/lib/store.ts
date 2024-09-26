@@ -11,7 +11,7 @@ import { useInitData } from "@telegram-apps/sdk-react";
 const GAME_STATE_KEY = "cricketGameState";
 
 const initialState: GameState = {
-  gamePhase: "quick-setup",
+  gamePhase: "toss",
   currentInnings: 1,
   target: null,
 
