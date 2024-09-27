@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import { Card, CardContent } from "@/src/components/ui/card";
 import { GameControls } from "./game-controls";
 import { Commentary } from "./commentary";
 import { ScoreBoard } from "./scoreboard";

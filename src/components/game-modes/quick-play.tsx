@@ -13,8 +13,25 @@ import {
   TableCell,
   TableRow,
 } from "@/src/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/src/components/ui/dialog";
+import { Button } from "@/src/components/ui/button";
 
-import { Zap, Target, Trophy, Award, Clock, Bolt, Shield } from "lucide-react";
+import {
+  Zap,
+  Target,
+  Trophy,
+  Award,
+  Clock,
+  Bolt,
+  Shield,
+  Info,
+} from "lucide-react";
 import { startQuickMatch } from "@/src/actions/game.action";
 import { token } from "@/src/lib/constants";
 import { SubmitButton } from "@/src/components/feedback/submit-button";
@@ -24,6 +41,7 @@ import { RewardItem } from "../cards/reward-card";
 import FormFeedback from "../feedback/form-feedback";
 import { useCricketGameState } from "@/src/lib/store";
 import { MatchFormat, MATCH_FORMATS } from "@/src/types/gameState";
+import { Header } from "../shared/header";
 
 export function QuickPlayMode() {
   const [selectedFormat, setSelectedFormat] = useState<MatchFormat>("blitz");
@@ -74,9 +92,7 @@ export function QuickPlayMode() {
 
   return (
     <main className="min-h-svh flex flex-col justify-between">
-      <section className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6">
-        <h2 className="text-2xl font-bold text-center">Quick Match Setup</h2>
-      </section>
+      <Header title="Quick Match Setup" />
 
       <section className="p-6">
         <Tabs
@@ -106,7 +122,7 @@ export function QuickPlayMode() {
                   <TableBody className="space-y-2 bg-muted/50 rounded-xl">
                     <TableRow>
                       <TableCell className="font-medium text-gray-300 rounded-tl-xl">
-                        Max Overs
+                        Overs
                       </TableCell>
                       <TableCell className="text-right font-bold rounded-tr-xl">
                         {format.overs}
@@ -115,7 +131,7 @@ export function QuickPlayMode() {
 
                     <TableRow>
                       <TableCell className="font-medium text-gray-300">
-                        Max wickets
+                        Wickets
                       </TableCell>
                       <TableCell className="text-right font-bold">
                         {format.totalWickets}
@@ -134,43 +150,56 @@ export function QuickPlayMode() {
                 </Table>
               </div>
 
-              <div>
-                <h4 className="text-lg font-semibold mb-4 text-center">
-                  Reward Structure
-                </h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <RewardItem
-                    icon={Zap}
-                    label="Six"
-                    value={format.rewards.six}
-                  />
-                  <RewardItem
-                    icon={Target}
-                    label="Four"
-                    value={format.rewards.four}
-                  />
-                  <RewardItem
-                    icon={Award}
-                    label="Wicket"
-                    value={format.rewards.wicket}
-                  />
-                  <RewardItem
-                    icon={Trophy}
-                    label="Run Margin"
-                    value={format.rewards.runMargin}
-                  />
-                </div>
+              <div className="flex justify-center">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="rounded-xl flex items-center gap-2"
+                    >
+                      <Info className="w-4 h-4" />
+                      View Reward Structure
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Reward Structure</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+                      <RewardItem
+                        icon={Zap}
+                        label="Six"
+                        value={format.rewards.six}
+                      />
+                      <RewardItem
+                        icon={Target}
+                        label="Four"
+                        value={format.rewards.four}
+                      />
+                      <RewardItem
+                        icon={Award}
+                        label="Wicket"
+                        value={format.rewards.wicket}
+                      />
+                      <RewardItem
+                        icon={Trophy}
+                        label="Run Margin"
+                        value={format.rewards.runMargin}
+                      />
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </TabsContent>
           ))}
         </Tabs>
         <FormFeedback error={response.message.error} />
       </section>
-      <section className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6 sticky bottom-0">
+      <section className="bg-black bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-gray-900 to-slate-900 p-6 sticky bottom-0">
         <form action={handleSubmit} className="w-full">
           <SubmitButton
-            title={`Pay ${MATCH_FORMATS[selectedFormat].entryFee} ${token.symbol} & Start ${selectedFormat} match`}
-            loadingTitle="Creating the game..."
+            title={"Continue"}
+            loadingTitle={`Paying ${MATCH_FORMATS[selectedFormat].entryFee} ${token.symbol}...`}
           />
         </form>
       </section>

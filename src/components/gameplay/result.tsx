@@ -1,15 +1,24 @@
 "use client";
 
+import { useState } from "react";
 import { RewardItem } from "../cards/reward-card";
-import { Zap, Target } from "lucide-react";
+import { Zap, Target, Award, Trophy, Info } from "lucide-react";
 import { SubmitButton } from "../feedback/submit-button";
 import { useCricketGameState } from "@/src/lib/store";
 import { InningsInterface } from "@/src/types/gameState";
 import { calculateRewards } from "@/src/lib/game-logics";
-import { useFormState } from "react-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/src/components/ui/dialog";
+import { Button } from "@/src/components/ui/button";
+import { Header } from "../shared/header";
 
 export function Result() {
-  const { gameState, endMatchAndClaimReward } = useCricketGameState();
+  const { gameState } = useCricketGameState();
   const { margin, winner, marginType } = gameState.matchResult;
   const { player, opponent } = gameState;
 
@@ -17,17 +26,14 @@ export function Result() {
   const { fourReward, sixerReward, wicketTakenReward, winMarginReward } =
     calculateRewards(gameState);
 
-  const [response, formAction] = useFormState(
-    endMatchAndClaimReward,
-    undefined,
-  );
+  // const [response, formAction] = useFormState(endMatchAndClaimReward, {
+  //   message: {},
+  // });
 
   return (
-    <main className="flex flex-col justify-between border-none">
-      <section className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6">
-        <h2 className="text-2xl font-bold text-center">Match Result</h2>
-      </section>
-      <section className="p-6">
+    <main className="flex flex-col justify-between border-none min-h-svh">
+      <Header title="Match Result" />
+      <section className="p-6 flex-grow">
         <div className="bg-gray-700 p-3 rounded-xl mb-6">
           <h4 className="text-lg font-semibold mb-4 text-center">
             Match Summary
@@ -51,39 +57,51 @@ export function Result() {
             {marginType}
           </p>
         </div>
-        <div className="bg-gray-700 p-6 rounded-xl mb-6">
-          <h4 className="text-lg font-semibold mb-4 text-center">
-            Your Performance
-          </h4>
-          <div className="grid grid-cols-2 gap-4">
-            <RewardItem icon={Zap} label="Sixes" value={sixerReward} />
-            <RewardItem icon={Target} label="Fours" value={fourReward} />
-            <RewardItem
-              icon={Target}
-              label="Wickets Taken"
-              value={wicketTakenReward}
-            />
-            <RewardItem
-              icon={Target}
-              label="Win Margin"
-              value={winMarginReward}
-            />
-          </div>
-        </div>
-
-        <div className="bg-cyan-900/30 p-6 rounded-xl">
+        <div className="bg-cyan-900/30 p-6 rounded-xl mb-6">
           <h4 className="text-lg font-semibold mb-4 text-center text-cyan-400">
             Your Rewards
           </h4>
-          <p className="text-3xl font-bold text-center text-cyan-400">
+          <p className="text-3xl font-bold text-center text-cyan-400 mb-4">
             {fourReward + sixerReward + wicketTakenReward + winMarginReward} PWR
           </p>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full rounded-xl bg-cyan-600/25"
+              >
+                <Info className="w-4 h-4 mr-2" />
+                View Performance Details
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Your Performance</DialogTitle>
+              </DialogHeader>
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <RewardItem icon={Zap} label="Sixes" value={sixerReward} />
+                <RewardItem icon={Target} label="Fours" value={fourReward} />
+                <RewardItem
+                  icon={Award}
+                  label="Wickets Taken"
+                  value={wicketTakenReward}
+                />
+                <RewardItem
+                  icon={Trophy}
+                  label="Win Margin"
+                  value={winMarginReward}
+                />
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </section>
-      <section className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6 flex flex-col space-y-4">
-        <form action={formAction}>
-          <SubmitButton title="Claim Rewards" loadingTitle="Claiming..." />
-        </form>
+      <section className="bg-gradient-to-r from-slate-800/50 to-slate-900 p-6 sticky bottom-0">
+        <SubmitButton
+          title="Claim Rewards"
+          loadingTitle="Claiming..."
+          className="w-full py-4"
+        />
       </section>
     </main>
   );

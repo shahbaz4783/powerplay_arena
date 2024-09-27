@@ -7,6 +7,7 @@ import {
 } from "../types/gameState";
 import { saveMatchDataToDatabase } from "../actions/game.action";
 import { useInitData } from "@telegram-apps/sdk-react";
+import { FormResponse } from "./types";
 
 const GAME_STATE_KEY = "cricketGameState";
 
@@ -141,20 +142,27 @@ export const useCricketGameState = () => {
     });
   };
 
-  const endMatchAndClaimReward = async () => {
+  const endMatchAndClaimReward = async (
+    prevState: FormResponse,
+    formData: FormData,
+  ): Promise<FormResponse> => {
     try {
       if (!userId) throw new Error("User ID not found");
-      await saveMatchDataToDatabase(gameState, BigInt(userId));
+      const result = await saveMatchDataToDatabase(gameState, BigInt(userId));
       await clearGameState();
 
       queryClient.setQueryData([GAME_STATE_KEY], initialState);
 
       console.log("Match ended, reward claimed, and state cleared");
+      console.log(result);
+      return result;
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message);
+        return { message: { error: error.message } };
       } else {
         console.error("Error ending match and claiming reward:");
+        return { message: { error: "An unexpected error occurred" } };
       }
     }
   };

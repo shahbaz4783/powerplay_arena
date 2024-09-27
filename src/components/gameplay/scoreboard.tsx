@@ -38,7 +38,7 @@ export function ScoreBoard() {
           <span className="text-gray-300">{runRate}</span>
         </div>
       </div>
-      <Progress value={(ballsFaced / (5 * 6)) * 100} className="h-3" />
+      <Progress value={(ballsFaced / (overs * 6)) * 100} className="h-3" />
     </section>
   );
 }

@@ -58,10 +58,10 @@ export async function startQuickMatch(
 export async function saveMatchDataToDatabase(
   gameState: GameState,
   userId: bigint,
-) {
+): Promise<FormResponse> {
   try {
     // Start a transaction
-    return await db.$transaction(async (tx) => {
+    const result = await db.$transaction(async (tx) => {
       // Update user stats
       await tx.stats.upsert({
         where: { userId },
@@ -93,9 +93,21 @@ export async function saveMatchDataToDatabase(
       });
 
       // Calculate rewards
-      const sixReward = gameState.player.sixes * 6;
-      const fourReward = gameState.player.fours * 4;
-      const totalReward = sixReward + fourReward;
+      const sixReward =
+        gameState.player.sixes * gameState.matchSetup.rewards.six;
+      const fourReward =
+        gameState.player.fours * gameState.matchSetup.rewards.four;
+      const wicketReward =
+        gameState.opponent.wickets * gameState.matchSetup.rewards.wicket;
+      let marginReward = 0;
+      if (
+        gameState.matchResult.winner === "player" &&
+        gameState.matchResult.margin
+      ) {
+        marginReward =
+          gameState.matchResult.margin * gameState.matchSetup.rewards.runMargin;
+      }
+      const totalReward = sixReward + fourReward + wicketReward + marginReward;
 
       // Update user's wallet
       await tx.wallet.update({
@@ -106,21 +118,32 @@ export async function saveMatchDataToDatabase(
       });
 
       // Update match status
-      // await tx.match.update({
-      //   where: {
-      //     id: '324',
-      //   },
-      //   data: {
-      //     status: "COMPLETED",
-      //     reward: totalReward,
-      //     score: gameState.player.runs,
-      //   },
-      // });
+      await tx.match.updateMany({
+        where: {
+          userId,
+          status: "IN_PROGRESS",
+        },
+        data: {
+          status: "COMPLETED",
+          reward: totalReward,
+          score: gameState.player.runs,
+        },
+      });
 
-      return { success: true, reward: totalReward };
+      return { totalReward, sixReward, fourReward, wicketReward, marginReward };
     });
+
+    return {
+      message: {
+        success: `Rewards claimed successfully! You earned ${result.totalReward} PWR.`,
+      },
+    };
   } catch (error) {
     console.error("Error ending match and claiming reward:", error);
-    return { success: false, error: "Failed to end match and claim reward" };
+    return {
+      message: {
+        error: "Failed to end match and claim reward. Please try again.",
+      },
+    };
   }
 }

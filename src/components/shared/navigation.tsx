@@ -9,7 +9,7 @@ const Navigation = () => {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky bottom-0 m-auto flex justify-evenly py-4 gap-6 w-full  bg-black bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-gray-900 to-black text-white">
+    <nav className="sticky bottom-0 m-auto flex justify-evenly py-4 gap-6 w-full bg-black bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-gray-900 to-black text-white">
       {NAVIGATION_LINKS.map((item) => (
         <Link key={item.href} href={item.href}>
           <div

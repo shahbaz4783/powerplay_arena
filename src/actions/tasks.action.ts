@@ -1,5 +1,6 @@
 "use server";
 
+import { token } from "../lib/constants";
 import { db } from "../lib/db";
 import { FormResponse } from "../lib/types";
 
@@ -54,14 +55,14 @@ export const dailyDrop = async (
         balance: { increment: reward },
       },
     });
-    
+
     await db.user.update({
       where: { telegramId },
       data: {
         lastClaimed: now,
       },
     });
-    return { message: { success: `You got ${reward} Gems` } };
+    return { message: { success: `You got ${reward} ${token.symbol}` } };
   } catch (error) {
     if (error instanceof Error) {
       return { message: { error: error.message } };
