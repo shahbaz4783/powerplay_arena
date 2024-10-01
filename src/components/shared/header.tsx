@@ -10,7 +10,7 @@ export function Header({ title, subtitle, className }: HeaderProps) {
   return (
     <header
       className={cn(
-        "bg-gradient-to-r from-slate-800 to-slate-900 p-6 flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0",
+        "p-6 flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0 bg-slate-800/50 backdrop-blur-md ",
         className,
       )}
     >

@@ -13,7 +13,7 @@ export function MidInnings() {
   const { target, currentInnings, toss } = gameState;
   const { runs, wickets, oversPlayed } = getCurrentInningsData(gameState);
   const {
-    matchSetup: { overs, totalWickets },
+    matchSetup: { overs },
   } = gameState;
 
   const [isVisible, setIsVisible] = useState(false);
