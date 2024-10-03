@@ -113,7 +113,9 @@ export function Commentary() {
                   "text-red-300": ballResult === "OUT!",
                   "text-green-300": ballResult === "SIX!",
                   "text-blue-300": ballResult === "FOUR!",
-                  "text-white": !["OUT!", "SIX!", "FOUR!"].includes(ballResult || ""),
+                  "text-white": !["OUT!", "SIX!", "FOUR!"].includes(
+                    ballResult || "",
+                  ),
                 })}
               >
                 {ballResult}
