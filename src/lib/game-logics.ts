@@ -184,13 +184,24 @@ export const computerBowling = (gameState: GameState): BowlingType => {
 export const getCurrentInningsData = (
   gameState: GameState,
 ): InningsInterface => {
-  return gameState.currentInnings === 1
-    ? gameState.gamePhase === "batting"
-      ? gameState.player
-      : gameState.opponent
-    : gameState.gamePhase === "batting"
+  if (gameState.gamePhase === "inningsOver") {
+    console.log("mid innings");
+    return gameState.toss.playMode === "defend"
       ? gameState.player
       : gameState.opponent;
+  }
+
+  if (gameState.currentInnings === 1) {
+    console.log("mid innings 2");
+    return gameState.gamePhase === "batting"
+      ? gameState.player
+      : gameState.opponent;
+  } else {
+    console.log("mid innings 3");
+    return gameState.gamePhase === "batting"
+      ? gameState.player
+      : gameState.opponent;
+  }
 };
 
 export const calculateRewards = (gameState: GameState) => {
