@@ -13,17 +13,22 @@ export function NavCards() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.4 }}
     >
-      <button className="bg-slate-800/50 bg-opacity-70 backdrop-blur-xl border border-white p-4 rounded-xl flex flex-col items-center justify-center">
+      <Link
+        href={"/miniapp/rankings"}
+        className="bg-slate-800/50 bg-opacity-70 backdrop-blur-xl border border-white p-4 rounded-xl flex flex-col items-center justify-center"
+      >
         <ChartLine size={32} className="mb-2" />
-        <span>Rankings</span>
-      </button>
+        <span className="text-blue-200 text-sm font-mono">Rankings</span>
+      </Link>
+
       <Link
         href={"/miniapp/stats"}
         className="bg-slate-800/50 bg-opacity-70 backdrop-blur-xl border border-white p-4 rounded-xl flex flex-col items-center justify-center"
       >
         <Target size={32} className="mb-2" />
-        <span>Stats</span>
+        <span className="text-blue-200 text-sm font-mono">Stats</span>
       </Link>
+
       <DailyRewardDialog />
     </motion.section>
   );

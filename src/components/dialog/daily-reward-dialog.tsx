@@ -40,8 +40,8 @@ export function DailyRewardDialog() {
   return (
     <Dialog>
       <DialogTrigger className="bg-slate-800/50 bg-opacity-70 backdrop-blur-xl border border-white p-4 rounded-xl flex flex-col items-center justify-center">
-        <Gift size={32} className="mb-2 text-cyan-300" />
-        <span>Reward</span>
+        <Gift size={32} className="mb-2" />
+        <span className="text-blue-200 text-sm font-mono">Reward</span>
       </DialogTrigger>
       <DialogContent className="space-y-2">
         <DialogHeader className="space-y-6">

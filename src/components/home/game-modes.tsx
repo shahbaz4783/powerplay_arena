@@ -1,8 +1,8 @@
 "use client";
 
 import { Card, CardContent } from "@/src/components/ui/card";
-import batsmanImg from "@/assets/batsman.png";
-import trophyImg from "@/assets/trophy.png";
+import batsmanImg from "@/assets/quickplay.png";
+import trophyImg from "@/assets/tournament.png";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -15,7 +15,7 @@ export function GameModes() {
       transition={{ duration: 0.5, delay: 0.2 }}
     >
       <Card
-        className="bg-blue-700 rounded-xl overflow-hidden"
+        className="backdrop-blur-md rounded-xl overflow-hidden bg-no-repeat"
         style={{
           backgroundImage: `url(${batsmanImg.src})`,
           backgroundSize: "contain",
@@ -23,15 +23,11 @@ export function GameModes() {
         }}
       >
         <Link href={"/game/quickplay"}>
-          <CardContent className="h-full flex flex-col items-center justify-end bg-sky-200 bg-opacity-15">
-            <h3 className="text-lg font-bold bg-stone-300 text-sky-900 px-3 bg-opacity-80 rounded">
-              Quick Match
-            </h3>
-          </CardContent>
+          <CardContent className="h-full flex flex-col items-center justify-end bg-sky-200 bg-opacity-15"></CardContent>
         </Link>
       </Card>
       <Card
-        className="bg-blue-700 rounded-xl overflow-hidden"
+        className="bg-slate-100 backdrop-blur-md rounded-xl overflow-hidden bg-no-repeat"
         style={{
           backgroundImage: `url(${trophyImg.src})`,
           backgroundSize: "contain",
@@ -39,11 +35,7 @@ export function GameModes() {
         }}
       >
         <Link href={"/game/tournament"}>
-          <CardContent className="h-full flex flex-col items-center justify-end bg-sky-200 bg-opacity-20">
-            <h3 className="text-lg font-bold bg-stone-300 text-sky-900 px-3 bg-opacity-80 rounded">
-              Tournament
-            </h3>
-          </CardContent>
+          <CardContent className="h-full flex flex-col items-center justify-end bg-sky-200 bg-opacity-20"></CardContent>
         </Link>
       </Card>
     </motion.section>
