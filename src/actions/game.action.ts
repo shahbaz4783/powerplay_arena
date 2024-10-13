@@ -59,7 +59,7 @@ export async function startQuickMatch(
           userId: user.telegramId,
           amount: entryFee,
           type: "MATCH_FEE",
-          description: "Fees paid for quick match",
+          description: `Match fees for ${matchFormat} format`,
         },
       });
     });
@@ -80,18 +80,15 @@ export async function saveMatchDataToDatabase(
   if (!userId) return { message: { error: "No user Found" } };
 
   try {
-    // Start a transaction
     await db.$transaction(async (tx) => {
-      // Update user stats
       await tx.stats.upsert({
         where: {
           userId_format: {
             userId,
-            format: gameState.matchSetup.format,
+            format: gameState.matchSetup.format as MatchFormat,
           },
         },
         update: {
-          format: gameState.matchSetup.format,
           matchesPlayed: { increment: 1 },
           matchesWon:
             gameState.matchResult.winner === "player"
@@ -101,21 +98,32 @@ export async function saveMatchDataToDatabase(
             gameState.matchResult.winner === "opponent"
               ? { increment: 1 }
               : undefined,
+          matchesTie:
+            gameState.matchResult.winner === "tie"
+              ? { increment: 1 }
+              : undefined,
           runsScored: { increment: gameState.player.runs },
-          wicketsTaken: { increment: gameState.opponent.wickets },
+          ballsFaced: { increment: gameState.player.ballsFaced },
           sixes: { increment: gameState.player.sixes },
           fours: { increment: gameState.player.fours },
+          wicketsTaken: { increment: gameState.opponent.wickets },
+          runsConceded: { increment: gameState.opponent.runs },
+          ballsBowled: { increment: gameState.opponent.ballsFaced },
         },
         create: {
           userId,
+          format: gameState.matchSetup.format as MatchFormat,
           matchesPlayed: 1,
-          format: gameState.matchSetup.format,
           matchesWon: gameState.matchResult.winner === "player" ? 1 : 0,
           matchesLost: gameState.matchResult.winner === "opponent" ? 1 : 0,
+          matchesTie: gameState.matchResult.winner === "tie" ? 1 : 0,
           runsScored: gameState.player.runs,
-          wicketsTaken: gameState.opponent.wickets,
+          ballsFaced: gameState.player.ballsFaced,
           sixes: gameState.player.sixes,
           fours: gameState.player.fours,
+          wicketsTaken: gameState.opponent.wickets,
+          runsConceded: gameState.opponent.runs,
+          ballsBowled: gameState.opponent.ballsFaced,
         },
       });
 
@@ -144,15 +152,15 @@ export async function saveMatchDataToDatabase(
         },
       });
 
+      // Create transaction record
       await tx.transaction.create({
         data: {
           userId: userId,
           amount: totalReward,
           type: "MATCH_WINNINGS",
+          description: `Match winnings for ${gameState.matchSetup.format} format`,
         },
       });
-
-      return { totalReward, sixReward, fourReward, wicketReward, marginReward };
     });
   } catch (error) {
     console.error("Error ending match and claiming reward:", error);
