@@ -54,12 +54,12 @@ export async function startQuickMatch(
         data: { balance: { decrement: entryFee } },
       });
 
-      await tx.match.create({
+      await tx.transaction.create({
         data: {
           userId: user.telegramId,
-          entryFee: entryFee,
-          status: "IN_PROGRESS",
-          format: matchFormat,
+          amount: entryFee,
+          type: "MATCH_FEE",
+          description: "Fees paid for quick match",
         },
       });
     });
@@ -77,9 +77,11 @@ export async function saveMatchDataToDatabase(
   gameState: GameState,
   userId: bigint,
 ): Promise<FormResponse> {
+  if (!userId) return { message: { error: "No user Found" } };
+
   try {
     // Start a transaction
-    const result = await db.$transaction(async (tx) => {
+    await db.$transaction(async (tx) => {
       // Update user stats
       await tx.stats.upsert({
         where: {
@@ -142,16 +144,11 @@ export async function saveMatchDataToDatabase(
         },
       });
 
-      // Update match status
-      await tx.match.updateMany({
-        where: {
-          userId,
-          status: "IN_PROGRESS",
-        },
+      await tx.transaction.create({
         data: {
-          status: "COMPLETED",
-          reward: totalReward,
-          score: gameState.player.runs,
+          userId: userId,
+          amount: totalReward,
+          type: "MATCH_WINNINGS",
         },
       });
 
