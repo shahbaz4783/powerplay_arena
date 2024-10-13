@@ -4,6 +4,8 @@ import { FormResponse } from "@/src/lib/types";
 import { db } from "../lib/db";
 import { GameState } from "../types/gameState";
 import { redirect } from "next/navigation";
+import { MatchFormat } from "@prisma/client";
+import { isValidMatchFormat } from "../lib/utils";
 
 export async function startQuickMatch(
   telegramId: number,
@@ -19,9 +21,24 @@ export async function startQuickMatch(
     if (!user) {
       return { message: { error: "No user found" } };
     }
+    const formatValue = formData.get("format");
+    const entryFee = parseInt(formData.get("entryFee") as string);
 
-    const entryFee = parseInt(formData.get("entryFee") as string, 10);
-    console.log(entryFee);
+    if (user.wallet!.balance < entryFee) {
+      return { message: { error: "Insufficient balance" } };
+    }
+
+    if (
+      !formatValue ||
+      typeof formatValue !== "string" ||
+      !isValidMatchFormat(formatValue)
+    ) {
+      return { message: { error: "Invalid match format" } };
+    }
+
+    const matchFormat: MatchFormat = formatValue as MatchFormat;
+
+    console.log(matchFormat);
 
     if (isNaN(entryFee)) {
       return { message: { error: "Invalid entry fee" } };
@@ -42,6 +59,7 @@ export async function startQuickMatch(
           userId: user.telegramId,
           entryFee: entryFee,
           status: "IN_PROGRESS",
+          format: matchFormat,
         },
       });
     });
@@ -64,8 +82,14 @@ export async function saveMatchDataToDatabase(
     const result = await db.$transaction(async (tx) => {
       // Update user stats
       await tx.stats.upsert({
-        where: { userId },
+        where: {
+          userId_format: {
+            userId,
+            format: gameState.matchSetup.format,
+          },
+        },
         update: {
+          format: gameState.matchSetup.format,
           matchesPlayed: { increment: 1 },
           matchesWon:
             gameState.matchResult.winner === "player"
@@ -83,6 +107,7 @@ export async function saveMatchDataToDatabase(
         create: {
           userId,
           matchesPlayed: 1,
+          format: gameState.matchSetup.format,
           matchesWon: gameState.matchResult.winner === "player" ? 1 : 0,
           matchesLost: gameState.matchResult.winner === "opponent" ? 1 : 0,
           runsScored: gameState.player.runs,
@@ -132,12 +157,6 @@ export async function saveMatchDataToDatabase(
 
       return { totalReward, sixReward, fourReward, wicketReward, marginReward };
     });
-
-    return {
-      message: {
-        success: `Rewards claimed successfully! You earned ${result.totalReward} PWR.`,
-      },
-    };
   } catch (error) {
     console.error("Error ending match and claiming reward:", error);
     return {
@@ -146,4 +165,5 @@ export async function saveMatchDataToDatabase(
       },
     };
   }
+  redirect("/miniapp");
 }

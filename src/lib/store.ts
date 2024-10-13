@@ -17,7 +17,7 @@ const initialState: GameState = {
   target: null,
 
   matchSetup: {
-    format: "blitz",
+    format: "BLITZ",
     entryFee: 50,
     overs: 2,
     totalWickets: 2,

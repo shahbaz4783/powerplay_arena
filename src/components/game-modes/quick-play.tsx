@@ -44,7 +44,7 @@ import { MatchFormat, MATCH_FORMATS } from "@/src/types/gameState";
 import { Header } from "../shared/header";
 
 export function QuickPlayMode() {
-  const [selectedFormat, setSelectedFormat] = useState<MatchFormat>("blitz");
+  const [selectedFormat, setSelectedFormat] = useState<MatchFormat>("BLITZ");
 
   const { updateGameState } = useCricketGameState();
 
@@ -215,11 +215,11 @@ function FormatIcon({
   className?: string;
 }) {
   switch (format) {
-    case "blitz":
+    case "BLITZ":
       return <Bolt className={className} />;
-    case "classic":
+    case "POWERPLAY":
       return <Trophy className={className} />;
-    case "extended":
+    case "CLASSIC":
       return <Shield className={className} />;
     default:
       return <Clock className={className} />;

@@ -12,7 +12,7 @@ export type GamePhase =
   | "inningsOver"
   | "result";
 
-export type MatchFormat = "blitz" | "classic" | "extended";
+export type MatchFormat = "BLITZ" | "POWERPLAY" | "CLASSIC";
 
 export interface MatchSetup {
   format: MatchFormat;
@@ -77,8 +77,8 @@ export interface GameState {
 }
 
 export const MATCH_FORMATS: Record<MatchFormat, MatchSetup> = {
-  blitz: {
-    format: "blitz",
+  BLITZ: {
+    format: "BLITZ",
     overs: 2,
     entryFee: 50,
     totalWickets: 2,
@@ -89,8 +89,8 @@ export const MATCH_FORMATS: Record<MatchFormat, MatchSetup> = {
       runMargin: 5,
     },
   },
-  classic: {
-    format: "classic",
+  POWERPLAY: {
+    format: "POWERPLAY",
     overs: 5,
     entryFee: 100,
     totalWickets: 5,
@@ -101,8 +101,8 @@ export const MATCH_FORMATS: Record<MatchFormat, MatchSetup> = {
       runMargin: 4,
     },
   },
-  extended: {
-    format: "extended",
+  CLASSIC: {
+    format: "CLASSIC",
     overs: 10,
     entryFee: 200,
     totalWickets: 10,

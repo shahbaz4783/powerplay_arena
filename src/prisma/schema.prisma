@@ -8,46 +8,57 @@ datasource db {
 }
 
 model WaitlistUser {
-  id String @id @default(uuid())
-  email String @unique
+  id        String   @id @default(uuid())
+  email     String   @unique
   createdAt DateTime @default(now())
 }
 
 model User {
-  telegramId       BigInt @unique
-  firstName        String @unique
-  lastName         String?
-  username         String? @unique
-  languageCode     String
-  isPremium        Boolean?
-  lastClaimed      DateTime?
-  wallet           Wallet?
-  matches   Match[]
-  stats     Stats?
+  telegramId     BigInt    @unique
+  firstName      String    @unique
+  lastName       String?
+  username       String?   @unique
+  languageCode   String
+  isPremium      Boolean?
+  lastClaimed    DateTime?
+  wallet         Wallet?
+  matches        Match[]
+  stats          Stats[]
 }
 
 model Match {
-  id           String   @id @default(cuid())
-  userId       BigInt
-  user         User     @relation(fields: [userId], references: [telegramId])
-  entryFee     Int
-  reward       Int?
-  status       MatchStatus @default(PENDING)
-  score        Json?
-  createdAt    DateTime @default(now())
+  id        String      @id @default(cuid())
+  userId    BigInt
+  user      User        @relation(fields: [userId], references: [telegramId])
+  entryFee  Int
+  reward    Int?
+  status    MatchStatus @default(PENDING)
+  score     Json?
+  createdAt DateTime    @default(now())
+  format    MatchFormat
 }
 
 model Stats {
-  id            String @id @default(cuid())
-  userId        BigInt @unique
-  user          User   @relation(fields: [userId], references: [telegramId])
-  matchesPlayed Int    @default(0)
-  matchesWon    Int    @default(0)
-  matchesLost   Int    @default(0)
-  runsScored    Int    @default(0)
-  wicketsTaken  Int    @default(0)
-  sixes         Int    @default(0)
-  fours         Int    @default(0)
+  id            String      @id @default(cuid())
+  userId        BigInt
+  user          User        @relation(fields: [userId], references: [telegramId])
+  matchesPlayed Int         @default(0)
+  matchesWon    Int         @default(0)
+  matchesLost   Int         @default(0)
+  matchesTie    Int         @default(0)
+  runsScored    Int         @default(0)
+  ballsFaced    Int         @default(0)
+  sixes         Int         @default(0)
+  fours         Int         @default(0)
+  wicketsTaken  Int         @default(0)
+  runsConceded  Int         @default(0)
+  ballsBowled   Int         @default(0)
+  format        MatchFormat
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([userId, format])
+  @@index([userId])
 }
 
 enum MatchStatus {
@@ -57,9 +68,15 @@ enum MatchStatus {
   CLAIMED
 }
 
+enum MatchFormat {
+  BLITZ
+  POWERPLAY
+  CLASSIC
+}
+
 model Wallet {
-  id               String @id @default(cuid())
-  balance          Int
-  user             User @relation(fields: [userId], references: [telegramId])
-  userId           BigInt @unique
+  id      String @id @default(cuid())
+  balance Int
+  user    User   @relation(fields: [userId], references: [telegramId])
+  userId  BigInt @unique
 }
