@@ -1,30 +1,21 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Gem, Star, Zap, ChevronLeft, ChevronRight, X } from "lucide-react";
-import Image from "next/image";
+import { motion } from "framer-motion";
+import { Zap } from "lucide-react";
 import { saveOrUpdateUser } from "../../actions/user.action";
-import { useGetWalletBalance } from "@/src/hooks/useGetWalletBalance";
+import { useGetUserInfo } from "@/src/hooks/useGetWalletBalance";
 import { useInitData } from "@telegram-apps/sdk-react";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/src/components/ui/avatar";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/src/components/ui/dialog";
-import { Button } from "@/src/components/ui/button";
+import { Dialog, DialogTrigger } from "@/src/components/ui/dialog";
 import { Progress } from "@/src/components/ui/progress";
 
 import { token } from "@/src/lib/constants";
 import { AvatarDialog } from "../dialog/avatar-dialog";
-import { useCricketGameState } from "@/src/lib/store";
 
 const levelTitles = [
   "Rookie Batsman",
@@ -66,21 +57,19 @@ const avatars = [
 
 export function UserInfoHeader() {
   const [currentAvatar, setCurrentAvatar] = useState(1);
-  const [level, setLevel] = useState(1);
-  const [xp, setXp] = useState(75);
 
   const initData = useInitData();
   const user = initData?.user;
 
-  const { data, isLoading } = useGetWalletBalance(user?.id!);
+  const { data, isLoading } = useGetUserInfo(user?.id);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (!user) return null;
+        if (!user) return;
         await saveOrUpdateUser(user);
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("Error saving/updating user data:", error);
       }
     };
 
@@ -90,6 +79,12 @@ export function UserInfoHeader() {
   const getLevelTitle = (level: number) => {
     return levelTitles[Math.min(level - 1, levelTitles.length - 1)];
   };
+
+  const level = data?.userXP?.level ?? 1;
+  const totalXP = data?.userXP?.totalXP ?? 0;
+  const balance = data?.walletInfo?.balance ?? 0;
+
+  const xpForNextLevel = 1000 - (totalXP % 1000);
 
   return (
     <motion.div
@@ -132,15 +127,15 @@ export function UserInfoHeader() {
         <div className="text-right">
           <p className="text-sm text-yellow-300">Level {level}</p>
           <p className="text-2xl font-bold">
-            {data?.balance} <span className="text-sm">{token.symbol}</span>
+            {balance} <span className="text-sm">{token.symbol}</span>
           </p>
         </div>
       </div>
       <div className="space-y-3 ">
-        <Progress value={xp} className="w-full" />
+        <Progress value={(totalXP % 1000) / 10} className="w-full" />
         <div className="flex justify-between text-sm text-blue-300">
-          <span>XP: {xp}/100</span>
-          <span>Next Level: {100 - xp} XP</span>
+          <span>XP: {totalXP}</span>
+          <span>Next Level: {xpForNextLevel} XP</span>
         </div>
       </div>
     </motion.div>

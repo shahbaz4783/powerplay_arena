@@ -1,9 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { getUserInfoById } from "../actions/user.action";
 
-export const useGetWalletBalance = (userId: number) => {
+export const useGetUserInfo = (userId: number | undefined) => {
   return useQuery({
-    queryKey: ["wallet-balance", userId],
-    queryFn: () => getUserInfoById(userId),
+    queryKey: ["user-info", userId],
+    queryFn: () => getUserInfoById(userId!),
+    enabled: !!userId,
+    staleTime: 60000,
+    gcTime: 3600000,
   });
 };

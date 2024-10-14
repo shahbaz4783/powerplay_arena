@@ -73,11 +73,16 @@ export const getUserInfoById = async (userId: number) => {
         select: { balance: true },
       });
 
+      const userXP = await tx.xP.findUnique({
+        where: { userId },
+        select: { level: true, totalXP: true },
+      });
+
       if (!walletInfo) {
         throw new Error("User wallet not found");
       }
 
-      return walletInfo;
+      return {walletInfo, userXP};
     });
 
     return result;

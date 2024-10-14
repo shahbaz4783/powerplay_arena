@@ -6,6 +6,7 @@ import { GameState } from "../types/gameState";
 import { redirect } from "next/navigation";
 import { MatchFormat } from "@prisma/client";
 import { isValidMatchFormat } from "../lib/utils";
+import { calculateRewards } from "../lib/game-logics";
 
 export async function startQuickMatch(
   telegramId: number,
@@ -112,28 +113,10 @@ export async function saveMatchDataToDatabase(
       });
 
       // Calculate rewards
-      const sixReward =
-        gameState.player.sixes * gameState.matchSetup.rewards.six;
-      const fourReward =
-        gameState.player.fours * gameState.matchSetup.rewards.four;
-      const wicketReward =
-        gameState.opponent.wickets * gameState.matchSetup.rewards.wicket;
-      let marginReward = 0;
-      if (
-        gameState.matchResult.winner === "player" &&
-        gameState.matchResult.margin
-      ) {
-        marginReward =
-          gameState.matchResult.margin * gameState.matchSetup.rewards.runMargin;
-      }
-      const totalReward = sixReward + fourReward + wicketReward + marginReward;
-
-      // Calculate XP
-      const baseXP = 100; // Base XP for completing a match
-      const winBonus = gameState.matchResult.winner === "player" ? 50 : 0;
-      const performanceXP =
-        gameState.player.runs + gameState.opponent.wickets * 10;
-      const totalXP = baseXP + winBonus + performanceXP;
+      const { fourReward, sixerReward, wicketTakenReward, winMarginReward } =
+        calculateRewards(gameState);
+      const totalReward =
+        sixerReward + fourReward + wicketTakenReward + winMarginReward;
 
       // Update user's wallet
       await tx.wallet.update({
@@ -142,6 +125,13 @@ export async function saveMatchDataToDatabase(
           balance: { increment: totalReward },
         },
       });
+
+      // Calculate XP
+      const baseXP = 100;
+      const winBonus = gameState.matchResult.winner === "player" ? 50 : 0;
+      const performanceXP =
+        gameState.player.runs + gameState.opponent.wickets * 10;
+      const totalXP = baseXP + winBonus + performanceXP;
 
       // Update XP record
       const updatedXP = await tx.xP.update({
@@ -152,8 +142,8 @@ export async function saveMatchDataToDatabase(
         },
       });
 
-      // Check for level up
       const newLevel = Math.floor(updatedXP.totalXP / 1000) + 1;
+      // Check for level up
       if (newLevel > updatedXP.level) {
         await tx.xP.update({
           where: { userId },
