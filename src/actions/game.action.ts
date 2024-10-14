@@ -77,18 +77,17 @@ export async function saveMatchDataToDatabase(
   gameState: GameState,
   userId: bigint,
 ): Promise<FormResponse> {
-  if (!userId) return { message: { error: "No user Found" } };
-
   try {
+    if (!userId) return { message: { error: "No user Found" } };
     await db.$transaction(async (tx) => {
-      await tx.stats.upsert({
+      await tx.stats.update({
         where: {
           userId_format: {
             userId,
             format: gameState.matchSetup.format as MatchFormat,
           },
         },
-        update: {
+        data: {
           matchesPlayed: { increment: 1 },
           matchesWon:
             gameState.matchResult.winner === "player"
@@ -110,21 +109,6 @@ export async function saveMatchDataToDatabase(
           runsConceded: { increment: gameState.opponent.runs },
           ballsBowled: { increment: gameState.opponent.ballsFaced },
         },
-        create: {
-          userId,
-          format: gameState.matchSetup.format as MatchFormat,
-          matchesPlayed: 1,
-          matchesWon: gameState.matchResult.winner === "player" ? 1 : 0,
-          matchesLost: gameState.matchResult.winner === "opponent" ? 1 : 0,
-          matchesTie: gameState.matchResult.winner === "tie" ? 1 : 0,
-          runsScored: gameState.player.runs,
-          ballsFaced: gameState.player.ballsFaced,
-          sixes: gameState.player.sixes,
-          fours: gameState.player.fours,
-          wicketsTaken: gameState.opponent.wickets,
-          runsConceded: gameState.opponent.runs,
-          ballsBowled: gameState.opponent.ballsFaced,
-        },
       });
 
       // Calculate rewards
@@ -144,6 +128,13 @@ export async function saveMatchDataToDatabase(
       }
       const totalReward = sixReward + fourReward + wicketReward + marginReward;
 
+      // Calculate XP
+      const baseXP = 100; // Base XP for completing a match
+      const winBonus = gameState.matchResult.winner === "player" ? 50 : 0;
+      const performanceXP =
+        gameState.player.runs + gameState.opponent.wickets * 10;
+      const totalXP = baseXP + winBonus + performanceXP;
+
       // Update user's wallet
       await tx.wallet.update({
         where: { userId },
@@ -151,6 +142,24 @@ export async function saveMatchDataToDatabase(
           balance: { increment: totalReward },
         },
       });
+
+      // Update XP record
+      const updatedXP = await tx.xP.update({
+        where: { userId },
+        data: {
+          totalXP: { increment: totalXP },
+          lastUpdated: new Date(),
+        },
+      });
+
+      // Check for level up
+      const newLevel = Math.floor(updatedXP.totalXP / 1000) + 1;
+      if (newLevel > updatedXP.level) {
+        await tx.xP.update({
+          where: { userId },
+          data: { level: newLevel },
+        });
+      }
 
       // Create transaction record
       await tx.transaction.create({

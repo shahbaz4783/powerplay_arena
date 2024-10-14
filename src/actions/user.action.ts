@@ -1,59 +1,92 @@
-'use server';
+"use server";
 
-import { getUserById, getWalletBalanceById } from '@/src/data/user';
-import { db } from '@/src/lib/db';
-import { User } from '@telegram-apps/sdk-react';
+import { db } from "@/src/lib/db";
+import { User } from "@telegram-apps/sdk-react";
+import { MatchFormat } from "@prisma/client";
 
 export const saveOrUpdateUser = async (user: User) => {
-	try {
-		const existingUser = await getUserById(user.id);
+  try {
+    const formats: MatchFormat[] = ["BLITZ", "POWERPLAY", "CLASSIC"];
 
-		if (existingUser) {
-			await db.user.update({
-				where: { telegramId: user.id },
-				data: {
-					username: user.username,
-					firstName: user.firstName,
-					lastName: user.lastName,
-					languageCode: user.languageCode,
-					isPremium: user.isPremium,
-				},
-			});
-		} else {
-			await db.$transaction(async (db: any) => {
-				await db.user.create({
-					data: {
-						telegramId: user.id,
-						username: user.username,
-						firstName: user.firstName,
-						lastName: user.lastName,
-						languageCode: user.languageCode || 'en',
-						isPremium: user.isPremium,
-					},
-				});
+    const result = await db.$transaction(async (tx) => {
+      const upsertedUser = await tx.user.upsert({
+        where: { telegramId: user.id },
+        update: {
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          languageCode: user.languageCode,
+          isPremium: user.isPremium,
+        },
+        create: {
+          telegramId: user.id,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          languageCode: user.languageCode || "en",
+          isPremium: user.isPremium,
+          wallet: {
+            create: {
+              balance: 100,
+            },
+          },
+          xp: {
+            create: {
+              totalXP: 0,
+              level: 1,
+            },
+          },
+          stats: {
+            create: formats.map((format) => ({
+              format,
+            })),
+          },
+        },
+      });
 
-				await db.wallet.create({
-					data: {
-						userId: user.id,
-						balance: 100,
-					},
-				});
-			});
-		}
-	} catch (error) {
-		if (error instanceof Error) {
-			console.log(error.message);
-		} else {
-			console.log('Something Went Wrong');
-		}
-	} finally {
-		await db.$disconnect();
-	}
+      // Fetch the wallet balance within the same transaction
+      const walletInfo = await tx.wallet.findUnique({
+        where: { userId: user.id },
+        select: { balance: true },
+      });
+
+      return { user: upsertedUser, walletBalance: walletInfo?.balance };
+    });
+
+    console.log("User data saved/updated successfully");
+    return result;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error saving/updating user:", error.message);
+    } else {
+      console.error("Something went wrong while saving/updating user");
+    }
+    throw error;
+  }
 };
 
 export const getUserInfoById = async (userId: number) => {
-	return db.wallet.findUnique({
-		where: { userId },
-		select: { balance: true },
-	});
+  try {
+    const result = await db.$transaction(async (tx) => {
+      const walletInfo = await tx.wallet.findUnique({
+        where: { userId },
+        select: { balance: true },
+      });
+
+      if (!walletInfo) {
+        throw new Error("User wallet not found");
+      }
+
+      return walletInfo;
+    });
+
+    return result;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching user info:", error.message);
+    } else {
+      console.error("Something went wrong while fetching user info");
+    }
+    throw error;
+  }
 };

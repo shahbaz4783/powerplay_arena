@@ -24,6 +24,18 @@ model User {
   wallet         Wallet?
   transaction    Transaction[]
   stats          Stats[]
+  xp             XP?
+}
+
+model XP {
+  id            String   @id @default(cuid())
+  userId        BigInt   @unique
+  user          User     @relation(fields: [userId], references: [telegramId])
+  totalXP       Int      @default(0)
+  level         Int      @default(1)
+  lastUpdated   DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Stats {
