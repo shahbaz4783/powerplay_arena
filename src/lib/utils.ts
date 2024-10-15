@@ -1,4 +1,4 @@
-import { MatchFormat } from "@prisma/client";
+import { MatchFormat, Stats } from "@prisma/client";
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -51,4 +51,9 @@ export const timeSince = (date: Date): string => {
 
   const yearsPast: number = Math.ceil(daysPast / 365);
   return `${yearsPast} year${yearsPast !== 1 ? "s" : ""} ago`;
+};
+
+export const calculateEcomony = (stats: Stats) => {
+  const { ballsBowled, runsConceded } = stats;
+  
 };

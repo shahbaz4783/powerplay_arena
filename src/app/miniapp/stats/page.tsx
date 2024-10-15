@@ -5,9 +5,7 @@ import { BowlingStats } from "@/src/components/stats/bowling-stats";
 export default function StatsPage() {
   return (
     <div className="space-y-12">
-      <PerformanceStats />
       <BattingStats />
-      <BowlingStats />
     </div>
   );
 }

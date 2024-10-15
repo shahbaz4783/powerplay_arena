@@ -3,7 +3,7 @@
 import { token } from "@/src/lib/constants";
 import { Header } from "../shared/header";
 import { useInitData } from "@telegram-apps/sdk-react";
-import { useGetUserInfo } from "@/src/hooks/useGetWalletBalance";
+import { useGetUserInfo } from "@/src/hooks/useUserData";
 
 export function WalletOverview() {
   const initData = useInitData();

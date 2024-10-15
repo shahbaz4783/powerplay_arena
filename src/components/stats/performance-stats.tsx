@@ -8,8 +8,12 @@ import {
   ChartTooltipContent,
 } from "@/src/components/ui/chart";
 import { StatCard } from "../cards/stats-card";
-import SectionHeading from "../shared/section-heading";
 import { motion } from "framer-motion";
+import { useGetUserStats } from "@/src/hooks/useUserData";
+import { useInitData } from "@telegram-apps/sdk-react";
+import { TabsContent } from "@radix-ui/react-tabs";
+import { Card } from "@telegram-apps/telegram-ui";
+import { CardHeader, CardTitle, CardContent } from "../ui/card";
 
 export const description = "A radial chart with stacked sections";
 
@@ -28,6 +32,12 @@ const chartConfig = {
 
 export function PerformanceStats() {
   const totalMatches = chartData[0].lost + chartData[0].won;
+
+  const initData = useInitData();
+  const user = initData?.user;
+  const { data: stats } = useGetUserStats(user?.id);
+
+  if (!stats) return null;
 
   return (
     <motion.section

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Zap } from "lucide-react";
 import { saveOrUpdateUser } from "../../actions/user.action";
-import { useGetUserInfo } from "@/src/hooks/useGetWalletBalance";
+import { useGetUserInfo } from "@/src/hooks/useUserData";
 import { useInitData } from "@telegram-apps/sdk-react";
 import {
   Avatar,

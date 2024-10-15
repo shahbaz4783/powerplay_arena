@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetUserTransaction } from "@/src/hooks/useGetUserTransactions";
+import { useGetUserTransaction } from "@/src/hooks/useUserData";
 import { useInitData } from "@telegram-apps/sdk-react";
 import { Card } from "@telegram-apps/telegram-ui";
 import { DollarSign, BarChart2, ArrowDown, ArrowUp } from "lucide-react";

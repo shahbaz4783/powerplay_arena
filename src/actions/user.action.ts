@@ -117,3 +117,30 @@ export const getUserTransactionById = async (
     throw error;
   }
 };
+
+export const getUserStats = async (userId: number) => {
+  try {
+    const stats = await db.stats.findMany({
+      where: {
+        userId: BigInt(userId),
+      },
+    });
+
+    const formattedStats = stats.reduce(
+      (acc, stat) => {
+        acc[stat.format] = stat;
+        return acc;
+      },
+      {} as Record<string, (typeof stats)[0]>,
+    );
+
+    return formattedStats;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching user stats info:", error.message);
+    } else {
+      console.error("Something went wrong while fetching stats info");
+    }
+    throw error;
+  }
+};
