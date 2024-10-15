@@ -39,13 +39,9 @@ interface FormatStats {
   ballsBowled: number;
 }
 
-interface UserStats {
-  [key: string]: FormatStats;
-}
-
 const statSections: StatSection[] = [
   {
-    title: "Overall Statistics",
+    title: "Performance",
     stats: [
       {
         key: "matchesPlayed",

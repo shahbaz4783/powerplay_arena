@@ -37,7 +37,7 @@
 		"eruda": "^3.0.1",
 		"framer-motion": "^11.3.21",
 		"lucide-react": "^0.424.0",
-		"next": "14.2.4",
+		"next": "^14.2.15",
 		"normalize.css": "^8.0.1",
 		"react": "^18",
 		"react-dom": "^18",
