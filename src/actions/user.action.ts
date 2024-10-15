@@ -2,7 +2,7 @@
 
 import { db } from "@/src/lib/db";
 import { User } from "@telegram-apps/sdk-react";
-import { MatchFormat } from "@prisma/client";
+import { MatchFormat, Transaction } from "@prisma/client";
 
 export const saveOrUpdateUser = async (user: User) => {
   try {
@@ -82,7 +82,7 @@ export const getUserInfoById = async (userId: number) => {
         throw new Error("User wallet not found");
       }
 
-      return {walletInfo, userXP};
+      return { walletInfo, userXP };
     });
 
     return result;
@@ -91,6 +91,28 @@ export const getUserInfoById = async (userId: number) => {
       console.error("Error fetching user info:", error.message);
     } else {
       console.error("Something went wrong while fetching user info");
+    }
+    throw error;
+  }
+};
+
+export const getUserTransactionById = async (
+  userId: number,
+  page: number = 1,
+) => {
+  try {
+    const pageSize = 10;
+    return await db.transaction.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: pageSize,
+      skip: (page - 1) * pageSize,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching user transaction info:", error.message);
+    } else {
+      console.error("Something went wrong while fetching transaction info");
     }
     throw error;
   }

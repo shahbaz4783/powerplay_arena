@@ -61,7 +61,7 @@ export function UserInfoHeader() {
   const initData = useInitData();
   const user = initData?.user;
 
-  const { data, isLoading } = useGetUserInfo(user?.id);
+  const { data } = useGetUserInfo(user?.id);
 
   useEffect(() => {
     const fetchData = async () => {

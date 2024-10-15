@@ -19,50 +19,65 @@ export const dailyDrop = async (
   formData: FormData,
 ): Promise<FormResponse> => {
   try {
-    const user = await db.user.findUnique({
-      where: { telegramId },
-    });
+    const result = await db.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({
+        where: { telegramId },
+      });
 
-    if (!user) {
-      return { message: { error: "User not found" } };
-    }
-
-    const now = new Date();
-    const lastClaimed = user.lastClaimed ? new Date(user.lastClaimed) : null;
-
-    if (lastClaimed) {
-      const startOfToday = new Date(
-        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
-      );
-      const endOfToday = new Date(
-        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1),
-      );
-
-      if (lastClaimed >= startOfToday && lastClaimed < endOfToday) {
-        return {
-          message: {
-            error: "You have already claimed your daily reward today",
-          },
-        };
+      if (!user) {
+        throw new Error("User not found");
       }
-    }
 
-    const reward = Math.floor(Math.random() * 41) + 10;
+      const now = new Date();
+      const lastClaimed = user.lastClaimed ? new Date(user.lastClaimed) : null;
 
-    await db.wallet.update({
-      where: { userId: telegramId },
-      data: {
-        balance: { increment: reward },
-      },
+      if (lastClaimed) {
+        const startOfToday = new Date(
+          Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+        );
+        const endOfToday = new Date(
+          Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            now.getUTCDate() + 1,
+          ),
+        );
+
+        if (lastClaimed >= startOfToday && lastClaimed < endOfToday) {
+          throw new Error("You have already claimed your daily reward today");
+        }
+      }
+
+      const reward = Math.floor(Math.random() * 41) + 10;
+
+      await tx.wallet.update({
+        where: { userId: telegramId },
+        data: {
+          balance: { increment: reward },
+        },
+      });
+
+      await tx.user.update({
+        where: { telegramId },
+        data: {
+          lastClaimed: now,
+        },
+      });
+
+      // Create a transaction record
+      await tx.transaction.create({
+        data: {
+          userId: telegramId,
+          amount: reward,
+          type: "REWARD",
+          description: "Daily reward claim",
+        },
+      });
+
+      return reward;
     });
 
-    await db.user.update({
-      where: { telegramId },
-      data: {
-        lastClaimed: now,
-      },
-    });
-    return { message: { success: `You got ${reward} ${token.symbol}` } };
+    return { message: { success: `You got ${result} ${token.symbol}` } };
   } catch (error) {
     if (error instanceof Error) {
       return { message: { error: error.message } };
