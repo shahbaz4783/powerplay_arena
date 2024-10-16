@@ -216,11 +216,13 @@ export const calculateRewards = (gameState: GameState) => {
   const sixerReward = player.sixes * six;
   const wicketTakenReward = opponent.wickets * wicket;
 
-  if (margin && marginType === "runs") {
-    winMarginReward = runMargin * margin;
-  }
-  if (margin && marginType === "wickets") {
-    winMarginReward = wicket * margin;
+  if (gameState.matchResult.winner === "player") {
+    if (margin && marginType === "runs") {
+      winMarginReward = runMargin * margin;
+    }
+    if (margin && marginType === "wickets") {
+      winMarginReward = wicket * margin;
+    }
   }
 
   return {

@@ -115,6 +115,7 @@ export async function saveMatchDataToDatabase(
       // Calculate rewards
       const { fourReward, sixerReward, wicketTakenReward, winMarginReward } =
         calculateRewards(gameState);
+
       const totalReward =
         sixerReward + fourReward + wicketTakenReward + winMarginReward;
 

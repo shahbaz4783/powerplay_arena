@@ -144,3 +144,29 @@ export const getUserStats = async (userId: number) => {
     throw error;
   }
 };
+
+export const getUserRankings = async () => {
+  try {
+    return await db.user.findMany({
+      where: {
+        xp: {
+          totalXP: {
+            gt: 0,
+          },
+        },
+      },
+      orderBy: { xp: { totalXP: "desc" } },
+      include: {
+        xp: { select: { totalXP: true, level: true } },
+      },
+      take: 20,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching user transaction info:", error.message);
+    } else {
+      console.error("Something went wrong while fetching transaction info");
+    }
+    throw error;
+  }
+};

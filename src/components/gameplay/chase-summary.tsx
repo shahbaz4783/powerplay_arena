@@ -9,7 +9,7 @@ export function ChaseSummary() {
   if (!gameState.target) return null;
 
   const {
-    matchSetup: { overs, totalWickets },
+    matchSetup: { overs },
   } = gameState;
 
   const { ballsFaced, runs } = getCurrentInningsData(gameState);

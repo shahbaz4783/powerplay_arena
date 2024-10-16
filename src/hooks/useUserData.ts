@@ -1,5 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { getUserStats, getUserTransactionById } from "../actions/user.action";
+import {
+  getUserRankings,
+  getUserStats,
+  getUserTransactionById,
+} from "../actions/user.action";
 import { getUserInfoById } from "../actions/user.action";
 
 export const useGetUserInfo = (userId: number | undefined) => {
@@ -27,6 +31,15 @@ export const useGetUserStats = (userId: number | undefined) => {
     queryKey: ["user-stats", userId],
     queryFn: () => getUserStats(userId!),
     enabled: !!userId,
+    staleTime: 60000,
+    gcTime: 3600000,
+  });
+};
+
+export const useGetUserRanking = () => {
+  return useQuery({
+    queryKey: ["user-ranking"],
+    queryFn: () => getUserRankings(),
     staleTime: 60000,
     gcTime: 3600000,
   });
