@@ -101,7 +101,7 @@ export const getUserTransactionById = async (
   page: number = 1,
 ) => {
   try {
-    const pageSize = 10;
+    const pageSize = 20;
     return await db.transaction.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },

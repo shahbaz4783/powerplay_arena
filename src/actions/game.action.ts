@@ -60,7 +60,7 @@ export async function startQuickMatch(
           userId: user.telegramId,
           amount: entryFee,
           type: "MATCH_FEE",
-          description: `Match fees for ${matchFormat} format`,
+          description: `Match Entry Fee (${matchFormat})`,
         },
       });
     });
@@ -158,7 +158,7 @@ export async function saveMatchDataToDatabase(
           userId: userId,
           amount: totalReward,
           type: "MATCH_WINNINGS",
-          description: `Match winnings for ${gameState.matchSetup.format} format`,
+          description: `Earnings from ${gameState.matchSetup.format} Match`,
         },
       });
     });
