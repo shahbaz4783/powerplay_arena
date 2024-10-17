@@ -44,7 +44,7 @@ export const dailyDrop = async (
         );
 
         if (lastClaimed >= startOfToday && lastClaimed < endOfToday) {
-          throw new Error("You have already claimed your daily reward today");
+          throw new Error("You have already claimed your daily reward");
         }
       }
 

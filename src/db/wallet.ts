@@ -10,9 +10,13 @@ export async function createWallet(userId: bigint, initialBalance: number = 0) {
   });
 }
 
-export async function updateWalletBalance(userId: bigint, amount: number) {
+export async function updateWalletBalance(telegramId: number, amount: number, operation: 'increment' | 'decrement') {
+  if (operation !== 'increment' && operation !== 'decrement') {
+    throw new Error('Invalid operation type');
+  }
+
   return db.wallet.update({
-    where: { userId },
-    data: { balance: { increment: amount } },
+    where: { userId: telegramId },
+    data: { balance: { [operation]: amount } },
   });
 }
