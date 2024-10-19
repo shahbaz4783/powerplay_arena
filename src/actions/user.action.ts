@@ -4,6 +4,11 @@ import { db } from "@/src/lib/db";
 import { User } from "@telegram-apps/sdk-react";
 import { MatchFormat, Transaction } from "@prisma/client";
 
+export interface PaginatedResponse {
+  transactions: Transaction[];
+  hasMore: boolean;
+}
+
 export const saveOrUpdateUser = async (user: User) => {
   try {
     const formats: MatchFormat[] = ["BLITZ", "POWERPLAY", "CLASSIC"];
@@ -97,17 +102,26 @@ export const getUserInfoById = async (userId: number) => {
 };
 
 export const getUserTransactionById = async (
-  userId: number,
+  userId: bigint,
   page: number = 1,
-) => {
+  pageSize: number = 20,
+): Promise<PaginatedResponse> => {
   try {
-    const pageSize = 20;
-    return await db.transaction.findMany({
+    const skip = (page - 1) * pageSize;
+    const transactions = await db.transaction.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
-      take: pageSize,
-      skip: (page - 1) * pageSize,
+      skip,
+      take: pageSize + 1,
     });
+
+    const hasMore = transactions.length > pageSize;
+    const paginatedTransactions = transactions.slice(0, pageSize);
+
+    return {
+      transactions: paginatedTransactions,
+      hasMore,
+    };
   } catch (error) {
     if (error instanceof Error) {
       console.error("Error fetching user transaction info:", error.message);

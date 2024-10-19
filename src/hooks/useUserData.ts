@@ -1,8 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   getUserRankings,
   getUserStats,
   getUserTransactionById,
+  PaginatedResponse,
 } from "../actions/user.action";
 import { getUserInfoById } from "../actions/user.action";
 
@@ -16,13 +17,18 @@ export const useGetUserInfo = (userId: number | undefined) => {
   });
 };
 
-export const useGetUserTransaction = (userId: number | undefined) => {
-  return useQuery({
-    queryKey: ["user-transaction", userId],
-    queryFn: () => getUserTransactionById(userId!),
+export const useGetUserTransaction = (userId: bigint | undefined) => {
+  return useInfiniteQuery<PaginatedResponse, Error>({
+    queryKey: ["user-transaction", JSON.stringify(userId?.toString())],
+    queryFn: ({ pageParam = 1 }) =>
+      getUserTransactionById(userId!, pageParam as number),
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.hasMore ? allPages.length + 1 : undefined;
+    },
     enabled: !!userId,
     staleTime: 60000,
     gcTime: 3600000,
+    initialPageParam: 1,
   });
 };
 
