@@ -40,7 +40,7 @@ const ShinyButton = ({
     <motion.button
       {...animationProps}
       className={cn(
-        "relative bg-blue-400 text-blue-950 rounded-xl px-6 py-3 w-full font-medium backdrop-blur-xl transition-[box-shadow] duration-300 ease-in-out hover:shadow dark:bg-[radial-gradient(circle_at_50%_0%,hsl(var(--primary)/10%)_0%,transparent_60%)] dark:hover:shadow-[0_0_20px_hsl(var(--primary)/10%)] disabled:bg-slate-700 disabled:text-gray-200",
+        "relative bg-slate-600/50 rounded-xl px-6 py-3 w-full font-medium backdrop-blur-md transition-[box-shadow] duration-300 ease-in-out hover:shadow dark:bg-[radial-gradient(circle_at_50%_0%,hsl(var(--primary)/10%)_0%,transparent_60%)] dark:hover:shadow-[0_0_20px_hsl(var(--primary)/10%)] disabled:bg-slate-700 disabled:text-gray-200",
         className,
       )}
       onClick={onClick}

@@ -12,7 +12,7 @@ export function WalletOverview() {
   const { data } = useGetUserInfo(user?.id);
 
   return (
-    <section className="border rounded-xl">
+    <section className="border rounded-xl overflow-hidden">
       <Header title="Overview" />
       <div className="p-4">
         <span className="text-4xl font-bold text-gray-100">

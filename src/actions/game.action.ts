@@ -5,8 +5,9 @@ import { db } from "../lib/db";
 import { GameState } from "../types/gameState";
 import { redirect } from "next/navigation";
 import { MatchFormat } from "@prisma/client";
-import { isValidMatchFormat } from "../lib/utils";
+import { capitalizeFirstLetter, isValidMatchFormat } from "../lib/utils";
 import { calculateRewards } from "../lib/game-logics";
+import { revalidatePath } from "next/cache";
 
 export async function startQuickMatch(
   telegramId: number,
@@ -60,7 +61,7 @@ export async function startQuickMatch(
           userId: user.telegramId,
           amount: entryFee,
           type: "MATCH_FEE",
-          description: `Match Entry Fee (${matchFormat})`,
+          description: `${capitalizeFirstLetter(matchFormat)} match entry fees`,
         },
       });
     });
@@ -158,7 +159,7 @@ export async function saveMatchDataToDatabase(
           userId: userId,
           amount: totalReward,
           type: "MATCH_WINNINGS",
-          description: `Earnings from ${gameState.matchSetup.format} Match`,
+          description: `Earnings from ${gameState.matchSetup.format.toLowerCase()} match`,
         },
       });
     });
@@ -170,5 +171,6 @@ export async function saveMatchDataToDatabase(
       },
     };
   }
+  revalidatePath("/", "layout");
   redirect("/miniapp");
 }

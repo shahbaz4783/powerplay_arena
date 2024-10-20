@@ -32,7 +32,7 @@ export function ChaseSummary() {
         </div>
       </div>
       <p className="text-center text-slate-400">
-        Need{" "}
+        {gameState.toss.playMode === "chase" ? "You" : "Opponent"} need{" "}
         <span className="text-xl font-bold text-white">
           {gameState.target - runs}
         </span>{" "}

@@ -68,7 +68,8 @@ export function TransactionLists() {
                 <div>
                   <h3 className="text-md font-semibold">{date}</h3>
                   <p className="text-xs text-slate-400">
-                    {transactions.length} transaction{transactions.length !== 1 ? "s" : ""}
+                    {transactions.length} transaction
+                    {transactions.length !== 1 ? "s" : ""}
                   </p>
                 </div>
                 <div className="flex items-center space-x-4">
@@ -104,7 +105,7 @@ export function TransactionLists() {
                         )}
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-100 line-clamp-1">
+                        <p className="text-slate-200 text-sm line-clamp-1">
                           {tx.description}
                         </p>
                         <div className="flex items-center text-sm text-gray-400">
@@ -120,11 +121,11 @@ export function TransactionLists() {
                           : "text-green-400"
                       }`}
                     >
-                      <span className="text-lg">
+                      <span className="">
                         {tx.type === "MATCH_FEE" ? "-" : "+"}
                         {tx.amount}
                       </span>
-                      <span className="text-xs ml-1">{token.symbol}</span>
+                      {/* <span className="text-xs ml-1">{token.symbol}</span> */}
                     </div>
                   </motion.li>
                 ))}
@@ -145,7 +146,7 @@ export function TransactionLists() {
 
         {!hasNextPage && allTransactions.length > 0 && (
           <p className="text-center text-gray-400 mt-6">
-            No more transactions to load.
+            You've reached the end of the transaction list.
           </p>
         )}
       </div>

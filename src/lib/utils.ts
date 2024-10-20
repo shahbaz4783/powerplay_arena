@@ -43,3 +43,10 @@ export function formatDate(date: Date): string {
     day: "numeric",
   });
 }
+
+export const capitalizeFirstLetter = (text: string) => {
+  return text
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};

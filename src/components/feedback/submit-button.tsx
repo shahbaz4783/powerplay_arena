@@ -19,9 +19,7 @@ export function SubmitButton({
   return (
     <div>
       <ShinyButton onClick={onClick} className={className} text={title} />
-      {pending && (
-        <LoadingOverlay initialMessage="Submitting your request..." />
-      )}
+      {pending && <LoadingOverlay initialMessage={loadingTitle} />}
     </div>
   );
 }

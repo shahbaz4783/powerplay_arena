@@ -46,6 +46,13 @@ export const saveOrUpdateUser = async (user: User) => {
               format,
             })),
           },
+          transaction: {
+            create: {
+              amount: 100,
+              type: "REWARD",
+              description: "Joining bonus",
+            },
+          },
         },
       });
 
