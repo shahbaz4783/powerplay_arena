@@ -1,6 +1,8 @@
 import { MatchFormat, Stats } from "@prisma/client";
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { LEVEL_DATA, LEVEL_NAMES, XP_THRESHOLDS } from "./constants";
+import { GameState, LevelInfo } from "../types/gameState";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -50,3 +52,36 @@ export const capitalizeFirstLetter = (text: string) => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
 };
+
+export function calculateLevel(xp: number): LevelInfo {
+  let level = 1;
+  let xpForNextLevel = LEVEL_DATA[0].xpThreshold;
+
+  for (let i = 0; i < LEVEL_DATA.length; i++) {
+    if (xp >= LEVEL_DATA[i].xpThreshold) {
+      level = LEVEL_DATA[i].level;
+      xpForNextLevel = LEVEL_DATA[i + 1] ? LEVEL_DATA[i + 1].xpThreshold : 0;
+    } else {
+      break;
+    }
+  }
+
+  return {
+    level: level,
+    name: LEVEL_DATA[level - 1].name,
+    currentXP: xp,
+    xpForNextLevel: xpForNextLevel,
+  };
+}
+
+export function calculateXPGain(gameState: GameState): number {
+  const winBonus = gameState.matchResult.winner === "player" ? 50 : 0;
+  const performanceXP = gameState.player.runs + gameState.opponent.wickets * 10;
+  return winBonus + performanceXP;
+}
+
+export function hasLeveledUp(oldXP: number, newXP: number): boolean {
+  const oldLevel = calculateLevel(oldXP).level;
+  const newLevel = calculateLevel(newXP).level;
+  return newLevel > oldLevel;
+}

@@ -1,11 +1,11 @@
 import { GameModes } from "@/src/components/home/game-modes";
 import { NavCards } from "@/src/components/home/navs";
-import { UserInfoHeader } from "@/src/components/home/user-info-header";
+import { UserProfileHeader } from "@/src/components/home/user-info-header";
 
 const MiniAppHomePage = () => {
   return (
     <div className="space-y-5 min-h-[84svh]">
-      <UserInfoHeader />
+      <UserProfileHeader />
       <GameModes />
       <NavCards />
     </div>

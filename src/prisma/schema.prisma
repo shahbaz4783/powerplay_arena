@@ -33,7 +33,8 @@ model XP {
   user          User     @relation(fields: [userId], references: [telegramId])
   totalXP       Int      @default(0)
   level         Int      @default(1)
-  lastUpdated   DateTime @default(now())
+  levelName     String
+  xpForNextLevel  Int      @default(5000)
 
   @@index([userId])
 }

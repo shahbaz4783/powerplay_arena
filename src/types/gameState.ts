@@ -16,7 +16,7 @@ export type MatchFormat = "BLITZ" | "POWERPLAY" | "CLASSIC";
 
 export interface MatchSetup {
   format: MatchFormat;
-  overs: 2 | 5 | 10;
+  overs: 1 | 5 | 10;
   entryFee: number;
   totalWickets: 2 | 5 | 10;
   rewards: {
@@ -79,7 +79,7 @@ export interface GameState {
 export const MATCH_FORMATS: Record<MatchFormat, MatchSetup> = {
   BLITZ: {
     format: "BLITZ",
-    overs: 2,
+    overs: 1,
     entryFee: 50,
     totalWickets: 2,
     rewards: {
@@ -114,3 +114,10 @@ export const MATCH_FORMATS: Record<MatchFormat, MatchSetup> = {
     },
   },
 };
+
+export interface LevelInfo {
+  level: number;
+  name: string;
+  currentXP: number;
+  xpForNextLevel: number;
+}

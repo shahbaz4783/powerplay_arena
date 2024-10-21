@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Zap } from "lucide-react";
-import { saveOrUpdateUser } from "../../actions/user.action";
 import { useGetUserInfo } from "@/src/hooks/useUserData";
 import { useInitData } from "@telegram-apps/sdk-react";
 import {
@@ -13,130 +12,149 @@ import {
 } from "@/src/components/ui/avatar";
 import { Dialog, DialogTrigger } from "@/src/components/ui/dialog";
 import { Progress } from "@/src/components/ui/progress";
-
 import { token } from "@/src/lib/constants";
 import { AvatarDialog } from "../dialog/avatar-dialog";
+import { useUserAvatar } from "@/src/hooks/useUserAvatar";
+import { Card } from "@/src/components/ui/card";
 
-const levelTitles = [
-  "Rookie Batsman",
-  "Spin Wizard",
-  "Pace Ace",
-  "All-Rounder",
-  "Captain Cool",
-  "Master Blaster",
-];
+interface UserXP {
+  level: number;
+  totalXP: number;
+  xpForNextLevel: number;
+  levelName: string;
+}
 
-const avatars = [
-  {
-    id: 1,
-    name: "Classic",
-    free: true,
-    url: "/placeholder.svg?height=100&width=100",
-  },
-  {
-    id: 2,
-    name: "Cyber Batsman",
-    free: true,
-    url: "/placeholder.svg?height=100&width=100",
-  },
-  {
-    id: 3,
-    name: "Neon Bowler",
-    free: false,
-    price: 100,
-    url: "/placeholder.svg?height=100&width=100",
-  },
-  {
-    id: 4,
-    name: "Holographic Captain",
-    free: false,
-    price: 200,
-    url: "/placeholder.svg?height=100&width=100",
-  },
-];
+interface WalletInfo {
+  balance: number;
+}
 
-export function UserInfoHeader() {
-  const [currentAvatar, setCurrentAvatar] = useState(1);
+interface UserData {
+  userXP: UserXP;
+  walletInfo: WalletInfo;
+}
 
+interface UserAvatarProps {
+  currentAvatar: number;
+  setCurrentAvatar: (avatar: number) => void;
+  userName: string | undefined;
+  levelName: string | undefined;
+}
+
+interface UserStatsProps {
+  level: number;
+  balance: number;
+}
+
+interface XPProgressProps {
+  totalXP: number;
+  xpForLevelUp: number;
+  xpForNextLevel: number;
+}
+
+export function UserProfileHeader(): JSX.Element {
   const initData = useInitData();
   const user = initData?.user;
 
   const { data } = useGetUserInfo(user?.id);
+  const { currentAvatar, setCurrentAvatar } = useUserAvatar(user?.id);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!user) return;
-        await saveOrUpdateUser(user);
-      } catch (error) {
-        console.error("Error saving/updating user data:", error);
-      }
-    };
+  const userData: UserData = data as UserData;
 
-    fetchData();
-  }, [user]);
-
-  const getLevelTitle = (level: number) => {
-    return levelTitles[Math.min(level - 1, levelTitles.length - 1)];
-  };
-
-  const level = data?.userXP?.level ?? 1;
-  const totalXP = data?.userXP?.totalXP ?? 0;
-  const balance = data?.walletInfo?.balance ?? 0;
-
-  const xpForNextLevel = 1000 - (totalXP % 1000);
+  const level = userData?.userXP.level;
+  const totalXP = userData?.userXP.totalXP;
+  const balance = userData?.walletInfo.balance;
+  const xpForLevelUp = userData?.userXP.xpForNextLevel;
+  const xpForNextLevel = xpForLevelUp - totalXP;
 
   return (
-    <motion.div
-      className="border bg-gray-800/50 rounded-xl p-4 space-y-5"
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="relative">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Avatar className="h-14 w-14 ring-2 ring-blue-500 cursor-pointer">
-                  <AvatarImage src={avatars[currentAvatar - 1].url} />
-                  <AvatarFallback>CM</AvatarFallback>
-                </Avatar>
-              </DialogTrigger>
-              <AvatarDialog
-                currentAvatar={currentAvatar}
-                setCurrentAvatar={setCurrentAvatar}
-                onClose={() => {}}
+    <Card className="bg-gradient-to-br rounded-xl from-gray-800 to-gray-900 p-4 space-y-5">
+      <motion.div
+        className="flex items-center justify-between"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <UserAvatar
+          currentAvatar={currentAvatar}
+          setCurrentAvatar={setCurrentAvatar}
+          userName={user?.firstName}
+          levelName={userData?.userXP?.levelName}
+        />
+        <UserStats level={level} balance={balance} />
+      </motion.div>
+      <XPProgress
+        totalXP={totalXP}
+        xpForLevelUp={xpForLevelUp}
+        xpForNextLevel={xpForNextLevel}
+      />
+    </Card>
+  );
+}
+
+function UserAvatar({
+  currentAvatar,
+  setCurrentAvatar,
+  userName,
+  levelName,
+}: UserAvatarProps): JSX.Element {
+  return (
+    <div className="flex items-center space-x-3">
+      <div className="relative">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Avatar className="h-14 w-14 ring-2 ring-primary cursor-pointer">
+              <AvatarImage
+                src={`/avatars/avatar-${currentAvatar}.png`}
+                alt="User Avatar"
               />
-            </Dialog>
-            <div className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-1">
-              <Zap className="h-4 w-4 text-yellow-300" />
-            </div>
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-blue-100">
-              {user?.firstName}
-            </h2>
-            <div className="flex items-center">
-              <span className="text-sm text-yellow-300">
-                {getLevelTitle(level)}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="text-right">
-          <p className="text-sm text-yellow-300">Level {level}</p>
-          <p className="text-2xl font-bold">
-            {balance} <span className="text-sm">{token.symbol}</span>
-          </p>
+              <AvatarFallback>{userName?.charAt(0) ?? "U"}</AvatarFallback>
+            </Avatar>
+          </DialogTrigger>
+          <AvatarDialog
+            currentAvatar={currentAvatar}
+            setCurrentAvatar={setCurrentAvatar}
+            onClose={() => {}}
+          />
+        </Dialog>
+        <div className="absolute -bottom-1 -right-1 bg-primary rounded-full p-1">
+          <Zap className="h-4 w-4 text-yellow-300" />
         </div>
       </div>
-      <div className="space-y-3 ">
-        <Progress value={(totalXP % 1000) / 10} className="w-full" />
-        <div className="flex justify-between text-sm text-blue-300">
-          <span>XP: {totalXP}</span>
-          <span>Next Level: {xpForNextLevel} XP</span>
-        </div>
+      <div>
+        <h2 className="text-xl font-bold">{userName ?? "User"}</h2>
+        <span className="text-sm text-yellow-300">{levelName ?? "Novice"}</span>
+      </div>
+    </div>
+  );
+}
+
+function UserStats({ level, balance }: UserStatsProps): JSX.Element {
+  return (
+    <div className="text-right">
+      <p className="text-sm text-yellow-300">Level {level}</p>
+      <p className="text-xl font-bold">
+        {balance} <span className="text-sm">{token.symbol}</span>
+      </p>
+    </div>
+  );
+}
+
+function XPProgress({
+  totalXP,
+  xpForLevelUp,
+  xpForNextLevel,
+}: XPProgressProps): JSX.Element {
+  return (
+    <motion.div
+      className="space-y-3"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+    >
+      <Progress value={(totalXP / xpForLevelUp) * 100} className="w-full" />
+      <div className="flex justify-between text-sm">
+        <span>XP: {totalXP}</span>
+        <span>Next Level: {xpForNextLevel} XP</span>
       </div>
     </motion.div>
   );

@@ -3,6 +3,7 @@
 import { db } from "@/src/lib/db";
 import { User } from "@telegram-apps/sdk-react";
 import { MatchFormat, Transaction } from "@prisma/client";
+import { LEVEL_DATA } from "../lib/constants";
 
 export interface PaginatedResponse {
   transactions: Transaction[];
@@ -39,6 +40,7 @@ export const saveOrUpdateUser = async (user: User) => {
             create: {
               totalXP: 0,
               level: 1,
+              levelName: LEVEL_DATA[0].name,
             },
           },
           stats: {
@@ -87,7 +89,6 @@ export const getUserInfoById = async (userId: number) => {
 
       const userXP = await tx.xP.findUnique({
         where: { userId },
-        select: { level: true, totalXP: true },
       });
 
       if (!walletInfo) {

@@ -2,10 +2,16 @@
 
 import { FormResponse } from "@/src/lib/types";
 import { db } from "../lib/db";
-import { GameState } from "../types/gameState";
+import { GameState, LevelInfo } from "../types/gameState";
 import { redirect } from "next/navigation";
 import { MatchFormat } from "@prisma/client";
-import { capitalizeFirstLetter, isValidMatchFormat } from "../lib/utils";
+import {
+  calculateLevel,
+  calculateXPGain,
+  capitalizeFirstLetter,
+  hasLeveledUp,
+  isValidMatchFormat,
+} from "../lib/utils";
 import { calculateRewards } from "../lib/game-logics";
 import { revalidatePath } from "next/cache";
 
@@ -82,6 +88,7 @@ export async function saveMatchDataToDatabase(
   try {
     if (!userId) return { message: { error: "No user Found" } };
     await db.$transaction(async (tx) => {
+      // Update stats
       await tx.stats.update({
         where: {
           userId_format: {
@@ -113,47 +120,18 @@ export async function saveMatchDataToDatabase(
         },
       });
 
-      // Calculate rewards
+      // Calculate rewards and add to the wallet and create a transaction
       const { fourReward, sixerReward, wicketTakenReward, winMarginReward } =
         calculateRewards(gameState);
-
       const totalReward =
         sixerReward + fourReward + wicketTakenReward + winMarginReward;
 
-      // Update user's wallet
       await tx.wallet.update({
         where: { userId },
         data: {
           balance: { increment: totalReward },
         },
       });
-
-      // Calculate XP
-      const baseXP = 100;
-      const winBonus = gameState.matchResult.winner === "player" ? 50 : 0;
-      const performanceXP =
-        gameState.player.runs + gameState.opponent.wickets * 10;
-      const totalXP = baseXP + winBonus + performanceXP;
-
-      // Update XP record
-      const updatedXP = await tx.xP.update({
-        where: { userId },
-        data: {
-          totalXP: { increment: totalXP },
-          lastUpdated: new Date(),
-        },
-      });
-
-      const newLevel = Math.floor(updatedXP.totalXP / 1000) + 1;
-      // Check for level up
-      if (newLevel > updatedXP.level) {
-        await tx.xP.update({
-          where: { userId },
-          data: { level: newLevel },
-        });
-      }
-
-      // Create transaction record
       await tx.transaction.create({
         data: {
           userId: userId,
@@ -162,14 +140,46 @@ export async function saveMatchDataToDatabase(
           description: `Earnings from ${gameState.matchSetup.format.toLowerCase()} match`,
         },
       });
+
+      // Calculate XP and check for level up
+      const xpGain = calculateXPGain(gameState);
+
+      const currentXPRecord = await tx.xP.findUnique({
+        where: { userId },
+      });
+
+      if (!currentXPRecord) {
+        throw new Error("XP record not found for user");
+      }
+
+      const oldTotalXP = currentXPRecord.totalXP;
+      const newTotalXP = oldTotalXP + xpGain;
+
+      // Calculate new level info
+      const newLevelInfo: LevelInfo = calculateLevel(newTotalXP);
+
+      console.table(newLevelInfo);
+
+      await tx.xP.update({
+        where: { userId },
+        data: {
+          totalXP: newTotalXP,
+          level: newLevelInfo.level,
+          levelName: newLevelInfo.name,
+          xpForNextLevel: newLevelInfo.xpForNextLevel,
+        },
+      });
     });
   } catch (error) {
-    console.error("Error ending match and claiming reward:", error);
-    return {
-      message: {
-        error: "Failed to end match and claim reward. Please try again.",
-      },
-    };
+    if (error instanceof Error) {
+      return { message: { error: error.message } };
+    } else {
+      return {
+        message: {
+          error: "Failed to end match and claim reward. Please try again.",
+        },
+      };
+    }
   }
   revalidatePath("/", "layout");
   redirect("/miniapp");

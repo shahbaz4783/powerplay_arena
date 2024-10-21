@@ -19,7 +19,7 @@ const initialState: GameState = {
   matchSetup: {
     format: "BLITZ",
     entryFee: 50,
-    overs: 2,
+    overs: 1,
     totalWickets: 2,
     rewards: {
       four: 4,

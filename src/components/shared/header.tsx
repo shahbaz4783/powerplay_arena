@@ -1,6 +1,7 @@
+"use client";
+
 import { cn } from "@/src/lib/utils";
 import { motion } from "framer-motion";
-import { Icon } from "lucide-react";
 interface HeaderProps {
   title: string;
   subtitle?: string;

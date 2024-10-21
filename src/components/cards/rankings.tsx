@@ -1,15 +1,8 @@
-import React from "react";
 import { getUserRankings } from "@/src/actions/user.action";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
 } from "@/src/components/ui/avatar";
 import { Trophy, Medal, Award } from "lucide-react";
 
