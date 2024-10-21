@@ -21,6 +21,7 @@ model User {
   languageCode   String
   isPremium      Boolean?
   lastClaimed    DateTime?
+  streak         Int       @default(0)
   wallet         Wallet?
   transaction    Transaction[]
   stats          Stats[]

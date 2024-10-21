@@ -1,8 +1,10 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { token } from "../lib/constants";
 import { db } from "../lib/db";
 import { FormResponse } from "../lib/types";
+import { calculateReward, calculateStreak } from "../lib/utils";
 
 export const giveTaskReward = async (telegramId: number, reward: number) => {
   await db.wallet.update({
@@ -22,6 +24,7 @@ export const dailyDrop = async (
     const result = await db.$transaction(async (tx) => {
       const user = await tx.user.findUnique({
         where: { telegramId },
+        include: { wallet: true },
       });
 
       if (!user) {
@@ -48,7 +51,8 @@ export const dailyDrop = async (
         }
       }
 
-      const reward = Math.floor(Math.random() * 41) + 10;
+      const streak = calculateStreak(lastClaimed, now);
+      const reward = calculateReward(streak);
 
       await tx.wallet.update({
         where: { userId: telegramId },
@@ -61,6 +65,7 @@ export const dailyDrop = async (
         where: { telegramId },
         data: {
           lastClaimed: now,
+          streak: streak,
         },
       });
 
@@ -70,14 +75,17 @@ export const dailyDrop = async (
           userId: telegramId,
           amount: reward,
           type: "REWARD",
-          description: "Daily reward claim",
+          description: `Daily reward claim (Day ${streak})`,
         },
       });
 
-      return reward;
+      return { reward, streak };
     });
-
-    return { message: { success: `You got ${result} ${token.symbol}` } };
+    return {
+      message: {
+        success: `Congratulations! You've claimed ${result.reward} ${token.symbol} on Day ${result.streak} of your streak!`,
+      },
+    };
   } catch (error) {
     if (error instanceof Error) {
       return { message: { error: error.message } };

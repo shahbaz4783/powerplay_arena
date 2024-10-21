@@ -5,7 +5,7 @@ interface UseUserAvatarReturn {
   setCurrentAvatar: (avatar: number) => void;
 }
 
-export function useUserAvatar(userId: string | undefined): UseUserAvatarReturn {
+export function useUserAvatar(userId: number | undefined): UseUserAvatarReturn {
   const [currentAvatar, setCurrentAvatar] = useState<number>(1);
 
   useEffect(() => {

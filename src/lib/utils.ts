@@ -85,3 +85,36 @@ export function hasLeveledUp(oldXP: number, newXP: number): boolean {
   const newLevel = calculateLevel(newXP).level;
   return newLevel > oldLevel;
 }
+
+export function calculateStreak(lastClaimed: Date | null, now: Date): number {
+  if (!lastClaimed) return 1;
+
+  const oneDayInMs = 24 * 60 * 60 * 1000;
+  const daysSinceLastClaim = Math.floor(
+    (now.getTime() - lastClaimed.getTime()) / oneDayInMs,
+  );
+
+  if (daysSinceLastClaim === 1) {
+    return 1;
+  } else if (daysSinceLastClaim > 1) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+export function calculateReward(streak: number): number {
+  let reward = 10;
+
+  if (streak >= 7) {
+    reward += 100;
+  } else if (streak >= 5) {
+    reward += 50;
+  } else if (streak >= 3) {
+    reward += 25;
+  }
+
+  reward += Math.floor(Math.random() * 20);
+
+  return reward;
+}
