@@ -1,4 +1,3 @@
-import DailyDrop from '@/src/components/earn/daily-drop';
 import TasksList from '@/src/components/earn/tasks';
 import GradualSpacing from '@/src/components/magicui/gradual-spacing';
 
