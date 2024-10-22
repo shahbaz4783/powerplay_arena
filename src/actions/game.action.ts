@@ -126,20 +126,22 @@ export async function saveMatchDataToDatabase(
       const totalReward =
         sixerReward + fourReward + wicketTakenReward + winMarginReward;
 
-      await tx.wallet.update({
-        where: { userId },
-        data: {
-          balance: { increment: totalReward },
-        },
-      });
-      await tx.transaction.create({
-        data: {
-          userId: userId,
-          amount: totalReward,
-          type: "MATCH_WINNINGS",
-          description: `Earnings from ${gameState.matchSetup.format.toLowerCase()} match`,
-        },
-      });
+      if (totalReward > 0) {
+        await tx.wallet.update({
+          where: { userId },
+          data: {
+            balance: { increment: totalReward },
+          },
+        });
+        await tx.transaction.create({
+          data: {
+            userId: userId,
+            amount: totalReward,
+            type: "MATCH_WINNINGS",
+            description: `Earnings from ${gameState.matchSetup.format.toLowerCase()} match`,
+          },
+        });
+      }
 
       // Calculate XP and check for level up
       const xpGain = calculateXPGain(gameState);

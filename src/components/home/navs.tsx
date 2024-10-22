@@ -1,8 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { X, Zap, Target, Atom, Trophy, Gift, ChartLine } from "lucide-react";
-import { DailyRewardDialog } from "../dialog/daily-reward-dialog";
+import { X, Zap, Target, Gift, ChartLine } from "lucide-react";
 import Link from "next/link";
 
 export function NavCards() {
@@ -29,7 +28,13 @@ export function NavCards() {
         <span className="text-blue-200 text-sm font-mono">Stats</span>
       </Link>
 
-      <DailyRewardDialog />
+      <Link
+        href={"/miniapp/reward"}
+        className="bg-slate-800/50 bg-opacity-70 backdrop-blur-xl border border-white p-4 rounded-xl flex flex-col items-center justify-center"
+      >
+        <Gift size={32} className="mb-2" />
+        <span className="text-blue-200 text-sm font-mono">Reward</span>
+      </Link>
     </motion.section>
   );
 }

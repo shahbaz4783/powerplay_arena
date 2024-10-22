@@ -12,7 +12,7 @@ export function Header({ title, subtitle, className }: HeaderProps) {
   return (
     <header
       className={cn(
-        "p-6 bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg",
+        "p-6 rounded-xl bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg",
         className,
       )}
     >

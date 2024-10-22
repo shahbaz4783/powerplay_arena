@@ -89,17 +89,25 @@ export function hasLeveledUp(oldXP: number, newXP: number): boolean {
 export function calculateStreak(lastClaimed: Date | null, now: Date): number {
   if (!lastClaimed) return 1;
 
-  const oneDayInMs = 24 * 60 * 60 * 1000;
-  const daysSinceLastClaim = Math.floor(
-    (now.getTime() - lastClaimed.getTime()) / oneDayInMs,
+  const startOfToday = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
   );
 
-  if (daysSinceLastClaim === 1) {
-    return 1;
-  } else if (daysSinceLastClaim > 1) {
-    return 1;
+  const startOfTomorrow = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1),
+  );
+
+  if (lastClaimed < startOfToday) {
+    const startOfYesterday = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1),
+    );
+    if (lastClaimed >= startOfYesterday) {
+      return 2;
+    } else {
+      return 1;
+    }
   } else {
-    return 0;
+    return 2;
   }
 }
 

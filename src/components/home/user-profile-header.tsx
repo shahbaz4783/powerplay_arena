@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Zap } from "lucide-react";
 import { useGetUserInfo } from "@/src/hooks/useUserData";
@@ -16,6 +16,7 @@ import { token } from "@/src/lib/constants";
 import { AvatarDialog } from "../dialog/avatar-dialog";
 import { useUserAvatar } from "@/src/hooks/useUserAvatar";
 import { Card } from "@/src/components/ui/card";
+import { saveOrUpdateUser } from "@/src/actions/user.action";
 
 interface UserXP {
   level: number;
@@ -54,6 +55,19 @@ interface XPProgressProps {
 export function UserProfileHeader(): JSX.Element {
   const initData = useInitData();
   const user = initData?.user;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!user) return;
+        await saveOrUpdateUser(user);
+      } catch (error) {
+        console.error("Error saving/updating user data:", error);
+      }
+    };
+
+    fetchData();
+  }, [user]);
 
   const { data } = useGetUserInfo(user?.id);
   const { currentAvatar, setCurrentAvatar } = useUserAvatar(user?.id);
@@ -151,7 +165,10 @@ function XPProgress({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
     >
-      <Progress value={(totalXP / xpForLevelUp) * 100} className="w-full" />
+      <Progress
+        value={(totalXP / xpForLevelUp) * 100}
+        className="w-full h-2 bg-slate-400 bg-opacity-20"
+      />
       <div className="flex justify-between text-sm">
         <span>XP: {totalXP}</span>
         <span>Next Level: {xpForNextLevel} XP</span>
