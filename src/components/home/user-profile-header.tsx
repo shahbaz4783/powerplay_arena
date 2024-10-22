@@ -81,7 +81,7 @@ export function UserProfileHeader(): JSX.Element {
   const xpForNextLevel = xpForLevelUp - totalXP;
 
   return (
-    <Card className="bg-gradient-to-br rounded-xl from-gray-800 to-gray-900 p-4 space-y-5">
+    <Card className=" rounded-xl p-4 space-y-5 bg-gradient-to-r from-gray-800 to-gray-900 shadow-lg">
       <motion.div
         className="flex items-center justify-between"
         initial={{ opacity: 0, y: -20 }}
