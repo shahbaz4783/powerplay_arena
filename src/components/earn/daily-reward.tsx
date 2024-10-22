@@ -73,17 +73,7 @@ export function DailyReward() {
 
   return (
     <section className="space-y-2">
-      <Header title="Daily Reward" />
       <div className="space-y-6">
-        <div className="flex justify-center">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-          >
-            <Gift size={48} className="text-yellow-400" />
-          </motion.div>
-        </div>
         <div className="text-center">
           <h3 className="text-xl font-semibold mb-2">
             {rewardClaimed ? "Reward Claimed!" : "Claim Your Reward!"}

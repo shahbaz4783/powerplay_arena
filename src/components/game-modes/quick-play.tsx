@@ -91,10 +91,14 @@ export function QuickPlayMode() {
   };
 
   return (
-    <main className="min-h-svh flex flex-col justify-between">
-      <Header title="Quick Match Setup" />
+    <main className="min-h-svh space-y-2 flex flex-col justify-between">
+      <Header
+        title="Quick Match"
+        subtitle="Set up your game and jump into the action"
+        className="mx-4 mt-3"
+      />
 
-      <section className="p-6">
+      <section className="p-4">
         <Tabs
           value={selectedFormat}
           onValueChange={handleFormatChange}

@@ -69,7 +69,7 @@ export function UserProfileHeader(): JSX.Element {
     fetchData();
   }, [user]);
 
-  const { data } = useGetUserInfo(user?.id);
+  const { data, isLoading } = useGetUserInfo(user?.id);
   const { currentAvatar, setCurrentAvatar } = useUserAvatar(user?.id);
 
   const userData: UserData = data as UserData;
@@ -94,12 +94,15 @@ export function UserProfileHeader(): JSX.Element {
           userName={user?.firstName}
           levelName={userData?.userXP?.levelName}
         />
-        <UserStats level={level} balance={balance} />
+        <UserStats
+          level={isLoading ? 1 : level}
+          balance={isLoading ? 100 : balance}
+        />
       </motion.div>
       <XPProgress
-        totalXP={totalXP}
-        xpForLevelUp={xpForLevelUp}
-        xpForNextLevel={xpForNextLevel}
+        totalXP={isLoading ? 1000 : totalXP}
+        xpForLevelUp={isLoading ? 5000 : xpForLevelUp}
+        xpForNextLevel={isLoading ? 250 : xpForNextLevel}
       />
     </Card>
   );
@@ -136,7 +139,9 @@ function UserAvatar({
       </div>
       <div>
         <h2 className="text-xl font-bold">{userName ?? "User"}</h2>
-        <span className="text-sm text-yellow-300">{levelName ?? "Novice"}</span>
+        <span className="text-sm text-yellow-300">
+          {levelName ?? "Rookie Batsman"}
+        </span>
       </div>
     </div>
   );

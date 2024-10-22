@@ -58,7 +58,6 @@ export function TransactionLists() {
 
   return (
     <section className="space-y-4">
-      <h2 className="text-sm text-slate-500">Transaction History</h2>
       <ul className="space-y-4 ">
         {Object.entries(groupedTransactions).map(([date, transactions]) => {
           const dailyTotal = calculateDailyTotal(transactions);

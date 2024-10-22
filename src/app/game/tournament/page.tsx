@@ -16,6 +16,7 @@ import {
 } from "@/src/components/ui/tabs";
 import { Trophy, Users, Calendar, DollarSign, Star } from "lucide-react";
 import TournamentPage from "@/src/components/game-modes/tournament";
+import { Header } from "@/src/components/shared/header";
 
 export default function TournamentScreen() {
   const [activeTab, setActiveTab] = useState("upcoming");
@@ -68,8 +69,11 @@ export default function TournamentScreen() {
   ];
 
   return (
-    <div className="min-h-screen text-gray-100 p-4 relative overflow-hidden">
-      <h1 className="text-3xl font-bold mb-6 text-center">Tournaments</h1>
+    <div className="min-h-screen space-y-6 text-gray-100 p-4 relative overflow-hidden">
+      <Header
+        title="Tournaments"
+        subtitle="Compete in high-stakes events for glory and rewards"
+      />
 
       <Tabs defaultValue="upcoming" className="w-full mb-6">
         <TabsList className="grid w-full grid-cols-3 mb-6 bg-gray-800">

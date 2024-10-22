@@ -12,6 +12,7 @@ import {
   TabsTrigger,
 } from "@/src/components/ui/tabs";
 import { Shield, Zap } from "lucide-react";
+import { Header } from "@/src/components/shared/header";
 
 export default function ShopPage() {
   const items = [
@@ -42,8 +43,11 @@ export default function ShopPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 p-4 relative overflow-hidden">
-      <h1 className="text-3xl font-bold mb-6 text-center">Power Play Shop</h1>
+    <div className="min-h-screen space-y-6 text-gray-100 relative overflow-hidden">
+      <Header
+        title="Cricket Emporium"
+        subtitle="Upgrade your gear and customize your experience"
+      />
 
       <Tabs defaultValue="equipment" className="w-full mb-6">
         <TabsList className="grid w-full grid-cols-3 mb-6 bg-gray-800">
