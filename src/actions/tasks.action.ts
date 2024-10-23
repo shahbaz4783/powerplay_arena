@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { token } from "../lib/constants";
 import { db } from "../lib/db";
 import { FormResponse } from "../lib/types";
-import { calculateReward, calculateStreak } from "../lib/utils";
+import { calculateReward } from "../lib/utils";
 
 export const giveTaskReward = async (telegramId: number, reward: number) => {
   await db.wallet.update({
@@ -51,7 +51,11 @@ export const dailyDrop = async (
         }
       }
 
-      const streak = calculateStreak(lastClaimed, now);
+      let streak = user.streak + 1;
+      if (streak > 7) streak = 1;
+
+      console.log({ streak });
+
       const reward = calculateReward(streak);
 
       await tx.wallet.update({
@@ -69,7 +73,6 @@ export const dailyDrop = async (
         },
       });
 
-      // Create a transaction record
       await tx.transaction.create({
         data: {
           userId: telegramId,
@@ -81,6 +84,8 @@ export const dailyDrop = async (
 
       return { reward, streak };
     });
+
+    revalidatePath("/miniapp/reward");
     return {
       message: {
         success: `Congratulations! You've claimed ${result.reward} ${token.symbol} on Day ${result.streak} of your streak!`,

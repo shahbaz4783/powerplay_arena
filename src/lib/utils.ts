@@ -86,31 +86,6 @@ export function hasLeveledUp(oldXP: number, newXP: number): boolean {
   return newLevel > oldLevel;
 }
 
-export function calculateStreak(lastClaimed: Date | null, now: Date): number {
-  if (!lastClaimed) return 1;
-
-  const startOfToday = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
-  );
-
-  const startOfTomorrow = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1),
-  );
-
-  if (lastClaimed < startOfToday) {
-    const startOfYesterday = new Date(
-      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1),
-    );
-    if (lastClaimed >= startOfYesterday) {
-      return 2;
-    } else {
-      return 1;
-    }
-  } else {
-    return 2;
-  }
-}
-
 export function calculateReward(streak: number): number {
   let reward = 10;
 
