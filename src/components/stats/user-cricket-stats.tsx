@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { StatCard } from "../cards/stats-card";
-import SectionHeading from "../shared/section-heading";
 import { useInitData } from "@telegram-apps/sdk-react";
 import { useGetUserStats } from "@/src/hooks/useUserData";
 import {
@@ -12,6 +11,8 @@ import {
   TabsTrigger,
 } from "@/src/components/ui/tabs";
 import { MATCH_FORMATS, MatchFormat } from "@/src/types/gameState";
+import { ChartContainer, ChartConfig } from "../ui/chart";
+import { Bar, BarChart } from "recharts";
 
 interface StatData {
   key: string;
@@ -38,6 +39,7 @@ interface FormatStats {
   runsConceded: number;
   ballsBowled: number;
 }
+
 
 const statSections: StatSection[] = [
   {
@@ -75,11 +77,11 @@ const statSections: StatSection[] = [
       },
       {
         key: "average",
-        title: "Average",
+        title: "Average Score",
         color: "from-green-500 to-emerald-300",
         calculate: (stats: FormatStats) =>
           stats.matchesPlayed > 0
-            ? Number((stats.runsScored / stats.matchesPlayed).toFixed(2))
+            ? Number(Math.round(stats.runsScored / stats.matchesPlayed))
             : 0,
       },
       { key: "sixes", title: "Sixes", color: "from-purple-500 to-pink-300" },
@@ -108,7 +110,13 @@ const statSections: StatSection[] = [
         title: "Economy",
         color: "from-yellow-500 to-orange-300",
         calculate: (stats: FormatStats) =>
-          Number((stats.runsConceded / (stats.ballsBowled / 6)).toFixed(2)),
+          stats.matchesPlayed > 0
+            ? Number(
+                Math.round(
+                  stats.runsConceded / (stats.ballsBowled / 6),
+                ).toFixed(2),
+              )
+            : 0,
       },
     ],
   },
@@ -125,8 +133,8 @@ const StatSection: React.FC<StatSectionProps> = ({
   stats,
   formatStats,
 }) => (
-  <div>
-    <SectionHeading title={title} />
+  <div className="space-y-2">
+    <h2 className="text-slate-400 font-mono text-sm">{title}</h2>
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
       {stats.map((stat, index) => (
         <motion.div
@@ -150,7 +158,7 @@ const StatSection: React.FC<StatSectionProps> = ({
   </div>
 );
 
-export function BattingStats() {
+export function UserCricketStats() {
   const initData = useInitData();
   const user = initData?.user;
   const { data: stats } = useGetUserStats(user?.id);

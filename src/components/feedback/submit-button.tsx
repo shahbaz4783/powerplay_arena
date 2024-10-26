@@ -17,9 +17,9 @@ export function SubmitButton({
 }: ClaimButtonProps) {
   const { pending } = useFormStatus();
   return (
-    <div>
+    <>
       <ShinyButton onClick={onClick} className={className} text={title} />
       {pending && <LoadingOverlay initialMessage={loadingTitle} />}
-    </div>
+    </>
   );
 }

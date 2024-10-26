@@ -49,23 +49,23 @@ export default function ShopPage() {
         subtitle="Upgrade your gear and customize your experience"
       />
 
-      <Tabs defaultValue="equipment" className="w-full mb-6">
-        <TabsList className="grid w-full grid-cols-3 mb-6 bg-gray-800">
+      <Tabs defaultValue="equipment" className="w-full">
+        <TabsList className="grid grid-cols-3 mb-8 gap-4 rounded-xl bg-slate-400 h-auto">
           <TabsTrigger
             value="equipment"
-            className="data-[state=active]:bg-yellow-500 data-[state=active]:text-gray-900"
+            className="flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900"
           >
             Equipment
           </TabsTrigger>
           <TabsTrigger
             value="powerups"
-            className="data-[state=active]:bg-yellow-500 data-[state=active]:text-gray-900"
+            className="flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900"
           >
             Power-ups
           </TabsTrigger>
           <TabsTrigger
             value="cosmetics"
-            className="data-[state=active]:bg-yellow-500 data-[state=active]:text-gray-900"
+            className="flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900"
           >
             Cosmetics
           </TabsTrigger>

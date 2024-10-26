@@ -3,6 +3,7 @@ import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { LEVEL_DATA, LEVEL_NAMES, XP_THRESHOLDS } from "./constants";
 import { GameState, LevelInfo } from "../types/gameState";
+import crypto from "crypto";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -87,17 +88,17 @@ export function hasLeveledUp(oldXP: number, newXP: number): boolean {
 }
 
 export function calculateReward(streak: number): number {
-  let reward = 10;
+  let reward: number;
 
   if (streak >= 7) {
-    reward += 100;
+    reward = crypto.randomInt(200, 500);
   } else if (streak >= 5) {
-    reward += 50;
+    reward = crypto.randomInt(100, 200);
   } else if (streak >= 3) {
-    reward += 25;
+    reward = crypto.randomInt(50, 100);
+  } else {
+    reward = crypto.randomInt(10, 50);
   }
-
-  reward += Math.floor(Math.random() * 20);
 
   return reward;
 }

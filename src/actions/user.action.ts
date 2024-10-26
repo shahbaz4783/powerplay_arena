@@ -196,3 +196,26 @@ export const getUserRankings = async () => {
     throw error;
   }
 };
+
+export const getUserFormatStats = async (
+  userId: number,
+  format: MatchFormat,
+) => {
+  try {
+    return await db.stats.findUnique({
+      where: {
+        userId_format: {
+          userId: BigInt(userId),
+          format: format,
+        },
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching user stats info:", error.message);
+    } else {
+      console.error("Something went wrong while fetching stats info");
+    }
+    throw error;
+  }
+};

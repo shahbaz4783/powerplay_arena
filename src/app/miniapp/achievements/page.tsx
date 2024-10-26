@@ -15,11 +15,26 @@ export default function AchievementPage() {
         title="Milestones"
         subtitle="Push your limits and unlock exclusive rewards"
       />
-      <Tabs defaultValue="challenges">
-        <TabsList className="grid w-full grid-cols-3 rounded-xl p-2 h-auto">
-          <TabsTrigger value="challenges">Challenges</TabsTrigger>
-          <TabsTrigger value="awards">Awards</TabsTrigger>
-          <TabsTrigger value="invites">Invites</TabsTrigger>
+      <Tabs defaultValue="challenges" className="w-full">
+        <TabsList className="grid grid-cols-3 mb-8 gap-4 rounded-xl bg-slate-400 h-auto">
+          <TabsTrigger
+            value="challenges"
+            className="flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900"
+          >
+            Challenges
+          </TabsTrigger>
+          <TabsTrigger
+            value="awards"
+            className="flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900"
+          >
+            Awards
+          </TabsTrigger>
+          <TabsTrigger
+            value="invites"
+            className="flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900"
+          >
+            Invites
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="challenges">
           <MilestonesPage />
