@@ -3,23 +3,30 @@ import ShinyButton from "../magicui/shiny-button";
 import { LoadingOverlay } from "@/src/components/shared/loading-overlay";
 
 interface ClaimButtonProps {
-  title: string;
-  loadingTitle: string;
-  className?: string;
-  onClick?: () => void;
+	title: string;
+	loadingTitle: string;
+	className?: string;
+	onClick?: () => void;
+	disabled?: boolean;
 }
 
 export function SubmitButton({
-  title,
-  loadingTitle,
-  className,
-  onClick,
+	title,
+	loadingTitle,
+	className,
+	onClick,
+	disabled,
 }: ClaimButtonProps) {
-  const { pending } = useFormStatus();
-  return (
-    <>
-      <ShinyButton onClick={onClick} className={className} text={title} />
-      {pending && <LoadingOverlay initialMessage={loadingTitle} />}
-    </>
-  );
+	const { pending } = useFormStatus();
+	return (
+		<>
+			<ShinyButton
+				disabled={pending}
+				onClick={onClick}
+				className={className}
+				text={title}
+			/>
+			{pending && <LoadingOverlay initialMessage={loadingTitle} />}
+		</>
+	);
 }

@@ -37,33 +37,33 @@ const ShinyButton = ({
   disabled,
 }: ShinyButtonProps) => {
   return (
-    <motion.button
-      {...animationProps}
-      className={cn(
-        "relative bg-slate-600/50 rounded-xl px-6 py-3 w-full font-medium backdrop-blur-md transition-[box-shadow] duration-300 ease-in-out hover:shadow dark:bg-[radial-gradient(circle_at_50%_0%,hsl(var(--primary)/10%)_0%,transparent_60%)] dark:hover:shadow-[0_0_20px_hsl(var(--primary)/10%)] disabled:bg-slate-700 disabled:text-gray-200",
-        className,
-      )}
-      onClick={onClick}
-      disabled={disabled}
-    >
-      <span
-        className="relative block h-full w-full text-sm uppercase tracking-wide"
-        style={{
-          maskImage:
-            "linear-gradient(-75deg,hsl(var(--primary)) calc(var(--x) + 20%),transparent calc(var(--x) + 30%),hsl(var(--primary)) calc(var(--x) + 100%))",
-        }}
-      >
-        {text}
-      </span>
-      <span
-        style={{
-          mask: "linear-gradient(rgb(0,0,0), rgb(0,0,0)) content-box,linear-gradient(rgb(0,0,0), rgb(0,0,0))",
-          maskComposite: "exclude",
-        }}
-        className="absolute inset-0 z-10 block rounded-[inherit] bg-[linear-gradient(-75deg,hsl(var(--primary)/10%)_calc(var(--x)+20%),hsl(var(--primary)/50%)_calc(var(--x)+25%),hsl(var(--primary)/10%)_calc(var(--x)+100%))] p-px"
-      ></span>
-    </motion.button>
-  );
+		<motion.button
+			{...animationProps}
+			className={cn(
+				'relative bg-slate-600/50 rounded-xl px-6 py-3 w-full font-medium backdrop-blur-md transition-[box-shadow] duration-300 ease-in-out hover:shadow dark:bg-[radial-gradient(circle_at_50%_0%,hsl(var(--primary)/10%)_0%,transparent_60%)] dark:hover:shadow-[0_0_20px_hsl(var(--primary)/10%)] disabled:bg-slate-600 disabled:text-gray-200',
+				className
+			)}
+			onClick={onClick}
+			disabled={disabled}
+		>
+			<span
+				className='relative block h-full w-full text-sm uppercase tracking-wide'
+				style={{
+					maskImage:
+						'linear-gradient(-75deg,hsl(var(--primary)) calc(var(--x) + 20%),transparent calc(var(--x) + 30%),hsl(var(--primary)) calc(var(--x) + 100%))',
+				}}
+			>
+				{text}
+			</span>
+			<span
+				style={{
+					mask: 'linear-gradient(rgb(0,0,0), rgb(0,0,0)) content-box,linear-gradient(rgb(0,0,0), rgb(0,0,0))',
+					maskComposite: 'exclude',
+				}}
+				className='absolute inset-0 z-10 block rounded-[inherit] bg-[linear-gradient(-75deg,hsl(var(--primary)/10%)_calc(var(--x)+20%),hsl(var(--primary)/50%)_calc(var(--x)+25%),hsl(var(--primary)/10%)_calc(var(--x)+100%))] p-px'
+			></span>
+		</motion.button>
+	);
 };
 
 export default ShinyButton;

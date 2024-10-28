@@ -11,32 +11,32 @@ import { Button } from "@/src/components/ui/button";
 import { token } from "@/src/lib/constants";
 
 const avatars = [
-  {
-    id: 1,
-    name: "Classic",
-    free: true,
-    url: "../components/",
-  },
-  {
-    id: 2,
-    name: "Cyber Batsman",
-    free: true,
-    url: "/placeholder.svg?height=100&width=100",
-  },
-  {
-    id: 3,
-    name: "Neon Bowler",
-    free: false,
-    price: 100,
-    url: "/placeholder.svg?height=100&width=100",
-  },
-  {
-    id: 4,
-    name: "Holographic Captain",
-    free: false,
-    price: 200,
-    url: "/placeholder.svg?height=100&width=100",
-  },
+	{
+		id: 1,
+		name: 'Classic',
+		free: true,
+		url: 'https://img.freepik.com/free-photo/portrait-man-cartoon-style_23-2151133925.jpg?t=st=1730133153~exp=1730136753~hmac=b1e262ec717ab51224779ed81a7930ae1fd6644abbc449bd233f1890c6cdb310&w=2000',
+	},
+	{
+		id: 2,
+		name: 'Cyber Batsman',
+		free: true,
+		url: 'https://img.freepik.com/free-photo/portrait-man-cartoon-style_23-2151133925.jpg?t=st=1730133153~exp=1730136753~hmac=b1e262ec717ab51224779ed81a7930ae1fd6644abbc449bd233f1890c6cdb310&w=2000',
+	},
+	{
+		id: 3,
+		name: 'Neon Bowler',
+		free: false,
+		price: 100,
+		url: 'https://img.freepik.com/free-photo/portrait-man-cartoon-style_23-2151133925.jpg?t=st=1730133153~exp=1730136753~hmac=b1e262ec717ab51224779ed81a7930ae1fd6644abbc449bd233f1890c6cdb310&w=2000',
+	},
+	{
+		id: 4,
+		name: 'Holographic Captain',
+		free: false,
+		price: 200,
+		url: 'https://img.freepik.com/free-photo/portrait-man-cartoon-style_23-2151133925.jpg?t=st=1730133153~exp=1730136753~hmac=b1e262ec717ab51224779ed81a7930ae1fd6644abbc449bd233f1890c6cdb310&w=2000',
+	},
 ];
 
 export function AvatarDialog({

@@ -120,38 +120,38 @@ function UserAvatar({
   isLoading,
 }: UserAvatarProps): JSX.Element {
   return (
-    <div className="flex items-center space-x-3">
-      <div className="relative">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Avatar className="h-14 w-14 ring-2 ring-primary cursor-pointer">
-              <AvatarImage
-                src={`/avatars/avatar-${currentAvatar}.png`}
-                alt="User Avatar"
-              />
-              <AvatarFallback>{userName?.charAt(0) ?? "U"}</AvatarFallback>
-            </Avatar>
-          </DialogTrigger>
-          <AvatarDialog
-            currentAvatar={currentAvatar}
-            setCurrentAvatar={setCurrentAvatar}
-            onClose={() => {}}
-          />
-        </Dialog>
-        <div className="absolute -bottom-1 -right-1 bg-primary rounded-full p-1">
-          <Zap className="h-4 w-4 text-yellow-300" />
-        </div>
-      </div>
-      <div>
-        <h2 className="text-xl font-bold">{userName ?? "User"}</h2>
-        {isLoading ? (
-          <Skeleton className="h-2 mt-1 w-20 bg-slate-200 bg-opacity-20 rounded-xl" />
-        ) : (
-          <span className="text-sm text-yellow-300">{levelName}</span>
-        )}
-      </div>
-    </div>
-  );
+		<div className='flex items-center space-x-3'>
+			<div className='relative'>
+				<Dialog>
+					<DialogTrigger asChild>
+						<Avatar className='h-14 w-14 ring-2 ring-primary cursor-pointer'>
+							<AvatarImage
+								src={`https://res.cloudinary.com/dw2o2w9zg/image/upload/v1730138783/9200_3_2_03_tv5m8n.jpg`}
+								alt='User Avatar'
+							/>
+							<AvatarFallback>{userName?.charAt(0) ?? 'U'}</AvatarFallback>
+						</Avatar>
+					</DialogTrigger>
+					<AvatarDialog
+						currentAvatar={currentAvatar}
+						setCurrentAvatar={setCurrentAvatar}
+						onClose={() => {}}
+					/>
+				</Dialog>
+				<div className='absolute -bottom-1 -right-1 bg-primary rounded-full p-1'>
+					<Zap className='h-4 w-4 text-yellow-300' />
+				</div>
+			</div>
+			<div>
+				<h2 className='text-xl font-bold'>{userName ?? 'User'}</h2>
+				{isLoading ? (
+					<Skeleton className='h-2 mt-1 w-20 bg-slate-200 bg-opacity-20 rounded-xl' />
+				) : (
+					<span className='text-sm text-yellow-300'>{levelName}</span>
+				)}
+			</div>
+		</div>
+	);
 }
 
 function UserStats({ level, balance, isLoading }: UserStatsProps): JSX.Element {
