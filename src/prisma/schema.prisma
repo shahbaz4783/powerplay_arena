@@ -41,8 +41,9 @@ model XP {
 }
 
 model Award {
-  awardId       String   @unique
-  userId        BigInt   @unique
+  id            String   @id @default(cuid())
+  awardId       String   
+  userId        BigInt 
   user          User     @relation(fields: [userId], references: [telegramId])
   title         String  
   description   String

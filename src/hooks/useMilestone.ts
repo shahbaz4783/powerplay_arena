@@ -127,7 +127,7 @@ export const useMilestones = () => {
 					isCompleted: totalWins >= 500,
 				},
 				{
-					id: 'total_runs_1000',
+					id: 'total_runs_20000',
 					title: 'Run Machine',
 					description:
 						'Reach cricket immortality! Score a total of 20,000 runs.',
