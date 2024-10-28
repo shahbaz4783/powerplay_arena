@@ -1,18 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useGetUserFormatStats } from '@/src/hooks/useUserData';
 import { useInitData } from '@telegram-apps/sdk-react';
-import { Star, Zap, Target, Award, LucideIcon } from 'lucide-react';
-import {
-	fetchClaimedAwards,
-	saveAwardToDatabase,
-} from '../actions/game.action';
-import { Milestone } from '../types/db.types';
-import { Award as AwardType } from '@prisma/client';
+import { fetchClaimedAwards } from '@/src/actions/game.action';
+import { Award } from '@prisma/client';
+import { Milestone } from '@/src/types/db.types';
 
 export const useMilestones = () => {
 	const [challenges, setChallenges] = useState<Milestone[]>([]);
 	const [unclaimedAwards, setUnclaimedAwards] = useState<Milestone[]>([]);
-	const [claimedAwards, setClaimedAwards] = useState<AwardType[]>([]);
+	const [claimedAwards, setClaimedAwards] = useState<Award[]>([]);
 
 	const initData = useInitData();
 	const user = initData?.user;
@@ -45,9 +41,9 @@ export const useMilestones = () => {
 					title: 'Lightning Striker',
 					description: 'Unleash your fury! Take 50 wickets in Blitz matches.',
 					progress: blitzStats?.wicketsTaken || 0,
-					total: 1,
+					total: 50,
 					reward: 750,
-					isCompleted: (blitzStats?.wicketsTaken || 0) >= 1,
+					isCompleted: (blitzStats?.wicketsTaken || 0) >= 50,
 				},
 				{
 					id: 'blitz_boundary_200',
@@ -134,7 +130,7 @@ export const useMilestones = () => {
 					progress: totalRuns,
 					total: 20000,
 					reward: 20000,
-					isCompleted: totalRuns >= 6,
+					isCompleted: totalRuns >= 20000,
 				},
 			];
 

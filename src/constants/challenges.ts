@@ -1,3 +1,5 @@
+import { Award, Zap, Target, Star, Trophy } from 'lucide-react';
+
 export const challenges = [
 	{
 		title: 'Lightning Striker',
@@ -84,3 +86,16 @@ export const challenges = [
 		xp: 1800,
 	},
 ];
+
+export const iconMap: { [key: string]: React.ElementType } = {
+	blitz_wicket_50: Zap,
+	blitz_boundary_200: Target,
+	powerplay_run_1000: Trophy,
+	powerplay_over_100: Award,
+	classic_over_450: Award,
+	classic_win_50: Trophy,
+	total_sixes_1000: Zap,
+	total_wickets_1000: Target,
+	total_wins_500: Trophy,
+	total_runs_20000: Star,
+};

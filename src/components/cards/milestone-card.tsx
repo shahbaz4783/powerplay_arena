@@ -1,19 +1,14 @@
 'use client';
 
-import {
-	Card,
-	CardContent,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from '@/src/components/ui/card';
-import { Award, Target, Trophy } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Award } from 'lucide-react';
 import { Progress } from '../ui/progress';
 import { token } from '@/src/lib/constants';
 import { SubmitButton } from '../feedback/submit-button';
 import { useFormState } from 'react-dom';
 import { Milestone } from '@/src/types/db.types';
 import { claimAwardAction } from '@/src/actions/tasks.action';
+import { iconMap } from '@/src/constants/challenges';
 
 interface MilestoneCardProps extends Milestone {
 	userId: number;
@@ -41,49 +36,89 @@ export function MilestoneCard({
 	});
 	const [state, formAction] = useFormState(claimAward, initialState);
 
+	const Icon = iconMap[id] || Award;
+
 	return (
-		<Card className='bg-slate-800/50 backdrop-blur-md rounded-xl'>
-			<CardHeader className='flex flex-row items-center justify-between pb-2'>
-				<CardTitle className='text-lg font-bold text-blue-400'>
+		<motion.div
+			className='bg-gradient-to-br from-slate-900 to-stone-800 border border-slate-700 rounded-xl p-6 shadow-lg'
+			initial={{ opacity: 0, scale: 0.8 }}
+			animate={{ opacity: 1, scale: 1 }}
+			transition={{ duration: 0.5 }}
+			whileTap={{ scale: 0.95 }}
+		>
+			<motion.div
+				className='flex items-center justify-between mb-4'
+				initial={{ y: -20 }}
+				animate={{ y: 0 }}
+				transition={{ delay: 0.2, duration: 0.5 }}
+			>
+				<motion.h3
+					className='text-xl font-bold text-blue-400'
+					initial={{ x: -20 }}
+					animate={{ x: 0 }}
+					transition={{ delay: 0.3, duration: 0.5 }}
+				>
 					{title}
-				</CardTitle>
-				<Target className='h-8 w-8 text-yellow-400' />
-			</CardHeader>
-			<CardContent>
-				<p className='text-sm text-gray-300 mb-2'>{description}</p>
+				</motion.h3>
+				<Icon className='h-8 w-8 text-yellow-300' />
+			</motion.div>
+			<motion.p
+				className='text-sm text-slate-300 mb-4'
+				initial={{ x: -20 }}
+				animate={{ x: 0 }}
+				transition={{ delay: 0.4, duration: 0.5 }}
+			>
+				{description}
+			</motion.p>
+			<motion.div
+				initial={{ scaleX: 0 }}
+				animate={{ scaleX: 1 }}
+				transition={{ delay: 0.5, duration: 0.5 }}
+			>
 				<Progress
 					value={(progress / total) * 100}
-					className='h-2 mb-2 bg-gray-700'
+					className='h-2 mb-2 bg-slate-700'
 				/>
-
-				<div className='flex justify-between text-sm text-gray-400'>
-					<span>
-						{progress}/{total}
-					</span>
-					<span>
-						Reward: {reward} {token.symbol}
-					</span>
-				</div>
-			</CardContent>
+			</motion.div>
+			<motion.div
+				className='flex justify-between text-sm text-slate-400'
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ delay: 0.6, duration: 0.5 }}
+			>
+				<span>
+					{progress}/{total}
+				</span>
+				<span>
+					Reward: {reward} {token.symbol}
+				</span>
+			</motion.div>
 			{isCompleted && (
-				<CardFooter>
-					<form action={formAction}>
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.7, duration: 0.5 }}
+				>
+					<form action={formAction} className='mt-4'>
 						<SubmitButton
 							title='Claim'
 							loadingTitle='Claiming your achievement...'
 						/>
 					</form>
-				</CardFooter>
+				</motion.div>
 			)}
 			{state.message && (
-				<p
+				<motion.p
 					className={`text-sm text-center mt-2 ${
 						state.success ? 'text-green-500' : 'text-red-500'
 					}`}
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ duration: 0.5 }}
 				>
 					{state.message}
-				</p>
+				</motion.p>
 			)}
-		</Card>
+		</motion.div>
 	);
 }

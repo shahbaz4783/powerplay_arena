@@ -5,15 +5,17 @@ export function InviteMilestones() {
   return (
 		<div className='space-y-4'>
 			{INVITE_MILESTONES.map((milestone) => (
-				// <MilestoneCard
-				//   key={milestone.id}
-				//   title={milestone.title}
-				//   description={milestone.description}
-				//   reward={milestone.reward}
-				//   currentProgress={12}
-				//   targetGoal={20}
-				// />
-				<p key={milestone.id}>hi</p>
+				<MilestoneCard
+					key={milestone.id}
+					id={milestone.id.toString()}
+					progress={0}
+					total={milestone.requiredInvites}
+					isCompleted={false}
+					description={milestone.description}
+					userId={1}
+					reward={milestone.reward}
+					title={milestone.title}
+				/>
 			))}
 		</div>
 	);
