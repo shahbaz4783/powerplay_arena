@@ -7,7 +7,6 @@ export interface Milestone {
 	id: string;
 	title: string;
 	description: string;
-	icon: LucideIcon;
 	progress: number;
 	total: number;
 	reward: number;

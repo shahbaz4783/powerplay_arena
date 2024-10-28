@@ -7,7 +7,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/src/components/ui/card';
-import { Award, Trophy } from 'lucide-react';
+import { Award, Target, Trophy } from 'lucide-react';
 import { Progress } from '../ui/progress';
 import { token } from '@/src/lib/constants';
 import { SubmitButton } from '../feedback/submit-button';
@@ -28,7 +28,6 @@ export function MilestoneCard({
 	total,
 	isCompleted,
 	userId,
-	icon: Icon,
 }: MilestoneCardProps) {
 	const initialState = { message: '', success: false };
 	const claimAward = claimAwardAction.bind(null, userId, {
@@ -39,7 +38,6 @@ export function MilestoneCard({
 		progress,
 		total,
 		isCompleted,
-		icon: Award,
 	});
 	const [state, formAction] = useFormState(claimAward, initialState);
 
@@ -49,7 +47,7 @@ export function MilestoneCard({
 				<CardTitle className='text-lg font-bold text-blue-400'>
 					{title}
 				</CardTitle>
-				<Icon className='h-8 w-8 text-yellow-400' />
+				<Target className='h-8 w-8 text-yellow-400' />
 			</CardHeader>
 			<CardContent>
 				<p className='text-sm text-gray-300 mb-2'>{description}</p>

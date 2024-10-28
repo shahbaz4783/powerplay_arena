@@ -7,7 +7,7 @@ export function Awards() {
 	return (
 		<div className='space-y-4'>
 			{claimedAwards.map((award) => (
-				<p>{award.title}</p>
+				<p key={award.title}>{award.title}</p>
 			))}
 		</div>
 	);
