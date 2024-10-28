@@ -44,7 +44,6 @@ export const useMilestones = () => {
 					id: 'blitz_wicket_50',
 					title: 'Lightning Striker',
 					description: 'Unleash your fury! Take 50 wickets in Blitz matches.',
-					icon: Award,
 					progress: blitzStats?.wicketsTaken || 0,
 					total: 1,
 					reward: 750,
@@ -55,7 +54,6 @@ export const useMilestones = () => {
 					title: 'Boundary Blaster',
 					description:
 						'Paint the field with fours! Hit 200 boundaries in Blitz games.',
-					icon: Award,
 					progress: blitzStats?.fours || 0,
 					total: 200,
 					reward: 750,
@@ -66,7 +64,6 @@ export const useMilestones = () => {
 					title: 'Powerplay Punisher',
 					description:
 						'Dominate the powerplay! Score 1000 runs in Powerplay matches.',
-					icon: Award,
 					progress: powerplayStats?.runsScored || 0,
 					total: 1000,
 					reward: 1500,
@@ -76,7 +73,6 @@ export const useMilestones = () => {
 					id: 'powerplay_over_100',
 					title: 'Endurance Emperor',
 					description: 'Outlast them all! Bowl 100 overs in Powerplay games.',
-					icon: Award,
 					progress: Math.floor((powerplayStats?.ballsBowled || 0) / 6),
 					total: 100,
 					reward: 1500,
@@ -87,7 +83,6 @@ export const useMilestones = () => {
 					title: 'Immovable Object',
 					description:
 						'Be the ultimate defender! Face 450 overs in Classic matches.',
-					icon: Award,
 					progress: Math.floor((classicStats?.ballsFaced || 0) / 6),
 					total: 450,
 					reward: 6000,
@@ -97,7 +92,6 @@ export const useMilestones = () => {
 					id: 'classic_win_50',
 					title: 'Classic Conqueror',
 					description: 'Master the long game! Win 50 Classic matches.',
-					icon: Award,
 					progress: classicStats?.matchesWon || 0,
 					total: 50,
 					reward: 10000,
@@ -107,7 +101,6 @@ export const useMilestones = () => {
 					id: 'total_sixes_1000',
 					title: 'Sixer Sensation',
 					description: 'Light up the sky! Hit 1000 sixes across all formats.',
-					icon: Zap,
 					progress: totalSixes,
 					total: 1000,
 					reward: 7500,
@@ -118,7 +111,6 @@ export const useMilestones = () => {
 					title: 'Stumps Shatterer',
 					description:
 						'Become a bowling legend! Take 1000 wickets across all formats.',
-					icon: Target,
 					progress: totalWickets,
 					total: 1000,
 					reward: 15000,
@@ -129,7 +121,6 @@ export const useMilestones = () => {
 					title: 'Victory Virtuoso',
 					description:
 						'Be the ultimate champion! Win 500 matches across all formats.',
-					icon: Star,
 					progress: totalWins,
 					total: 500,
 					reward: 18000,
@@ -140,7 +131,6 @@ export const useMilestones = () => {
 					title: 'Run Machine',
 					description:
 						'Reach cricket immortality! Score a total of 20,000 runs.',
-					icon: Target,
 					progress: totalRuns,
 					total: 20000,
 					reward: 20000,
