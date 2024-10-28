@@ -5,6 +5,8 @@ import { token } from "../lib/constants";
 import { db } from "../lib/db";
 import { FormResponse } from "../lib/types";
 import { calculateReward } from "../lib/utils";
+import { saveAwardToDatabase } from './game.action';
+import { Milestone } from '../types/db.types';
 
 export const giveTaskReward = async (telegramId: number, reward: number) => {
   await db.wallet.update({
@@ -99,3 +101,24 @@ export const dailyDrop = async (
     }
   }
 };
+
+
+export async function claimAwardAction(userId: number, award: Milestone) {
+	try {
+		const response = await saveAwardToDatabase(userId, award);
+		if (response.message.success) {
+			return { success: true, message: 'Award claimed successfully!' };
+		} else {
+			return {
+				success: false,
+				message: response.message.error || 'Failed to claim award',
+			};
+		}
+	} catch (error) {
+		console.error('Error claiming award:', error);
+		return {
+			success: false,
+			message: 'An error occurred while claiming the award',
+		};
+	}
+}

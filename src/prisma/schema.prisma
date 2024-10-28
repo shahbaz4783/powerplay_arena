@@ -25,6 +25,7 @@ model User {
   wallet         Wallet?
   transaction    Transaction[]
   stats          Stats[]
+  award          Award[]
   xp             XP?
 }
 
@@ -36,7 +37,16 @@ model XP {
   level         Int      @default(1)
   levelName     String
   xpForNextLevel  Int      @default(5000)
+  @@index([userId])
+}
 
+model Award {
+  awardId       String   @unique
+  userId        BigInt   @unique
+  user          User     @relation(fields: [userId], references: [telegramId])
+  title         String  
+  description   String
+  
   @@index([userId])
 }
 
