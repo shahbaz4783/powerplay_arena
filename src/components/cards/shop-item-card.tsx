@@ -14,6 +14,8 @@ import { Button } from '@/src/components/ui/button';
 import { token } from '@/src/lib/constants';
 import { SubmitButton } from '../feedback/submit-button';
 import Image from 'next/image';
+import { useInitData } from '@telegram-apps/sdk-react';
+import { useGetUserInfo } from '@/src/hooks/useUserData';
 
 interface ShopItemProps {
 	id: number;
@@ -21,7 +23,6 @@ interface ShopItemProps {
 	price: number;
 	requiredLevel: number;
 	image: string;
-	userLevel: number;
 	userCoins: number;
 	onPurchase: (id: number, price: number) => void;
 	isPurchased: boolean;
@@ -34,10 +35,15 @@ export function ShopItemCard({
 	price,
 	requiredLevel,
 	image,
-	userLevel,
 	onPurchase,
 	description,
 }: ShopItemProps) {
+	const initData = useInitData();
+	const user = initData?.user;
+
+	const { data } = useGetUserInfo(user?.id);
+	const userLevel = data?.userXP?.level || 1;
+
 	const [isOpen, setIsOpen] = useState(false);
 
 	const handlePurchase = () => {

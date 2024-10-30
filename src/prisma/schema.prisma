@@ -36,7 +36,7 @@ model XP {
   totalXP       Int      @default(0)
   level         Int      @default(1)
   levelName     String
-  xpForNextLevel  Int      @default(5000)
+  xpForNextLevel  Int      @default(2000)
   @@index([userId])
 }
 

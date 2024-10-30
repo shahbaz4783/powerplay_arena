@@ -181,54 +181,54 @@ export const LEVEL_NAMES = [
 ];
 
 export const LEVEL_DATA = [
-  {
-    level: 1,
-    name: "Rookie Batsman",
-    xpThreshold: 0,
-  },
-  {
-    level: 2,
-    name: "Club Player",
-    xpThreshold: 5000,
-  },
-  {
-    level: 3,
-    name: "First-Class Contender",
-    xpThreshold: 10000,
-  },
-  {
-    level: 4,
-    name: "National Prospect",
-    xpThreshold: 25000,
-  },
-  {
-    level: 5,
-    name: "International Debutant",
-    xpThreshold: 50000,
-  },
-  {
-    level: 6,
-    name: "Test Match Regular",
-    xpThreshold: 100000,
-  },
-  {
-    level: 7,
-    name: "World Cup Hero",
-    xpThreshold: 200000,
-  },
-  {
-    level: 8,
-    name: "Cricket Maestro",
-    xpThreshold: 400000,
-  },
-  {
-    level: 9,
-    name: "Living Legend",
-    xpThreshold: 600000,
-  },
-  {
-    level: 10,
-    name: "Immortal of the Game",
-    xpThreshold: 1000000,
-  },
+	{
+		level: 1,
+		name: 'Rookie Batsman',
+		xpThreshold: 0,
+	},
+	{
+		level: 2,
+		name: 'Club Player',
+		xpThreshold: 2000,
+	},
+	{
+		level: 3,
+		name: 'First-Class Contender',
+		xpThreshold: 5000,
+	},
+	{
+		level: 4,
+		name: 'National Prospect',
+		xpThreshold: 15000,
+	},
+	{
+		level: 5,
+		name: 'International Debutant',
+		xpThreshold: 30000,
+	},
+	{
+		level: 6,
+		name: 'Test Match Regular',
+		xpThreshold: 50000,
+	},
+	{
+		level: 7,
+		name: 'World Cup Hero',
+		xpThreshold: 100000,
+	},
+	{
+		level: 8,
+		name: 'Cricket Maestro',
+		xpThreshold: 200000,
+	},
+	{
+		level: 9,
+		name: 'Living Legend',
+		xpThreshold: 500000,
+	},
+	{
+		level: 10,
+		name: 'Immortal of the Game',
+		xpThreshold: 1000000,
+	},
 ];
