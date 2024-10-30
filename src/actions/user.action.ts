@@ -16,47 +16,55 @@ export const saveOrUpdateUser = async (user: User) => {
 
     const result = await db.$transaction(async (tx) => {
       const upsertedUser = await tx.user.upsert({
-        where: { telegramId: user.id },
-        update: {
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          languageCode: user.languageCode,
-          isPremium: user.isPremium,
-        },
-        create: {
-          telegramId: user.id,
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          languageCode: user.languageCode || "en",
-          isPremium: user.isPremium,
-          wallet: {
-            create: {
-              balance: 100,
-            },
-          },
-          xp: {
-            create: {
-              totalXP: 0,
-              level: 1,
-              levelName: LEVEL_DATA[0].name,
-            },
-          },
-          stats: {
-            create: formats.map((format) => ({
-              format,
-            })),
-          },
-          transaction: {
-            create: {
-              amount: 100,
-              type: "REWARD",
-              description: "Joining bonus",
-            },
-          },
-        },
-      });
+				where: { telegramId: user.id },
+				update: {
+					username: user.username,
+					firstName: user.firstName,
+					lastName: user.lastName,
+					languageCode: user.languageCode,
+					isPremium: user.isPremium,
+				},
+				create: {
+					telegramId: user.id,
+					username: user.username,
+					firstName: user.firstName,
+					lastName: user.lastName,
+					languageCode: user.languageCode || 'en',
+					isPremium: user.isPremium,
+					wallet: {
+						create: {
+							balance: 100,
+						},
+					},
+					xp: {
+						create: {
+							totalXP: 0,
+							level: 1,
+							levelName: LEVEL_DATA[0].name,
+						},
+					},
+					stats: {
+						create: formats.map((format) => ({
+							format,
+						})),
+					},
+					transaction: {
+						create: {
+							amount: 100,
+							type: 'REWARD',
+							description: 'Joining bonus',
+						},
+					},
+					award: {
+						create: {
+							awardId: 'rookie_sensation',
+							title: 'Rookie Sensation',
+							description:
+								"You've taken your first step into the exciting world of cricket. May your journey be filled with sixes, wickets, and unforgettable moments.",
+						},
+					},
+				},
+			});
 
       // Fetch the wallet balance within the same transaction
       const walletInfo = await tx.wallet.findUnique({

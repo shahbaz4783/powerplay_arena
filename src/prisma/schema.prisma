@@ -26,6 +26,7 @@ model User {
   transaction    Transaction[]
   stats          Stats[]
   award          Award[]
+  avatar         Avatar[]
   xp             XP?
 }
 
@@ -40,6 +41,18 @@ model XP {
   @@index([userId])
 }
 
+model Avatar {
+  id  String   @id @default(cuid())
+  avatarId      String   
+  userId        BigInt 
+  user          User     @relation(fields: [userId], references: [telegramId])
+  title         String  
+  description   String
+  href          String
+
+  @@index([userId])
+}
+
 model Award {
   id            String   @id @default(cuid())
   awardId       String   
@@ -47,6 +60,7 @@ model Award {
   user          User     @relation(fields: [userId], references: [telegramId])
   title         String  
   description   String
+  createdAt     DateTime @default(now())
   
   @@index([userId])
 }
