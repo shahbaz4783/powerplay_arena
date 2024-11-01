@@ -13,17 +13,12 @@ export function Awards() {
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.5, staggerChildren: 0.1 }}
 		>
-			{claimedAwards.length > 0 ? (
+			{claimedAwards.length > 0 && (
 				<>
 					{claimedAwards.map((award) => (
 						<AwardCard key={award.awardId} {...award} />
 					))}
 				</>
-			) : (
-				<div className='text-sm text-slate-400 font-mono text-center'>
-					<p>You don't have any awards yet.</p>
-					<p>Keep playing to earn them!</p>
-				</div>
 			)}
 		</motion.div>
 	);

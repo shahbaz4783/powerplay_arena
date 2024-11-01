@@ -51,10 +51,10 @@ export const saveOrUpdateUser = async (user: User) => {
 					},
 					award: {
 						create: {
-							awardId: 'rookie_sensation',
-							title: 'Rookie Sensation',
+							awardId: 'new_player_join',
+							title: 'Welcome to the Crease',
 							description:
-								"You've taken your first step into the exciting world of cricket. May your journey be filled with sixes, wickets, and unforgettable moments.",
+								'Your cricket journey begins with the first step onto the pitch',
 						},
 					},
 				},
