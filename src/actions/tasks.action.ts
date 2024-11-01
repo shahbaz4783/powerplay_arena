@@ -9,103 +9,97 @@ import { saveAwardToDatabase } from './game.action';
 import { Milestone } from '../types/db.types';
 
 export const giveTaskReward = async (telegramId: number, reward: number) => {
-  await db.wallet.update({
-    where: { userId: telegramId },
-    data: {
-      balance: { increment: reward },
-    },
-  });
+	await db.profile.update({
+		where: { telegramId },
+		data: {
+			balance: { increment: reward },
+		},
+	});
 };
 
 export const dailyDrop = async (
-  telegramId: number,
-  prevState: FormResponse,
-  formData: FormData,
+	telegramId: number,
+	prevState: FormResponse,
+	formData: FormData
 ): Promise<FormResponse> => {
-  try {
-    const result = await db.$transaction(async (tx) => {
-      const user = await tx.user.findUnique({
-        where: { telegramId },
-        include: { wallet: true },
-      });
+	try {
+		const result = await db.$transaction(async (tx) => {
+			const profile = await tx.profile.findUnique({
+				where: { telegramId },
+			});
 
-      if (!user) {
-        throw new Error("User not found");
-      }
+			if (!profile) {
+				throw new Error('User not found');
+			}
 
-      const now = new Date();
-      const lastClaimed = user.lastClaimed ? new Date(user.lastClaimed) : null;
+			const now = new Date();
+			const lastClaimedAt = profile.lastClaimedAt
+				? new Date(profile.lastClaimedAt)
+				: null;
 
-      if (lastClaimed) {
-        const startOfToday = new Date(
-          Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
-        );
-        const endOfToday = new Date(
-          Date.UTC(
-            now.getUTCFullYear(),
-            now.getUTCMonth(),
-            now.getUTCDate() + 1,
-          ),
-        );
+			if (lastClaimedAt) {
+				const startOfToday = new Date(
+					Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+				);
+				const endOfToday = new Date(
+					Date.UTC(
+						now.getUTCFullYear(),
+						now.getUTCMonth(),
+						now.getUTCDate() + 1
+					)
+				);
 
-        if (lastClaimed >= startOfToday && lastClaimed < endOfToday) {
-          throw new Error("You have already claimed your daily reward");
-        }
-      }
+				if (lastClaimedAt >= startOfToday && lastClaimedAt < endOfToday) {
+					throw new Error('You have already claimed your daily reward');
+				}
+			}
 
-      let streak = user.streak + 1;
-      if (streak > 7) streak = 1;
+			let streak = profile.streakLength++;
+			if (streak > 7) {
+				streak = 1;
+				profile.weeklyStreak++;
+			}
 
-      console.log({ streak });
+			const reward = calculateReward(streak);
 
-      const reward = calculateReward(streak);
+			await tx.profile.update({
+				where: { telegramId },
+				data: {
+					balance: { increment: reward },
+					lastClaimedAt: now,
+				},
+			});
 
-      await tx.wallet.update({
-        where: { userId: telegramId },
-        data: {
-          balance: { increment: reward },
-        },
-      });
+			await tx.transaction.create({
+				data: {
+					telegramId,
+					amount: reward,
+					type: 'REWARD',
+					description: `Daily reward claim (Day ${streak})`,
+				},
+			});
 
-      await tx.user.update({
-        where: { telegramId },
-        data: {
-          lastClaimed: now,
-          streak: streak,
-        },
-      });
+			return { reward, streak };
+		});
 
-      await tx.transaction.create({
-        data: {
-          userId: telegramId,
-          amount: reward,
-          type: "REWARD",
-          description: `Daily reward claim (Day ${streak})`,
-        },
-      });
-
-      return { reward, streak };
-    });
-
-    revalidatePath("/miniapp/reward");
-    return {
-      message: {
-        success: `Congratulations! You've claimed ${result.reward} ${token.symbol} on Day ${result.streak} of your streak!`,
-      },
-    };
-  } catch (error) {
-    if (error instanceof Error) {
-      return { message: { error: error.message } };
-    } else {
-      return { message: { error: "Something Went Wrong" } };
-    }
-  }
+		revalidatePath('/miniapp/reward');
+		return {
+			message: {
+				success: `Congratulations! You've claimed ${result.reward} ${token.symbol} on Day ${result.streak} of your streak!`,
+			},
+		};
+	} catch (error) {
+		if (error instanceof Error) {
+			return { message: { error: error.message } };
+		} else {
+			return { message: { error: 'Something Went Wrong' } };
+		}
+	}
 };
 
-
-export async function claimAwardAction(userId: number, award: Milestone) {
+export async function claimAwardAction(telegramId: number, award: Milestone) {
 	try {
-		const response = await saveAwardToDatabase(userId, award);
+		const response = await saveAwardToDatabase(telegramId, award);
 		if (response.message.success) {
 			return { success: true, message: 'Award claimed successfully!' };
 		} else {

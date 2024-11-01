@@ -6,17 +6,17 @@ import {
   getUserTransactionById,
   PaginatedResponse,
 } from "../actions/user.action";
-import { getUserInfoById } from "../actions/user.action";
-import { MatchFormat } from "@prisma/client";
+import { getUserProfileById } from '../actions/user.action';
+import { MatchFormat } from '@prisma/client';
 
-export const useGetUserInfo = (userId: number | undefined) => {
-  return useQuery({
-    queryKey: ["user-info", userId],
-    queryFn: () => getUserInfoById(userId!),
-    enabled: !!userId,
-    staleTime: 60000,
-    gcTime: 3600000,
-  });
+export const useUserProfile = (telegramId: number | undefined) => {
+	return useQuery({
+		queryKey: ['user-info', telegramId],
+		queryFn: () => getUserProfileById(telegramId!),
+		enabled: !!telegramId,
+		staleTime: 60000,
+		gcTime: 3600000,
+	});
 };
 
 export const useGetUserTransaction = (userId: bigint | undefined) => {

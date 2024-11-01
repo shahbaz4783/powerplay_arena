@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useGetUserInfo } from '@/src/hooks/useUserData';
+import { useUserProfile } from '@/src/hooks/useUserData';
 import { useInitData } from '@telegram-apps/sdk-react';
 import { Progress } from '@/src/components/ui/progress';
 import { token } from '@/src/lib/constants';
@@ -11,38 +11,37 @@ import { Card } from '@/src/components/ui/card';
 import { saveOrUpdateUser } from '@/src/actions/user.action';
 import { Skeleton } from '../ui/skeleton';
 
-interface UserXP {
+interface UserProfile {
 	level: number;
 	totalXP: number;
 	xpForNextLevel: number;
 	levelName: string;
-}
-
-interface WalletInfo {
 	balance: number;
 }
 
-interface UserData {
-	userXP: UserXP;
-	walletInfo: WalletInfo;
+interface UserProfileHookResult {
+	data: {
+		userProfile: UserProfile | null;
+	} | null;
+	isLoading: boolean;
 }
 
 interface UserStatsProps {
-	level: number;
-	balance: number;
+	level: number | undefined;
+	balance: number | undefined;
 	isLoading: boolean;
 	levelName: string | undefined;
 	name: string | undefined;
 }
 
 interface XPProgressProps {
-	totalXP: number;
-	xpForLevelUp: number;
-	xpForNextLevel: number;
+	totalXP: number | undefined;
+	xpForLevelUp: number | undefined;
+	xpForNextLevel: number | undefined;
 	isLoading: boolean;
 }
 
-export function UserProfileHeader(): JSX.Element {
+export function UserProfileHeader() {
 	const initData = useInitData();
 	const user = initData?.user;
 
@@ -58,14 +57,11 @@ export function UserProfileHeader(): JSX.Element {
 		fetchData();
 	}, [user]);
 
-	const { data, isLoading } = useGetUserInfo(user?.id);
-	const userData: UserData = data as UserData;
-
-	const level = userData?.userXP.level;
-	const totalXP = userData?.userXP.totalXP;
-	const balance = userData?.walletInfo.balance;
-	const xpForLevelUp = userData?.userXP.xpForNextLevel;
-	const xpForNextLevel = xpForLevelUp - totalXP;
+	const { data, isLoading } = useUserProfile(user?.id) as UserProfileHookResult;
+	const profile = data?.userProfile;
+	const totalXP = profile?.totalXP;
+	const xpForLevelUp = profile?.xpForNextLevel;
+	const xpForNextLevel = xpForLevelUp! - totalXP!;
 
 	return (
 		<Card className='rounded-xl p-4 space-y-5 bg-gradient-to-r from-gray-800 to-gray-900 shadow-lg'>
@@ -77,11 +73,11 @@ export function UserProfileHeader(): JSX.Element {
 			>
 				<AvatarDialog />
 				<UserStats
-					level={level}
-					balance={balance}
 					isLoading={isLoading}
+					level={profile?.level}
+					balance={profile?.balance}
 					name={user?.firstName}
-					levelName={userData?.userXP?.levelName}
+					levelName={profile?.levelName}
 				/>
 			</motion.div>
 
@@ -131,39 +127,42 @@ function UserStats({
 }
 
 function XPProgress({
-  totalXP,
-  xpForLevelUp,
-  xpForNextLevel,
-  isLoading,
+	totalXP,
+	xpForLevelUp,
+	xpForNextLevel,
+	isLoading,
 }: XPProgressProps) {
-  return (
-    <motion.div
-      className="space-y-3"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-    >
-      {isLoading ? (
-        <Skeleton className="h-2 w-full bg-slate-100 bg-opacity-20 rounded-xl" />
-      ) : (
-        <Progress
-          value={(totalXP / xpForLevelUp) * 100}
-          className="w-full h-2 bg-slate-400 bg-opacity-20"
-        />
-      )}
+	const progressValue =
+		totalXP && xpForLevelUp ? (totalXP / xpForLevelUp) * 100 : 0;
 
-      <div className="flex justify-between text-sm">
-        {isLoading ? (
-          <Skeleton className="h-3 w-1/6 bg-slate-100 bg-opacity-20 rounded-xl" />
-        ) : (
-          <span>XP: {totalXP}</span>
-        )}
-        {isLoading ? (
-          <Skeleton className="h-3 w-1/4 bg-slate-100 bg-opacity-20 rounded-xl" />
-        ) : (
-          <span>Next Level: {xpForNextLevel} XP</span>
-        )}
-      </div>
-    </motion.div>
-  );
+	return (
+		<motion.div
+			className='space-y-3'
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.5, delay: 0.2 }}
+		>
+			{isLoading ? (
+				<Skeleton className='h-2 w-full bg-slate-100 bg-opacity-20 rounded-xl' />
+			) : (
+				<Progress
+					value={progressValue}
+					className='w-full h-2 bg-slate-400 bg-opacity-20'
+				/>
+			)}
+
+			<div className='flex justify-between text-sm'>
+				{isLoading ? (
+					<Skeleton className='h-3 w-1/6 bg-slate-100 bg-opacity-20 rounded-xl' />
+				) : (
+					<span>XP: {totalXP ?? 0}</span>
+				)}
+				{isLoading ? (
+					<Skeleton className='h-3 w-1/4 bg-slate-100 bg-opacity-20 rounded-xl' />
+				) : (
+					<span>Next Level: {xpForNextLevel ?? 0} XP</span>
+				)}
+			</div>
+		</motion.div>
+	);
 }

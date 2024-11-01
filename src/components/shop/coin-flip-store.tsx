@@ -5,13 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUpCircle, ArrowDownCircle, Coins } from 'lucide-react';
 import { Button } from '@/src/components/ui/button';
 import {
-	Card,
-	CardContent,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from '@/src/components/ui/card';
-import {
 	Tabs,
 	TabsContent,
 	TabsList,
@@ -26,6 +19,7 @@ import {
 } from '@/src/components/ui/dialog';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import { SubmitButton } from '../feedback/submit-button';
+import { token } from '@/src/lib/constants';
 
 const bettingTiers = [
 	{ name: 'Low Stakes', minBet: 10, maxBet: 100 },
@@ -120,7 +114,7 @@ export function CoinFlipChallenge() {
 									className='w-full'
 								/>
 								<div className='text-center font-semibold'>
-									Bet Amount: {betAmount} coins
+									Bet Amount: {betAmount} {token.symbol}
 								</div>
 							</div>
 						</TabsContent>
@@ -138,39 +132,49 @@ export function CoinFlipChallenge() {
 						))}
 					</TabsList>
 				</Tabs>
-				<div className='space-y-2 bg-slate-900 rounded-xl p-3'>
-					<h3 className='font-semibold text-lg'>Select Challenge:</h3>
-					<div className='grid grid-cols-2 gap-2'>
-						{challenges.map((challenge) => (
-							<Button
-								key={challenge.name}
-								variant={
-									selectedChallenge === challenge ? 'default' : 'outline'
-								}
-								className='w-full rounded-xl h-auto py-2 flex flex-col items-center justify-center'
-								onClick={() => setSelectedChallenge(challenge)}
-							>
-								<span className='font-semibold'>{challenge.name}</span>
-								<span className='text-sm'>
-									{challenge.payout}x - {challenge.odds * 100}%
-								</span>
-							</Button>
-						))}
-					</div>
+
+				<div className='grid grid-cols-2 gap-2 bg-slate-900 rounded-xl p-3'>
+					{challenges.map((challenge) => (
+						<Button
+							key={challenge.name}
+							variant={selectedChallenge === challenge ? 'secondary' : 'ghost'}
+							className='w-full rounded-xl border h-auto py-2 flex flex-col items-center justify-center'
+							onClick={() => setSelectedChallenge(challenge)}
+						>
+							<span className=' text-xs'>{challenge.name}</span>
+							<span className='text-sm'>
+								{challenge.payout}x - {challenge.odds * 100}%
+							</span>
+						</Button>
+					))}
 				</div>
+
 				<div className=' bg-slate-900 rounded-xl p-3'>
-					<h3 className='font-semibold text-lg mb-2'>Choose your side:</h3>
+					<h3 className='text-center text-slate-400 text-sm mb-2'>
+						Choose Your Side
+					</h3>
 					<ToggleGroup
 						type='single'
+						className='gap-3'
 						value={selectedSide || ''}
 						onValueChange={(value) =>
 							setSelectedSide(value as 'heads' | 'tails')
 						}
 					>
-						<ToggleGroupItem value='heads' aria-label='Heads'>
+						<ToggleGroupItem
+							variant={'outline'}
+							className='rounded-xl w-full'
+							value='heads'
+							aria-label='Heads'
+						>
 							Heads
 						</ToggleGroupItem>
-						<ToggleGroupItem value='tails' aria-label='Tails'>
+						<ToggleGroupItem
+							variant={'outline'}
+							className='rounded-xl w-full'
+							value='tails'
+							aria-label='Tails'
+						>
 							Tails
 						</ToggleGroupItem>
 					</ToggleGroup>

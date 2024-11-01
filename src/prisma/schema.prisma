@@ -14,98 +14,94 @@ model WaitlistUser {
 }
 
 model User {
-  telegramId     BigInt    @unique
+  telegramId     BigInt    @id @unique
   firstName      String    @unique
   lastName       String?
   username       String?   @unique
   languageCode   String
   isPremium      Boolean?
-  lastClaimed    DateTime?
-  streak         Int       @default(0)
-  wallet         Wallet?
+  profile        Profile?
   transaction    Transaction[]
   stats          Stats[]
   award          Award[]
   avatar         Avatar[]
-  xp             XP?
 }
 
-model XP {
-  id            String   @id @default(cuid())
-  userId        BigInt   @unique
-  user          User     @relation(fields: [userId], references: [telegramId])
-  totalXP       Int      @default(0)
-  level         Int      @default(1)
-  levelName     String
+model Profile {
+  id              String   @id @default(cuid())
+  telegramId      BigInt   @unique
+  user            User     @relation(fields: [telegramId], references: [telegramId])
+  balance         Int      @default(0)
+  totalXP         Int      @default(0)
+  level           Int      @default(1)
+  levelName       String   @default("Rookie")
   xpForNextLevel  Int      @default(2000)
-  @@index([userId])
+  streakLength    Int      @default(0)
+  weeklyStreak    Int      @default(0)
+  bettingPasses   Int      @default(0)
+  avatarUrl       String
+  lastClaimedAt   DateTime?
+
+  @@index([telegramId])
 }
 
 model Avatar {
-  id  String   @id @default(cuid())
+  id            String   @id @default(cuid())
   avatarId      String   
-  userId        BigInt 
-  user          User     @relation(fields: [userId], references: [telegramId])
+  telegramId    BigInt 
+  user          User     @relation(fields: [telegramId], references: [telegramId])
   title         String  
   description   String
   href          String
 
-  @@index([userId])
+  @@index([telegramId])
 }
 
 model Award {
   id            String   @id @default(cuid())
   awardId       String   
-  userId        BigInt 
-  user          User     @relation(fields: [userId], references: [telegramId])
+  telegramId    BigInt 
+  user          User     @relation(fields: [telegramId], references: [telegramId])
   title         String  
   description   String
   createdAt     DateTime @default(now())
   
-  @@index([userId])
+  @@index([telegramId])
 }
 
 model Stats {
-  id            String      @id @default(cuid())
-  userId        BigInt
-  format        MatchFormat
-  user          User        @relation(fields: [userId], references: [telegramId])
+  id               String      @id @default(cuid())
+  telegramId       BigInt
+  format           MatchFormat
+  user             User        @relation(fields: [telegramId], references: [telegramId])
 
-  matchesPlayed Int         @default(0)
-  matchesWon    Int         @default(0)
-  matchesLost   Int         @default(0)
-  matchesTie    Int         @default(0)
+  matchesPlayed    Int         @default(0)
+  matchesWon       Int         @default(0)
+  matchesLost      Int         @default(0)
+  matchesTie       Int         @default(0)
 
-  runsScored    Int         @default(0)
-  ballsFaced    Int         @default(0)
-  sixes         Int         @default(0)
-  fours         Int         @default(0)
+  runsScored        Int         @default(0)
+  highestRunsScored Int         @default(0)
+  ballsFaced        Int         @default(0)
+  sixes             Int         @default(0)
+  fours             Int         @default(0)
+  
+  wicketsTaken          Int         @default(0)
+  runsConceded          Int         @default(0)
+  lowestRunsConceded    Int         @default(0)
+  highestWicketsTaken   Int         @default(0)
+  ballsBowled           Int         @default(0)
+  hattrik               Int         @default(0)
+  maidenOver            Int         @default(0)
 
-  wicketsTaken  Int         @default(0)
-  runsConceded  Int         @default(0)
-  ballsBowled   Int         @default(0)
-
-  @@unique([userId, format])
-  @@index([userId])
-}
-
-enum MatchFormat {
-  BLITZ
-  POWERPLAY
-  CLASSIC
-}
-
-model Wallet {
-  id      String @id @default(cuid())
-  balance Int
-  user    User   @relation(fields: [userId], references: [telegramId])
-  userId  BigInt @unique
+  @@unique([telegramId, format])
+  @@index([telegramId])
 }
 
 model Transaction {
   id          String            @id @default(cuid())
-  userId      BigInt
-  user        User              @relation(fields: [userId], references: [telegramId])
+  telegramId  BigInt
+  user        User              @relation(fields: [telegramId], references: [telegramId])
   amount      Int
   type        TransactionType
   description String?
@@ -113,18 +109,28 @@ model Transaction {
   createdAt   DateTime          @default(now())
   status      TransactionStatus @default(COMPLETED)
 
-  @@index([userId])
+  @@index([telegramId])
   @@index([type])
 }
 
 enum TransactionType {
   MATCH_FEE
-  MATCH_WINNINGS
+  MATCH_EARNINGS
   REWARD
+  BET_PLACED
+  BET_WON
+  PURCHASE
+  OTHERS
 }
 
 enum TransactionStatus {
   PENDING
   COMPLETED
   FAILED
+}
+
+enum MatchFormat {
+  BLITZ
+  POWERPLAY
+  CLASSIC
 }

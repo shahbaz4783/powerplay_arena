@@ -22,18 +22,23 @@ export async function startQuickMatch(
 	formData: FormData
 ): Promise<FormResponse> {
 	try {
-		const user = await db.user.findUnique({
-			where: { telegramId: BigInt(telegramId) },
-			include: { wallet: true },
-		});
-
-		if (!user) {
-			return { message: { error: 'No user found' } };
-		}
 		const formatValue = formData.get('format');
 		const entryFee = parseInt(formData.get('entryFee') as string);
+		const matchFormat: MatchFormat = formatValue as MatchFormat;
 
-		if (user.wallet!.balance < entryFee) {
+		if (isNaN(entryFee)) {
+			return { message: { error: 'Invalid entry fee' } };
+		}
+
+		const profile = await db.profile.findUnique({
+			where: { telegramId: BigInt(telegramId) },
+		});
+
+		if (!profile) {
+			return { message: { error: 'No user found' } };
+		}
+
+		if (profile.balance < entryFee) {
 			return { message: { error: 'Insufficient balance' } };
 		}
 
@@ -45,27 +50,16 @@ export async function startQuickMatch(
 			return { message: { error: 'Invalid match format' } };
 		}
 
-		const matchFormat: MatchFormat = formatValue as MatchFormat;
-
-		console.log(matchFormat);
-
-		if (isNaN(entryFee)) {
-			return { message: { error: 'Invalid entry fee' } };
-		}
-
-		if (user.wallet!.balance < entryFee) {
-			return { message: { error: 'Insufficient balance' } };
-		}
-
+		// Deduct entry fees and create a transaction
 		await db.$transaction(async (tx) => {
-			await tx.wallet.update({
-				where: { userId: user.telegramId },
+			await tx.profile.update({
+				where: { telegramId: profile.telegramId },
 				data: { balance: { decrement: entryFee } },
 			});
 
 			await tx.transaction.create({
 				data: {
-					userId: user.telegramId,
+					telegramId: profile.telegramId,
 					amount: entryFee,
 					type: 'MATCH_FEE',
 					description: `${capitalizeFirstLetter(matchFormat)} match entry fees`,
@@ -84,16 +78,16 @@ export async function startQuickMatch(
 
 export async function saveMatchDataToDatabase(
 	gameState: GameState,
-	userId: bigint
+	telegramId: bigint
 ): Promise<FormResponse> {
 	try {
-		if (!userId) return { message: { error: 'No user Found' } };
+		if (!telegramId) return { message: { error: 'No user Found' } };
 		await db.$transaction(async (tx) => {
 			// Update stats
 			await tx.stats.update({
 				where: {
-					userId_format: {
-						userId,
+					telegramId_format: {
+						telegramId,
 						format: gameState.matchSetup.format as MatchFormat,
 					},
 				},
@@ -128,17 +122,17 @@ export async function saveMatchDataToDatabase(
 				sixerReward + fourReward + wicketTakenReward + winMarginReward;
 
 			if (totalReward > 0) {
-				await tx.wallet.update({
-					where: { userId },
+				await tx.profile.update({
+					where: { telegramId },
 					data: {
 						balance: { increment: totalReward },
 					},
 				});
 				await tx.transaction.create({
 					data: {
-						userId: userId,
+						telegramId,
 						amount: totalReward,
-						type: 'MATCH_WINNINGS',
+						type: 'MATCH_EARNINGS',
 						description: `Earnings from ${gameState.matchSetup.format.toLowerCase()} match`,
 					},
 				});
@@ -147,8 +141,8 @@ export async function saveMatchDataToDatabase(
 			// Calculate XP and check for level up
 			const xpGain = calculateXPGain(gameState);
 
-			const currentXPRecord = await tx.xP.findUnique({
-				where: { userId },
+			const currentXPRecord = await tx.profile.findUnique({
+				where: { telegramId },
 			});
 
 			if (!currentXPRecord) {
@@ -163,8 +157,8 @@ export async function saveMatchDataToDatabase(
 
 			console.table(newLevelInfo);
 
-			await tx.xP.update({
-				where: { userId },
+			await tx.profile.update({
+				where: { telegramId },
 				data: {
 					totalXP: newTotalXP,
 					level: newLevelInfo.level,
@@ -188,17 +182,14 @@ export async function saveMatchDataToDatabase(
 	redirect('/miniapp');
 }
 
-export async function saveAwardToDatabase(
-	userId: number,
-	challenge: Milestone
-) {
+export async function saveAwardToDatabase(telegramId: number, challenge: Milestone) {
 	try {
-		if (!userId) return { message: { error: 'No user Found' } };
+		if (!telegramId) return { message: { error: 'No user Found' } };
 		console.log('Saving challenge:', challenge);
 
 		await db.$transaction(async (tx) => {
-			await tx.wallet.update({
-				where: { userId },
+			await tx.profile.update({
+				where: { telegramId },
 				data: {
 					balance: { increment: challenge.reward },
 				},
@@ -206,7 +197,7 @@ export async function saveAwardToDatabase(
 
 			await tx.transaction.create({
 				data: {
-					userId: userId,
+					telegramId,
 					amount: challenge.reward,
 					type: 'REWARD',
 					description: `Reward for completing ${challenge.title} challenge`,
@@ -215,7 +206,7 @@ export async function saveAwardToDatabase(
 
 			await tx.award.create({
 				data: {
-					userId,
+					telegramId,
 					awardId: challenge.id,
 					title: challenge.title,
 					description: challenge.description,
@@ -236,10 +227,10 @@ export async function saveAwardToDatabase(
 	}
 }
 
-export async function fetchClaimedAwards(userId: number) {
-	if (!userId) return [];
+export async function fetchClaimedAwards(telegramId: number) {
+	if (!telegramId) return [];
 
 	return await db.award.findMany({
-		where: { userId },
+		where: { telegramId },
 	});
 }
