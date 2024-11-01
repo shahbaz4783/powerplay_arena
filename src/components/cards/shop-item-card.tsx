@@ -15,7 +15,7 @@ import { token } from '@/src/lib/constants';
 import { SubmitButton } from '../feedback/submit-button';
 import Image from 'next/image';
 import { useInitData } from '@telegram-apps/sdk-react';
-import { useGetUserInfo } from '@/src/hooks/useUserData';
+import { useUserProfile } from '@/src/hooks/useUserData';
 
 interface ShopItemProps {
 	id: number;
@@ -41,8 +41,8 @@ export function ShopItemCard({
 	const initData = useInitData();
 	const user = initData?.user;
 
-	const { data } = useGetUserInfo(user?.id);
-	const userLevel = data?.userXP?.level || 1;
+	const { data } = useUserProfile(user?.id);
+	const userLevel = data?.userProfile.level || 1;
 
 	const [isOpen, setIsOpen] = useState(false);
 

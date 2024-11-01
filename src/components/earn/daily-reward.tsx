@@ -16,7 +16,7 @@ import { Progress } from "@/src/components/ui/progress";
 import { dailyDrop } from "@/src/actions/tasks.action";
 import FormFeedback from "../feedback/form-feedback";
 import { SubmitButton } from "../feedback/submit-button";
-import { useGetUserInfo } from "@/src/hooks/useUserData";
+import { useUserProfile } from '@/src/hooks/useUserData';
 import { Button } from "@/src/components/ui/button";
 import { Header } from "../shared/header";
 
@@ -24,7 +24,7 @@ export function DailyReward() {
   const initData = useInitData();
   const user = initData?.user;
 
-  const { data } = useGetUserInfo(user?.id);
+  const { data } = useUserProfile(user?.id);
 
   const [response, action] = useFormState(dailyDrop.bind(null, user?.id!), {
     message: {},
@@ -37,10 +37,10 @@ export function DailyReward() {
     { day: 7, reward: "200-500" },
   ];
 
-  const streak = data?.userInfo?.streak || 0;
-  const lastClaimed = data?.userInfo?.lastClaimed
-    ? new Date(data.userInfo.lastClaimed)
-    : null;
+  const streak = data?.userProfile.streakLength || 0;
+	const lastClaimed = data?.userProfile.lastClaimedAt
+		? new Date(data.userProfile.lastClaimedAt)
+		: null;
 
   const isRewardClaimed = () => {
     if (!lastClaimed) return false;
