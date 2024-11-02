@@ -171,7 +171,13 @@ export const getUserRankings = async () => {
 					gt: 0,
 				},
 			},
-			select: { totalXP: true, level: true, levelName: true, avatarUrl: true },
+			select: {
+				totalXP: true,
+				level: true,
+				levelName: true,
+				avatarUrl: true,
+				user: true,
+			},
 			orderBy: { totalXP: 'desc' },
 			take: 20,
 		});
