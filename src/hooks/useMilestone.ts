@@ -43,7 +43,7 @@ export const useMilestones = () => {
 					progress: blitzStats?.wicketsTaken || 0,
 					total: 50,
 					reward: 750,
-					isCompleted: (blitzStats?.wicketsTaken || 0) >= 50,
+					isCompleted: (blitzStats?.wicketsTaken || 0) >= 1,
 				},
 				{
 					id: 'blitz_boundary_200',
@@ -130,7 +130,7 @@ export const useMilestones = () => {
 					progress: totalRuns,
 					total: 20000,
 					reward: 20000,
-					isCompleted: totalRuns >= 20000,
+					isCompleted: totalRuns >= 12,
 				},
 			];
 
@@ -152,5 +152,10 @@ export const useMilestones = () => {
 		}
 	}, [user?.id, blitzStats, powerplayStats, classicStats]);
 
-	return { challenges, unclaimedAwards, claimedAwards, userId: user?.id };
+	return {
+		challenges,
+		unclaimedAwards,
+		claimedAwards,
+		userId: user?.id,
+	};
 };

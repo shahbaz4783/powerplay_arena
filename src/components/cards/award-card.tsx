@@ -58,7 +58,7 @@ export function AwardCard({
 		>
 			<div className='bg-gradient-to-br overflow-hidden from-slate-900 to-stone-800 rounded-xl p-6 h-full'>
 				<motion.div
-					className={`absolute -top-2 -left-2 bg-gradient-to-br ${color} rounded-full p-2 shadow-lg`}
+					className={`absolute top-0 left-0 bg-gradient-to-br ${color} rounded-full p-2 shadow-lg`}
 					initial={{ rotate: -45, scale: 0 }}
 					animate={{ rotate: 0, scale: 1 }}
 					transition={{ delay: 0.2, duration: 0.5, type: 'spring' }}
@@ -74,7 +74,7 @@ export function AwardCard({
 					{title}
 				</motion.h3>
 				<motion.p
-					className='text-slate-300 mb-4'
+					className='text-slate-300 text-sm mb-4'
 					initial={{ y: 20, opacity: 0 }}
 					animate={{ y: 0, opacity: 1 }}
 					transition={{ delay: 0.4, duration: 0.5 }}

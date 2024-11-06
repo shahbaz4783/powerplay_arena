@@ -3,6 +3,7 @@
 import { useMilestones } from '@/src/hooks/useMilestone';
 import { motion } from 'framer-motion';
 import { AwardCard } from '../cards/award-card';
+import { MessageCard } from '../cards/message-card';
 
 export function Awards() {
 	const { claimedAwards } = useMilestones();
@@ -13,12 +14,18 @@ export function Awards() {
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.5, staggerChildren: 0.1 }}
 		>
-			{claimedAwards.length > 0 && (
+			{claimedAwards.length > 0 ? (
 				<>
 					{claimedAwards.map((award) => (
 						<AwardCard key={award.awardId} {...award} />
 					))}
 				</>
+			) : (
+				<MessageCard
+					title='Loading Your Awards'
+					message='Polishing your trophies and medals...'
+					type='loading'
+				/>
 			)}
 		</motion.div>
 	);

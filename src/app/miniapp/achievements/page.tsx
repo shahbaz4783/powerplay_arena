@@ -1,6 +1,6 @@
 import { Awards } from '@/src/components/achievements/awards';
 import { MilestonesPage } from '@/src/components/achievements/game-milestones';
-import { InviteMilestones } from '@/src/components/achievements/invite-milestones';
+import { UnclaimedRewards } from '@/src/components/achievements/unclaimed-rewards';
 import { Header } from '@/src/components/shared/header';
 import {
 	Tabs,
@@ -28,13 +28,13 @@ export default function AchievementPage() {
 						value='awards'
 						className='flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900'
 					>
-						Awards
+						My Awards
 					</TabsTrigger>
 					<TabsTrigger
 						value='invites'
 						className='flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900'
 					>
-						Invites
+						Unclaimed
 					</TabsTrigger>
 				</TabsList>
 				<TabsContent value='challenges'>
@@ -44,7 +44,7 @@ export default function AchievementPage() {
 					<Awards />
 				</TabsContent>
 				<TabsContent value='invites'>
-					<InviteMilestones />
+					<UnclaimedRewards />
 				</TabsContent>
 			</Tabs>
 		</div>
