@@ -100,12 +100,12 @@ export const dailyDrop = async (
 export async function claimAwardAction(telegramId: number, award: Milestone) {
 	try {
 		const response = await saveAwardToDatabase(telegramId, award);
-		if (response.message.success) {
+		if (response?.message.error) {
 			return { success: true, message: 'Award claimed successfully!' };
 		} else {
 			return {
 				success: false,
-				message: response.message.error || 'Failed to claim award',
+				message: response?.message.error || 'Failed to claim award',
 			};
 		}
 	} catch (error) {
