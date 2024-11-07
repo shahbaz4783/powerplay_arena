@@ -2,14 +2,17 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpCircle, ArrowDownCircle, Coins } from 'lucide-react';
-import { Button } from '@/src/components/ui/button';
 import {
-	Tabs,
-	TabsContent,
-	TabsList,
-	TabsTrigger,
-} from '@/src/components/ui/tabs';
+	ArrowUpCircle,
+	ArrowDownCircle,
+	Coins,
+	Badge,
+	CoinsIcon,
+	Shuffle,
+	ArrowRight,
+	Landmark,
+	SwordIcon,
+} from 'lucide-react';
 import { Slider } from '@/src/components/ui/slider';
 import {
 	Dialog,
@@ -20,51 +23,37 @@ import {
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import { SubmitButton } from '../feedback/submit-button';
 import { token } from '@/src/lib/constants';
-
-const bettingTiers = [
-	{ name: 'Low Stakes', minBet: 10, maxBet: 100 },
-	{ name: 'Medium Stakes', minBet: 100, maxBet: 1000 },
-	{ name: 'High Roller', minBet: 1000, maxBet: 10000 },
-];
-
-const challenges = [
-	{
-		name: 'Safe Bet',
-		description: '75% chance to win, but only 1.3x payout',
-		odds: 0.75,
-		payout: 1.3,
-	},
-	{
-		name: 'Classic Flip',
-		description: '50/50 chance to double your bet',
-		odds: 0.5,
-		payout: 2,
-	},
-	{
-		name: 'Triple or Nothing',
-		description: '33% chance to triple your bet',
-		odds: 0.33,
-		payout: 3,
-	},
-	{
-		name: 'High Risk, High Reward',
-		description: '20% chance to quintuple your bet',
-		odds: 0.2,
-		payout: 5,
-	},
-];
+import { useInitData } from '@telegram-apps/sdk-react';
+import { useUserProfile } from '@/src/hooks/useUserData';
+import { MessageCard } from '../cards/message-card';
+import { betOptions, betSides } from '@/src/constants/challenges';
+import { calculateBettingPassCost, cn } from '@/src/lib/utils';
+import { Card, CardContent } from '../ui/card';
 
 export function CoinFlipChallenge() {
-	const [selectedTier, setSelectedTier] = useState(bettingTiers[0]);
-	const [selectedChallenge, setSelectedChallenge] = useState(challenges[0]);
-	const [betAmount, setBetAmount] = useState(selectedTier.minBet);
-	const [userBalance, setUserBalance] = useState(1000);
-	const [result, setResult] = useState<'win' | 'lose' | null>(null);
-	const [isSpinning, setIsSpinning] = useState(false);
-	const [selectedSide, setSelectedSide] = useState<'heads' | 'tails' | null>(
-		null
-	);
+	const [betAmount, setBetAmount] = useState(0);
+	const [selectedChallenge, setSelectedChallenge] = useState(betOptions[0]);
+	const [selectedSide, setSelectedSide] = useState<string | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isSpinning, setIsSpinning] = useState(false);
+	const [result, setResult] = useState<'win' | 'lose' | null>(null);
+
+	const initData = useInitData();
+	const user = initData?.user;
+	const { data, isLoading } = useUserProfile(user?.id);
+
+	if (isLoading)
+		return (
+			<MessageCard
+				title='Preparing Coin Flip Challenge'
+				message='Polishing the lucky coin and setting up the challenge. Get ready to test your fortune!'
+				type='loading'
+			/>
+		);
+
+	const profile = data?.userProfile;
+	const userBalance = profile?.balance as number;
+	const maxBet = Math.floor((userBalance * 0.65) / 10) * 10;
 
 	const handleBet = () => {
 		if (betAmount > userBalance || !selectedSide) return;
@@ -77,117 +66,151 @@ export function CoinFlipChallenge() {
 			const randomOutcome = Math.random();
 			const isWin = randomOutcome <= selectedChallenge.odds;
 
-			if (isWin) {
-				setUserBalance(
-					userBalance + betAmount * (selectedChallenge.payout - 1)
-				);
-				setResult('win');
-			} else {
-				setUserBalance(userBalance - betAmount);
-				setResult('lose');
-			}
-
 			setIsSpinning(false);
 		}, 5000);
 	};
 
 	return (
 		<div className='w-full max-w-2xl mx-auto'>
-			<section className='space-y-4'>
-				<Tabs
-					defaultValue={bettingTiers[0].name}
-					className='w-full bg-slate-900 rounded-xl p-3 space-y-3'
-				>
-					{bettingTiers.map((tier) => (
-						<TabsContent key={tier.name} value={tier.name}>
-							<div className='space-y-4'>
-								<div className='flex justify-between text-sm text-muted-foreground'>
-									<span>Min Bet: {tier.minBet}</span>
-									<span>Max Bet: {tier.maxBet}</span>
-								</div>
-								<Slider
-									min={tier.minBet}
-									max={tier.maxBet}
-									step={1}
-									value={[betAmount]}
-									onValueChange={(value) => setBetAmount(value[0])}
-									className='w-full'
-								/>
-								<div className='text-center font-semibold'>
-									Bet Amount: {betAmount} {token.symbol}
-								</div>
-							</div>
-						</TabsContent>
-					))}
-					<TabsList className='grid w-full grid-cols-3 rounded-xl'>
-						{bettingTiers.map((tier) => (
-							<TabsTrigger
-								key={tier.name}
-								value={tier.name}
-								onClick={() => setSelectedTier(tier)}
-								className='rounded-xl'
+			<main className='space-y-4'>
+				<section className='w-full bg-slate-900 rounded-xl p-4 space-y-6'>
+					<div className='flex justify-between text-sm text-muted-foreground'>
+						<span>Min Bet: {10}</span>
+						<span>Balance: {userBalance}</span>
+						<span>Max Bet: {maxBet}</span>
+					</div>
+					<Slider
+						min={0}
+						max={maxBet}
+						step={10}
+						value={[betAmount]}
+						onValueChange={(value) => setBetAmount(value[0])}
+						className='w-full'
+						disabled={profile?.bettingPasses === 0}
+					/>
+					<div className='flex justify-between text-sm text-slate-400'>
+						<p>Betting Pass: {profile?.bettingPasses}</p>
+						<p>
+							Bet Amount: {betAmount} {token.symbol}
+						</p>
+					</div>
+				</section>
+
+				<section className='bg-slate-900 rounded-xl p-3 space-y-4'>
+					<div className='grid grid-cols-2 gap-2'>
+						{betOptions.map((option) => (
+							<div
+								key={option.name}
+								className={cn(
+									'w-full rounded-xl border cursor-pointer h-auto py-4 flex flex-col items-center justify-center',
+									{
+										'text-slate-900 bg-white font-bold':
+											selectedChallenge === option,
+									}
+								)}
+								onClick={() => setSelectedChallenge(option)}
 							>
-								{tier.name}
-							</TabsTrigger>
+								<span className=' text-sm'>{option.name}</span>
+							</div>
 						))}
-					</TabsList>
-				</Tabs>
+					</div>
+					<p className='text-sm text-slate-400 text-center'>
+						{selectedChallenge.description}
+					</p>
+				</section>
 
-				<div className='grid grid-cols-2 gap-2 bg-slate-900 rounded-xl p-3'>
-					{challenges.map((challenge) => (
-						<Button
-							key={challenge.name}
-							variant={selectedChallenge === challenge ? 'secondary' : 'ghost'}
-							className='w-full rounded-xl border h-auto py-2 flex flex-col items-center justify-center'
-							onClick={() => setSelectedChallenge(challenge)}
-						>
-							<span className=' text-xs'>{challenge.name}</span>
-							<span className='text-sm'>
-								{challenge.payout}x - {challenge.odds * 100}%
-							</span>
-						</Button>
-					))}
-				</div>
-
-				<div className=' bg-slate-900 rounded-xl p-3'>
+				<div className='bg-slate-900 rounded-xl p-3'>
 					<h3 className='text-center text-slate-400 text-sm mb-2'>
 						Choose Your Side
 					</h3>
-					<ToggleGroup
-						type='single'
-						className='gap-3'
-						value={selectedSide || ''}
-						onValueChange={(value) =>
-							setSelectedSide(value as 'heads' | 'tails')
-						}
-					>
-						<ToggleGroupItem
-							variant={'outline'}
-							className='rounded-xl w-full'
-							value='heads'
-							aria-label='Heads'
-						>
-							Heads
-						</ToggleGroupItem>
-						<ToggleGroupItem
-							variant={'outline'}
-							className='rounded-xl w-full'
-							value='tails'
-							aria-label='Tails'
-						>
-							Tails
-						</ToggleGroupItem>
-					</ToggleGroup>
+					<div className='grid grid-cols-2 gap-2'>
+						{betSides.map((side) => (
+							<div
+								key={side.value}
+								className={cn(
+									'w-full rounded-xl border cursor-pointer h-auto py-4 flex flex-col items-center justify-center',
+									{
+										'text-slate-900 bg-white font-bold':
+											selectedSide === side.value,
+									}
+								)}
+								onClick={() => setSelectedSide(side.value)}
+							>
+								<span className=' text-sm'>{side.name}</span>
+							</div>
+						))}
+					</div>
 				</div>
 
-				<SubmitButton
-					title='Place Bet'
-					loadingTitle='Please wait for result...'
-					onClick={handleBet}
-					disabled={betAmount > userBalance || !selectedSide || isSpinning}
-					className='w-full'
-				/>
-			</section>
+				{betAmount > 0 && selectedChallenge && selectedSide && (
+					<section className='bg-slate-900 border-slate-800 rounded-xl'>
+						<CardContent className='p-6 space-y-4'>
+							<h3 className='text-lg font-semibold text-slate-200'>
+								Your Bet Summary
+							</h3>
+							<div className='grid grid-cols-2 gap-4'>
+								<div className='space-y-2'>
+									<p className='text-sm text-slate-400'>Bet Amount</p>
+									<div className='flex items-center space-x-2'>
+										<Landmark className='h-5 w-5 text-blue-500' />
+										<span className='text-lg font-medium text-slate-200'>
+											{betAmount} {token.symbol}
+										</span>
+									</div>
+								</div>
+								<div className='space-y-2'>
+									<p className='text-sm text-slate-400'>Bet Amount</p>
+									<div className='flex items-center space-x-2'>
+										<SwordIcon className='h-5 w-5 text-blue-500' />
+										<span className='text-lg font-medium text-slate-200'>
+											{selectedChallenge.name}
+										</span>
+									</div>
+								</div>
+								<div className='space-y-2'>
+									<p className='text-sm text-slate-400'>Your Side</p>
+									<div className='flex items-center space-x-2'>
+										<CoinsIcon className='h-5 w-5 text-blue-500' />
+										<span className='text-lg font-medium text-slate-200 capitalize'>
+											{selectedSide || 'Not selected'}
+										</span>
+									</div>
+								</div>
+								<div className='space-y-2'>
+									<p className='text-sm text-slate-400'>Betting Pass Cost</p>
+									<div className='flex items-center space-x-2'>
+										<Shuffle className='h-5 w-5 text-blue-500' />
+										<span className='text-lg font-medium text-slate-200'>
+											{calculateBettingPassCost(betAmount)}
+										</span>
+									</div>
+								</div>
+							</div>
+
+							<div className='flex items-center justify-between text-sm text-slate-400'>
+								<span>Potential Win</span>
+								<div className='flex items-center space-x-1'>
+									<span className='text-green-400 font-medium'>
+										{Math.round(betAmount * selectedChallenge.payout)}
+										{token.symbol}
+									</span>
+									<ArrowRight className='h-4 w-4 text-green-400' />
+								</div>
+							</div>
+
+							<SubmitButton
+								title='Place Bet'
+								loadingTitle='Please wait for result...'
+								onClick={handleBet}
+								disabled={
+									betAmount > userBalance || !selectedSide || isSpinning
+								}
+								className='w-full'
+							/>
+						</CardContent>
+					</section>
+				)}
+			</main>
 
 			<Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
 				<DialogContent className='sm:max-w-md'>

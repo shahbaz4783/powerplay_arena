@@ -99,3 +99,41 @@ export const iconMap: { [key: string]: React.ElementType } = {
 	total_wins_500: Trophy,
 	total_runs_20000: Star,
 };
+
+export const betOptions = [
+	{
+		name: 'Safe Horizon',
+		description: '75% chance to win with a low-risk 1.2x return.',
+		odds: 0.75,
+		payout: 1.2,
+	},
+	{
+		name: 'Classic Flip',
+		description: '50/50 chance to double your bet',
+		odds: 0.5,
+		payout: 2,
+	},
+	{
+		name: 'Triple Threat',
+		description: '33% chance to triple your bet with a bold move.',
+		odds: 0.33,
+		payout: 3,
+	},
+	{
+		name: 'Fortune’s Favour',
+		description: '20% chance to 5x your bet and hit the jackpot',
+		odds: 0.2,
+		payout: 5,
+	},
+];
+
+export const betSides = [
+	{
+		name: 'Heads',
+		value: 'heads',
+	},
+	{
+		name: 'Tails',
+		value: 'tails',
+	},
+];

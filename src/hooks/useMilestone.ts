@@ -53,7 +53,7 @@ export const useMilestones = () => {
 					progress: blitzStats?.fours || 0,
 					total: 200,
 					reward: 750,
-					isCompleted: (blitzStats?.fours || 0) >= 200,
+					isCompleted: (blitzStats?.fours || 0) >= 1,
 				},
 				{
 					id: 'powerplay_run_1000',
@@ -110,7 +110,7 @@ export const useMilestones = () => {
 					progress: totalWickets,
 					total: 1000,
 					reward: 15000,
-					isCompleted: totalWickets >= 1000,
+					isCompleted: totalWickets >= 1,
 				},
 				{
 					id: 'total_wins_500',

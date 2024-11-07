@@ -102,3 +102,11 @@ export function calculateReward(streak: number): number {
 
   return reward;
 }
+
+export const calculateBettingPassCost = (betAmount: number): number => {
+	if (betAmount < 100) return 1;
+	if (betAmount < 300) return 2;
+	if (betAmount < 500) return 3;
+	if (betAmount < 1000) return 4;
+	return 5;
+};

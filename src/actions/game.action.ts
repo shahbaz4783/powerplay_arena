@@ -187,6 +187,17 @@ export async function saveAwardToDatabase(telegramId: number, challenge: Milesto
 		if (!telegramId) return { message: { error: 'No user Found' } };
 		console.log('Saving challenge:', challenge);
 
+		const existingAward = await db.award.findFirst({
+			where: {
+				telegramId,
+				awardId: challenge.id,
+			},
+		});
+
+		if (existingAward) {
+			return { message: { error: 'This award has already been claimed' } };
+		}
+
 		await db.$transaction(async (tx) => {
 			await tx.profile.update({
 				where: { telegramId },
@@ -213,7 +224,6 @@ export async function saveAwardToDatabase(telegramId: number, challenge: Milesto
 				},
 			});
 		});
-		return { message: { success: 'Challenge saved successfully' } };
 	} catch (error) {
 		if (error instanceof Error) {
 			return { message: { error: error.message } };
@@ -225,6 +235,7 @@ export async function saveAwardToDatabase(telegramId: number, challenge: Milesto
 			};
 		}
 	}
+	revalidatePath('/miniapp/achievements');
 }
 
 export async function fetchClaimedAwards(telegramId: number) {
@@ -232,5 +243,6 @@ export async function fetchClaimedAwards(telegramId: number) {
 
 	return await db.award.findMany({
 		where: { telegramId },
+		orderBy: { createdAt: 'desc' },
 	});
 }
