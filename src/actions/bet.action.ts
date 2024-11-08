@@ -1,31 +1,46 @@
 'use server';
 
 import { db } from '@/src/lib/db';
-import { revalidatePath } from 'next/cache';
 import { betOptions } from '../constants/challenges';
-import { FormResponse } from '../lib/types';
 import { calculateBettingPassCost } from '../lib/utils';
 import { token } from '../lib/constants';
 
+interface FormState {
+	message: {
+		error?: string;
+		success?: string;
+	};
+	result: 'win' | 'lose' | null;
+	winAmount: number;
+}
+
 export async function placeBet(
 	telegramId: bigint,
-	prevState: FormResponse,
+	prevState: FormState,
 	formData: FormData
-): Promise<FormResponse> {
+): Promise<FormState> {
 	try {
 		const betAmount = Number(formData.get('betAmount'));
 		const challengeName = formData.get('challengeName') as string;
 		const selectedSide = formData.get('selectedSide') as string;
 
 		if (!betAmount || !challengeName || !selectedSide) {
-			return { message: { error: 'Invalid input data' } };
+			return {
+				message: { error: 'Invalid input data' },
+				result: null,
+				winAmount: 0,
+			};
 		}
 
 		const challenge = betOptions.find(
 			(option) => option.name === challengeName
 		);
 		if (!challenge) {
-			return { message: { error: 'Invalid challenge' } };
+			return {
+				message: { error: 'Invalid challenge' },
+				result: null,
+				winAmount: 0,
+			};
 		}
 
 		const bettingPassCost = calculateBettingPassCost(betAmount);
@@ -40,28 +55,25 @@ export async function placeBet(
 			}
 
 			if (profile.balance < betAmount) {
-				return { message: { error: 'Insufficient balance' } };
+				return {
+					message: { error: 'Insufficient balance' },
+					result: null,
+					winAmount: 0,
+				};
 			}
 
 			if (profile.bettingPasses < bettingPassCost) {
-				return { message: { error: 'Insufficient betting passes' } };
+				return {
+					message: { error: 'Insufficient betting passes' },
+					result: null,
+					winAmount: 0,
+				};
 			}
 
 			// Simulate the coin flip
 			const isWin = Math.random() <= challenge.odds;
 			const winAmount = isWin ? Math.round(betAmount * challenge.payout) : 0;
 			const netGain = winAmount - betAmount;
-
-			// Record the bet transaction
-			await tx.transaction.create({
-				data: {
-					telegramId,
-					amount: betAmount,
-					type: 'BET_PLACED',
-					balanceEffect: 'DECREMENT',
-					description: `Coin Flip Challenge: ${challengeName}, Side: ${selectedSide}`,
-				},
-			});
 
 			// Update user's balance and betting passes
 			await tx.profile.update({
@@ -88,21 +100,36 @@ export async function placeBet(
 
 				return {
 					message: {
-						success: `Congratulations! You won ${winAmount} ${token.symbol}!`,
+						success: `Congratulations! You won ${netGain} ${token.symbol}!`,
 					},
+					result: 'win',
+					winAmount: netGain,
+				};
+			} else {
+				await tx.transaction.create({
+					data: {
+						telegramId,
+						amount: betAmount,
+						type: 'BET_PLACED',
+						balanceEffect: 'DECREMENT',
+						description: `Coin Flip Challenge: ${challengeName}, Side: ${selectedSide}`,
+					},
+				});
+				return {
+					message: {
+						error: `Better luck next time! You lost ${betAmount} ${token.symbol}`,
+					},
+					result: 'lose',
+					winAmount: 0,
 				};
 			}
-
-			return {
-				message: {
-					error: `Better luck next time! You lost ${betAmount} ${token.symbol}`,
-				},
-			};
 		});
 	} catch (error) {
 		console.error('Error placing bet:', error);
 		return {
 			message: { error: 'An error occurred while placing the bet' },
+			result: null,
+			winAmount: 0,
 		};
 	}
 }
