@@ -4,6 +4,8 @@ import { db } from '@/src/lib/db';
 import { revalidatePath } from 'next/cache';
 import { betOptions } from '../constants/challenges';
 import { FormResponse } from '../lib/types';
+import { calculateBettingPassCost } from '../lib/utils';
+import { token } from '../lib/constants';
 
 export async function placeBet(
 	telegramId: bigint,
@@ -11,82 +13,92 @@ export async function placeBet(
 	formData: FormData
 ): Promise<FormResponse> {
 	try {
-		const betAmount = formData.get('betAmount');
-		const challengeName = formData.get('challengeName');
-		const selectedSide = formData.get('selectedSide');
+		const betAmount = Number(formData.get('betAmount'));
+		const challengeName = formData.get('challengeName') as string;
+		const selectedSide = formData.get('selectedSide') as string;
 
-		console.log({ betAmount, challengeName, selectedSide });
+		if (!betAmount || !challengeName || !selectedSide) {
+			return { message: { error: 'Invalid input data' } };
+		}
 
-		const user = await db.profile.findUnique({
-			where: { telegramId },
-			select: { balance: true, bettingPasses: true },
+		const challenge = betOptions.find(
+			(option) => option.name === challengeName
+		);
+		if (!challenge) {
+			return { message: { error: 'Invalid challenge' } };
+		}
+
+		const bettingPassCost = calculateBettingPassCost(betAmount);
+
+		return await db.$transaction(async (tx) => {
+			const profile = await tx.profile.findUnique({
+				where: { telegramId },
+			});
+
+			if (!profile) {
+				throw new Error('Profile not found');
+			}
+
+			if (profile.balance < betAmount) {
+				return { message: { error: 'Insufficient balance' } };
+			}
+
+			if (profile.bettingPasses < bettingPassCost) {
+				return { message: { error: 'Insufficient betting passes' } };
+			}
+
+			// Simulate the coin flip
+			const isWin = Math.random() <= challenge.odds;
+			const winAmount = isWin ? Math.round(betAmount * challenge.payout) : 0;
+			const netGain = winAmount - betAmount;
+
+			// Record the bet transaction
+			await tx.transaction.create({
+				data: {
+					telegramId,
+					amount: betAmount,
+					type: 'BET_PLACED',
+					balanceEffect: 'DECREMENT',
+					description: `Coin Flip Challenge: ${challengeName}, Side: ${selectedSide}`,
+				},
+			});
+
+			// Update user's balance and betting passes
+			await tx.profile.update({
+				where: { telegramId },
+				data: {
+					balance: { increment: netGain },
+					bettingPasses: { decrement: bettingPassCost },
+				},
+			});
+
+			// Record the result transaction
+			if (isWin) {
+				await tx.transaction.create({
+					data: {
+						telegramId,
+						amount: netGain,
+						type: 'BET_WON',
+						balanceEffect: 'INCREMENT',
+						description: `${
+							isWin ? 'Won' : 'Lost'
+						} Coin Flip Challenge: ${challengeName}`,
+					},
+				});
+
+				return {
+					message: {
+						success: `Congratulations! You won ${winAmount} ${token.symbol}!`,
+					},
+				};
+			}
+
+			return {
+				message: {
+					error: `Better luck next time! You lost ${betAmount} ${token.symbol}`,
+				},
+			};
 		});
-
-		return { message: { success: 'OK' } };
-
-		// if (!user) {
-		// 	return { success: false, message: 'User not found' };
-		// }
-
-		// if (user.balance < betAmount) {
-		// 	return { success: false, message: 'Insufficient balance' };
-		// }
-
-		// if (user.bettingPasses < 1) {
-		// 	return { success: false, message: 'No betting passes available' };
-		// }
-
-		// // Simulate the coin flip
-		// const randomOutcome = Math.random();
-		// const challenge = betOptions.find(
-		// 	(option) => option.name === challengeName
-		// );
-		// if (!challenge) {
-		// 	return { success: false, message: 'Invalid challenge' };
-		// }
-
-		// const isWin = randomOutcome <= challenge.odds;
-		// const winAmount = isWin ? Math.round(betAmount * challenge.payout) : 0;
-
-		// // Update user's balance and betting passes
-		// await db.profile.update({
-		// 	where: { telegramId },
-		// 	data: {
-		// 		balance: { increment: winAmount - betAmount },
-		// 		bettingPasses: { decrement: 1 },
-		// 	},
-		// });
-
-		// // Record the bet transaction
-		// await db.transaction.create({
-		// 	data: {
-		// 		telegramId,
-		// 		amount: betAmount,
-		// 		type: 'BET_PLACED',
-		// 		description: `Coin Flip Challenge: ${challengeName}, Side: ${selectedSide}`,
-		// 	},
-		// });
-
-		// Record the win transaction if applicable
-		// if (isWin) {
-		// 	await db.transaction.create({
-		// 		data: {
-		// 			telegramId,
-		// 			amount: winAmount,
-		// 			type: 'BET_WON',
-		// 			description: `Won Coin Flip Challenge: ${challengeName}`,
-		// 		},
-		// 	});
-		// }
-
-		revalidatePath('/bazar');
-
-		// return {
-		// 	success: true,
-		// 	message: isWin ? 'Congratulations! You won!' : 'Better luck next time!',
-		// 	result: isWin ? 'win' : 'lose',
-		// 	winAmount,
-		// };
 	} catch (error) {
 		console.error('Error placing bet:', error);
 		return {

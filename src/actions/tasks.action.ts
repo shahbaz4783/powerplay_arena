@@ -75,6 +75,7 @@ export const dailyDrop = async (
 					telegramId,
 					amount: reward,
 					type: 'REWARD',
+					balanceEffect: 'INCREMENT',
 					description: `Daily reward claim (Day ${streak})`,
 				},
 			});

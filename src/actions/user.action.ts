@@ -46,6 +46,7 @@ export const saveOrUpdateUser = async (user: User) => {
 						create: {
 							amount: 100,
 							type: 'REWARD',
+							balanceEffect: 'INCREMENT',
 							description: 'Joining bonus',
 						},
 					},

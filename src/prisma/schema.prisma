@@ -103,6 +103,7 @@ model Transaction {
   telegramId  BigInt
   user        User              @relation(fields: [telegramId], references: [telegramId])
   amount      Int
+  balanceEffect BalanceEffect
   type        TransactionType
   description String?
   matchId     String?
@@ -111,6 +112,12 @@ model Transaction {
 
   @@index([telegramId])
   @@index([type])
+}
+
+enum BalanceEffect {
+  INCREMENT
+  DECREMENT
+  NO_EFFECT
 }
 
 enum TransactionType {

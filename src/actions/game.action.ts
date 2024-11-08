@@ -62,6 +62,7 @@ export async function startQuickMatch(
 					telegramId: profile.telegramId,
 					amount: entryFee,
 					type: 'MATCH_FEE',
+					balanceEffect: 'DECREMENT',
 					description: `${capitalizeFirstLetter(matchFormat)} match entry fees`,
 				},
 			});
@@ -133,6 +134,7 @@ export async function saveMatchDataToDatabase(
 						telegramId,
 						amount: totalReward,
 						type: 'MATCH_EARNINGS',
+						balanceEffect: 'INCREMENT',
 						description: `Earnings from ${gameState.matchSetup.format.toLowerCase()} match`,
 					},
 				});
@@ -182,7 +184,10 @@ export async function saveMatchDataToDatabase(
 	redirect('/miniapp');
 }
 
-export async function saveAwardToDatabase(telegramId: number, challenge: Milestone) {
+export async function saveAwardToDatabase(
+	telegramId: number,
+	challenge: Milestone
+) {
 	try {
 		if (!telegramId) return { message: { error: 'No user Found' } };
 		console.log('Saving challenge:', challenge);
@@ -211,6 +216,7 @@ export async function saveAwardToDatabase(telegramId: number, challenge: Milesto
 					telegramId,
 					amount: challenge.reward,
 					type: 'REWARD',
+					balanceEffect: 'INCREMENT',
 					description: `Reward for completing ${challenge.title} challenge`,
 				},
 			});

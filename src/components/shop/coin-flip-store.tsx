@@ -103,6 +103,9 @@ export function CoinFlipChallenge() {
 					/>
 				)}
 			</form>
+
+			<p className='text-red-700'>{formState.message.error}</p>
+			<p className='text-green-700'>{formState.message.success}</p>
 		</div>
 	);
 }
