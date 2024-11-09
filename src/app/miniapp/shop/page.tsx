@@ -8,6 +8,7 @@ import { Header } from '@/src/components/shared/header';
 import { AvatarStore } from '@/src/components/shop/avatar-store';
 import { CoinFlipChallenge } from '@/src/components/coin-flip/coin-flip-game';
 import { BettingPassStore } from '@/src/components/shop/betting-pass-store';
+import { RedemptionStore } from '@/src/components/shop/redemption-store';
 
 export default function ShopPage() {
 	return (
@@ -32,10 +33,10 @@ export default function ShopPage() {
 						Avatars
 					</TabsTrigger>
 					<TabsTrigger
-						value='tbd'
+						value='redemption'
 						className='flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900'
 					>
-						TBD
+						Redeem
 					</TabsTrigger>
 				</TabsList>
 
@@ -44,6 +45,9 @@ export default function ShopPage() {
 				</TabsContent>
 				<TabsContent value='avatar'>
 					<AvatarStore />
+				</TabsContent>
+				<TabsContent value='redemption'>
+					<RedemptionStore />
 				</TabsContent>
 			</Tabs>
 		</div>

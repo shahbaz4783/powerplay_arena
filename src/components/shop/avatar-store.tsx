@@ -9,13 +9,13 @@ export function AvatarStore() {
 			{avatars.map((avatar) => (
 				<ShopItemCard
 					key={avatar.id}
+					type='avatar'
 					image={avatar.href}
 					price={avatar.price}
 					isPurchased={false}
 					name={avatar.name}
 					onPurchase={() => {}}
 					requiredLevel={avatar.requiredLvl}
-					userCoins={323}
 					id={avatar.id}
 					description={avatar.description}
 				/>
