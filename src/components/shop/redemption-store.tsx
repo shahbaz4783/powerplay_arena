@@ -1,153 +1,54 @@
 'use client';
 
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Coins, Gift, ExternalLink } from 'lucide-react';
-import { Button } from '@/src/components/ui/button';
+import { Coins, Gift, Star } from 'lucide-react';
 import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogDescription,
-	DialogFooter,
-} from '@/src/components/ui/dialog';
-import Image from 'next/image';
-
-interface RedemptionItem {
-	id: number;
-	name: string;
-	description: string;
-	coinCost: number;
-	image: string;
-	type: 'physical' | 'digital' | 'experience';
-}
-
-const redemptionItems: RedemptionItem[] = [
-	{
-		id: 1,
-		name: 'Streaming Service Annual Subscription',
-		description: 'One year premium subscription to a top streaming service.',
-		coinCost: 200000,
-		image:
-			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731137122/Screenshot_2024-11-09_at_12.54.09_PM_ao3xi4.png',
-		type: 'digital',
-	},
-	{
-		id: 2,
-		name: 'Designer Sunglasses',
-		description: 'Stylish, high-end designer sunglasses.',
-		coinCost: 150000,
-		image:
-			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731137122/Screenshot_2024-11-09_at_12.54.09_PM_ao3xi4.png',
-		type: 'physical',
-	},
-	{
-		id: 3,
-		name: 'Online Course Bundle',
-		description:
-			'Access to a bundle of premium online courses on various topics.',
-		coinCost: 250000,
-		image:
-			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731137122/Screenshot_2024-11-09_at_12.54.09_PM_ao3xi4.png',
-		type: 'digital',
-	},
-	{
-		id: 4,
-		name: 'Smart Home Starter Kit',
-		description: 'Complete smart home starter kit with various IoT devices.',
-		coinCost: 350000,
-		image:
-			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731137122/Screenshot_2024-11-09_at_12.54.09_PM_ao3xi4.png',
-		type: 'physical',
-	},
-	{
-		id: 5,
-		name: 'Premium Fitness Tracker',
-		description:
-			'High-end fitness tracker with advanced health monitoring features.',
-		coinCost: 100000,
-		image:
-			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731137122/Screenshot_2024-11-09_at_12.54.09_PM_ao3xi4.png',
-		type: 'physical',
-	},
-];
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/src/components/ui/card';
 
 export function RedemptionStore() {
-	const [selectedItem, setSelectedItem] = useState<RedemptionItem | null>(null);
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-	const handleRedeem = (item: RedemptionItem) => {
-		setSelectedItem(item);
-		setIsDialogOpen(true);
-	};
-
-	const confirmRedemption = () => {
-		setIsDialogOpen(false);
-	};
-
 	return (
 		<div>
-			<div className='space-y-6'>
-				{redemptionItems.map((item) => (
-					<motion.div
-						key={item.id}
-						className='bg-card border rounded-xl overflow-hidden shadow-lg'
-						transition={{ duration: 0.2 }}
-					>
-						<Image
-							src={item.image}
-							alt={item.name}
-							width={300}
-							height={200}
-							className='w-full h-48 object-cover'
-						/>
-						<div className='p-4'>
-							<h3 className='text-lg font-semibold mb-2'>{item.name}</h3>
-							<p className='text-sm text-muted-foreground mb-4'>
-								{item.description}
-							</p>
-							<div className='flex justify-between items-center'>
-								<span className='flex items-center text-yellow-500'>
-									<Coins className='mr-1 h-4 w-4' />
-									{item.coinCost}
-								</span>
-								<Button onClick={() => handleRedeem(item)}>
-									<Gift className='mr-2 h-4 w-4' />
-									Redeem
-								</Button>
-							</div>
-						</div>
-					</motion.div>
-				))}
-			</div>
+			<Card className='w-full rounded-xl'>
+				<CardHeader className='text-center'>
+					<CardTitle className='text-3xl font-bold'>
+						Exciting Rewards Coming Soon!
+					</CardTitle>
+					<CardDescription className='text-xl mt-2'>
+						Keep playing and earning coins to unlock amazing prizes!
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<div className='space-y-8'>
+						<motion.div
+							className='flex justify-center items-center space-x-4'
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.5 }}
+						>
+							<Coins className='w-12 h-12 text-yellow-500' />
+							<Star className='w-12 h-12 text-purple-500' />
+							<Gift className='w-12 h-12 text-red-500' />
+						</motion.div>
 
-			<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>Confirm Redemption</DialogTitle>
-						<DialogDescription>
-							Are you sure you want to redeem {selectedItem?.name} for{' '}
-							{selectedItem?.coinCost} coins?
-						</DialogDescription>
-					</DialogHeader>
-					<div className='flex items-center justify-center py-4'>
-						<Image
-							src={selectedItem?.image || ''}
-							alt={selectedItem?.name || ''}
-							width={200}
-							height={150}
-							className='rounded-md'
-						/>
+						<div className='bg-muted p-4 rounded-xl'>
+							<h3 className='font-semibold text-lg mb-2'>
+								Why keep earning coins?
+							</h3>
+							<ul className='list-disc list-inside space-y-1 text-muted-foreground'>
+								<li>Unlock exclusive rewards and experiences</li>
+								<li>Boost your chances of winning big</li>
+								<li>Climb the leaderboard and gain recognition</li>
+								<li>Be first in line when new rewards drop</li>
+							</ul>
+						</div>
 					</div>
-					<DialogFooter>
-						<Button variant='outline' onClick={() => setIsDialogOpen(false)}>
-							Cancel
-						</Button>
-						<Button onClick={confirmRedemption}>Confirm Redemption</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+				</CardContent>
+			</Card>
 		</div>
 	);
 }

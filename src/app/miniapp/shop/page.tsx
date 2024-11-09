@@ -7,7 +7,7 @@ import {
 import { Header } from '@/src/components/shared/header';
 import { AvatarStore } from '@/src/components/shop/avatar-store';
 import { CoinFlipChallenge } from '@/src/components/coin-flip/coin-flip-game';
-import { BettingPassStore } from '@/src/components/shop/betting-pass-store';
+import { PowerPassStore } from '@/src/components/shop/power-pass-store';
 import { RedemptionStore } from '@/src/components/shop/redemption-store';
 
 export default function ShopPage() {
@@ -41,7 +41,7 @@ export default function ShopPage() {
 				</TabsList>
 
 				<TabsContent value='betting-pass'>
-					<BettingPassStore />
+					<PowerPassStore />
 				</TabsContent>
 				<TabsContent value='avatar'>
 					<AvatarStore />

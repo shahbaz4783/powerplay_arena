@@ -5,7 +5,7 @@ import batsmanImg from "@/assets/quickplay.png";
 import trophyImg from "@/assets/tournament.png";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { HandCoins } from 'lucide-react';
+import { Coins, HandCoins } from 'lucide-react';
 
 export function GameModes() {
 	return (
@@ -27,12 +27,19 @@ export function GameModes() {
 					<CardContent className='h-full flex flex-col items-center justify-end bg-sky-200 bg-opacity-15'></CardContent>
 				</Link>
 			</Card>
-			<Card className=' backdrop-blur-md rounded-xl overflow-hidden bg-no-repeat'>
+
+			<Card className='backdrop-blur-md bg-slate-800/50 rounded-xl overflow-hidden bg-no-repeat'>
 				<Link href={'/game/coin-flip'}>
-					<CardContent className='h-full font-bold text-lg text-sky-300 flex flex-col items-center justify-end bg-sky-200 bg-opacity-20'>
-						<HandCoins className='text-white mb-2' />
-						Coin Flip Challenge
-					</CardContent>
+					<div className='h-full flex flex-col items-center justify-between'>
+						<div className='relative w-24 h-24 mt-2'>
+							<div className='w-full h-full rounded-full bg-gradient-to-r from-yellow-400 to-yellow-200 shadow-lg flex items-center justify-center'>
+								<Coins className='w-12 h-12 text-yellow-800' />
+							</div>
+						</div>
+						<p className='text-muted-foreground bg-slate-700/50 p-2 w-full text-center'>
+							Coin Flip Challege
+						</p>
+					</div>
 				</Link>
 			</Card>
 		</motion.section>

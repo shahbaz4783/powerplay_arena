@@ -11,70 +11,70 @@ const bettingPassOptions = [
 		image:
 			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
 		description:
-			'Dip your toes into the exciting world of cricket betting with 5 passes. Perfect for newcomers looking to test their luck!',
+			'Begin your journey with 5 Power Pass. Perfect for newcomers ready to explore the game!',
 		isPurchased: false,
-		type: 'bettingPass' as const,
+		type: 'powerPass' as const,
 		quantity: 5,
 	},
 	{
 		id: 2,
-		name: "Enthusiast's Choice",
+		name: 'Value Pack',
 		price: 359,
 		requiredLevel: 2,
 		image:
 			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
 		description:
-			'Step up your game with 20 passes. Ideal for regular players who want more action and better value. Save 10% on this pack!',
+			'Boost your gameplay with 20 Power Pass. Ideal for regular players seeking more opportunities. 10% discount included!',
 		isPurchased: false,
-		type: 'bettingPass' as const,
+		type: 'powerPass' as const,
 		quantity: 20,
 		discount: 10,
 	},
 	{
 		id: 3,
-		name: "Pro Punter's Pack",
+		name: 'Pro Pack',
 		price: 799,
 		requiredLevel: 3,
 		image:
 			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
 		description:
-			'Elevate your betting experience with 50 passes. Perfect for serious players looking to maximize their winning potential. Enjoy a 20% discount!',
+			'Elevate your experience with 50 Power Pass. For serious players aiming to maximize their potential. Enjoy a 20% discount!',
 		isPurchased: false,
-		type: 'bettingPass' as const,
+		type: 'powerPass' as const,
 		quantity: 50,
 		discount: 20,
 	},
 	{
 		id: 4,
-		name: 'Century Striker Bundle',
+		name: 'Elite Bundle',
 		price: 1399,
 		requiredLevel: 4,
 		image:
 			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
 		description:
-			'Hit a century with 100 betting passes! This power-packed bundle is designed for dedicated bettors who play frequently. Save a whopping 30%!',
+			'Power up with 100 Power Pass! This bundle is perfect for dedicated players who engage frequently. Save an impressive 30%!',
 		isPurchased: false,
-		type: 'bettingPass' as const,
+		type: 'powerPass' as const,
 		quantity: 100,
 		discount: 30,
 	},
 	{
 		id: 5,
-		name: "Legend's Vault",
+		name: 'Ultimate Vault',
 		price: 1999,
 		requiredLevel: 5,
 		image:
 			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
 		description:
-			'Unleash your inner cricket legend with our ultimate pack of 200 passes. For the most passionate and high-stakes players. Incredible 50% savings!',
+			'Unlock limitless play with our top-tier pack of 200 Power Pass. For the most passionate players who demand the best. Enjoy a massive 50% discount!',
 		isPurchased: false,
-		type: 'bettingPass' as const,
+		type: 'powerPass' as const,
 		quantity: 200,
 		discount: 50,
 	},
 ];
 
-export function BettingPassStore() {
+export function PowerPassStore() {
 	return (
 		<>
 			{bettingPassOptions.map((option) => (
@@ -86,7 +86,7 @@ export function BettingPassStore() {
 					isPurchased={false}
 					onPurchase={() => {}}
 					requiredLevel={option.requiredLevel}
-					type='bettingPass'
+					type={option.type}
 					id={option.id}
 					price={option.price}
 					discount={option.discount}

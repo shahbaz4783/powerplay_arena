@@ -28,7 +28,7 @@ interface ShopItemProps {
 	isPurchased: boolean;
 	description: string;
 	discount?: number;
-	type: 'avatar' | 'bettingPass' | 'luckyCharm';
+	type: 'avatar' | 'powerPass';
 	quantity?: number;
 }
 
@@ -92,7 +92,7 @@ export function ShopItemCard({
 						<div>
 							<h3 className='text-lg font-semibold'>{name}</h3>
 							<p className='text-xs font-mono text-slate-400'>
-								{quantity} {type === 'bettingPass' ? 'Game Pass' : ''}
+								{quantity} {type === 'powerPass' ? 'Power Pass' : ''}
 							</p>
 						</div>
 						<div className='flex justify-between items-center'>
