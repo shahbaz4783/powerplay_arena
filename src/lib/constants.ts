@@ -72,10 +72,11 @@ export const SOCIAL_TASKS_LIST = [
 ];
 
 export const token = {
-  name: "Powercoin",
-  symbol: "PWR",
-  totalSupply: 10000000,
-  decimals: 18,
+	name: 'Power Coin',
+	pass: 'Power Pass',
+	symbol: 'PWR',
+	totalSupply: 10000000,
+	decimals: 18,
 };
 
 export const TIPS_AND_QUOTES = [

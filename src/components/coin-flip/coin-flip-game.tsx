@@ -85,7 +85,7 @@ export function CoinFlipChallenge() {
 					setBetAmount={setBetAmount}
 					userBalance={userBalance}
 					maxBet={maxBet}
-					bettingPasses={profile?.bettingPasses || 0}
+					bettingPasses={profile?.powerPass || 0}
 				/>
 
 				<BetChallenge

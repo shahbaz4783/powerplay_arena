@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { token } from "../lib/constants";
 import { db } from "../lib/db";
-import { FormResponse } from "../lib/types";
+import { FormResponse } from '../types/types';
 import { calculateReward } from "../lib/utils";
 import { saveAwardToDatabase } from './game.action';
 import { Milestone } from '../types/db.types';

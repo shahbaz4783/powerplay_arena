@@ -1,6 +1,6 @@
 'use client';
 
-import { avatars } from '@/src/constants/avatars';
+import { avatars } from '@/src/constants/shop-items';
 import { ShopItemCard } from '../cards/shop-item-card';
 
 export function AvatarStore() {

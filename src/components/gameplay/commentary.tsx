@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CommentaryEvent } from "@/src/lib/types";
+import { CommentaryEvent } from '@/src/types/types';
 import { commentaryTexts } from "@/src/lib/commentary";
 import { cn } from "@/src/lib/utils";
 import { useCricketGameState } from "@/src/lib/store";

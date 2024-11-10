@@ -7,7 +7,7 @@ import {
 } from "../types/gameState";
 import { saveMatchDataToDatabase } from "../actions/game.action";
 import { useInitData } from "@telegram-apps/sdk-react";
-import { FormResponse } from "./types";
+import { FormResponse } from '../types/types';
 
 const GAME_STATE_KEY = "cricketGameState";
 

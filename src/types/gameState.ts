@@ -77,42 +77,42 @@ export interface GameState {
 }
 
 export const MATCH_FORMATS: Record<MatchFormat, MatchSetup> = {
-  BLITZ: {
-    format: "BLITZ",
-    overs: 1,
-    entryFee: 50,
-    totalWickets: 2,
-    rewards: {
-      six: 12,
-      four: 6,
-      wicket: 20,
-      runMargin: 5,
-    },
-  },
-  POWERPLAY: {
-    format: "POWERPLAY",
-    overs: 5,
-    entryFee: 100,
-    totalWickets: 5,
-    rewards: {
-      six: 6,
-      four: 4,
-      wicket: 15,
-      runMargin: 4,
-    },
-  },
-  CLASSIC: {
-    format: "CLASSIC",
-    overs: 10,
-    entryFee: 200,
-    totalWickets: 10,
-    rewards: {
-      six: 6,
-      four: 4,
-      wicket: 10,
-      runMargin: 3,
-    },
-  },
+	BLITZ: {
+		format: 'BLITZ',
+		overs: 1,
+		entryFee: 2,
+		totalWickets: 2,
+		rewards: {
+			six: 12,
+			four: 6,
+			wicket: 20,
+			runMargin: 5,
+		},
+	},
+	POWERPLAY: {
+		format: 'POWERPLAY',
+		overs: 5,
+		entryFee: 5,
+		totalWickets: 5,
+		rewards: {
+			six: 6,
+			four: 4,
+			wicket: 15,
+			runMargin: 4,
+		},
+	},
+	CLASSIC: {
+		format: 'CLASSIC',
+		overs: 10,
+		entryFee: 10,
+		totalWickets: 10,
+		rewards: {
+			six: 6,
+			four: 4,
+			wicket: 10,
+			runMargin: 3,
+		},
+	},
 };
 
 export interface LevelInfo {

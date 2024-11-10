@@ -3,6 +3,8 @@
 import { db } from "@/src/lib/db";
 import { User } from "@telegram-apps/sdk-react";
 import { MatchFormat, Transaction } from '@prisma/client';
+import { LEVEL_DATA } from '../lib/constants';
+import { avatars } from '../constants/shop-items';
 
 export interface PaginatedResponse {
 	transactions: Transaction[];
@@ -33,8 +35,10 @@ export const saveOrUpdateUser = async (user: User) => {
 					profile: {
 						create: {
 							balance: 100,
-							avatarUrl: '',
-							bettingPasses: 5,
+							avatarUrl: avatars[0].href,
+							powerPass: 5,
+							levelName: LEVEL_DATA[0].name,
+							xpForNextLevel: LEVEL_DATA[1].xpThreshold,
 						},
 					},
 					stats: {

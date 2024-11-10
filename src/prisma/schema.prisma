@@ -34,11 +34,11 @@ model Profile {
   balance         Int      @default(0)
   totalXP         Int      @default(0)
   level           Int      @default(1)
-  levelName       String   @default("Rookie")
-  xpForNextLevel  Int      @default(2000)
+  levelName       String
+  xpForNextLevel  Int
   streakLength    Int      @default(0)
   weeklyStreak    Int      @default(0)
-  bettingPasses   Int      @default(0)
+  powerPass       Int
   avatarUrl       String
   lastClaimedAt   DateTime?
 

@@ -62,7 +62,7 @@ export async function placeBet(
 				};
 			}
 
-			if (profile.bettingPasses < bettingPassCost) {
+			if (profile.powerPass < bettingPassCost) {
 				return {
 					message: { error: 'Insufficient betting passes' },
 					result: null,
@@ -80,7 +80,7 @@ export async function placeBet(
 				where: { telegramId },
 				data: {
 					balance: { increment: netGain },
-					bettingPasses: { decrement: bettingPassCost },
+					powerPass: { decrement: bettingPassCost },
 				},
 			});
 

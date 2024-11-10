@@ -8,7 +8,7 @@ import {
 	DialogTitle,
 } from '@/src/components/ui/dialog';
 import { token } from '@/src/lib/constants';
-import { avatars } from '@/src/constants/avatars';
+import { avatars } from '@/src/constants/shop-items';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User } from 'lucide-react';

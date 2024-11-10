@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, Lock, Percent } from 'lucide-react';
+import { ChevronRight, Lock, Percent, Minus, Plus } from 'lucide-react';
 import {
 	Dialog,
 	DialogContent,
@@ -24,7 +24,7 @@ interface ShopItemProps {
 	price: number;
 	requiredLevel: number;
 	image: string;
-	onPurchase: (id: number, price: number) => void;
+	onPurchase: (id: number, price: number, quantity: number) => void;
 	isPurchased: boolean;
 	description: string;
 	discount?: number;
@@ -52,14 +52,28 @@ export function ShopItemCard({
 
 	const [isOpen, setIsOpen] = useState(false);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [selectedQuantity, setSelectedQuantity] = useState(1);
 
 	const handlePurchase = () => {
+		setSelectedQuantity(1);
 		setIsDialogOpen(true);
 	};
 
 	const confirmPurchase = () => {
-		onPurchase(id, price);
+		onPurchase(id, price * selectedQuantity, selectedQuantity);
 		setIsDialogOpen(false);
+	};
+
+	const incrementQuantity = () => {
+		if (quantity && selectedQuantity < quantity) {
+			setSelectedQuantity((prev) => prev + 1);
+		}
+	};
+
+	const decrementQuantity = () => {
+		if (selectedQuantity > 1) {
+			setSelectedQuantity((prev) => prev - 1);
+		}
 	};
 
 	return (
@@ -136,20 +150,49 @@ export function ShopItemCard({
 			</div>
 
 			<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-				<DialogContent>
+				<DialogContent className='w-11/12 rounded-xl'>
 					<DialogHeader>
 						<DialogTitle>Confirm Purchase</DialogTitle>
 						<DialogDescription>
-							Are you sure you want to purchase {name} for {price}{' '}
-							{token.symbol}?
+							{quantity ? (
+								<div className='space-y-4'>
+									<p>Select the quantity you want to purchase:</p>
+									<div className='flex items-center justify-center space-x-4'>
+										<Button
+											variant='outline'
+											size='icon'
+											onClick={decrementQuantity}
+											disabled={selectedQuantity === 1}
+										>
+											<Minus className='h-4 w-4' />
+										</Button>
+										<span className='text-2xl font-bold'>
+											{selectedQuantity}
+										</span>
+										<Button
+											variant='outline'
+											size='icon'
+											onClick={incrementQuantity}
+											disabled={selectedQuantity === quantity}
+										>
+											<Plus className='h-4 w-4' />
+										</Button>
+									</div>
+								</div>
+							) : (
+								<p>Are you sure you want to purchase {name}?</p>
+							)}
+							<p className='mt-4 text-center font-semibold'>
+								Total: {price * selectedQuantity} {token.symbol}
+							</p>
 						</DialogDescription>
 					</DialogHeader>
-					<DialogFooter>
+					<div className='grid grid-cols-2 gap-4'>
 						<Button variant='outline' onClick={() => setIsDialogOpen(false)}>
 							Cancel
 						</Button>
 						<Button onClick={confirmPurchase}>Confirm Purchase</Button>
-					</DialogFooter>
+					</div>
 				</DialogContent>
 			</Dialog>
 		</>

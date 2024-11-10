@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useReducer, ReactNode } from "react";
-import { GameState } from "@/src/lib/types";
+import { GameState } from '@/src/types/types';
 
 type Action =
   | { type: "UPDATE_GAME_STATE"; payload: Partial<GameState> }

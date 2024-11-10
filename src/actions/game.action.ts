@@ -1,6 +1,6 @@
 "use server";
 
-import { FormResponse } from "@/src/lib/types";
+import { FormResponse } from '@/src/types/types';
 import { db } from "../lib/db";
 import { GameState, LevelInfo } from "../types/gameState";
 import { redirect } from "next/navigation";
@@ -15,6 +15,7 @@ import {
 import { calculateRewards } from "../lib/game-logics";
 import { revalidatePath } from "next/cache";
 import { Milestone } from "../types/db.types";
+import { token } from '../lib/constants';
 
 export async function startQuickMatch(
 	telegramId: number,
@@ -38,8 +39,8 @@ export async function startQuickMatch(
 			return { message: { error: 'No user found' } };
 		}
 
-		if (profile.balance < entryFee) {
-			return { message: { error: 'Insufficient balance' } };
+		if (profile.powerPass < entryFee) {
+			return { message: { error: `You dont have enough ${token.pass}` } };
 		}
 
 		if (
@@ -54,7 +55,7 @@ export async function startQuickMatch(
 		await db.$transaction(async (tx) => {
 			await tx.profile.update({
 				where: { telegramId: profile.telegramId },
-				data: { balance: { decrement: entryFee } },
+				data: { powerPass: { decrement: entryFee } },
 			});
 
 			await tx.transaction.create({
