@@ -1,47 +1,93 @@
-"use client";
+'use client';
 
-import { Card, CardContent } from "@/src/components/ui/card";
-import batsmanImg from "@/assets/quickplay.png";
-import trophyImg from "@/assets/tournament.png";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { Coins, HandCoins } from 'lucide-react';
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+	CardDescription,
+} from '@/src/components/ui/card';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { Coins, ArrowRight } from 'lucide-react';
 
 export function GameModes() {
+	const cardVariants = {
+		initial: { opacity: 0, y: 20 },
+		animate: { opacity: 1, y: 0 },
+	};
+
 	return (
 		<motion.section
-			className='grid grid-cols-2 min-h-40 gap-4 mb-6'
-			initial={{ opacity: 0, scale: 0.9 }}
-			animate={{ opacity: 1, scale: 1 }}
-			transition={{ duration: 0.5, delay: 0.2 }}
+			className='grid grid-cols-2 gap-4'
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			transition={{ duration: 0.5, staggerChildren: 0.2 }}
 		>
-			<Card
-				className='backdrop-blur-md rounded-xl overflow-hidden bg-no-repeat'
-				style={{
-					backgroundImage: `url(${batsmanImg.src})`,
-					backgroundSize: 'contain',
-					backgroundPosition: 'center',
-				}}
-			>
-				<Link href={'/game/quickplay'}>
-					<CardContent className='h-full flex flex-col items-center justify-end bg-sky-200 bg-opacity-15'></CardContent>
-				</Link>
-			</Card>
+			<Link href='/game/quickplay' passHref className='h-full'>
+				<motion.div
+					className='h-full'
+					variants={cardVariants}
+					initial='initial'
+					animate='animate'
+				>
+					<Card className='h-full backdrop-blur-md overflow-hidden rounded-xl flex flex-col'>
+						<CardHeader>
+							<CardTitle className='flex items-center justify-between'>
+								<span>Power Play</span>
+							</CardTitle>
+						</CardHeader>
+						<CardContent className='flex-grow flex flex-col justify-between'>
+							<CardDescription className='text-xs'>
+								Jump into a fast-paced cricket match!
+							</CardDescription>
+							<motion.div
+								className=' flex items-center justify-center self-end'
+								animate={{ rotateY: [360, 0] }}
+								transition={{
+									duration: 1.5,
+									ease: 'easeInOut',
+								}}
+							>
+								<ArrowRight className='w-8 h-8' />
+							</motion.div>
+						</CardContent>
+					</Card>
+				</motion.div>
+			</Link>
 
-			<Card className='backdrop-blur-md bg-slate-800/50 rounded-xl overflow-hidden bg-no-repeat'>
-				<Link href={'/game/coin-flip'}>
-					<div className='h-full flex flex-col items-center justify-between'>
-						<div className='relative w-24 h-24 mt-2'>
-							<div className='w-full h-full rounded-full bg-gradient-to-r from-yellow-400 to-yellow-200 shadow-lg flex items-center justify-center'>
-								<Coins className='w-12 h-12 text-yellow-800' />
-							</div>
-						</div>
-						<p className='text-muted-foreground bg-slate-700/50 p-2 w-full text-center'>
-							Coin Flip Challege
-						</p>
-					</div>
-				</Link>
-			</Card>
+			<Link href='/game/coin-flip' passHref className='h-full'>
+				<motion.div
+					className='h-full'
+					variants={cardVariants}
+					initial='initial'
+					animate='animate'
+					whileHover='hover'
+				>
+					<Card className='h-full backdrop-blur-md overflow-hidden rounded-xl flex flex-col'>
+						<CardHeader>
+							<CardTitle className='flex items-center justify-between'>
+								<span>Flip & Win</span>
+							</CardTitle>
+						</CardHeader>
+						<CardContent className='flex-grow flex flex-col justify-between'>
+							<CardDescription className='text-xs'>
+								Test your luck in our exciting coin flip game!
+							</CardDescription>
+							<motion.div
+								className=' flex items-center justify-center self-end'
+								animate={{ rotateY: [360, 0] }}
+								transition={{
+									duration: 1.5,
+									ease: 'easeInOut',
+								}}
+							>
+								<ArrowRight className='w-8 h-8' />
+							</motion.div>
+						</CardContent>
+					</Card>
+				</motion.div>
+			</Link>
 		</motion.section>
 	);
 }
