@@ -77,7 +77,13 @@ export function ShopItemCard({
 
 	return (
 		<>
-			<div className='bg-card border rounded-xl text-card-foreground overflow-hidden shadow-lg mb-4'>
+			<motion.div
+				initial={{ opacity: 0, scale: 0.8 }}
+				animate={{ opacity: 1, scale: 1 }}
+				transition={{ duration: 0.5 }}
+				whileTap={{ scale: 0.95 }}
+				className='bg-card border rounded-xl text-card-foreground overflow-hidden shadow-lg mb-4'
+			>
 				<div className='flex'>
 					<div className='w-1/3 relative'>
 						<Image
@@ -148,7 +154,7 @@ export function ShopItemCard({
 						)}
 					</div>
 				</motion.div>
-			</div>
+			</motion.div>
 
 			<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 				<DialogContent className='w-11/12 rounded-xl'>

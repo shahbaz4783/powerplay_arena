@@ -24,7 +24,7 @@ export function GameModes() {
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.5, staggerChildren: 0.2 }}
 		>
-			<Link href='/game/quickplay' passHref className='h-full'>
+			<Link href='/game/cricket/match-setup' passHref className='h-full'>
 				<motion.div
 					className='h-full'
 					variants={cardVariants}

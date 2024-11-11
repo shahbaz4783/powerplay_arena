@@ -3,14 +3,7 @@
 import React from "react";
 import { useGetUserTransaction } from "@/src/hooks/useUserData";
 import { useInitData } from "@telegram-apps/sdk-react";
-import {
-  ArrowDown,
-  ArrowUp,
-  Clock,
-  Calendar,
-  TrendingDown,
-  TrendingUp,
-} from "lucide-react";
+import { Clock, TrendingDown, TrendingUp } from 'lucide-react';
 import { formatDate } from "@/src/lib/utils";
 import { motion } from "framer-motion";
 import { token } from "@/src/lib/constants";

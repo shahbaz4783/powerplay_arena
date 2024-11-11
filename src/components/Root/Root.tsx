@@ -14,8 +14,8 @@ import {
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 
-import { ErrorBoundary } from '@/src/components/ErrorBoundary';
-import { ErrorPage } from '@/src/components/ErrorPage';
+import { ErrorBoundary } from '@/src/components/feedback/ErrorBoundary';
+import { ErrorPage } from '@/src/components/feedback/ErrorPage';
 import { useTelegramMock } from '@/src/hooks/useTelegramMock';
 import { useDidMount } from '@/src/hooks/useDidMount';
 

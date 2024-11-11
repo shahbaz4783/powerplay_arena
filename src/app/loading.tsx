@@ -13,7 +13,7 @@ export default function LoadingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen  flex flex-col items-center justify-center p-4 overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden">
       <div className="relative">
         <div className="absolute inset-0 blur-3xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 opacity-30 animate-pulse"></div>
         <div className="relative z-10 bg-gray-900 bg-opacity-80 rounded-xl p-8 shadow-2xl">

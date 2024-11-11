@@ -1,47 +1,48 @@
 import {
-  Award,
-  Badge,
-  ChartNoAxesColumn,
-  ClipboardList,
-  House,
-  Instagram,
-  MessageCircle,
-  Pickaxe,
-  ShoppingBag,
-  Twitter,
-  UserPlus,
-  Users,
-  WalletMinimal,
-} from "lucide-react";
-import { FaTelegramPlane, FaInstagram } from "react-icons/fa";
-import { FaXTwitter, FaDiscord } from "react-icons/fa6";
+	Activity,
+	Award,
+	Badge,
+	ChartNoAxesColumn,
+	ClipboardList,
+	House,
+	Instagram,
+	MessageCircle,
+	Pickaxe,
+	ShoppingBag,
+	Twitter,
+	UserPlus,
+	Users,
+	WalletMinimal,
+} from 'lucide-react';
+import { FaTelegramPlane, FaInstagram } from 'react-icons/fa';
+import { FaXTwitter, FaDiscord } from 'react-icons/fa6';
 
 export const NAVIGATION_LINKS = [
-  {
-    title: "Home",
-    href: "/miniapp",
-    icon: House,
-  },
-  {
-    title: "Milestones",
-    href: "/miniapp/achievements",
-    icon: Award,
-  },
-  {
-    title: "Shop",
-    href: "/miniapp/shop",
-    icon: ShoppingBag,
-  },
-  {
-    title: "Invite",
-    href: "/miniapp/invite",
-    icon: UserPlus,
-  },
-  {
-    title: "Wallet",
-    href: "/miniapp/wallet",
-    icon: WalletMinimal,
-  },
+	{
+		title: 'Home',
+		href: '/miniapp',
+		icon: House,
+	},
+	{
+		title: 'Milestones',
+		href: '/miniapp/milestones',
+		icon: Award,
+	},
+	{
+		title: 'Shop',
+		href: '/miniapp/shop',
+		icon: ShoppingBag,
+	},
+	{
+		title: 'Activity',
+		href: '/miniapp/activity',
+		icon: Activity,
+	},
+	{
+		title: 'Wallet',
+		href: '/miniapp/wallet',
+		icon: WalletMinimal,
+	},
 ];
 
 export const SOCIAL_TASKS_LIST = [

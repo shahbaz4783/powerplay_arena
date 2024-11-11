@@ -16,6 +16,7 @@ import { calculateRewards } from "../lib/game-logics";
 import { revalidatePath } from "next/cache";
 import { Milestone } from "../types/db.types";
 import { token } from '../lib/constants';
+import { v4 as uuidv4 } from 'uuid';
 
 export async function startQuickMatch(
 	telegramId: number,
@@ -75,7 +76,7 @@ export async function startQuickMatch(
 			return { message: { error: 'Something went wrong' } };
 		}
 	}
-	redirect('/game');
+	redirect(`/game/cricket/match-setup/${uuidv4()}`);
 }
 
 export async function saveMatchDataToDatabase(
