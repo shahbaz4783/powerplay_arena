@@ -58,7 +58,7 @@ export const avatars = [
 
 export const powerPassPacks = [
 	{
-		id: 1,
+		id: 'starter_pack',
 		name: 'Starter Pack',
 		price: 99,
 		requiredLevel: 1,
@@ -71,7 +71,7 @@ export const powerPassPacks = [
 		quantity: 5,
 	},
 	{
-		id: 2,
+		id: 'value_pack',
 		name: 'Value Pack',
 		price: 359,
 		requiredLevel: 2,
@@ -85,7 +85,7 @@ export const powerPassPacks = [
 		discount: 10,
 	},
 	{
-		id: 3,
+		id: 'pro_pack',
 		name: 'Pro Pack',
 		price: 799,
 		requiredLevel: 3,
@@ -99,7 +99,7 @@ export const powerPassPacks = [
 		discount: 20,
 	},
 	{
-		id: 4,
+		id: 'elite_bundle',
 		name: 'Elite Bundle',
 		price: 1399,
 		requiredLevel: 4,
@@ -113,7 +113,7 @@ export const powerPassPacks = [
 		discount: 30,
 	},
 	{
-		id: 5,
+		id: 'ultimate_vault',
 		name: 'Ultimate Vault',
 		price: 1999,
 		requiredLevel: 5,

@@ -19,12 +19,12 @@ import { useInitData } from '@telegram-apps/sdk-react';
 import { useUserProfile } from '@/src/hooks/useUserData';
 
 interface ShopItemProps {
-	id: number;
+	id: number | string;
 	name: string;
 	price: number;
 	requiredLevel: number;
 	image: string;
-	onPurchase: (id: number, price: number, quantity: number) => void;
+	onPurchase: (formData: FormData) => void;
 	isPurchased: boolean;
 	description: string;
 	discount?: number;
@@ -59,17 +59,11 @@ export function ShopItemCard({
 		setIsDialogOpen(true);
 	};
 
-	const confirmPurchase = () => {
-		onPurchase(id, price * selectedQuantity, selectedQuantity);
-		setIsDialogOpen(false);
-	};
-
 	const incrementQuantity = () => {
 		if (quantity && selectedQuantity < quantity) {
 			setSelectedQuantity((prev) => prev + 1);
 		}
 	};
-
 	const decrementQuantity = () => {
 		if (selectedQuantity > 1) {
 			setSelectedQuantity((prev) => prev - 1);
@@ -138,12 +132,13 @@ export function ShopItemCard({
 					<div className='p-3'>
 						<p className='text-sm text-muted-foreground mb-3'>{description}</p>
 						{userLevel >= requiredLevel && (
-							<SubmitButton
-								title='Purchase'
-								loadingTitle='Purchasing'
+							<Button
 								onClick={handlePurchase}
 								disabled={userLevel < requiredLevel}
-							/>
+								className='w-full rounded-xl'
+							>
+								Purchase
+							</Button>
 						)}
 					</div>
 				</motion.div>
@@ -187,12 +182,15 @@ export function ShopItemCard({
 							</p>
 						</DialogDescription>
 					</DialogHeader>
-					<div className='grid grid-cols-2 gap-4'>
-						<Button variant='outline' onClick={() => setIsDialogOpen(false)}>
-							Cancel
-						</Button>
-						<Button onClick={confirmPurchase}>Confirm Purchase</Button>
-					</div>
+					<form action={onPurchase}>
+						<input type='hidden' name='powerPassId' value={id} />
+						<input type='hidden' name='quantity' value={selectedQuantity} />
+						<SubmitButton
+							title='Confirm Purchase'
+							loadingTitle='Purchasing'
+							disabled={userLevel < requiredLevel}
+						/>
+					</form>
 				</DialogContent>
 			</Dialog>
 		</>

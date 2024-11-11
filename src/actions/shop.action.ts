@@ -2,17 +2,29 @@
 
 import { db } from '@/src/lib/db';
 import { FormResponse } from '../types/types';
+import { powerPassPacks } from '../constants/shop-items';
 
-export async function purchasePowerPass(
+export const purchasePowerPass = async (
 	telegramId: bigint,
 	prevState: FormResponse,
 	formData: FormData
-) {
-	const powerPassId = formData.get('powerPassId');
-	const powerPassQuantity = formData.get('quantity');
+): Promise<FormResponse> => {
+	console.log({ formData });
 
-	const totalCost = 99;
-	const totalPass = 5;
+	const powerPassId = formData.get('powerPassId');
+	const powerPassPackQuantity = Number(formData.get('quantity'));
+
+	const packInfo = powerPassPacks.find(
+		(pack) => pack.id.toString() === powerPassId
+	);
+
+	if (!packInfo)
+		return {
+			message: { error: 'Cant find the selected pack. Please try again later' },
+		};
+
+	const totalCost = packInfo?.price;
+	const totalPass = packInfo.quantity * powerPassPackQuantity;
 	try {
 		await db.$transaction(async (tx) => {
 			const profile = await tx.profile.findUnique({
@@ -23,6 +35,10 @@ export async function purchasePowerPass(
 				throw new Error('Profile not found');
 			}
 
+			if (profile.balance < totalCost) {
+				return { message: { error: 'You dont have enough coins' } };
+			}
+
 			await tx.profile.update({
 				where: { telegramId },
 				data: {
@@ -31,12 +47,16 @@ export async function purchasePowerPass(
 				},
 			});
 		});
+		return { message: { success: 'Purcahse Successful' } };
 	} catch (error) {
-		console.error('Error placing bet:', error);
-		return {
-			message: { error: 'An error occurred while placing the bet' },
-			result: null,
-			winAmount: 0,
-		};
+		if (error instanceof Error) {
+			return {
+				message: { error: error.message },
+			};
+		} else {
+			return {
+				message: { error: 'An error occurred while purchasing the pass.' },
+			};
+		}
 	}
-}
+};
