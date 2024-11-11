@@ -220,7 +220,7 @@ export const getUserFormatStats = async (
 	}
 };
 
-export const getUserAvatars = async (telegramId: bigint) => {
+export const getUserAvatars = async (telegramId: number) => {
 	try {
 		return await db.avatar.findMany({
 			where: {

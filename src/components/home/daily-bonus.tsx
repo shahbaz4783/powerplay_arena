@@ -19,20 +19,17 @@ export function DailyBonus() {
   });
 
   return (
-    <div className="w-full max-w-md bg-slate-800 rounded-xl p-4">
-      <h3 className="text-2xl font-bold mb-2 text-center">
-        Today's Power Play
-      </h3>
-      <p className="text-sm text-center mb-4">
-        Score big with your daily bonus!
-      </p>
-      <form className="w-full col-span-3 border" action={action}>
-        <SubmitButton title="Claim" loadingTitle="Claiming..." />
-      </form>
-      <FormFeedback
-        error={response.message.error}
-        success={response.message.success}
-      />
-    </div>
-  );
+		<div className='w-full max-w-md bg-slate-800 rounded-xl p-4'>
+			<h3 className='text-2xl font-bold mb-2 text-center'>
+				Today's Power Play
+			</h3>
+			<p className='text-sm text-center mb-4'>
+				Score big with your daily bonus!
+			</p>
+			<form className='w-full col-span-3 border' action={action}>
+				<SubmitButton title='Claim' loadingTitle='Claiming...' />
+			</form>
+			<FormFeedback message={response.message} />
+		</div>
+	);
 }

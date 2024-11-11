@@ -18,13 +18,13 @@ export default function ShopPage() {
 				subtitle='Personalize Your Look and Test Your Luck'
 			/>
 
-			<Tabs defaultValue='betting-pass' className='w-full'>
+			<Tabs defaultValue='power-pass' className='w-full'>
 				<TabsList className='grid grid-cols-3 mb-8 gap-4 rounded-xl bg-slate-400 h-auto'>
 					<TabsTrigger
-						value='betting-pass'
+						value='power-pass'
 						className='flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900'
 					>
-						Betting Pass
+						Power Pass
 					</TabsTrigger>
 					<TabsTrigger
 						value='avatar'
@@ -40,7 +40,7 @@ export default function ShopPage() {
 					</TabsTrigger>
 				</TabsList>
 
-				<TabsContent value='betting-pass'>
+				<TabsContent value='power-pass'>
 					<PowerPassStore />
 				</TabsContent>
 				<TabsContent value='avatar'>

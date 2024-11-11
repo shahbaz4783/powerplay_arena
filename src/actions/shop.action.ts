@@ -3,8 +3,6 @@
 import { db } from '@/src/lib/db';
 import { FormResponse } from '../types/types';
 import { avatars, powerPassPacks } from '../constants/shop-items';
-import { token } from '../lib/constants';
-import { revalidatePath } from 'next/cache';
 import { responseMessages } from '../constants/messages';
 
 export const purchasePowerPass = async (
@@ -90,6 +88,14 @@ export const purchaseAvatar = async (
 	formData: FormData
 ): Promise<FormResponse> => {
 	try {
+		const profile = await db.profile.findUnique({
+			where: { telegramId },
+		});
+
+		if (!profile) {
+			throw new Error(responseMessages.general.error.unexpectedError);
+		}
+
 		const itemId = formData.get('itemId');
 
 		const avatarInfo = avatars.find(
@@ -115,12 +121,12 @@ export const purchaseAvatar = async (
 				message: { error: responseMessages.shop.error.itemNotFound },
 			};
 
-		const profile = await db.profile.findUnique({
-			where: { telegramId },
-		});
-
-		if (!profile) {
-			throw new Error('Profile not found');
+		if (profile.balance < avatarInfo.price) {
+			return {
+				message: {
+					error: responseMessages.transaction.error.insufficientBalance,
+				},
+			};
 		}
 
 		await db.$transaction(async (tx) => {

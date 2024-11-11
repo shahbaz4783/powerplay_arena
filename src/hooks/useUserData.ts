@@ -45,7 +45,7 @@ export const useGetUserStats = (userId: number | undefined) => {
 	});
 };
 
-export const useGetUserAvatar = (userId: bigint) => {
+export const useGetUserAvatar = (userId: number) => {
 	return useQuery({
 		queryKey: ['user-avatar', userId],
 		queryFn: () => getUserAvatars(userId!),

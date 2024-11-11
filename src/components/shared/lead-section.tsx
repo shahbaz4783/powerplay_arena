@@ -49,10 +49,7 @@ const LeadSection = () => {
 					</p>
 				</div>
 
-				<FormFeedback
-					error={formState.message.error}
-					success={formState.message.success}
-				/>
+				<FormFeedback message={formState.message} />
 			</main>
 			<aside className='hidden lg:block col-span-2'>
 				<Image
