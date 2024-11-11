@@ -97,8 +97,8 @@ export function QuickPlayMode() {
 				subtitle='Set up your game and jump into the action'
 				className='mx-4 mt-3'
 			/>
-
-			<section className='p-4'>
+			<section className='p-4 space-y-4'>
+				<FormFeedback message={response.message} />
 				<Tabs
 					value={selectedFormat}
 					onValueChange={handleFormatChange}
@@ -197,7 +197,6 @@ export function QuickPlayMode() {
 						</TabsContent>
 					))}
 				</Tabs>
-				<FormFeedback error={response.message.error} />
 			</section>
 			<section className='bg-black bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-gray-900 to-slate-900 p-6 sticky bottom-0'>
 				<form action={handleSubmit} className='w-full'>

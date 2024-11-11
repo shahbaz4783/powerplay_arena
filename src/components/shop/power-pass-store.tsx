@@ -33,6 +33,7 @@ export function PowerPassStore() {
 					price={pack.price}
 					discount={pack.discount}
 					quantity={pack.quantity}
+					serverResponse={response}
 				/>
 			))}
 		</>

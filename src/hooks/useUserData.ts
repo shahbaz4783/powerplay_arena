@@ -1,11 +1,12 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
-  getUserFormatStats,
-  getUserRankings,
-  getUserStats,
-  getUserTransactionById,
-  PaginatedResponse,
-} from "../actions/user.action";
+	getUserAvatars,
+	getUserFormatStats,
+	getUserRankings,
+	getUserStats,
+	getUserTransactionById,
+	PaginatedResponse,
+} from '../actions/user.action';
 import { getUserProfileById } from '../actions/user.action';
 import { MatchFormat } from '@prisma/client';
 
@@ -20,28 +21,38 @@ export const useUserProfile = (telegramId: number | undefined) => {
 };
 
 export const useGetUserTransaction = (userId: bigint | undefined) => {
-  return useInfiniteQuery<PaginatedResponse, Error>({
-    queryKey: ["user-transaction", JSON.stringify(userId?.toString())],
-    queryFn: ({ pageParam = 1 }) =>
-      getUserTransactionById(userId!, pageParam as number),
-    getNextPageParam: (lastPage, allPages) => {
-      return lastPage.hasMore ? allPages.length + 1 : undefined;
-    },
-    enabled: !!userId,
-    staleTime: 60000,
-    gcTime: 3600000,
-    initialPageParam: 1,
-  });
+	return useInfiniteQuery<PaginatedResponse, Error>({
+		queryKey: ['user-transaction', JSON.stringify(userId?.toString())],
+		queryFn: ({ pageParam = 1 }) =>
+			getUserTransactionById(userId!, pageParam as number),
+		getNextPageParam: (lastPage, allPages) => {
+			return lastPage.hasMore ? allPages.length + 1 : undefined;
+		},
+		enabled: !!userId,
+		staleTime: 60000,
+		gcTime: 3600000,
+		initialPageParam: 1,
+	});
 };
 
 export const useGetUserStats = (userId: number | undefined) => {
-  return useQuery({
-    queryKey: ["user-stats", userId],
-    queryFn: () => getUserStats(userId!),
-    enabled: !!userId,
-    staleTime: 60000,
-    gcTime: 3600000,
-  });
+	return useQuery({
+		queryKey: ['user-stats', userId],
+		queryFn: () => getUserStats(userId!),
+		enabled: !!userId,
+		staleTime: 60000,
+		gcTime: 3600000,
+	});
+};
+
+export const useGetUserAvatar = (userId: bigint) => {
+	return useQuery({
+		queryKey: ['user-avatar', userId],
+		queryFn: () => getUserAvatars(userId!),
+		enabled: !!userId,
+		staleTime: 60000,
+		gcTime: 3600000,
+	});
 };
 
 export const useGetUserFormatStats = (

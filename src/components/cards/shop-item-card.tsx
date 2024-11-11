@@ -2,12 +2,11 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, Lock, Percent, Minus, Plus } from 'lucide-react';
+import { ChevronRight, Lock, Minus, Plus } from 'lucide-react';
 import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
-	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from '@/src/components/ui/dialog';
@@ -17,6 +16,8 @@ import { SubmitButton } from '@/src/components/feedback/submit-button';
 import Image from 'next/image';
 import { useInitData } from '@telegram-apps/sdk-react';
 import { useUserProfile } from '@/src/hooks/useUserData';
+import { FormResponse } from '@/src/types/types';
+import FormFeedback from '../feedback/form-feedback';
 
 interface ShopItemProps {
 	id: number | string;
@@ -27,9 +28,11 @@ interface ShopItemProps {
 	onPurchase: (formData: FormData) => void;
 	isPurchased: boolean;
 	description: string;
-	discount?: number;
 	type: 'avatar' | 'powerPass';
+	discount?: number;
 	quantity?: number;
+	xpGain?: number;
+	serverResponse: FormResponse;
 }
 
 export function ShopItemCard({
@@ -43,6 +46,8 @@ export function ShopItemCard({
 	discount,
 	quantity,
 	type,
+	xpGain,
+	serverResponse,
 }: ShopItemProps) {
 	const initData = useInitData();
 	const user = initData?.user;
@@ -100,7 +105,8 @@ export function ShopItemCard({
 						<div>
 							<h3 className='text-lg font-semibold'>{name}</h3>
 							<p className='text-xs font-mono text-slate-400'>
-								{quantity} {type === 'powerPass' ? 'Power Pass' : ''}
+								{quantity ?? xpGain}{' '}
+								{type === 'powerPass' ? `${token.pass}` : 'XP'}
 							</p>
 						</div>
 						<div className='flex justify-between items-center'>
@@ -183,14 +189,15 @@ export function ShopItemCard({
 						</DialogDescription>
 					</DialogHeader>
 					<form action={onPurchase}>
-						<input type='hidden' name='powerPassId' value={id} />
-						<input type='hidden' name='quantity' value={selectedQuantity} />
+						<input type='hidden' name='itemId' value={id} />
+						<input type='hidden' name='itemQuantity' value={selectedQuantity} />
 						<SubmitButton
 							title='Confirm Purchase'
 							loadingTitle='Purchasing'
 							disabled={userLevel < requiredLevel}
 						/>
 					</form>
+					<FormFeedback message={serverResponse.message} />
 				</DialogContent>
 			</Dialog>
 		</>

@@ -5,6 +5,7 @@ import { User } from "@telegram-apps/sdk-react";
 import { MatchFormat, Transaction } from '@prisma/client';
 import { LEVEL_DATA } from '../lib/constants';
 import { avatars } from '../constants/shop-items';
+import { responseMessages } from '../constants/messages';
 
 export interface PaginatedResponse {
 	transactions: Transaction[];
@@ -214,6 +215,23 @@ export const getUserFormatStats = async (
 			console.error('Error fetching user stats info:', error.message);
 		} else {
 			console.error('Something went wrong while fetching stats info');
+		}
+		throw error;
+	}
+};
+
+export const getUserAvatars = async (telegramId: bigint) => {
+	try {
+		return await db.avatar.findMany({
+			where: {
+				telegramId,
+			},
+		});
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error(error.message);
+		} else {
+			console.error(responseMessages.general.error.unexpectedError);
 		}
 		throw error;
 	}
