@@ -50,9 +50,9 @@ function App(props: PropsWithChildren) {
 }
 
 function RootInner({ children }: PropsWithChildren) {
-	if (process.env.NODE_ENV === 'development') {
-		useTelegramMock();
-	}
+	// if (process.env.NODE_ENV === 'development') {
+	// useTelegramMock();
+	// }
 
 	const debug = useLaunchParams().startParam === 'debug';
 	const manifestUrl = useMemo(() => {
