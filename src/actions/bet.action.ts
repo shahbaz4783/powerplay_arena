@@ -72,6 +72,11 @@ export async function placeBet(
 
 			// Simulate the coin flip
 			const isWin = Math.random() <= challenge.odds;
+			const flipResult = isWin
+				? selectedSide
+				: selectedSide === 'head'
+				? 'tail'
+				: 'head';
 			const winAmount = isWin ? Math.round(betAmount * challenge.payout) : 0;
 			const netGain = winAmount - betAmount;
 
@@ -100,7 +105,7 @@ export async function placeBet(
 
 				return {
 					message: {
-						success: `Congratulations! You won ${netGain} ${token.symbol}!`,
+						success: `Congratulations! Its ${flipResult}. You won ${netGain} ${token.symbol}!`,
 					},
 					result: 'win',
 					winAmount: netGain,
@@ -117,7 +122,7 @@ export async function placeBet(
 				});
 				return {
 					message: {
-						error: `Better luck next time! You lost ${betAmount} ${token.symbol}`,
+						error: `Better luck next time! It was ${flipResult}. You lost ${betAmount} ${token.symbol}`,
 					},
 					result: 'lose',
 					winAmount: 0,

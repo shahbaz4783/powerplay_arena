@@ -6,7 +6,7 @@ import { Button } from "@telegram-apps/telegram-ui";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { ArrowRight, Target, Clock } from "lucide-react";
-import { Header } from '@/src/components/shared/header';
+import { Header } from "../../common/elements/header";
 
 export function MidInnings() {
   const { gameState, updateGameState } = useCricketGameState();

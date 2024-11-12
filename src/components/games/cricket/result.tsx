@@ -4,7 +4,6 @@ import { useCricketGameState } from '@/src/lib/store';
 import { Trophy, Target, Zap, Award, Coins, TrendingUp } from 'lucide-react';
 import { calculateRewards } from '@/src/lib/game-logics';
 import { RewardItem } from '@/src/components/common/cards/reward-card';
-import { SubmitButton } from '@/src/components/feedback/submit-button';
 import { useFormState } from 'react-dom';
 
 import { calculateXPGain } from '@/src/lib/utils';
@@ -15,7 +14,8 @@ import {
 	CardTitle,
 } from '@/src/components/ui/card';
 import { Progress } from '@/src/components/ui/progress';
-import { Header } from '../../shared/header';
+import { SubmitButton } from '../../common/buttons/submit-button';
+import { Header } from '../../common/elements/header';
 
 export function Result() {
 	const { gameState, endMatchAndClaimReward } = useCricketGameState();
