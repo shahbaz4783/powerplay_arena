@@ -4,11 +4,10 @@ import {
 	TabsList,
 	TabsTrigger,
 } from '@/src/components/ui/tabs';
-import { Header } from '@/src/components/shared/header';
-import { AvatarStore } from '@/src/components/shop/avatar-store';
-import { CoinFlipChallenge } from '@/src/components/coin-flip/coin-flip-game';
-import { PowerPassStore } from '@/src/components/shop/power-pass-store';
-import { RedemptionStore } from '@/src/components/shop/redemption-store';
+import { Header } from '@/src/components/common/elements/header';
+import { PowerPassStore } from '@/src/components/layouts/shop/powerpass-store';
+import { AvatarStore } from '@/src/components/layouts/shop/avatar-store';
+import { RedemptionStore } from '@/src/components/layouts/shop/redeem-store';
 
 export default function ShopPage() {
 	return (

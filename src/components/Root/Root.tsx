@@ -14,8 +14,8 @@ import {
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 
-import { ErrorBoundary } from '@/src/components/feedback/ErrorBoundary';
-import { ErrorPage } from '@/src/components/feedback/ErrorPage';
+import { ErrorBoundary } from '@/src/components/layouts/feedback/ErrorBoundary';
+import { ErrorPage } from '@/src/components/layouts/feedback/ErrorPage';
 import { useTelegramMock } from '@/src/hooks/useTelegramMock';
 import { useDidMount } from '@/src/hooks/useDidMount';
 
@@ -50,9 +50,7 @@ function App(props: PropsWithChildren) {
 }
 
 function RootInner({ children }: PropsWithChildren) {
-	// Mock Telegram environment in development mode if needed.
 	if (process.env.NODE_ENV === 'development') {
-		// eslint-disable-next-line react-hooks/rules-of-hooks
 		useTelegramMock();
 	}
 
@@ -61,7 +59,6 @@ function RootInner({ children }: PropsWithChildren) {
 		return new URL('tonconnect-manifest.json', window.location.href).toString();
 	}, []);
 
-	// Enable debug mode to see all the methods sent and events received.
 	useEffect(() => {
 		if (debug) {
 			import('eruda').then((lib) => lib.default.init());
@@ -78,8 +75,6 @@ function RootInner({ children }: PropsWithChildren) {
 }
 
 export function Root(props: PropsWithChildren) {
-	// Unfortunately, Telegram Mini Apps does not allow us to use all features of the Server Side
-	// Rendering. That's why we are showing loader on the server side.
 	const didMount = useDidMount();
 
 	return didMount ? (
@@ -87,6 +82,6 @@ export function Root(props: PropsWithChildren) {
 			<RootInner {...props} />
 		</ErrorBoundary>
 	) : (
-		<div className='root__loading'>Loading</div>
+		<div className='root__loading'>Loading...</div>
 	);
 }

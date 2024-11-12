@@ -1,6 +1,5 @@
-import { TransactionLists } from '@/src/components/cards/transaction-card';
-import { WalletOverview } from '@/src/components/cards/wallet-overview-card';
-import { Header } from '@/src/components/shared/header';
+import { Header } from '@/src/components/common/elements/header';
+import { TransactionLists } from '@/src/components/layouts/activity/all-transaction';
 
 export default function Treasury() {
 	return (

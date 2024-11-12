@@ -1,4 +1,4 @@
-import TasksList from '@/src/components/earn/tasks';
+import TasksList from '@/src/components/layouts/earn/tasks';
 import GradualSpacing from '@/src/components/magicui/gradual-spacing';
 
 const TaskPage = () => {

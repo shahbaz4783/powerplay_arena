@@ -1,5 +1,5 @@
-import { Header } from '@/src/components/shared/header';
-import { CoinFlipChallenge } from '@/src/components/coin-flip/coin-flip-game';
+import { CoinFlipChallenge } from '@/src/components/games/coin-flip/coin-flip-game';
+import { Header } from '@/src/components/common/elements/header';
 
 export default function CoinFlipChallengePage() {
 	return (

@@ -1,4 +1,4 @@
-import FeatureComingSoon from '@/src/components/shared/coming-soon';
+import FeatureComingSoon from "@/src/components/common/message/coming-soon";
 
 export default function WalletPage() {
 	return (

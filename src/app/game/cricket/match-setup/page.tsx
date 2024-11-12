@@ -1,9 +1,9 @@
-import { QuickPlayMode } from "@/src/components/game-modes/quick-play";
+import { QuickPlayMode } from '@/src/components/games/cricket/quick-play';
 
 export default function QuickPlayGamePage() {
-  return (
-    <>
-      <QuickPlayMode />
-    </>
-  );
+	return (
+		<>
+			<QuickPlayMode />
+		</>
+	);
 }
