@@ -49,7 +49,7 @@ interface UserBalanceProps {
 	isLoading: boolean;
 }
 
-export function UserProfileHeader() {
+export function ProfileSummary() {
 	const initData = useInitData();
 	const user = initData?.user;
 
