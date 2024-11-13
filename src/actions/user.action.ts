@@ -3,7 +3,7 @@
 import { db } from "@/src/lib/db";
 import { User } from "@telegram-apps/sdk-react";
 import { MatchFormat, Transaction } from '@prisma/client';
-import { LEVEL_DATA } from '../lib/constants';
+import { LEVEL_DATA } from '../constants/app-config';
 import { avatars } from '../constants/shop-items';
 import { responseMessages } from '../constants/messages';
 

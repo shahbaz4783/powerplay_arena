@@ -6,7 +6,7 @@ import { useInitData } from '@telegram-apps/sdk-react';
 import { Clock, TrendingDown, TrendingUp } from 'lucide-react';
 import { formatDate } from '@/src/lib/utils';
 import { motion } from 'framer-motion';
-import { token } from '@/src/lib/constants';
+import { token } from '@/src/constants/app-config';
 import { Transaction } from '@prisma/client';
 import { SubmitButton } from '../../common/buttons/submit-button';
 

@@ -20,6 +20,7 @@ import { useTelegramMock } from '@/src/hooks/useTelegramMock';
 import { useDidMount } from '@/src/hooks/useDidMount';
 
 import './styles.css';
+import { LoadingUI } from '../layouts/feedback/loading-ui';
 
 function App(props: PropsWithChildren) {
 	const lp = useLaunchParams();
@@ -82,6 +83,6 @@ export function Root(props: PropsWithChildren) {
 			<RootInner {...props} />
 		</ErrorBoundary>
 	) : (
-		<div className='root__loading'>Loading...</div>
+		<LoadingUI />
 	);
 }

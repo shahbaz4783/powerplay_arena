@@ -1,7 +1,7 @@
 import { MatchFormat, Stats } from "@prisma/client";
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { LEVEL_DATA, LEVEL_NAMES, XP_THRESHOLDS } from "./constants";
+import { LEVEL_DATA } from '../constants/app-config';
 import { GameState, LevelInfo } from "../types/gameState";
 import crypto from "crypto";
 

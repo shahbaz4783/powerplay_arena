@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useUserProfile } from '@/src/hooks/useUserData';
 import { useInitData } from '@telegram-apps/sdk-react';
 import { Progress } from '@/src/components/ui/progress';
-import { token } from '@/src/lib/constants';
+import { token } from '@/src/constants/app-config';
 import { Card } from '@/src/components/ui/card';
 import { saveOrUpdateUser } from '@/src/actions/user.action';
 import { Coins, Gem, Zap } from 'lucide-react';

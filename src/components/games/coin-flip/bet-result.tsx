@@ -8,7 +8,7 @@ import {
 	DialogTitle,
 } from '@/src/components/ui/dialog';
 import { Button } from '@/src/components/ui/button';
-import { token } from '@/src/lib/constants';
+import { token } from '@/src/constants/app-config';
 import { RefreshCw, Home } from 'lucide-react';
 
 interface ResultModalProps {

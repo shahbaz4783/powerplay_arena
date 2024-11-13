@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CommentaryEvent } from '@/src/types/types';
-import { commentaryTexts } from "@/src/lib/commentary";
+import { commentaryTexts } from "@/src/constants/game-texts";
 import { cn } from "@/src/lib/utils";
 import { useCricketGameState } from "@/src/lib/store";
 import { getCurrentInningsData } from "@/src/lib/game-logics";

@@ -10,9 +10,10 @@ import {
 	TabsList,
 	TabsTrigger,
 } from '@/src/components/ui/tabs';
-import { MATCH_FORMATS, MatchFormat } from '@/src/types/gameState';
 import { ChartContainer, ChartConfig } from '../../ui/chart';
 import { Bar, BarChart } from 'recharts';
+import { MATCH_FORMATS } from '@/src/constants/app-config';
+import { MatchFormat } from '@prisma/client';
 
 interface StatData {
 	key: string;

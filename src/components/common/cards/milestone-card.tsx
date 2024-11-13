@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { Award } from 'lucide-react';
 import { Progress } from '../../ui/progress';
-import { token } from '@/src/lib/constants';
+import { token } from '@/src/constants/app-config';
 import { useFormState } from 'react-dom';
 import { Milestone } from '@/src/types/db.types';
 import { claimAwardAction } from '@/src/actions/tasks.action';

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { token } from "../lib/constants";
+import { token } from '../constants/app-config';
 import { db } from "../lib/db";
 import { FormResponse } from '../types/types';
 import { calculateReward } from "../lib/utils";

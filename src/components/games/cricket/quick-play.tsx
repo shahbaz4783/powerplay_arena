@@ -33,15 +33,15 @@ import {
 	Info,
 } from 'lucide-react';
 import { startQuickMatch } from '@/src/actions/game.action';
-import { token } from '@/src/lib/constants';
+import { MATCH_FORMATS, token } from '@/src/constants/app-config';
 import { useInitData } from '@telegram-apps/sdk-react';
 import { useFormState } from 'react-dom';
 import { RewardItem } from '../../common/cards/reward-card';
 import { useCricketGameState } from '@/src/lib/store';
-import { MatchFormat, MATCH_FORMATS } from '@/src/types/gameState';
 import { SubmitButton } from '../../common/buttons/submit-button';
 import { Header } from '../../common/elements/header';
 import { ServerResponse } from '../../common/message/server-response';
+import { MatchFormat } from '@prisma/client';
 
 export function QuickPlayMode() {
 	const [selectedFormat, setSelectedFormat] = useState<MatchFormat>('BLITZ');
@@ -144,10 +144,19 @@ export function QuickPlayMode() {
 
 										<TableRow>
 											<TableCell className='font-medium text-gray-300 rounded-bl-xl'>
+												Pass Required
+											</TableCell>
+											<TableCell className='text-right font-bold rounded-br-xl'>
+												{format.passRequired}
+											</TableCell>
+										</TableRow>
+
+										<TableRow>
+											<TableCell className='font-medium text-gray-300 rounded-bl-xl'>
 												Entry Fees
 											</TableCell>
 											<TableCell className='text-right font-bold rounded-br-xl'>
-												{format.entryFee} {token.pass}
+												{format.entryFee} {token.symbol}
 											</TableCell>
 										</TableRow>
 									</TableBody>

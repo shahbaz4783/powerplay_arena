@@ -11,7 +11,7 @@ import {
 	DialogTitle,
 } from '@/src/components/ui/dialog';
 import { Button } from '@/src/components/ui/button';
-import { token } from '@/src/lib/constants';
+import { token } from '@/src/constants/app-config';
 import { SubmitButton } from '@/src/components/common/buttons/submit-button';
 import Image from 'next/image';
 import { useInitData } from '@telegram-apps/sdk-react';

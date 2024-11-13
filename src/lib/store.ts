@@ -12,58 +12,59 @@ import { FormResponse } from '../types/types';
 const GAME_STATE_KEY = "cricketGameState";
 
 const initialState: GameState = {
-  gamePhase: "toss",
-  currentInnings: 1,
-  target: null,
+	gamePhase: 'toss',
+	currentInnings: 1,
+	target: null,
 
-  matchSetup: {
-    format: "BLITZ",
-    entryFee: 50,
-    overs: 1,
-    totalWickets: 2,
-    rewards: {
-      four: 4,
-      six: 6,
-      runMargin: 10,
-      wicket: 20,
-    },
-  },
+	matchSetup: {
+		format: 'BLITZ',
+		entryFee: 50,
+		passRequired: 2,
+		overs: 2,
+		totalWickets: 2,
+		rewards: {
+			four: 4,
+			six: 6,
+			runMargin: 10,
+			wicket: 20,
+		},
+	},
 
-  toss: {
-    winner: null,
-    choice: null,
-    playMode: null,
-  },
+	toss: {
+		winner: null,
+		choice: null,
+		playMode: null,
+	},
 
-  player: {
-    runs: 0,
-    wickets: 0,
-    ballsFaced: 0,
-    oversPlayed: "0.0",
-    fours: 0,
-    sixes: 0,
-    runRate: "0.00",
-    overInfo: [],
-  },
+	player: {
+		runs: 0,
+		wickets: 0,
+		ballsFaced: 0,
+		oversPlayed: '0.0',
+		fours: 0,
+		sixes: 0,
+		runRate: '0.00',
+		overInfo: [],
+	},
 
-  opponent: {
-    runs: 0,
-    wickets: 0,
-    ballsFaced: 0,
-    oversPlayed: "0.0",
-    fours: 0,
-    sixes: 0,
-    runRate: "0.00",
-    overInfo: [],
-  },
+	opponent: {
+		runs: 0,
+		wickets: 0,
+		ballsFaced: 0,
+		oversPlayed: '0.0',
+		fours: 0,
+		sixes: 0,
+		runRate: '0.00',
+		overInfo: [],
+	},
 
-  matchResult: {
-    winner: null,
-    margin: null,
-    marginType: null,
-  },
+	matchResult: {
+		winner: null,
+		margin: null,
+		marginType: null,
+	},
 
-  achievements: [],
+	achievements: [],
 };
 
 const getGameState = (): GameState => {

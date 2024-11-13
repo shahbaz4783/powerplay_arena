@@ -1,4 +1,4 @@
-import { token } from '../lib/constants';
+import { token } from './app-config';
 
 export const responseMessages = {
 	transaction: {

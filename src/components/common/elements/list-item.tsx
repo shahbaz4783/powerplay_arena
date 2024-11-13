@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import ShinyButton from '../../magicui/shiny-button';
-import { token } from '@/src/lib/constants';
+import { token } from '@/src/constants/app-config';
 
 interface ListItemProps {
 	title: string;

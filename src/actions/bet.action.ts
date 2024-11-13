@@ -3,7 +3,7 @@
 import { db } from '@/src/lib/db';
 import { betOptions } from '../constants/challenges';
 import { calculateBettingPassCost } from '../lib/utils';
-import { token } from '../lib/constants';
+import { token } from '../constants/app-config';
 
 interface FormState {
 	message: {

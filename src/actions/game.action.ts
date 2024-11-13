@@ -6,16 +6,15 @@ import { GameState, LevelInfo } from "../types/gameState";
 import { redirect } from "next/navigation";
 import { MatchFormat } from "@prisma/client";
 import {
-  calculateLevel,
-  calculateXPGain,
-  capitalizeFirstLetter,
-  hasLeveledUp,
-  isValidMatchFormat,
-} from "../lib/utils";
-import { calculateRewards } from "../lib/game-logics";
-import { revalidatePath } from "next/cache";
-import { Milestone } from "../types/db.types";
-import { token } from '../lib/constants';
+	calculateLevel,
+	calculateXPGain,
+	capitalizeFirstLetter,
+	isValidMatchFormat,
+} from '../lib/utils';
+import { calculateRewards } from '../lib/game-logics';
+import { revalidatePath } from 'next/cache';
+import { Milestone } from '../types/db.types';
+import { token } from '../constants/app-config';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function startQuickMatch(
@@ -26,6 +25,7 @@ export async function startQuickMatch(
 	try {
 		const formatValue = formData.get('format');
 		const entryFee = parseInt(formData.get('entryFee') as string);
+		const passRequired = parseInt(formData.get('passRequired') as string);
 		const matchFormat: MatchFormat = formatValue as MatchFormat;
 
 		if (isNaN(entryFee)) {
@@ -40,7 +40,11 @@ export async function startQuickMatch(
 			return { message: { error: 'No user found' } };
 		}
 
-		if (profile.powerPass < entryFee) {
+		if (profile.balance < entryFee) {
+			return { message: { error: `You dont have enough ${token.name}` } };
+		}
+
+		if (profile.powerPass < passRequired) {
 			return { message: { error: `You dont have enough ${token.pass}` } };
 		}
 
@@ -52,11 +56,10 @@ export async function startQuickMatch(
 			return { message: { error: 'Invalid match format' } };
 		}
 
-		// Deduct entry fees and create a transaction
 		await db.$transaction(async (tx) => {
 			await tx.profile.update({
 				where: { telegramId: profile.telegramId },
-				data: { powerPass: { decrement: entryFee } },
+				data: { balance: { decrement: entryFee } },
 			});
 
 			await tx.transaction.create({

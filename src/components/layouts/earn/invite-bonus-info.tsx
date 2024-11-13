@@ -1,4 +1,4 @@
-import { token } from '@/src/lib/constants';
+import { token } from '@/src/constants/app-config';
 
 export function InviteBonusInfo() {
 	return (
