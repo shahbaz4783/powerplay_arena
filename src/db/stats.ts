@@ -1,6 +1,6 @@
 'use server';
 
-import { MatchFormat } from '@prisma/client';
+import { BetType, MatchFormat } from '@prisma/client';
 import { db } from '../lib/db';
 
 export const getUserStats = async (telegramId: number) => {
@@ -35,6 +35,26 @@ export const getUserFormatStats = async (
 				telegramId_format: {
 					telegramId: BigInt(userId),
 					format: format,
+				},
+			},
+		});
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error('Error fetching user stats info:', error.message);
+		} else {
+			console.error('Something went wrong while fetching stats info');
+		}
+		throw error;
+	}
+};
+
+export const getUserBettingStats = async (userId: number, betType: BetType) => {
+	try {
+		return await db.betStats.findUnique({
+			where: {
+				telegramId_betType: {
+					telegramId: BigInt(userId),
+					betType,
 				},
 			},
 		});

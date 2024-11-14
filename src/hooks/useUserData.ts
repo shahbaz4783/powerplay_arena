@@ -1,6 +1,10 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MatchFormat } from '@prisma/client';
-import { getUserFormatStats, getUserStats } from '../db/stats';
+import { BetType, MatchFormat } from '@prisma/client';
+import {
+	getUserBettingStats,
+	getUserFormatStats,
+	getUserStats,
+} from '../db/stats';
 import {
 	getUserAvatars,
 	getUserProfileById,
@@ -79,23 +83,37 @@ export const useGetUserAvatar = (userId: number) => {
 };
 
 export const useGetUserFormatStats = (
-  userId: number | undefined,
-  format: MatchFormat,
+	userId: number | undefined,
+	format: MatchFormat
 ) => {
-  return useQuery({
-    queryKey: ["user-format-stats", userId, format],
-    queryFn: () => getUserFormatStats(userId!, format),
-    enabled: !!userId,
-    staleTime: 60000,
-    gcTime: 3600000,
-  });
+	return useQuery({
+		queryKey: ['user-format-stats', userId, format],
+		queryFn: () => getUserFormatStats(userId!, format),
+		enabled: !!userId,
+		staleTime: 60000,
+		gcTime: 3600000,
+	});
+};
+
+export const useGetUserBettingStats = (
+	userId: number | undefined,
+	betType: BetType
+) => {
+	return useQuery({
+		queryKey: ['user-betting-stats', userId, betType],
+		queryFn: () => getUserBettingStats(userId!, betType),
+		enabled: !!userId,
+		staleTime: 60000,
+		gcTime: 3600000,
+	});
 };
 
 export const useGetUserRanking = () => {
-  return useQuery({
-    queryKey: ["user-ranking"],
-    queryFn: () => getUserRankings(),
-    staleTime: 60000,
-    gcTime: 3600000,
-  });
+	return useQuery({
+		queryKey: ['user-ranking'],
+		queryFn: () => getUserRankings(),
+		staleTime: 60000,
+		gcTime: 3600000,
+	});
 };
+

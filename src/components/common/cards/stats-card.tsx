@@ -4,10 +4,15 @@ import { Card, CardContent } from '../../ui/card';
 interface StatsCardProps {
 	title: string;
 	value: number | string;
-	color: string;
+	color?: string;
 	className?: string;
 }
-export function StatCard({ title, value, color, className }: StatsCardProps) {
+export function StatCard({
+	title,
+	value,
+	color = 'from-blue-500 to-cyan-300',
+	className,
+}: StatsCardProps) {
 	return (
 		<Card
 			className={cn(
