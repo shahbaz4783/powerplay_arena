@@ -2,15 +2,20 @@
 
 import { db } from "@/src/lib/db";
 import { User } from "@telegram-apps/sdk-react";
-import { MatchFormat, Transaction } from '@prisma/client';
+import { BetType, MatchFormat, Transaction } from '@prisma/client';
 import { LEVEL_DATA } from '../constants/app-config';
 import { avatars } from '../constants/shop-items';
 import { responseMessages } from '../constants/messages';
 
-
 export const saveOrUpdateUser = async (user: User) => {
 	try {
 		const formats: MatchFormat[] = ['BLITZ', 'POWERPLAY', 'CLASSIC'];
+		const betTypes: BetType[] = [
+			'SAFE_BET',
+			'CLASSIC_FLIP',
+			'TRIPLE_SHOT',
+			'JACKPOT',
+		];
 
 		const result = await db.$transaction(async (tx) => {
 			const upsertedUser = await tx.user.upsert({
@@ -31,12 +36,17 @@ export const saveOrUpdateUser = async (user: User) => {
 					isPremium: user.isPremium,
 					profile: {
 						create: {
-							balance: 100,
+							balance: 500,
 							avatarUrl: avatars[0].href,
 							powerPass: 5,
 							levelName: LEVEL_DATA[0].name,
 							xpForNextLevel: LEVEL_DATA[1].xpThreshold,
 						},
+					},
+					betStats: {
+						create: betTypes.map((betType) => ({
+							betType,
+						})),
 					},
 					stats: {
 						create: formats.map((format) => ({

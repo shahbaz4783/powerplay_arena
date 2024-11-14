@@ -17,9 +17,20 @@ export function BetAmount({
 	return (
 		<section className='w-full bg-slate-900 rounded-xl p-4 space-y-6'>
 			<div className='flex justify-between text-sm text-muted-foreground'>
-				<span>Min Bet: 10</span>
-				<span>Balance: {userBalance}</span>
-				<span>Max Bet: {maxBet}</span>
+				<span>
+					Min Bet:{' '}
+					<span className='font-mono text-slate-300 font-bold'>10</span>
+				</span>
+				<span>
+					Balance:{' '}
+					<span className='font-mono text-slate-300 font-bold'>
+						{userBalance}
+					</span>
+				</span>
+				<span>
+					Max Bet:{' '}
+					<span className='font-mono text-slate-300 font-bold'>{maxBet}</span>
+				</span>
 			</div>
 			<Slider
 				min={0}
@@ -32,9 +43,17 @@ export function BetAmount({
 				disabled={bettingPasses === 0}
 			/>
 			<div className='flex justify-between text-sm text-slate-400'>
-				<p>Betting Pass: {bettingPasses}</p>
 				<p>
-					Bet Amount: {betAmount} {token.symbol}
+					Betting Pass:{' '}
+					<span className='font-mono text-slate-300 font-bold'>
+						{bettingPasses}
+					</span>
+				</p>
+				<p>
+					Bet Amount:{' '}
+					<span className='font-mono text-slate-300 font-bold'>
+						{betAmount} {token.symbol}{' '}
+					</span>
 				</p>
 			</div>
 		</section>

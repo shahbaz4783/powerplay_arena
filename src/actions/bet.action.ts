@@ -4,6 +4,7 @@ import { db } from '@/src/lib/db';
 import { betOptions } from '../constants/challenges';
 import { calculateBettingPassCost } from '../lib/utils';
 import { token } from '../constants/app-config';
+import { BetType } from '@prisma/client';
 
 interface FormState {
 	message: {
@@ -12,6 +13,7 @@ interface FormState {
 	};
 	result: 'win' | 'lose' | 'failed' | null;
 	winAmount: number;
+	xpGain?: number;
 	flipResult?: 'heads' | 'tails';
 }
 
@@ -73,7 +75,8 @@ export async function placeBet(
 
 			// Simulate the coin flip
 			let flipResult = selectedSide;
-			const isWin = Math.random() <= challenge.odds;
+			const randomOutcome = Math.random();
+			const isWin = randomOutcome <= challenge.odds;
 
 			if (isWin) {
 				flipResult === (selectedSide as 'heads' | 'tails');
@@ -84,12 +87,34 @@ export async function placeBet(
 			const winAmount = isWin ? Math.round(betAmount * challenge.payout) : 0;
 			const netGain = winAmount - betAmount;
 
+			const xpGain = Math.floor(
+				isWin
+					? betAmount * challenge.payout * 0.1
+					: betAmount * challenge.payout * 0.02
+			);
+
 			// Update user's balance and betting passes
 			await tx.profile.update({
 				where: { telegramId },
 				data: {
 					balance: { increment: netGain },
 					powerPass: { decrement: bettingPassCost },
+					totalXP: { increment: xpGain },
+				},
+			});
+
+			await tx.betStats.update({
+				where: {
+					telegramId_betType: {
+						telegramId: telegramId,
+						betType: challenge.betType,
+					},
+				},
+				data: {
+					betsPlaced: { increment: 1 },
+					betsWon: { increment: isWin ? 1 : 0 },
+					totalWagered: { increment: betAmount },
+					totalPayout: { increment: netGain },
 				},
 			});
 
@@ -114,6 +139,7 @@ export async function placeBet(
 					result: 'win',
 					winAmount: netGain,
 					flipResult,
+					xpGain,
 				};
 			} else {
 				await tx.transaction.create({
@@ -132,6 +158,7 @@ export async function placeBet(
 					result: 'lose',
 					winAmount: 0,
 					flipResult,
+					xpGain,
 				};
 			}
 		});

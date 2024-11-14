@@ -111,6 +111,7 @@ export function CoinFlipChallenge() {
 				flipResult={formState.flipResult!}
 				betAmount={betAmount}
 				selectedSide={selectedSide}
+				xpGain={formState.xpGain!}
 			/>
 		</div>
 	);

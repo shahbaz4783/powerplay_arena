@@ -21,6 +21,7 @@ interface ResultModalProps {
 		success?: string;
 	};
 	flipResult: 'heads' | 'tails' | null;
+	xpGain: number;
 	selectedSide: string | null;
 	betAmount: number;
 }
@@ -32,6 +33,7 @@ export function BetResult({
 	winAmount,
 	message,
 	flipResult,
+	xpGain,
 	selectedSide,
 	betAmount,
 }: ResultModalProps) {
@@ -96,6 +98,12 @@ export function BetResult({
 											The coin landed on{' '}
 											<span className='font-bold uppercase text-slate-400'>
 												{flipResult}
+											</span>
+										</p>
+										<p className='text-lg'>
+											XP Gain{' '}
+											<span className='font-bold uppercase text-slate-400'>
+												{xpGain}
 											</span>
 										</p>
 									</div>

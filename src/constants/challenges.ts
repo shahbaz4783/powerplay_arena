@@ -1,3 +1,4 @@
+import { BetType } from '@prisma/client';
 import { Award, Zap, Target, Star, Trophy } from 'lucide-react';
 
 export const iconMap: { [key: string]: React.ElementType } = {
@@ -13,27 +14,39 @@ export const iconMap: { [key: string]: React.ElementType } = {
 	total_runs_20000: Star,
 };
 
-export const betOptions = [
+interface BetOptionsProps {
+	betType: BetType;
+	name: string;
+	description: string;
+	odds: number;
+	payout: number;
+}
+
+export const betOptions: BetOptionsProps[] = [
 	{
-		name: 'Safe Horizon',
-		description: '75% chance to win with a low-risk 1.2x return.',
+		betType: 'SAFE_BET',
+		name: 'Safe Bet',
+		description: '75% chance to win with a low-risk 1.25x return.',
 		odds: 0.75,
-		payout: 1.2,
+		payout: 1.25,
 	},
 	{
+		betType: 'CLASSIC_FLIP',
 		name: 'Classic Flip',
 		description: '50/50 chance to double your bet',
 		odds: 0.5,
 		payout: 2,
 	},
 	{
-		name: 'Triple Threat',
+		betType: 'TRIPLE_SHOT',
+		name: 'Triple Shot',
 		description: '33% chance to triple your bet with a bold move.',
 		odds: 0.33,
 		payout: 3,
 	},
 	{
-		name: 'Fortune’s Favour',
+		betType: 'JACKPOT',
+		name: 'Jackpot',
 		description: '20% chance to 5x your bet and hit the jackpot',
 		odds: 0.2,
 		payout: 5,

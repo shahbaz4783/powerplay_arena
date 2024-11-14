@@ -15,7 +15,7 @@ model WaitlistUser {
 
 model User {
   telegramId     BigInt    @id @unique
-  firstName      String    @unique
+  firstName      String
   lastName       String?
   username       String?   @unique
   languageCode   String
@@ -23,6 +23,7 @@ model User {
   profile        Profile?
   transaction    Transaction[]
   stats          Stats[]
+  betStats       BetStats[]
   award          Award[]
   avatar         Avatar[]
 }
@@ -30,7 +31,7 @@ model User {
 model Profile {
   id              String   @id @default(cuid())
   telegramId      BigInt   @unique
-  user            User     @relation(fields: [telegramId], references: [telegramId])
+  user            User     @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
   balance         Int      @default(0)
   totalXP         Int      @default(0)
   level           Int      @default(1)
@@ -49,7 +50,7 @@ model Avatar {
   id            String   @id @default(cuid())
   avatarId      String   
   telegramId    BigInt 
-  user          User     @relation(fields: [telegramId], references: [telegramId])
+  user          User     @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
   title         String  
   description   String
   href          String
@@ -61,7 +62,7 @@ model Award {
   id            String   @id @default(cuid())
   awardId       String   
   telegramId    BigInt 
-  user          User     @relation(fields: [telegramId], references: [telegramId])
+  user          User     @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
   title         String  
   description   String
   createdAt     DateTime @default(now())
@@ -73,7 +74,7 @@ model Stats {
   id               String      @id @default(cuid())
   telegramId       BigInt
   format           MatchFormat
-  user             User        @relation(fields: [telegramId], references: [telegramId])
+  user             User        @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
 
   matchesPlayed    Int         @default(0)
   matchesWon       Int         @default(0)
@@ -98,10 +99,31 @@ model Stats {
   @@index([telegramId])
 }
 
+model BetStats {
+  id              String   @id @default(cuid())
+  telegramId      BigInt
+  user             User    @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+  betType         BetType
+  betsPlaced      Int      @default(0)
+  betsWon         Int      @default(0)
+  totalWagered    Float    @default(0)
+  totalPayout     Float    @default(0)
+
+  @@unique([telegramId, betType])
+  @@index([telegramId])
+}
+
+enum BetType {
+  SAFE_BET
+  CLASSIC_FLIP
+  TRIPLE_SHOT
+  JACKPOT
+}
+
 model Transaction {
   id          String            @id @default(cuid())
   telegramId  BigInt
-  user        User              @relation(fields: [telegramId], references: [telegramId])
+  user        User              @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
   amount      Int
   balanceEffect BalanceEffect
   type        TransactionType

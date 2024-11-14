@@ -17,7 +17,7 @@ export function BetChallenge({
 	return (
 		<section className='bg-slate-900 rounded-xl p-3 space-y-4'>
 			<h3 className='text-lg text-center font-semibold text-slate-200'>
-				Choose Your Risk
+				Pick Your Odds
 			</h3>
 			<div className='grid grid-cols-2 gap-2'>
 				{betOptions.map((option) => (
