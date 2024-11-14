@@ -1,16 +1,12 @@
 'use client';
+
 import { useGetUserBettingStats } from '@/src/hooks/useUserData';
 import { useInitData } from '@telegram-apps/sdk-react';
 import { StatCard } from '../../common/cards/stats-card';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import {
-	DropdownMenu,
-	DropdownMenuTrigger,
-	DropdownMenuContent,
-	DropdownMenuItem,
-} from '@/src/components/ui/dropdown-menu';
-import { Button } from '../../ui/button';
+import { Button } from '@/src/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const betTypes = [
 	'SAFE_BET',
@@ -18,18 +14,41 @@ const betTypes = [
 	'TRIPLE_SHOT',
 	'JACKPOT',
 ] as const;
-type BetType = (typeof betTypes)[number];
 
 export function BettingStats() {
 	const initData = useInitData();
 	const user = initData?.user;
 
-	const bettingStats = betTypes.reduce((stats, betType) => {
-		stats[betType] = useGetUserBettingStats(user?.id, betType).data;
-		return stats;
-	}, {} as Record<BetType, any>);
+	const safeBetStats = useGetUserBettingStats(user?.id, 'SAFE_BET').data;
+	const classicFlipStats = useGetUserBettingStats(
+		user?.id,
+		'CLASSIC_FLIP'
+	).data;
+	const tripleShotStats = useGetUserBettingStats(user?.id, 'TRIPLE_SHOT').data;
+	const jackpotStats = useGetUserBettingStats(user?.id, 'JACKPOT').data;
 
-	const [selectedBetType, setSelectedBetType] = useState<BetType>(betTypes[0]);
+	const bettingStats = {
+		SAFE_BET: safeBetStats,
+		CLASSIC_FLIP: classicFlipStats,
+		TRIPLE_SHOT: tripleShotStats,
+		JACKPOT: jackpotStats,
+	};
+
+	const [selectedBetTypeIndex, setSelectedBetTypeIndex] = useState(0);
+
+	const handlePrevious = () => {
+		setSelectedBetTypeIndex((prev) =>
+			prev === 0 ? betTypes.length - 1 : prev - 1
+		);
+	};
+
+	const handleNext = () => {
+		setSelectedBetTypeIndex((prev) =>
+			prev === betTypes.length - 1 ? 0 : prev + 1
+		);
+	};
+
+	const selectedBetType = betTypes[selectedBetTypeIndex];
 
 	const renderBettingStatContent = (data: any) => (
 		<div className='grid grid-cols-2 gap-3'>
@@ -68,32 +87,40 @@ export function BettingStats() {
 			className='space-y-6 bg-slate-900 rounded-xl p-4 backdrop-blur-md relative text-center'
 		>
 			<h2 className='text-2xl font-semibold text-white tracking-wide mb-6 bg-gradient-to-r from-purple-500 to-indigo-500 p-3 rounded-xl'>
-				Betting Stats & Insights
+				Your Betting Performance
 			</h2>
-			<div className='flex justify-center mb-6'>
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button className='bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-6 py-2 shadow-md'>
-							{selectedBetType.replace(/_/g, ' ')}
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent className='bg-slate-800 text-white rounded-lg shadow-lg'>
-						{betTypes.map((betType) => (
-							<DropdownMenuItem
-								key={betType}
-								onClick={() => setSelectedBetType(betType)}
-								className='hover:bg-indigo-600 px-4 py-2 rounded-lg'
-							>
-								{betType.replace(/_/g, ' ')}
-							</DropdownMenuItem>
-						))}
-					</DropdownMenuContent>
-				</DropdownMenu>
+			<div className='flex justify-between items-center mb-6'>
+				<Button
+					variant='ghost'
+					size='icon'
+					onClick={handlePrevious}
+					className='text-white hover:bg-slate-800'
+				>
+					<ChevronLeft className='h-6 w-6' />
+				</Button>
+				<span className='text-lg font-medium text-white'>
+					{selectedBetType.replace(/_/g, ' ')}
+				</span>
+				<Button
+					variant='ghost'
+					size='icon'
+					onClick={handleNext}
+					className='text-white hover:bg-slate-800'
+				>
+					<ChevronRight className='h-6 w-6' />
+				</Button>
 			</div>
 
-			<div className='flex justify-center items-center mt-6'>
+			<motion.div
+				key={selectedBetType}
+				initial={{ opacity: 0, x: 50 }}
+				animate={{ opacity: 1, x: 0 }}
+				exit={{ opacity: 0, x: -50 }}
+				transition={{ duration: 0.3 }}
+				className='flex justify-center items-center mt-6'
+			>
 				{renderBettingStatContent(bettingStats[selectedBetType])}
-			</div>
+			</motion.div>
 		</motion.section>
 	);
 }
