@@ -1,23 +1,46 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { MatchFormat } from '@prisma/client';
+import { getUserFormatStats, getUserStats } from '../db/stats';
 import {
 	getUserAvatars,
-	getUserFormatStats,
-	getUserRankings,
-	getUserStats,
+	getUserProfileById,
 	getUserTransactionById,
 	PaginatedResponse,
-} from '../actions/user.action';
-import { getUserProfileById } from '../actions/user.action';
-import { MatchFormat } from '@prisma/client';
+} from '../db/user';
+import { getUserRankings } from '../db/rankings';
+
+// export const useUserProfile = (telegramId: number | undefined) => {
+// 	return useQuery({
+// 		queryKey: ['user-info', telegramId],
+// 		queryFn: () => getUserProfileById(telegramId!),
+// 		enabled: !!telegramId,
+// 		staleTime: 60000,
+// 		gcTime: 3600000,
+// 	});
+// };
 
 export const useUserProfile = (telegramId: number | undefined) => {
-	return useQuery({
+	const queryClient = useQueryClient();
+
+	const query = useQuery({
 		queryKey: ['user-info', telegramId],
 		queryFn: () => getUserProfileById(telegramId!),
 		enabled: !!telegramId,
 		staleTime: 60000,
 		gcTime: 3600000,
 	});
+
+	const mutation = useMutation({
+		mutationFn: () => getUserProfileById(telegramId!),
+		onSuccess: (data) => {
+			queryClient.setQueryData(['user-info', telegramId], data);
+		},
+	});
+
+	return {
+		...query,
+		mutate: mutation.mutate,
+	};
 };
 
 export const useGetUserTransaction = (userId: bigint | undefined) => {

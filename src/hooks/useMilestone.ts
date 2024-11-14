@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useGetUserFormatStats } from '@/src/hooks/useUserData';
 import { useInitData } from '@telegram-apps/sdk-react';
-import { fetchClaimedAwards } from '@/src/actions/game.action';
 import { Award } from '@prisma/client';
 import { Milestone } from '@/src/types/db.types';
+import { fetchClaimedAwards } from '../db/user';
 
 export const useMilestones = () => {
 	const [challenges, setChallenges] = useState<Milestone[]>([]);

@@ -10,8 +10,9 @@ interface FormState {
 		error?: string;
 		success?: string;
 	};
-	result: 'win' | 'lose' | null;
+	result: 'win' | 'lose' | 'failed' | null;
 	winAmount: number;
+	flipResult?: 'heads' | 'tails';
 }
 
 export async function placeBet(
@@ -22,12 +23,12 @@ export async function placeBet(
 	try {
 		const betAmount = Number(formData.get('betAmount'));
 		const challengeName = formData.get('challengeName') as string;
-		const selectedSide = formData.get('selectedSide') as string;
+		const selectedSide = formData.get('selectedSide') as 'heads' | 'tails';
 
 		if (!betAmount || !challengeName || !selectedSide) {
 			return {
 				message: { error: 'Invalid input data' },
-				result: null,
+				result: 'failed',
 				winAmount: 0,
 			};
 		}
@@ -38,7 +39,7 @@ export async function placeBet(
 		if (!challenge) {
 			return {
 				message: { error: 'Invalid challenge' },
-				result: null,
+				result: 'failed',
 				winAmount: 0,
 			};
 		}
@@ -57,7 +58,7 @@ export async function placeBet(
 			if (profile.balance < betAmount) {
 				return {
 					message: { error: 'Insufficient balance' },
-					result: null,
+					result: 'failed',
 					winAmount: 0,
 				};
 			}
@@ -65,18 +66,21 @@ export async function placeBet(
 			if (profile.powerPass < bettingPassCost) {
 				return {
 					message: { error: 'Insufficient betting passes' },
-					result: null,
+					result: 'failed',
 					winAmount: 0,
 				};
 			}
 
 			// Simulate the coin flip
+			let flipResult = selectedSide;
 			const isWin = Math.random() <= challenge.odds;
-			const flipResult = isWin
-				? selectedSide
-				: selectedSide === 'head'
-				? 'tail'
-				: 'head';
+
+			if (isWin) {
+				flipResult === (selectedSide as 'heads' | 'tails');
+			} else {
+				flipResult = selectedSide === 'heads' ? 'tails' : 'heads';
+			}
+
 			const winAmount = isWin ? Math.round(betAmount * challenge.payout) : 0;
 			const netGain = winAmount - betAmount;
 
@@ -109,6 +113,7 @@ export async function placeBet(
 					},
 					result: 'win',
 					winAmount: netGain,
+					flipResult,
 				};
 			} else {
 				await tx.transaction.create({
@@ -122,10 +127,11 @@ export async function placeBet(
 				});
 				return {
 					message: {
-						error: `Better luck next time! It was ${flipResult}. You lost ${betAmount} ${token.symbol}`,
+						success: `It was ${flipResult}. You lost ${betAmount} ${token.symbol}`,
 					},
 					result: 'lose',
 					winAmount: 0,
+					flipResult,
 				};
 			}
 		});
@@ -133,7 +139,7 @@ export async function placeBet(
 		console.error('Error placing bet:', error);
 		return {
 			message: { error: 'An error occurred while placing the bet' },
-			result: null,
+			result: 'failed',
 			winAmount: 0,
 		};
 	}

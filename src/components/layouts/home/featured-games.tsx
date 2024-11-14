@@ -24,7 +24,7 @@ const GameCard = ({
 			className={`bg-gray-800 rounded-xl p-4 flex items-center space-x-4 border-l-4 ${accentColor}`}
 			whileTap={{ scale: 0.98 }}
 		>
-			<Icon className='w-12 h-12 text-white' />
+			<Icon className='w-8 h-8 text-white' />
 			<div>
 				<h3 className='text-lg font-bold text-white mb-1'>{title}</h3>
 				<p className='text-xs text-gray-400'>{description}</p>
@@ -42,15 +42,15 @@ export function FeaturedGames() {
 			className='space-y-4'
 		>
 			<GameCard
-				title='Cricket Clash'
-				description='Fast-paced cricket action!'
+				title='Strike Play'
+				description='Quick matches, big wins!'
 				icon={FaBaseballBatBall}
 				href='/game/cricket/match-setup'
 				accentColor='border-green-500'
 			/>
 			<GameCard
-				title='Coin Rush'
-				description='Flip coins, win big!'
+				title='Fortune Flip'
+				description='Flip to win, luck awaits!'
 				icon={HandCoins}
 				href='/game/coin-flip'
 				accentColor='border-yellow-500'

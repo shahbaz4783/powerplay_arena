@@ -248,12 +248,3 @@ export async function saveAwardToDatabase(
 	}
 	revalidatePath('/miniapp/achievements');
 }
-
-export async function fetchClaimedAwards(telegramId: number) {
-	if (!telegramId) return [];
-
-	return await db.award.findMany({
-		where: { telegramId },
-		orderBy: { createdAt: 'desc' },
-	});
-}

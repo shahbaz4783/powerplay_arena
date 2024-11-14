@@ -4,7 +4,7 @@ import { Header } from '@/src/components/common/elements/header';
 export default function CoinFlipChallengePage() {
 	return (
 		<div className='space-y-6 text-gray-100 relative overflow-hidden'>
-			<Header title='Coin Flip' subtitle='Flip coin and earn reward' />
+			<Header title='Fortune Flip' subtitle='Flip to win, luck awaits!' />
 			<CoinFlipChallenge />
 		</div>
 	);

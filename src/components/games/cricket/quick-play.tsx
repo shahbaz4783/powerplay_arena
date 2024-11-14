@@ -93,7 +93,7 @@ export function QuickPlayMode() {
 	return (
 		<main className='min-h-svh space-y-2 flex flex-col justify-between'>
 			<Header
-				title='Quick Match'
+				title='Match Setup'
 				subtitle='Set up your game and jump into the action'
 				className='mx-4 mt-3'
 			/>
@@ -174,7 +174,7 @@ export function QuickPlayMode() {
 											View Reward Structure
 										</Button>
 									</DialogTrigger>
-									<DialogContent className='sm:max-w-[425px]'>
+									<DialogContent className='w-11/12 rounded-xl'>
 										<DialogHeader>
 											<DialogTitle>Reward Structure</DialogTitle>
 										</DialogHeader>

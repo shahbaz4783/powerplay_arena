@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useInitData } from '@telegram-apps/sdk-react';
 import { useUserProfile } from '@/src/hooks/useUserData';
 import { MessageCard } from '@/src/components/common/cards/message-card';
@@ -29,7 +29,7 @@ export function CoinFlipChallenge() {
 
 	const initData = useInitData();
 	const userId = BigInt(initData?.user?.id || 0);
-	const { data, isLoading } = useUserProfile(initData?.user?.id);
+	const { data, isLoading, mutate } = useUserProfile(initData?.user?.id);
 
 	const [formState, formAction] = useFormState(placeBet.bind(null, userId), {
 		message: {},
@@ -43,15 +43,10 @@ export function CoinFlipChallenge() {
 		}
 	}, [formState]);
 
-	const handleBetAgain = () => {
+	const handleModalClose = useCallback(() => {
 		setIsModalOpen(false);
-		setBetAmount(0);
-		setSelectedSide(null);
-	};
-
-	const handleGoHome = () => {
-		console.log('Navigating to home...');
-	};
+		mutate();
+	}, [mutate]);
 
 	if (isLoading) {
 		return (
@@ -109,12 +104,13 @@ export function CoinFlipChallenge() {
 
 			<BetResult
 				isOpen={isModalOpen}
-				onOpenChange={setIsModalOpen}
+				onOpenChange={handleModalClose}
 				result={formState.result}
 				winAmount={formState.winAmount}
-				onBetAgain={handleBetAgain}
-				onGoHome={handleGoHome}
 				message={formState.message}
+				flipResult={formState.flipResult!}
+				betAmount={betAmount}
+				selectedSide={selectedSide}
 			/>
 		</div>
 	);

@@ -110,14 +110,15 @@ export function calculateReward(streak: number): number {
 }
 
 export const calculateBettingPassCost = (betAmount: number): number => {
-	let bettingPassCost: number;
-	if (betAmount < 100) bettingPassCost = 1;
-	else if (betAmount >= 100 && betAmount < 300) bettingPassCost = 2;
-	else if (betAmount >= 300 && betAmount < 500) bettingPassCost = 3;
-	else if (betAmount >= 500 && betAmount < 1000) bettingPassCost = 4;
-	else if (betAmount >= 1000 && betAmount < 5000) bettingPassCost = 5;
-	else if (betAmount >= 5000 && betAmount < 10000) bettingPassCost = 8;
-	else bettingPassCost = 10;
+	if (betAmount <= 100) return 1;
+
+	let bettingPassCost = 1;
+	let currentRangeLimit = 100;
+
+	while (betAmount >= currentRangeLimit) {
+		bettingPassCost += 1;
+		currentRangeLimit *= 2;
+	}
 
 	return bettingPassCost;
 };

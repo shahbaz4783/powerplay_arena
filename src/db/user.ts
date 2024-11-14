@@ -1,39 +1,96 @@
-// import { MatchFormat } from '@prisma/client';
-// import { db } from '../lib/db';
-// import { GameState } from '../types/gameState';
+'use server';
 
-// export const getUserById = async (telegramId: number) => {
-// 	return await db.user.findUnique({
-// 		where: { telegramId },
-// 	});
-// };
+import { Transaction } from '@prisma/client';
+import { responseMessages } from '../constants/messages';
+import { db } from '../lib/db';
 
-// export const getWalletBalanceById = async (telegramId: number) => {
-// 	return await db.wallet.findUnique({
-// 		where: { userId: telegramId },
-// 	});
-// };
+export interface PaginatedResponse {
+	transactions: Transaction[];
+	hasMore: boolean;
+}
 
-// export async function updateStats(tx: any, userId: bigint, gameState: GameState) {
-//   await tx.stats.update({
-//     where: {
-//       userId_format: {
-//         userId,
-//         format: gameState.matchSetup.format as MatchFormat,
-//       },
-//     },
-//     data: {
-//       matchesPlayed: { increment: 1 },
-//       matchesWon: gameState.matchResult.winner === "player" ? { increment: 1 } : undefined,
-//       matchesLost: gameState.matchResult.winner === "opponent" ? { increment: 1 } : undefined,
-//       matchesTie: gameState.matchResult.winner === "tie" ? { increment: 1 } : undefined,
-//       runsScored: { increment: gameState.player.runs },
-//       ballsFaced: { increment: gameState.player.ballsFaced },
-//       sixes: { increment: gameState.player.sixes },
-//       fours: { increment: gameState.player.fours },
-//       wicketsTaken: { increment: gameState.opponent.wickets },
-//       runsConceded: { increment: gameState.opponent.runs },
-//       ballsBowled: { increment: gameState.opponent.ballsFaced },
-//     },
-//   });
-// }
+export const getUserProfileById = async (telegramId: number) => {
+	try {
+		const result = await db.$transaction(async (tx) => {
+			const userProfile = await tx.profile.findUnique({
+				where: { telegramId },
+			});
+
+			const userInfo = await tx.user.findUnique({
+				where: { telegramId: telegramId },
+			});
+
+			if (!userProfile) {
+				throw new Error('User wallet not found');
+			}
+
+			return { userProfile, userInfo };
+		});
+
+		return result;
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error('Error fetching user info:', error.message);
+		} else {
+			console.error('Something went wrong while fetching user info');
+		}
+		throw error;
+	}
+};
+
+export const getUserTransactionById = async (
+	telegramId: bigint,
+	page: number = 1,
+	pageSize: number = 20
+): Promise<PaginatedResponse> => {
+	try {
+		const skip = (page - 1) * pageSize;
+		const transactions = await db.transaction.findMany({
+			where: { telegramId },
+			orderBy: { createdAt: 'desc' },
+			skip,
+			take: pageSize + 1,
+		});
+
+		const hasMore = transactions.length > pageSize;
+		const paginatedTransactions = transactions.slice(0, pageSize);
+
+		return {
+			transactions: paginatedTransactions,
+			hasMore,
+		};
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error('Error fetching user transaction info:', error.message);
+		} else {
+			console.error('Something went wrong while fetching transaction info');
+		}
+		throw error;
+	}
+};
+
+export async function fetchClaimedAwards(telegramId: number) {
+	if (!telegramId) return [];
+
+	return await db.award.findMany({
+		where: { telegramId },
+		orderBy: { createdAt: 'desc' },
+	});
+}
+
+export const getUserAvatars = async (telegramId: number) => {
+	try {
+		return await db.avatar.findMany({
+			where: {
+				telegramId,
+			},
+		});
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error(error.message);
+		} else {
+			console.error(responseMessages.general.error.unexpectedError);
+		}
+		throw error;
+	}
+};

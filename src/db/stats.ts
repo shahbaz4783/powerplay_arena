@@ -1,30 +1,49 @@
-// import { Prisma, MatchFormat } from '@prisma/client';
-// import { db } from '../lib/db';
+'use server';
 
-// export async function getStatsByUserId(userId: bigint, format: MatchFormat) {
-//   return db.stats.findUnique({
-//     where: { userId_format: { userId, format } },
-//   });
-// }
+import { MatchFormat } from '@prisma/client';
+import { db } from '../lib/db';
 
-// export async function createStats(userId: bigint, format: MatchFormat) {
-//   return db.stats.create({
-//     data: { userId, format },
-//   });
-// }
+export const getUserStats = async (telegramId: number) => {
+	try {
+		const stats = await db.stats.findMany({
+			where: { telegramId },
+		});
 
-// export async function updateStats(userId: bigint, format: MatchFormat, data: Prisma.StatsUpdateInput) {
-//   return db.stats.update({
-//     where: { userId_format: { userId, format } },
-//     data,
-//   });
-// }
+		const formattedStats = stats.reduce((acc, stat) => {
+			acc[stat.format] = stat;
+			return acc;
+		}, {} as Record<string, (typeof stats)[0]>);
 
-// export async function getTopPlayersByWins(format: MatchFormat, limit: number = 10) {
-//   return db.stats.findMany({
-//     where: { format },
-//     orderBy: { matchesWon: 'desc' },
-//     take: limit,
-//     include: { user: true },
-//   });
-// }
+		return formattedStats;
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error('Error fetching user stats info:', error.message);
+		} else {
+			console.error('Something went wrong while fetching stats info');
+		}
+		throw error;
+	}
+};
+
+export const getUserFormatStats = async (
+	userId: number,
+	format: MatchFormat
+) => {
+	try {
+		return await db.stats.findUnique({
+			where: {
+				telegramId_format: {
+					telegramId: BigInt(userId),
+					format: format,
+				},
+			},
+		});
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error('Error fetching user stats info:', error.message);
+		} else {
+			console.error('Something went wrong while fetching stats info');
+		}
+		throw error;
+	}
+};

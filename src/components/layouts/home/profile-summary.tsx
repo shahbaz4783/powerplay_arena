@@ -11,6 +11,7 @@ import { saveOrUpdateUser } from '@/src/actions/user.action';
 import { Coins, Gem, Zap } from 'lucide-react';
 import { AvatarDialog } from '../../common/dialog/avatar-dialog';
 import { Skeleton } from '../../ui/skeleton';
+import { cn } from '@/src/lib/utils';
 
 interface UserProfile {
 	level: number;
@@ -88,7 +89,17 @@ export function ProfileSummary() {
 					levelName={profile?.levelName}
 				/>
 			</motion.div>
-
+			<motion.div
+				className='absolute inset-0 opacity-50'
+				initial={{ backgroundPosition: '0% 0%' }}
+				animate={{ backgroundPosition: '100% 100%' }}
+				transition={{ repeat: Infinity, duration: 20, ease: 'linear' }}
+				style={{
+					backgroundImage:
+						'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)',
+					backgroundSize: '30px 30px',
+				}}
+			/>
 			<motion.div
 				className='grid grid-cols-2 gap-4'
 				initial={{ opacity: 0, y: 20 }}
@@ -177,12 +188,17 @@ function XPProgress({
 				{isLoading ? (
 					<Skeleton className='h-3 w-1/6 bg-slate-100 bg-opacity-20 rounded-xl' />
 				) : (
-					<span>XP: {totalXP ?? 0}</span>
+					<div className='text-xs font-mono text-slate-300'>
+						<span>XP:</span> <span>{totalXP}</span>
+					</div>
 				)}
 				{isLoading ? (
 					<Skeleton className='h-3 w-1/4 bg-slate-100 bg-opacity-20 rounded-xl' />
 				) : (
-					<span>Next Level: {xpForNextLevel ?? 0} XP</span>
+					<div className='text-xs font-mono text-slate-300'>
+						<span>Next Level:</span> <span>{xpForNextLevel}</span>{' '}
+						<span>XP</span>
+					</div>
 				)}
 			</div>
 		</motion.div>
@@ -212,10 +228,7 @@ function BalanceCard({
 				{isLoading ? (
 					<Skeleton className='h-3 mt-3 bg-slate-100 bg-opacity-20 rounded-xl' />
 				) : (
-					<span className='text-lg font-bold text-white'>
-						{value}{' '}
-						{symbol && <span className='text-sm text-gray-400'>{symbol}</span>}
-					</span>
+					<span className={'font-bold text-white'}>{value}</span>
 				)}
 			</div>
 		</div>

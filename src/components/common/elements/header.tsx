@@ -1,10 +1,10 @@
 'use client';
 
 import { cn } from '@/src/lib/utils';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, Info, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface HeaderProps {
 	title: string;
@@ -20,16 +20,17 @@ export function Header({
 	showBackButton = true,
 }: HeaderProps) {
 	const router = useRouter();
+	const [showInfo, setShowInfo] = useState(false);
 
 	return (
 		<header
 			className={cn(
-				'relative p-6 rounded-xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 shadow-lg overflow-hidden',
+				'relative p-4 sm:p-6 rounded-xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 shadow-lg overflow-hidden',
 				className
 			)}
 		>
 			<motion.div
-				className='absolute inset-0 opacity-50'
+				className='absolute inset-0 opacity-30'
 				initial={{ backgroundPosition: '0% 0%' }}
 				animate={{ backgroundPosition: '100% 100%' }}
 				transition={{ repeat: Infinity, duration: 20, ease: 'linear' }}
@@ -49,36 +50,50 @@ export function Header({
 							transition={{ duration: 0.3 }}
 							onClick={() => router.back()}
 							whileTap={{ scale: 0.95 }}
-							className='text-gray-400 bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full p-1'
+							className='text-gray-400 bg-slate-700 hover:bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full p-2'
 						>
-							<ChevronLeft className='w-6 h-6' />
+							<ChevronLeft className='w-5 h-5' />
 						</motion.button>
 					) : (
-						<Info />
+						<motion.button
+							whileTap={{ scale: 0.95 }}
+							onClick={() => setShowInfo(!showInfo)}
+							className='text-gray-400 bg-slate-700 hover:bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full p-2'
+						>
+							<Info className='w-5 h-5' />
+						</motion.button>
 					)}
 
 					<motion.div
 						className='flex items-center space-x-2'
-						initial={{ scale: 0.9 }}
-						animate={{ scale: 1 }}
+						initial={{ scale: 0.9, opacity: 0 }}
+						animate={{ scale: 1, opacity: 1 }}
 						transition={{ duration: 0.5, type: 'spring' }}
 					>
-						<h1 className='text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400'>
+						<Sparkles className='w-5 h-5 text-blue-400' />
+						<h1 className='text-xl sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400'>
 							{title}
 						</h1>
 					</motion.div>
 				</div>
 
-				{subtitle && (
-					<motion.p
-						initial={{ opacity: 0, y: 10 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.5, delay: 0.2 }}
-						className='text-xs mt-1 text-gray-400 max-w-md text-right mx-auto'
-					>
-						{subtitle}
-					</motion.p>
-				)}
+				<AnimatePresence>
+					{(subtitle || showInfo) && (
+						<motion.div
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -10 }}
+							transition={{ duration: 0.3 }}
+							className='mt-2 text-right'
+						>
+							<p className='text-xs sm:text-sm text-gray-400 max-w-md ml-auto'>
+								{showInfo
+									? "Here's some additional info about this page."
+									: subtitle}
+							</p>
+						</motion.div>
+					)}
+				</AnimatePresence>
 			</div>
 
 			<motion.div

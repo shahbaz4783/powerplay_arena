@@ -1,9 +1,9 @@
-import { getUserRankings } from '@/src/actions/user.action';
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
 } from '@/src/components/ui/avatar';
+import { getUserRankings } from '@/src/db/rankings';
 import { Trophy, Medal, Award } from 'lucide-react';
 
 export const Leaderboard = async () => {
