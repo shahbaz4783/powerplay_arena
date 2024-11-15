@@ -2,9 +2,10 @@
 
 import { db } from '@/src/lib/db';
 import { betOptions } from '../constants/challenges';
-import { calculateBettingPassCost } from '../lib/utils';
+import { calculateBettingPassCost, calculateLevel } from '../lib/utils';
 import { token } from '../constants/app-config';
 import { BetType } from '@prisma/client';
+import { LevelInfo } from '../types/gameState';
 
 interface FormState {
 	message: {
@@ -93,6 +94,9 @@ export async function placeBet(
 					: betAmount * challenge.payout * 0.02
 			);
 
+			const newTotalXP = profile.totalXP + xpGain;
+			const newLevelInfo: LevelInfo = calculateLevel(newTotalXP);
+
 			// Update user's balance and betting passes
 			await tx.profile.update({
 				where: { telegramId },
@@ -100,6 +104,9 @@ export async function placeBet(
 					balance: { increment: netGain },
 					powerPass: { decrement: bettingPassCost },
 					totalXP: { increment: xpGain },
+					level: newLevelInfo.level,
+					levelName: newLevelInfo.name,
+					xpForNextLevel: newLevelInfo.xpForNextLevel,
 				},
 			});
 

@@ -4,6 +4,8 @@ import { db } from '@/src/lib/db';
 import { FormResponse } from '../types/types';
 import { avatars, powerPassPacks } from '../constants/shop-items';
 import { responseMessages } from '../constants/messages';
+import { LevelInfo } from '../types/gameState';
+import { calculateLevel } from '../lib/utils';
 
 export const purchasePowerPass = async (
 	telegramId: bigint,
@@ -140,11 +142,17 @@ export const purchaseAvatar = async (
 				},
 			});
 
+			const newTotalXP = profile.totalXP + avatarInfo.xpGain;
+			const newLevelInfo: LevelInfo = calculateLevel(newTotalXP);
+
 			await tx.profile.update({
 				where: { telegramId },
 				data: {
 					balance: { decrement: avatarInfo.price },
 					totalXP: { increment: avatarInfo.xpGain },
+					level: newLevelInfo.level,
+					levelName: newLevelInfo.name,
+					xpForNextLevel: newLevelInfo.xpForNextLevel,
 				},
 			});
 

@@ -54,19 +54,24 @@ export const dailyDrop = async (
 				}
 			}
 
-			let streak = profile.streakLength++;
-			if (streak > 7) {
-				streak = 1;
-				profile.weeklyStreak++;
+			let streakLength = profile.streakLength;
+			let weeklyStreak = profile.weeklyStreak;
+			streakLength++;
+
+			if (streakLength > 7) {
+				streakLength = 1;
+				weeklyStreak++;
 			}
 
-			const reward = calculateReward(streak);
+			const reward = calculateReward(streakLength);
 
 			await tx.profile.update({
 				where: { telegramId },
 				data: {
 					balance: { increment: reward },
 					lastClaimedAt: now,
+					streakLength,
+					weeklyStreak,
 				},
 			});
 
@@ -76,17 +81,17 @@ export const dailyDrop = async (
 					amount: reward,
 					type: 'REWARD',
 					balanceEffect: 'INCREMENT',
-					description: `Daily reward claim (Day ${streak})`,
+					description: `Daily reward claim (Day ${streakLength})`,
 				},
 			});
 
-			return { reward, streak };
+			return { reward, streakLength };
 		});
 
 		revalidatePath('/miniapp/reward');
 		return {
 			message: {
-				success: `Congratulations! You've claimed ${result.reward} ${token.symbol} on Day ${result.streak} of your streak!`,
+				success: `Congratulations! You've claimed ${result.reward} ${token.symbol} on Day ${result.streakLength} of your streak!`,
 			},
 		};
 	} catch (error) {

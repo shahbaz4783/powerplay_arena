@@ -162,8 +162,6 @@ export async function saveMatchDataToDatabase(
 			// Calculate new level info
 			const newLevelInfo: LevelInfo = calculateLevel(newTotalXP);
 
-			console.table(newLevelInfo);
-
 			await tx.profile.update({
 				where: { telegramId },
 				data: {
