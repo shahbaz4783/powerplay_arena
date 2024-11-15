@@ -6,7 +6,7 @@ export default function StatsPage() {
 	return (
 		<div className='space-y-8'>
 			<Header
-				title='Your Cricket Journey'
+				title='Overall Stats'
 				subtitle='Dive into your performance metrics'
 			/>
 			<BettingStats />

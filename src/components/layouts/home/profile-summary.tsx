@@ -8,47 +8,9 @@ import { Progress } from '@/src/components/ui/progress';
 import { token } from '@/src/constants/app-config';
 import { Card } from '@/src/components/ui/card';
 import { saveOrUpdateUser } from '@/src/actions/user.action';
-import { Coins, Gem, Zap } from 'lucide-react';
+import { Coins, Zap } from 'lucide-react';
 import { AvatarDialog } from '../../common/dialog/avatar-dialog';
 import { Skeleton } from '../../ui/skeleton';
-import { cn } from '@/src/lib/utils';
-
-interface UserProfile {
-	level: number;
-	totalXP: number;
-	xpForNextLevel: number;
-	levelName: string;
-	balance: number;
-	powerPass: number;
-}
-
-interface UserProfileHookResult {
-	data: {
-		userProfile: UserProfile | null;
-	} | null;
-	isLoading: boolean;
-}
-
-interface UserStatsProps {
-	level: number | undefined;
-	balance: number | undefined;
-	isLoading: boolean;
-	levelName: string | undefined;
-	name: string | undefined;
-}
-
-interface XPProgressProps {
-	totalXP: number | undefined;
-	xpForLevelUp: number | undefined;
-	xpForNextLevel: number | undefined;
-	isLoading: boolean;
-}
-
-interface UserBalanceProps {
-	coin: number | undefined;
-	pass: number | undefined;
-	isLoading: boolean;
-}
 
 export function ProfileSummary() {
 	const initData = useInitData();
@@ -66,7 +28,7 @@ export function ProfileSummary() {
 		fetchData();
 	}, [user]);
 
-	const { data, isLoading } = useUserProfile(user?.id) as UserProfileHookResult;
+	const { data, isLoading } = useUserProfile(user?.id);
 	const profile = data?.userProfile;
 	const totalXP = profile?.totalXP;
 	const xpForLevelUp = profile?.xpForNextLevel;
@@ -80,7 +42,7 @@ export function ProfileSummary() {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
 			>
-				<AvatarDialog />
+				<AvatarDialog userId={user?.id!} currentAvatar={profile?.avatarUrl!} />
 				<UserStats
 					isLoading={isLoading}
 					level={profile?.level}
@@ -89,17 +51,6 @@ export function ProfileSummary() {
 					levelName={profile?.levelName}
 				/>
 			</motion.div>
-			<motion.div
-				className='absolute inset-0 opacity-50'
-				initial={{ backgroundPosition: '0% 0%' }}
-				animate={{ backgroundPosition: '100% 100%' }}
-				transition={{ repeat: Infinity, duration: 20, ease: 'linear' }}
-				style={{
-					backgroundImage:
-						'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)',
-					backgroundSize: '30px 30px',
-				}}
-			/>
 			<motion.div
 				className='grid grid-cols-2 gap-4'
 				initial={{ opacity: 0, y: 20 }}
@@ -131,6 +82,14 @@ export function ProfileSummary() {
 	);
 }
 
+interface UserStatsProps {
+	level: number | undefined;
+	balance: number | undefined;
+	isLoading: boolean;
+	levelName: string | undefined;
+	name: string | undefined;
+}
+
 function UserStats({
 	level,
 	balance,
@@ -157,6 +116,13 @@ function UserStats({
 			</div>
 		</section>
 	);
+}
+
+interface XPProgressProps {
+	totalXP: number | undefined;
+	xpForLevelUp: number | undefined;
+	xpForNextLevel: number | undefined;
+	isLoading: boolean;
 }
 
 function XPProgress({

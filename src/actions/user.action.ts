@@ -6,6 +6,7 @@ import { BetType, MatchFormat, Transaction } from '@prisma/client';
 import { LEVEL_DATA } from '../constants/app-config';
 import { avatars } from '../constants/shop-items';
 import { responseMessages } from '../constants/messages';
+import { revalidatePath } from 'next/cache';
 
 export const saveOrUpdateUser = async (user: User) => {
 	try {
@@ -90,5 +91,27 @@ export const saveOrUpdateUser = async (user: User) => {
 			console.error('Something went wrong while saving/updating user');
 		}
 		throw error;
+	}
+};
+
+export const updateAvatar = async (telegramId: number, avatarUrl: string) => {
+	try {
+		await db.profile.update({
+			where: { telegramId },
+			data: {
+				avatarUrl,
+			},
+		});
+		revalidatePath('/miniapp');
+	} catch (error) {
+		if (error instanceof Error) {
+			return {
+				message: { error: error.message },
+			};
+		} else {
+			return {
+				message: { error: responseMessages.general.error.unexpectedError },
+			};
+		}
 	}
 };

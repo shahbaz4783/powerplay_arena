@@ -86,7 +86,7 @@ export function Header({
 							transition={{ duration: 0.3 }}
 							className='mt-2 text-right'
 						>
-							<p className='text-xs sm:text-sm text-gray-400 max-w-md ml-auto'>
+							<p className='text-xs sm:text-sm text-gray-400 w-3/4 ml-auto'>
 								{showInfo
 									? "Here's some additional info about this page."
 									: subtitle}
