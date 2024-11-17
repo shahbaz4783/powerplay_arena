@@ -4,18 +4,24 @@ import React, { useState } from 'react';
 import { useFormState } from 'react-dom';
 import { useInitData } from '@telegram-apps/sdk-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Clock, Award, Zap, Gift, ChevronRight } from 'lucide-react';
+import {
+	Calendar,
+	Clock,
+	Award,
+	Zap,
+	Gift,
+	Coins,
+	TrendingUp,
+} from 'lucide-react';
 import { Progress } from '@/src/components/ui/progress';
 import { dailyDrop } from '@/src/actions/tasks.action';
 import { useUserProfile } from '@/src/hooks/useUserData';
-import { Button } from '@/src/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
 import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from '@/src/components/ui/tooltip';
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from '@/src/components/ui/card';
 import {
 	Dialog,
 	DialogContent,
@@ -23,6 +29,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/src/components/ui/dialog';
+import { SubmitButton } from '../../common/buttons/submit-button';
 
 export function DailyReward() {
 	const initData = useInitData();
@@ -34,21 +41,16 @@ export function DailyReward() {
 		message: {},
 	});
 
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
 	const rewardTiers = [
-		{ day: 1, reward: '10-50', icon: Gift },
-		{ day: 3, reward: '50-100', icon: Gift },
-		{ day: 5, reward: '100-200', icon: Gift },
-		{ day: 7, reward: '200-500', icon: Gift },
+		{ day: 1, coins: '20-50', powerPass: '0' },
+		{ day: 3, coins: '50-100', powerPass: '10-15' },
+		{ day: 5, coins: '100-200', powerPass: '0' },
+		{ day: 7, coins: '200-500', powerPass: '20-30' },
 	];
 
-	const grandRewards = [
-		{ week: 2, coins: '2000', pass: 1 },
-		{ week: 4, coins: '4000', pass: 1 },
-		{ week: 8, coins: '8000', pass: 1 },
-		{ week: 16, coins: '16000', pass: 1 },
-	];
+	const weeklyBoost = 5;
 
 	const streak = data?.userProfile.streakLength || 0;
 	const weeklyStreak = data?.userProfile.weeklyStreak || 0;
@@ -85,23 +87,31 @@ export function DailyReward() {
 
 	const rewardClaimed = isRewardClaimed();
 
+	const calculateBoostedReward = (reward: string) => {
+		const [min, max] = reward.split('-').map(Number);
+		const boost = 1 + (weeklyStreak * weeklyBoost) / 100;
+		return `${Math.floor(min * boost)}-${Math.floor(max * boost)}`;
+	};
+
 	return (
-		<Card className='w-full max-w-md mx-auto overflow-hidden'>
-			<CardHeader className='text-center bg-gradient-to-r from-yellow-400 to-orange-500 text-primary-foreground'>
+		<Card className='w-full max-w-md mx-auto overflow-hidden rounded-xl bg-gray-900 text-gray-100'>
+			<CardHeader className='text-center bg-gradient-to-r from-gray-800 to-gray-900 py-6'>
 				<CardTitle className='text-2xl font-bold'>
-					{rewardClaimed ? 'Daily Reward Claimed!' : 'Claim Your Daily Reward'}
+					{rewardClaimed
+						? 'Daily Reward Claimed!'
+						: 'Reward is Ready to Claim!'}
 				</CardTitle>
 			</CardHeader>
 			<CardContent className='space-y-6 p-6'>
 				<div className='flex justify-between items-center'>
-					<div className='flex items-center space-x-2 bg-primary/10 rounded-full px-4 py-2'>
-						<Calendar className='text-primary h-5 w-5' />
+					<div className='flex items-center space-x-2 bg-gray-800 rounded-full px-4 py-2'>
+						<Calendar className='text-blue-400 h-5 w-5' />
 						<span className='font-semibold'>
 							Streak: {streak} day{streak !== 1 ? 's' : ''}
 						</span>
 					</div>
-					<div className='flex items-center space-x-2 bg-yellow-500/10 rounded-full px-4 py-2'>
-						<Award className='text-yellow-500 h-5 w-5' />
+					<div className='flex items-center space-x-2 bg-gray-800 rounded-full px-4 py-2'>
+						<Award className='text-yellow-400 h-5 w-5' />
 						<span className='font-semibold'>Week: {weeklyStreak}</span>
 					</div>
 				</div>
@@ -111,96 +121,96 @@ export function DailyReward() {
 						<span>Streak Progress</span>
 						<span>{streak}/7 days</span>
 					</div>
-					<Progress value={(streak / 7) * 100} className='h-2' />
+					<Progress value={(streak / 7) * 100} className='h-2 bg-gray-700'>
+						<div
+							className='h-full bg-blue-500'
+							style={{ width: `${(streak / 7) * 100}%` }}
+						/>
+					</Progress>
 				</div>
 
-				<div className='space-y-4'>
-					<h4 className='text-lg font-semibold'>Daily Rewards</h4>
-					<div className='grid grid-cols-4 gap-3'>
-						{rewardTiers.map((tier) => (
-							<TooltipProvider key={tier.day}>
-								<Tooltip>
-									<TooltipTrigger asChild>
-										<motion.div
-											className={`p-3 rounded-xl ${
-												streak >= tier.day ? 'bg-primary' : 'bg-secondary'
-											} text-center cursor-pointer`}
-											whileHover={{ scale: 1.05 }}
-											whileTap={{ scale: 0.95 }}
-										>
-											<tier.icon
-												className={`h-6 w-6 mx-auto ${
-													streak >= tier.day
-														? 'text-primary-foreground'
-														: 'text-primary'
-												}`}
-											/>
-											<div
-												className={`font-semibold mt-1 ${
-													streak >= tier.day
-														? 'text-primary-foreground'
-														: 'text-primary'
-												}`}
-											>
-												Day {tier.day}
-											</div>
-										</motion.div>
-									</TooltipTrigger>
-									<TooltipContent>
-										<p>{tier.reward} coins</p>
-									</TooltipContent>
-								</Tooltip>
-							</TooltipProvider>
-						))}
-					</div>
-				</div>
-
-				<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-					<DialogTrigger asChild>
-						<Button
-							variant='outline'
-							className='w-full flex justify-between items-center'
-							onClick={() => setIsDialogOpen(true)}
-						>
-							<span>View Grand Rewards</span>
-							<ChevronRight className='h-4 w-4' />
-						</Button>
-					</DialogTrigger>
-					<DialogContent className='sm:max-w-[425px]'>
-						<DialogHeader>
-							<DialogTitle>Grand Rewards</DialogTitle>
-						</DialogHeader>
-						<div className='grid grid-cols-2 gap-4 mt-4'>
-							{grandRewards.map((reward, index) => (
+				<div className='grid grid-cols-2 gap-4'>
+					{rewardTiers.map((tier) => (
+						<Dialog key={tier.day}>
+							<DialogTrigger asChild>
 								<motion.div
-									key={reward.week}
 									className={`p-4 rounded-xl ${
-										weeklyStreak >= reward.week
-											? 'bg-gradient-to-br from-yellow-400 to-orange-500'
-											: 'bg-secondary'
+										streak >= tier.day
+											? 'bg-gray-700 cursor-pointer'
+											: 'bg-gray-800 opacity-50'
 									} text-center`}
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									transition={{ delay: index * 0.1 }}
+									whileTap={streak >= tier.day ? { scale: 0.95 } : {}}
 								>
-									<div className='font-bold text-lg mb-2'>
-										Week {reward.week}
+									<Gift className='h-8 w-8 mx-auto mb-2 text-yellow-400' />
+									<div className='font-semibold text-lg'>Day {tier.day}</div>
+									<div className='flex items-center justify-center space-x-1 mt-2'>
+										<Coins className='h-4 w-4 text-yellow-400' />
+										<span className='text-sm'>{tier.coins}</span>
 									</div>
-									<div className='flex justify-center items-center space-x-2'>
-										<Zap className='h-5 w-5' />
-										<span>{reward.coins} coins</span>
-									</div>
-									<div className='flex justify-center items-center space-x-2 mt-1'>
-										<Award className='h-5 w-5' />
-										<span>{reward.pass} Power Pass</span>
-									</div>
+									{tier.powerPass !== '0' && (
+										<div className='flex items-center justify-center space-x-1 mt-1'>
+											<Zap className='h-4 w-4 text-blue-400' />
+											<span className='text-sm'>{tier.powerPass} Pass</span>
+										</div>
+									)}
 								</motion.div>
-							))}
-						</div>
-					</DialogContent>
-				</Dialog>
+							</DialogTrigger>
+							<DialogContent className='bg-gray-800 text-gray-100 w-11/12 rounded-xl'>
+								<DialogHeader>
+									<DialogTitle className='text-2xl font-bold'>
+										Day {tier.day} Reward
+									</DialogTitle>
+								</DialogHeader>
+								<div className='space-y-4'>
+									<div className='bg-gray-700 p-4 rounded-lg'>
+										<h3 className='text-lg font-semibold mb-2'>Base Reward</h3>
+										<div className='flex items-center space-x-2'>
+											<Coins className='h-5 w-5 text-yellow-400' />
+											<span>{tier.coins} coins</span>
+										</div>
+										{tier.powerPass !== '0' && (
+											<div className='flex items-center space-x-2 mt-1'>
+												<Zap className='h-5 w-5 text-blue-400' />
+												<span>{tier.powerPass} Power Pass</span>
+											</div>
+										)}
+									</div>
+									{weeklyStreak > 0 && (
+										<div className='bg-gray-700 p-4 rounded-lg'>
+											<h3 className='text-lg font-semibold mb-2'>
+												Boosted Reward
+											</h3>
+											<div className='flex items-center space-x-2'>
+												<Coins className='h-5 w-5 text-yellow-400' />
+												<span>{calculateBoostedReward(tier.coins)} coins</span>
+											</div>
+											{tier.powerPass !== '0' && (
+												<div className='flex items-center space-x-2 mt-1'>
+													<Zap className='h-5 w-5 text-blue-400' />
+													<span>
+														{calculateBoostedReward(tier.powerPass)} Power Pass
+													</span>
+												</div>
+											)}
+										</div>
+									)}
+								</div>
+							</DialogContent>
+						</Dialog>
+					))}
+				</div>
 
-				<div className='flex items-center justify-center space-x-2 text-muted-foreground'>
+				<div className='bg-gray-800 p-4 rounded-lg flex items-center justify-between'>
+					<div className='flex items-center space-x-2'>
+						<TrendingUp className='h-5 w-5 text-green-400' />
+						<span className='font-semibold'>Weekly Boost</span>
+					</div>
+					<span className='text-green-400 font-bold'>
+						{weeklyStreak * weeklyBoost}%
+					</span>
+				</div>
+
+				<div className='flex items-center justify-center space-x-2 text-gray-400'>
 					<Clock size={16} />
 					<span className='text-sm'>
 						{rewardClaimed
@@ -229,12 +239,7 @@ export function DailyReward() {
 
 				<form className='w-full' action={action}>
 					{!rewardClaimed && (
-						<Button
-							type='submit'
-							className='w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-primary-foreground font-semibold py-6 text-lg'
-						>
-							{response.message ? 'Claim Again' : 'Claim Reward'}
-						</Button>
+						<SubmitButton title='Claim Now' loadingTitle='Claiming' />
 					)}
 				</form>
 			</CardContent>
