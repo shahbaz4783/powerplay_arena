@@ -1,4 +1,4 @@
-import TasksList from '@/src/components/layouts/earn/tasks';
+import TasksList from '@/src/components/layouts/daily-reward/tasks';
 
 const TaskPage = () => {
 	return (
