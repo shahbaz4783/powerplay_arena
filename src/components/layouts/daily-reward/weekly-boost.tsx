@@ -22,8 +22,7 @@ export function WeeklyBoost({ weeklyStreak }: WeeklyBoostProps) {
 			<DialogTrigger asChild>
 				<motion.div
 					className='bg-gradient-to-br from-gray-800 to-gray-700 p-4 rounded-xl shadow-lg flex items-center justify-between cursor-pointer'
-					whileHover={{ scale: 1.02 }}
-					whileTap={{ scale: 0.98 }}
+					whileTap={{ scale: 0.95 }}
 				>
 					<div className='flex items-center space-x-2'>
 						<TrendingUp className='h-5 w-5 text-green-400' />

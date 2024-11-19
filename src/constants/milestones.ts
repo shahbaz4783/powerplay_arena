@@ -1,49 +1,47 @@
 import { Milestone } from '@/src/types/db.types';
+import { MatchFormat, BetType } from '@prisma/client';
+import { BettingStats, CricketStats } from '../hooks/useStats';
 
-const calculateTotalStats = (cricketStats: any) => {
-	const { blitzStats, powerplayStats, classicStats } = cricketStats;
+const calculateTotalStats = (cricketStats: CricketStats) => {
+	const formats = Object.values(MatchFormat);
 	return {
-		totalSixes:
-			(blitzStats?.sixes || 0) +
-			(powerplayStats?.sixes || 0) +
-			(classicStats?.sixes || 0),
-		totalWickets:
-			(blitzStats?.wicketsTaken || 0) +
-			(powerplayStats?.wicketsTaken || 0) +
-			(classicStats?.wicketsTaken || 0),
-		totalWins:
-			(blitzStats?.matchesWon || 0) +
-			(powerplayStats?.matchesWon || 0) +
-			(classicStats?.matchesWon || 0),
-		totalRuns:
-			(blitzStats?.runsScored || 0) +
-			(powerplayStats?.runsScored || 0) +
-			(classicStats?.runsScored || 0),
+		totalSixes: formats.reduce(
+			(total, format) => total + (cricketStats[format]?.sixes || 0),
+			0
+		),
+		totalWickets: formats.reduce(
+			(total, format) => total + (cricketStats[format]?.wicketsTaken || 0),
+			0
+		),
+		totalWins: formats.reduce(
+			(total, format) => total + (cricketStats[format]?.matchesWon || 0),
+			0
+		),
+		totalRuns: formats.reduce(
+			(total, format) => total + (cricketStats[format]?.runsScored || 0),
+			0
+		),
 	};
 };
 
-const calculateBettingTotals = (bettingStats: any) => {
-	const { safeBet, classicFlip, tripleShot, jackpot } = bettingStats;
+const calculateBettingTotals = (bettingStats: BettingStats) => {
+	const betTypes = Object.values(BetType);
 	return {
-		totalBetEarnings:
-			(safeBet?.totalPayout || 0) +
-			(classicFlip?.totalPayout || 0) +
-			(tripleShot?.totalPayout || 0) +
-			(jackpot?.totalPayout || 0),
-		totalBetsWon:
-			(safeBet?.betsWon || 0) +
-			(classicFlip?.betsWon || 0) +
-			(tripleShot?.betsWon || 0) +
-			(jackpot?.betsWon || 0),
+		totalBetEarnings: betTypes.reduce(
+			(total, type) => total + (bettingStats[type]?.totalPayout || 0),
+			0
+		),
+		totalBetsWon: betTypes.reduce(
+			(total, type) => total + (bettingStats[type]?.betsWon || 0),
+			0
+		),
 	};
 };
 
 export const calculateMilestones = (
-	cricketStats: any,
-	bettingStats: any
+	cricketStats: CricketStats,
+	bettingStats: BettingStats
 ): Milestone[] => {
-	const { blitzStats, powerplayStats, classicStats } = cricketStats;
-	const { safeBet, classicFlip, tripleShot, jackpot } = bettingStats;
 	const { totalSixes, totalWickets, totalWins, totalRuns } =
 		calculateTotalStats(cricketStats);
 	const { totalBetEarnings, totalBetsWon } =
@@ -54,58 +52,64 @@ export const calculateMilestones = (
 			id: 'blitz_wicket_50',
 			title: 'Lightning Striker',
 			description: 'Unleash your fury! Take 50 wickets in Blitz matches.',
-			progress: blitzStats?.wicketsTaken || 0,
+			progress: cricketStats[MatchFormat.BLITZ]?.wicketsTaken || 0,
 			total: 50,
 			reward: 750,
-			isCompleted: (blitzStats?.wicketsTaken || 0) >= 50,
+			isCompleted: (cricketStats[MatchFormat.BLITZ]?.wicketsTaken || 0) >= 50,
 		},
 		{
 			id: 'blitz_boundary_200',
 			title: 'Boundary Blaster',
 			description:
 				'Paint the field with fours! Hit 200 boundaries in Blitz games.',
-			progress: blitzStats?.fours || 0,
+			progress: cricketStats[MatchFormat.BLITZ]?.fours || 0,
 			total: 200,
 			reward: 750,
-			isCompleted: (blitzStats?.fours || 0) >= 200,
+			isCompleted: (cricketStats[MatchFormat.BLITZ]?.fours || 0) >= 200,
 		},
 		{
 			id: 'powerplay_run_1000',
 			title: 'Powerplay Punisher',
 			description:
 				'Dominate the powerplay! Score 1000 runs in Powerplay matches.',
-			progress: powerplayStats?.runsScored || 0,
+			progress: cricketStats[MatchFormat.POWERPLAY]?.runsScored || 0,
 			total: 1000,
 			reward: 1500,
-			isCompleted: (powerplayStats?.runsScored || 0) >= 1000,
+			isCompleted:
+				(cricketStats[MatchFormat.POWERPLAY]?.runsScored || 0) >= 1000,
 		},
 		{
 			id: 'powerplay_over_100',
 			title: 'Endurance Emperor',
 			description: 'Outlast them all! Bowl 100 overs in Powerplay games.',
-			progress: Math.floor((powerplayStats?.ballsBowled || 0) / 6),
+			progress: Math.floor(
+				(cricketStats[MatchFormat.POWERPLAY]?.ballsBowled || 0) / 6
+			),
 			total: 100,
 			reward: 1500,
-			isCompleted: (powerplayStats?.ballsBowled || 0) >= 600,
+			isCompleted:
+				(cricketStats[MatchFormat.POWERPLAY]?.ballsBowled || 0) >= 600,
 		},
 		{
 			id: 'classic_over_450',
 			title: 'Immovable Object',
 			description:
 				'Be the ultimate defender! Face 450 overs in Classic matches.',
-			progress: Math.floor((classicStats?.ballsFaced || 0) / 6),
+			progress: Math.floor(
+				(cricketStats[MatchFormat.CLASSIC]?.ballsFaced || 0) / 6
+			),
 			total: 450,
 			reward: 6000,
-			isCompleted: (classicStats?.ballsFaced || 0) >= 2700,
+			isCompleted: (cricketStats[MatchFormat.CLASSIC]?.ballsFaced || 0) >= 2700,
 		},
 		{
 			id: 'classic_win_50',
 			title: 'Classic Conqueror',
 			description: 'Master the long game! Win 50 Classic matches.',
-			progress: classicStats?.matchesWon || 0,
+			progress: cricketStats[MatchFormat.CLASSIC]?.matchesWon || 0,
 			total: 50,
 			reward: 10000,
-			isCompleted: (classicStats?.matchesWon || 0) >= 50,
+			isCompleted: (cricketStats[MatchFormat.CLASSIC]?.matchesWon || 0) >= 50,
 		},
 		{
 			id: 'total_sixes_1000',
@@ -124,7 +128,7 @@ export const calculateMilestones = (
 			progress: totalWickets,
 			total: 1000,
 			reward: 15000,
-			isCompleted: totalWickets >= 1,
+			isCompleted: totalWickets >= 1000,
 		},
 		{
 			id: 'total_wins_500',
@@ -149,37 +153,37 @@ export const calculateMilestones = (
 			id: 'safe_rich',
 			title: 'Safe Rich',
 			description: 'Accumulate 50,000 in safe winnings from bets.',
-			progress: safeBet?.totalPayout || 0,
+			progress: bettingStats[BetType.SAFE_BET]?.totalPayout || 0,
 			total: 50000,
 			reward: 5000,
-			isCompleted: (safeBet?.totalPayout || 0) >= 50000,
+			isCompleted: (bettingStats[BetType.SAFE_BET]?.totalPayout || 0) >= 50000,
 		},
 		{
 			id: 'classic_flip_100',
 			title: 'Flip Master',
 			description: 'Win 100 Classic Flips. Heads or tails, you decide!',
-			progress: classicFlip?.betsWon || 0,
+			progress: bettingStats[BetType.CLASSIC_FLIP]?.betsWon || 0,
 			total: 100,
 			reward: 2000,
-			isCompleted: (classicFlip?.betsWon || 0) >= 20,
+			isCompleted: (bettingStats[BetType.CLASSIC_FLIP]?.betsWon || 0) >= 100,
 		},
 		{
-			id: '300_triple_shop_bets',
+			id: '300_triple_shot_bets',
 			title: 'High Roller',
 			description: 'Place 300 Triple Shot bets. Go big or go home!',
-			progress: tripleShot?.betsPlaced || 0,
+			progress: bettingStats[BetType.TRIPLE_SHOT]?.betsPlaced || 0,
 			total: 300,
 			reward: 3000,
-			isCompleted: (tripleShot?.betsPlaced || 0) >= 300,
+			isCompleted: (bettingStats[BetType.TRIPLE_SHOT]?.betsPlaced || 0) >= 300,
 		},
 		{
 			id: '50_jackpot_wins',
 			title: 'Jackpot Juggernaut',
-			description: 'Win 20 Jackpot bets. Hit the big time!',
-			progress: jackpot?.betsWon || 0,
+			description: 'Win 50 Jackpot bets. Hit the big time!',
+			progress: bettingStats[BetType.JACKPOT]?.betsWon || 0,
 			total: 50,
 			reward: 2000,
-			isCompleted: (jackpot?.betsWon || 0) >= 50,
+			isCompleted: (bettingStats[BetType.JACKPOT]?.betsWon || 0) >= 50,
 		},
 		{
 			id: '1000_bet_wins',

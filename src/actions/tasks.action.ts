@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { token } from '../constants/app-config';
 import { db } from "../lib/db";
 import { FormResponse } from '../types/types';
-import { calculateReward } from "../lib/utils";
+import { calculateReward, calculateStreak } from '../lib/utils';
 import { saveAwardToDatabase } from './game.action';
 import { Milestone } from '../types/db.types';
 
@@ -32,44 +32,25 @@ export const dailyDrop = async (
 				throw new Error('User not found');
 			}
 
-			const now = new Date();
-			const lastClaimedAt = profile.lastClaimedAt
-				? new Date(profile.lastClaimedAt)
-				: null;
-
-			if (lastClaimedAt) {
-				const startOfToday = new Date(
-					Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
-				);
-				const endOfToday = new Date(
-					Date.UTC(
-						now.getUTCFullYear(),
-						now.getUTCMonth(),
-						now.getUTCDate() + 1
-					)
+			const { streakLength, weeklyStreak, isMissed, canClaim } =
+				calculateStreak(
+					profile.lastClaimedAt,
+					profile.streakLength,
+					profile.weeklyStreak
 				);
 
-				if (lastClaimedAt >= startOfToday && lastClaimedAt < endOfToday) {
-					throw new Error('You have already claimed your daily reward');
-				}
+			if (!canClaim) {
+				throw new Error('You have already claimed your daily reward');
 			}
 
-			let streakLength = profile.streakLength;
-			let weeklyStreak = profile.weeklyStreak;
-			streakLength++;
-
-			if (streakLength > 7) {
-				streakLength = 1;
-				weeklyStreak++;
-			}
-
-			const reward = calculateReward(streakLength);
+			const { coins, powerPass } = calculateReward(streakLength);
 
 			await tx.profile.update({
 				where: { telegramId },
 				data: {
-					balance: { increment: reward },
-					lastClaimedAt: now,
+					balance: { increment: coins },
+					powerPass: { increment: powerPass },
+					lastClaimedAt: new Date(),
 					streakLength,
 					weeklyStreak,
 				},
@@ -78,20 +59,28 @@ export const dailyDrop = async (
 			await tx.transaction.create({
 				data: {
 					telegramId,
-					amount: reward,
+					amount: coins,
 					type: 'REWARD',
 					balanceEffect: 'INCREMENT',
-					description: `Daily reward claim (Day ${streakLength})`,
+					description: `Daily reward claim (Day ${streakLength}): ${coins} ${token.symbol} and ${powerPass} Power Pass`,
 				},
 			});
 
-			return { reward, streakLength };
+			return { coins, powerPass, streakLength, isMissed };
 		});
 
 		revalidatePath('/miniapp/reward');
 		return {
 			message: {
-				success: `Congratulations! You've claimed ${result.reward} ${token.symbol} on Day ${result.streakLength} of your streak!`,
+				success: `Congratulations! You've claimed ${result.coins} ${
+					token.symbol
+				} and ${result.powerPass} Power Pass on Day ${
+					result.streakLength
+				} of your streak!${
+					result.isMissed
+						? ' You missed a day, but your new streak starts now!'
+						: ''
+				}`,
 			},
 		};
 	} catch (error) {

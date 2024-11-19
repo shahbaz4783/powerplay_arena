@@ -1,7 +1,7 @@
 import { MatchFormat } from '@prisma/client';
 import clsx, { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { LEVEL_DATA } from '../constants/app-config';
+import { LEVEL_DATA, rewardTiers } from '../constants/app-config';
 import { GameState, LevelInfo } from '../types/gameState';
 import crypto from 'crypto';
 
@@ -93,20 +93,16 @@ export function hasLeveledUp(oldXP: number, newXP: number): boolean {
 	return newLevel > oldLevel;
 }
 
-export function calculateReward(streak: number): number {
-	let reward: number;
+export function calculateReward(streakDay: number) {
+	const tier =
+		rewardTiers[streakDay - 1] || rewardTiers[rewardTiers.length - 1];
+	const [minCoins, maxCoins] = tier.coins.split('-').map(Number);
+	const [minPowerPass, maxPowerPass] = tier.powerPass.split('-').map(Number);
 
-	if (streak >= 7) {
-		reward = crypto.randomInt(200, 500);
-	} else if (streak >= 5) {
-		reward = crypto.randomInt(100, 200);
-	} else if (streak >= 3) {
-		reward = crypto.randomInt(50, 100);
-	} else {
-		reward = crypto.randomInt(10, 50);
-	}
-
-	return reward;
+	return {
+		coins: crypto.randomInt(minCoins, maxCoins + 1),
+		powerPass: crypto.randomInt(minPowerPass, maxPowerPass + 1),
+	};
 }
 
 export const calculateBettingPassCost = (betAmount: number): number => {
@@ -123,7 +119,6 @@ export const calculateBettingPassCost = (betAmount: number): number => {
 	return bettingPassCost;
 };
 
-
 export const calculateBoostedReward = (
 	reward: string,
 	weeklyStreak: number
@@ -131,4 +126,61 @@ export const calculateBoostedReward = (
 	const [min, max] = reward.split('-').map(Number);
 	const boost = 1 + (weeklyStreak * 5) / 100;
 	return `${Math.floor(min * boost)}-${Math.floor(max * boost)}`;
+};
+
+export const getTimeUntilNextReward = () => {
+	const now = new Date();
+	const utcMidnight = new Date(
+		Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)
+	);
+	const timeLeft = utcMidnight.getTime() - now.getTime();
+	const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+	const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+	return `${hours}h ${minutes}m`;
+};
+
+export interface StreakInfo {
+	streakLength: number;
+	weeklyStreak: number;
+	isMissed: boolean;
+	canClaim: boolean;
+}
+
+export const calculateStreak = (
+	lastClaimedAt: Date | null,
+	currentStreak: number,
+	currentWeeklyStreak: number
+): StreakInfo => {
+	const now = new Date();
+	const startOfToday = new Date(
+		Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+	);
+	const startOfYesterday = new Date(startOfToday);
+	startOfYesterday.setUTCDate(startOfYesterday.getUTCDate() - 1);
+
+	let streakLength = currentStreak;
+	let weeklyStreak = currentWeeklyStreak;
+	let isMissed = false;
+	let canClaim = true;
+
+	if (!lastClaimedAt) {
+		streakLength = 1;
+	} else {
+		const lastClaimedUTC = new Date(lastClaimedAt);
+		if (lastClaimedUTC >= startOfToday) {
+			canClaim = false;
+		} else if (lastClaimedUTC < startOfYesterday) {
+			isMissed = true;
+			streakLength = 1;
+		} else {
+			streakLength++;
+		}
+	}
+
+	if (streakLength > 7) {
+		weeklyStreak++;
+		streakLength = 1;
+	}
+
+	return { streakLength, weeklyStreak, isMissed, canClaim };
 };

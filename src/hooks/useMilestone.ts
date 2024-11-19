@@ -3,7 +3,7 @@ import { useInitData } from '@telegram-apps/sdk-react';
 import { Award } from '@prisma/client';
 import { Milestone } from '@/src/types/db.types';
 import { fetchClaimedAwards } from '../db/user';
-import { useStats } from './useStats';
+import { useStats, CricketStats, BettingStats } from './useStats';
 import { calculateMilestones } from '../constants/milestones';
 
 export const useMilestones = () => {
@@ -19,7 +19,10 @@ export const useMilestones = () => {
 		const loadMilestones = async () => {
 			if (!user?.id || !cricketStats || !bettingStats) return;
 
-			const allMilestones = calculateMilestones(cricketStats, bettingStats);
+			const allMilestones = calculateMilestones(
+				cricketStats as CricketStats,
+				bettingStats as BettingStats
+			);
 			const fetchedClaimedAwards = await fetchClaimedAwards(user.id);
 
 			const unclaimedMilestones = allMilestones.filter(

@@ -92,7 +92,7 @@ export function RewardCardDialog({
 						{weeklyStreak > 0 && (
 							<div className='bg-gradient-to-br from-gray-800 to-gray-700 p-6 rounded-xl shadow-inner'>
 								<h3 className='text-xl font-semibold mb-4 text-green-400'>
-									Boosted Reward
+									Your Boosted Reward
 								</h3>
 								<div className='flex items-center justify-between mb-2'>
 									<div className='flex items-center space-x-2'>
