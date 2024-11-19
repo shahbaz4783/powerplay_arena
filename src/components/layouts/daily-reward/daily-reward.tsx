@@ -17,20 +17,29 @@ import { SubmitButton } from '@/src/components/common/buttons/submit-button';
 import { StreakInfo } from './streak-info';
 import { RewardGrid } from './reward-grid';
 import { WeeklyBoost } from './weekly-boost';
+import { MessageCard } from '../../common/cards/message-card';
 
 export function DailyReward() {
 	const initData = useInitData();
 	const user = initData?.user;
-	const { data } = useUserProfile(user?.id);
+	const { data, isLoading } = useUserProfile(user?.id);
+
+	// if (isLoading)
+	// 	return (
+	// 		<MessageCard
+	// 			title='Loading Daily reward'
+	// 			message='We are working on it'
+	// 			type='loading'
+	// 		/>
+	// 	);
+
 	const [response, action] = useFormState(dailyDrop.bind(null, user?.id!), {
 		message: {},
 	});
 
 	const streak = data?.userProfile.streakLength || 0;
 	const weeklyStreak = data?.userProfile.weeklyStreak || 0;
-	const lastClaimed = data?.userProfile.lastClaimedAt
-		? new Date(data.userProfile.lastClaimedAt)
-		: null;
+	const lastClaimed = data?.userProfile.lastClaimedAt;
 
 	const isRewardClaimed = () => {
 		if (!lastClaimed) return false;
@@ -62,10 +71,10 @@ export function DailyReward() {
 	const rewardClaimed = isRewardClaimed();
 
 	return (
-		<Card className='w-full max-w-2xl mx-auto overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100 shadow-xl'>
-			<CardHeader className='text-center bg-gradient-to-r from-indigo-600 to-purple-600 py-6'>
-				<CardTitle className='text-3xl font-bold'>
-					{rewardClaimed ? 'Daily Reward Claimed!' : 'Reward is Ready!'}
+		<Card className='w-full overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100 shadow-xl'>
+			<CardHeader className='text-center bg-gradient-to-r from-slate-700 to-gray-700 py-6'>
+				<CardTitle className='text-2xl font-mono font-bold'>
+					{rewardClaimed ? 'Reward Claimed!' : 'Reward is Ready!'}
 				</CardTitle>
 			</CardHeader>
 			<CardContent className='space-y-6 p-6'>
@@ -75,7 +84,7 @@ export function DailyReward() {
 
 				<div className='flex items-center justify-center space-x-2 text-gray-400'>
 					<Clock size={16} />
-					<span className='text-sm'>
+					<span className='text-sm italic'>
 						{rewardClaimed
 							? `Next reward in: ${getTimeUntilNextReward()}`
 							: 'You can claim your reward now!'}

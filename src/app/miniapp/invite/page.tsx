@@ -1,7 +1,7 @@
 import { Header } from '@/src/components/common/elements/header';
-import { InviteBonusInfo } from '@/src/components/layouts/daily-reward/invite-bonus-info';
-import { InviteLink } from '@/src/components/layouts/daily-reward/invite-link';
-import { InviteList } from '@/src/components/layouts/daily-reward/invite-list';
+import { InviteBonusInfo } from '@/src/components/layouts/other-tasks/invite-bonus-info';
+import { InviteLink } from '@/src/components/layouts/other-tasks/invite-link';
+import { InviteList } from '@/src/components/layouts/other-tasks/invite-list';
 
 const InvitePage = () => {
 	return (

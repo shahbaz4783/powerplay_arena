@@ -96,3 +96,20 @@ export const MATCH_FORMATS: Record<MatchFormat, MatchSetup> = {
 		},
 	},
 };
+
+
+export interface RewardTier {
+	day: number;
+	coins: string;
+	powerPass: string;
+}
+
+export const rewardTiers: RewardTier[] = [
+	{ day: 1, coins: '20-30', powerPass: '2-3' },
+	{ day: 2, coins: '30-50', powerPass: '3-5' },
+	{ day: 3, coins: '50-100', powerPass: '5-10' },
+	{ day: 4, coins: '100-150', powerPass: '10-15' },
+	{ day: 5, coins: '150-200', powerPass: '15-20' },
+	{ day: 6, coins: '200-300', powerPass: '20-25' },
+	{ day: 7, coins: '300-500', powerPass: '25-30' },
+];

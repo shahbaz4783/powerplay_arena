@@ -122,3 +122,13 @@ export const calculateBettingPassCost = (betAmount: number): number => {
 
 	return bettingPassCost;
 };
+
+
+export const calculateBoostedReward = (
+	reward: string,
+	weeklyStreak: number
+): string => {
+	const [min, max] = reward.split('-').map(Number);
+	const boost = 1 + (weeklyStreak * 5) / 100;
+	return `${Math.floor(min * boost)}-${Math.floor(max * boost)}`;
+};
