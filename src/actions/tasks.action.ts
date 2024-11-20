@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache";
 import { token } from '../constants/app-config';
 import { db } from "../lib/db";
 import { FormResponse } from '../types/types';
-import { calculateReward, calculateStreak } from '../lib/utils';
+import {
+	calculateReward,
+	getStreakStatus,
+	incrementStreak,
+} from '../lib/utils';
 import { saveAwardToDatabase } from './game.action';
 import { Milestone } from '../types/db.types';
 
@@ -23,36 +27,37 @@ export const dailyDrop = async (
 	formData: FormData
 ): Promise<FormResponse> => {
 	try {
+		const profile = await db.profile.findUnique({
+			where: { telegramId },
+		});
+
+		if (!profile) {
+			throw new Error('User not found');
+		}
+
+		const { canClaim, isMissed } = getStreakStatus(profile.lastClaimedAt);
+
+		if (!canClaim) {
+			throw new Error('You have already claimed your daily reward');
+		}
+
+		const { newStreak, newWeeklyStreak } = incrementStreak(
+			profile.streakLength,
+			profile.weeklyStreak,
+			profile.lastClaimedAt
+		);
+
+		const { coins, powerPass } = calculateReward(newStreak);
+
 		const result = await db.$transaction(async (tx) => {
-			const profile = await tx.profile.findUnique({
-				where: { telegramId },
-			});
-
-			if (!profile) {
-				throw new Error('User not found');
-			}
-
-			const { streakLength, weeklyStreak, isMissed, canClaim } =
-				calculateStreak(
-					profile.lastClaimedAt,
-					profile.streakLength,
-					profile.weeklyStreak
-				);
-
-			if (!canClaim) {
-				throw new Error('You have already claimed your daily reward');
-			}
-
-			const { coins, powerPass } = calculateReward(streakLength);
-
 			await tx.profile.update({
 				where: { telegramId },
 				data: {
 					balance: { increment: coins },
 					powerPass: { increment: powerPass },
 					lastClaimedAt: new Date(),
-					streakLength,
-					weeklyStreak,
+					streakLength: newStreak,
+					weeklyStreak: newWeeklyStreak,
 				},
 			});
 
@@ -62,21 +67,21 @@ export const dailyDrop = async (
 					amount: coins,
 					type: 'REWARD',
 					balanceEffect: 'INCREMENT',
-					description: `Daily reward claim (Day ${streakLength}): ${coins} ${token.symbol} and ${powerPass} Power Pass`,
+					description: `Daily reward claim (Day ${
+						newStreak === 0 ? '7' : newStreak
+					}): ${coins} ${token.symbol} and ${powerPass} Power Pass`,
 				},
 			});
 
-			return { coins, powerPass, streakLength, isMissed };
+			return { coins, powerPass, newStreak, isMissed };
 		});
 
 		revalidatePath('/miniapp/reward');
 		return {
 			message: {
-				success: `Congratulations! You've claimed ${result.coins} ${
-					token.symbol
-				} and ${result.powerPass} Power Pass on Day ${
-					result.streakLength
-				} of your streak!${
+				success: `You've got ${result.coins} ${token.symbol} and ${
+					result.powerPass
+				} Power Pass on Day ${result.newStreak} of your streak!${
 					result.isMissed
 						? ' You missed a day, but your new streak starts now!'
 						: ''
@@ -87,7 +92,12 @@ export const dailyDrop = async (
 		if (error instanceof Error) {
 			return { message: { error: error.message } };
 		} else {
-			return { message: { error: 'Something Went Wrong' } };
+			return {
+				message: {
+					error:
+						'Something Went Wrong. Please check your internet connection or try again later.',
+				},
+			};
 		}
 	}
 };

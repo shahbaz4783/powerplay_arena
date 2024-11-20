@@ -18,7 +18,7 @@ import { WeeklyBoost } from './weekly-boost';
 import { MessageCard } from '../../common/cards/message-card';
 import { ServerResponse } from '../../common/message/server-response';
 import { AlertCircle } from 'lucide-react';
-import { calculateStreak } from '@/src/lib/utils';
+import { getStreakStatus } from '@/src/lib/utils';
 
 export function DailyReward() {
 	const initData = useInitData();
@@ -35,11 +35,7 @@ export function DailyReward() {
 	const currentStreak = data?.userProfile.streakLength || 0;
 	const currentWeeklyStreak = data?.userProfile.weeklyStreak || 0;
 
-	const { streakLength, weeklyStreak, isMissed, canClaim } = calculateStreak(
-		lastClaimed,
-		currentStreak,
-		currentWeeklyStreak
-	);
+	const { canClaim, isMissed } = getStreakStatus(lastClaimed);
 
 	if (isLoading)
 		return (
@@ -66,13 +62,13 @@ export function DailyReward() {
 						</span>
 					</div>
 				)}
-				<StreakInfo streak={streakLength} weeklyStreak={weeklyStreak} />
+				<StreakInfo streak={currentStreak} weeklyStreak={currentWeeklyStreak} />
 				<RewardGrid
-					streak={streakLength}
-					weeklyStreak={weeklyStreak}
+					streak={currentStreak}
+					weeklyStreak={currentWeeklyStreak}
 					rewardClaimed={!canClaim}
 				/>
-				<WeeklyBoost weeklyStreak={weeklyStreak} />
+				<WeeklyBoost weeklyStreak={currentWeeklyStreak} />
 
 				<div className='flex items-center justify-center space-x-2 text-gray-400'>
 					<span className='text-sm italic'>

@@ -146,11 +146,7 @@ export interface StreakInfo {
 	canClaim: boolean;
 }
 
-export const calculateStreak = (
-	lastClaimedAt: Date | null,
-	currentStreak: number,
-	currentWeeklyStreak: number
-): StreakInfo => {
+export const getStreakStatus = (lastClaimedAt: Date | null) => {
 	const now = new Date();
 	const startOfToday = new Date(
 		Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
@@ -158,29 +154,44 @@ export const calculateStreak = (
 	const startOfYesterday = new Date(startOfToday);
 	startOfYesterday.setUTCDate(startOfYesterday.getUTCDate() - 1);
 
-	let streakLength = currentStreak;
-	let weeklyStreak = currentWeeklyStreak;
 	let isMissed = false;
 	let canClaim = true;
 
 	if (!lastClaimedAt) {
-		streakLength = 1;
+		canClaim = true;
 	} else {
 		const lastClaimedUTC = new Date(lastClaimedAt);
 		if (lastClaimedUTC >= startOfToday) {
 			canClaim = false;
 		} else if (lastClaimedUTC < startOfYesterday) {
 			isMissed = true;
-			streakLength = 1;
+			canClaim = true;
 		} else {
-			streakLength++;
+			canClaim = true;
 		}
 	}
 
-	if (streakLength > 7) {
-		weeklyStreak++;
-		streakLength = 1;
+	return { isMissed, canClaim };
+};
+
+export const incrementStreak = (
+	currentStreak: number,
+	currentWeeklyStreak: number,
+	lastClaimedAt: Date | null
+): { newStreak: number; newWeeklyStreak: number } => {
+	const { isMissed } = getStreakStatus(lastClaimedAt);
+
+	let newStreak = currentStreak + 1;
+	let newWeeklyStreak = currentWeeklyStreak;
+
+	if (newStreak >= 7) {
+		newWeeklyStreak++;
+		newStreak = 0;
 	}
 
-	return { streakLength, weeklyStreak, isMissed, canClaim };
+	if (isMissed) {
+		newStreak = 1;
+	}
+
+	return { newStreak, newWeeklyStreak };
 };
