@@ -121,7 +121,8 @@ export async function placeBet(
 					betsPlaced: { increment: 1 },
 					betsWon: { increment: isWin ? 1 : 0 },
 					totalWagered: { increment: betAmount },
-					totalPayout: { increment: netGain },
+					totalEarning: { increment: isWin ? netGain : 0 },
+					totalLoss: { increment: !isWin ? betAmount : 0 },
 				},
 			});
 
@@ -170,11 +171,18 @@ export async function placeBet(
 			}
 		});
 	} catch (error) {
-		console.error('Error placing bet:', error);
-		return {
-			message: { error: 'An error occurred while placing the bet' },
-			result: 'failed',
-			winAmount: 0,
-		};
+		if (error instanceof Error) {
+			return {
+				message: { error: error.message },
+				result: 'failed',
+				winAmount: 0,
+			};
+		} else {
+			return {
+				message: { error: 'An error occurred while placing the bet' },
+				result: 'failed',
+				winAmount: 0,
+			};
+		}
 	}
 }

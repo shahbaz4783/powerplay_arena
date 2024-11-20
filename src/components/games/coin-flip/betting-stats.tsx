@@ -49,13 +49,9 @@ export function BettingStats() {
 				color='from-yellow-500 to-orange-300'
 			/>
 			<StatCard
-				title={data?.totalPayout! >= 0 ? 'Total Profit' : 'Total Loss'}
-				value={data?.totalPayout ?? 0}
-				color={
-					data?.totalPayout! >= 0
-						? 'from-green-500 to-emerald-300'
-						: 'from-red-500 to-red-300'
-				}
+				title={'Earnings'}
+				value={data?.totalEarning ?? 0}
+				color={'from-green-500 to-emerald-300'}
 			/>
 		</div>
 	);

@@ -28,7 +28,7 @@ const calculateBettingTotals = (bettingStats: BettingStats) => {
 	const betTypes = Object.values(BetType);
 	return {
 		totalBetEarnings: betTypes.reduce(
-			(total, type) => total + (bettingStats[type]?.totalPayout || 0),
+			(total, type) => total + (bettingStats[type]?.totalEarning || 0),
 			0
 		),
 		totalBetsWon: betTypes.reduce(
@@ -153,10 +153,10 @@ export const calculateMilestones = (
 			id: 'safe_rich',
 			title: 'Safe Rich',
 			description: 'Accumulate 50,000 in safe winnings from bets.',
-			progress: bettingStats[BetType.SAFE_BET]?.totalPayout || 0,
+			progress: bettingStats[BetType.SAFE_BET]?.totalEarning || 0,
 			total: 50000,
 			reward: 5000,
-			isCompleted: (bettingStats[BetType.SAFE_BET]?.totalPayout || 0) >= 50000,
+			isCompleted: (bettingStats[BetType.SAFE_BET]?.totalEarning || 0) >= 50000,
 		},
 		{
 			id: 'classic_flip_100',

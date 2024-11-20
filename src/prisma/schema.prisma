@@ -14,100 +14,101 @@ model WaitlistUser {
 }
 
 model User {
-  telegramId     BigInt    @id @unique
-  firstName      String
-  lastName       String?
-  username       String?   @unique
-  languageCode   String
-  isPremium      Boolean?
-  profile        Profile?
-  transaction    Transaction[]
-  stats          Stats[]
-  betStats       BetStats[]
-  award          Award[]
-  avatar         Avatar[]
+  telegramId   BigInt        @id @unique
+  firstName    String
+  lastName     String?
+  username     String?       @unique
+  languageCode String
+  isPremium    Boolean?
+  profile      Profile?
+  transaction  Transaction[]
+  stats        Stats[]
+  betStats     BetStats[]
+  award        Award[]
+  avatar       Avatar[]
 }
 
 model Profile {
-  id              String   @id @default(cuid())
-  telegramId      BigInt   @unique
-  user            User     @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-  balance         Int      @default(0)
-  totalXP         Int      @default(0)
-  level           Int      @default(1)
-  levelName       String
-  xpForNextLevel  Int
-  streakLength    Int      @default(0)
-  weeklyStreak    Int      @default(0)
-  powerPass       Int
-  avatarUrl       String
-  lastClaimedAt   DateTime?
+  id             String    @id @default(cuid())
+  telegramId     BigInt    @unique
+  user           User      @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+  balance        Int       @default(0)
+  totalXP        Int       @default(0)
+  level          Int       @default(1)
+  levelName      String
+  xpForNextLevel Int
+  streakLength   Int       @default(0)
+  weeklyStreak   Int       @default(0)
+  powerPass      Int
+  avatarUrl      String
+  lastClaimedAt  DateTime?
 
   @@index([telegramId])
 }
 
 model Avatar {
-  id            String   @id @default(cuid())
-  avatarId      String   
-  telegramId    BigInt 
-  user          User     @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-  title         String  
-  description   String
-  href          String
+  id          String @id @default(cuid())
+  avatarId    String
+  telegramId  BigInt
+  user        User   @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+  title       String
+  description String
+  href        String
 
   @@index([telegramId])
 }
 
 model Award {
-  id            String   @id @default(cuid())
-  awardId       String   
-  telegramId    BigInt 
-  user          User     @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-  title         String  
-  description   String
-  createdAt     DateTime @default(now())
-  
+  id          String   @id @default(cuid())
+  awardId     String
+  telegramId  BigInt
+  user        User     @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+  title       String
+  description String
+  createdAt   DateTime @default(now())
+
   @@index([telegramId])
 }
 
 model Stats {
-  id               String      @id @default(cuid())
-  telegramId       BigInt
-  format           MatchFormat
-  user             User        @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+  id         String      @id @default(cuid())
+  telegramId BigInt
+  format     MatchFormat
+  user       User        @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
 
-  matchesPlayed    Int         @default(0)
-  matchesWon       Int         @default(0)
-  matchesLost      Int         @default(0)
-  matchesTie       Int         @default(0)
+  matchesPlayed Int @default(0)
+  matchesWon    Int @default(0)
+  matchesLost   Int @default(0)
+  matchesTie    Int @default(0)
 
-  runsScored        Int         @default(0)
-  highestRunsScored Int         @default(0)
-  ballsFaced        Int         @default(0)
-  sixes             Int         @default(0)
-  fours             Int         @default(0)
-  
-  wicketsTaken          Int         @default(0)
-  runsConceded          Int         @default(0)
-  lowestRunsConceded    Int         @default(0)
-  highestWicketsTaken   Int         @default(0)
-  ballsBowled           Int         @default(0)
-  hattrik               Int         @default(0)
-  maidenOver            Int         @default(0)
+  runsScored        Int @default(0)
+  highestRunsScored Int @default(0)
+  ballsFaced        Int @default(0)
+  sixes             Int @default(0)
+  fours             Int @default(0)
+
+  wicketsTaken        Int @default(0)
+  runsConceded        Int @default(0)
+  lowestRunsConceded  Int @default(0)
+  highestWicketsTaken Int @default(0)
+  ballsBowled         Int @default(0)
+  hattrik             Int @default(0)
+  maidenOver          Int @default(0)
 
   @@unique([telegramId, format])
   @@index([telegramId])
 }
 
 model BetStats {
-  id              String   @id @default(cuid())
-  telegramId      BigInt
-  user             User    @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-  betType         BetType
-  betsPlaced      Int      @default(0)
-  betsWon         Int      @default(0)
-  totalWagered    Float    @default(0)
-  totalPayout     Float    @default(0)
+  id           String  @id @default(cuid())
+  telegramId   BigInt
+  user         User    @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+  betType      BetType
+  betsPlaced   Int     @default(0)
+  betsWon      Int     @default(0)
+  totalWagered Float   @default(0)
+  totalEarning Float   @default(0)
+  totalLoss    Float   @default(0)
 
   @@unique([telegramId, betType])
   @@index([telegramId])
@@ -121,16 +122,16 @@ enum BetType {
 }
 
 model Transaction {
-  id          String            @id @default(cuid())
-  telegramId  BigInt
-  user        User              @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-  amount      Int
+  id            String            @id @default(cuid())
+  telegramId    BigInt
+  user          User              @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+  amount        Int
   balanceEffect BalanceEffect
-  type        TransactionType
-  description String?
-  matchId     String?
-  createdAt   DateTime          @default(now())
-  status      TransactionStatus @default(COMPLETED)
+  type          TransactionType
+  description   String?
+  matchId       String?
+  createdAt     DateTime          @default(now())
+  status        TransactionStatus @default(COMPLETED)
 
   @@index([telegramId])
   @@index([type])
