@@ -1,130 +1,105 @@
-# Telegram Mini Apps Next.js Template
+# Power Play Arena
 
-This template demonstrates how developers can implement a web application on the Telegram
-Mini Apps platform using the following technologies and libraries:
+Welcome to Power Play Arena, where cricket action and coin flip thrills await!
 
-- [Next.js](https://nextjs.org/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [TON Connect](https://docs.ton.org/develop/dapps/ton-connect/overview)
-- [@telegram-apps SDK](https://docs.telegram-mini-apps.com/packages/telegram-apps-sdk)
-- [Telegram UI](https://github.com/Telegram-Mini-Apps/TelegramUI)
+🎮 [Play Power Play Arena Now!](https://t.me/powerplay_arena_bot)
 
-> The template was created using [pnpm](https://pnpm.io/). Therefore, it is required to use
-> it for this project as well. Using other package managers, you will receive a corresponding error.
+## About the Game
 
-## Install Dependencies
+Power Play Arena offers two exciting game modes in one Telegram-based platform: Cricket Matches and Coin Flip Betting. Test your cricket skills or try your luck with bets, and climb the leaderboard to become the ultimate champion!
 
-If you have just cloned this template, you should install the project dependencies using the
-command:
+## 📚 Comprehensive Guide 📚
 
-```Bash
-pnpm install
-```
+### 🏏 Cricket Matches
 
-## Scripts
+Three exciting formats to test your skills:
 
-This project contains the following scripts:
+- **Blitz**: 2 overs, 2 wickets
+- **Powerplay**: 5 overs, 5 wickets
+- **Classic**: 10 overs, 10 wickets
 
-- `dev`. Runs the application in development mode.
-- `dev:https`. Runs the application in development mode using self-signed SSL certificate.
-- `build`. Builds the application for production.
-- `start`. Starts the Next.js server in production mode.
-- `lint`. Runs [eslint](https://eslint.org/) to ensure the code quality meets the required
-  standards.
+- Both batting and bowling mechanics
+- Earn rewards based on your performance (runs, wickets, boundaries, win margin)
 
-To run a script, use the `pnpm run` command:
+### 🎲 Coin Toss Game
 
-```Bash
-pnpm run {script}
-# Example: pnpm run build
-```
+Test your luck with four exciting coin toss options:
 
-## Create Bot and Mini App
+- **Safe Bet**: 75% chance to win, 1.25x payout
+- **Classic Flip**: 50/50 chance, 2x payout
+- **Triple Shot**: 33% chance to win, 3x payout
+- **Jackpot**: 20% chance to win, 5x payout
 
-Before you start, make sure you have already created a Telegram Bot. Here is
-a [comprehensive guide](https://docs.telegram-mini-apps.com/platform/creating-new-app) on how to
-do it.
+### 🎯 Milestones
 
-## Run
+- Complete exciting challenges to earn rewards
+- Various milestones for both cricket and betting games
+- Unlock achievements and boost your progress
+- Check your current challenges and claim rewards
 
-Although Mini Apps are designed to be opened
-within [Telegram applications](https://docs.telegram-mini-apps.com/platform/about#supported-applications),
-you can still develop and test them outside of Telegram during the development process.
+### 🎁 Daily Rewards
 
-To run the application in the development mode, use the `dev` script:
+- Claim your reward daily between 00:00 to 23:59 UTC
+- Maintain your streak for increasing bonuses
+- Each week of consecutive claims adds 5% boost to your base reward
+- No limit to how high your boost can go
+- Missing a day resets your streak, but keeps your weekly progress
 
-```bash
-pnpm run dev
-```
+### 📈 Progression System
 
-After this, you will see a similar message in your terminal:
+- Earn XP through cricket matches and betting games
+- Level up to unlock new features and rewards
 
-```bash
-▲ Next.js 14.2.3
-- Local:        http://localhost:3000
+### 🏆 Leaderboard
 
-✓ Starting...
-✓ Ready in 2.9s
-```
+- Compete with players worldwide based on XP
+- XP is earned through all game activities
+- Climb the ranks by playing matches and placing bets
+- View your position and aim for the top!
 
-To view the application, you need to open the `Local`
-link (`http://localhost:3000` in this example) in your browser.
+### 🛒 In-game Shop
 
-It is important to note that some libraries in this template, such as `@telegram-apps/sdk`, are not
-intended for use outside of Telegram.
+- Power Passes: Essential for cricket match entry
+- Avatars: Personalize your profile
+- Boosters: Gain temporary advantages in games
 
-Nevertheless, they appear to function properly. This is because the `src/hooks/useTelegramMock.ts`
-file, which is imported in the application's `Root` component, employs the `mockTelegramEnv`
-function to simulate the Telegram environment. This trick convinces the application that it is
-running in a Telegram-based environment. Therefore, be cautious not to use this function in
-production mode unless you fully understand its implications.
+### 👤 User Profiles
 
-### Run Inside Telegram
+- Track your stats and progress separately for cricket and betting
+- Showcase your achievements and rankings
+- Customize your in-game appearance
 
-Although it is possible to run the application outside of Telegram, it is recommended to develop it
-within Telegram for the most accurate representation of its real-world functionality.
+## Technology Stack
 
-To run the application inside Telegram, [@BotFather](https://t.me/botfather) requires an HTTPS link.
+Power Play Arena is built using modern web technologies to ensure a smooth, responsive, and scalable gaming experience:
 
-This template already provides a solution.
+- **Next.js**: React framework for building the user interface and handling server-side rendering
+- **Prisma**: Modern database toolkit for TypeScript and Node.js
+- **Tailwind CSS**: Utility-first CSS framework for rapid UI development
+- **TypeScript**: Typed superset of JavaScript for improved developer experience and code quality
+- **Node.js**: JavaScript runtime for server-side logic
+- **Telegram Bot API**: For integrating the game with Telegram's platform
 
-To retrieve a link with the HTTPS protocol, consider using the `dev:https` script:
+This tech stack allows us to deliver a high-performance, maintainable, and feature-rich gaming experience directly through Telegram.
 
-```bash
-$ pnpm run dev:https
+## How to Start Playing
 
-▲ Next.js 14.2.3
-- Local:        https://localhost:3000
+1. Open Telegram and search for @PowerPlayArenaBot
+2. Start the bot and enter the arena
+3. Choose between Cricket Matches or Coin Flip Betting
+4. Play, win, and climb the ranks!
 
-✓ Starting...
-✓ Ready in 2.4s
-```
+Join Power Play Arena now and experience the excitement of cricket and the thrill of betting in one place!
 
-Visiting the `Local` link (`https://localhost:3000` in this example) in your
-browser, you will see the following warning:
+## Community
 
-![SSL Warning](assets/ssl-warning.png)
+Join our community channels to stay updated, share strategies, and connect with other players:
 
-This browser warning is normal and can be safely ignored as long as the site is secure. Click
-the `Proceed to localhost (unsafe)` button to continue and view the application.
+- Telegram Channel: [@PowerPlayArenaNews](https://t.me/PowerPlayArenaNews)
+- Telegram Group: [@PowerPlayArenaChat](https://t.me/PowerPlayArenaChat)
 
-Once the application is displayed correctly, submit the
-link `https://127.0.0.1:3000` (`https://localhost:3000` is considered as invalid by BotFather) as
-the Mini App link to [@BotFather](https://t.me/botfather). Then, navigate
-to [https://web.telegram.org/k/](https://web.telegram.org/k/), find your bot, and launch the
-Telegram Mini App. This approach provides the full development experience.
+## Feedback and Support
 
-## Deploy
+We're constantly improving Power Play Arena. If you have any feedback, suggestions, or need support, please contact us through the bot using the /feedback command.
 
-The easiest way to deploy your Next.js app is to use
-the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
-from the creators of Next.js.
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more
-details.
-
-## Useful Links
-
-- [Platform documentation](https://docs.telegram-mini-apps.com/)
-- [@telegram-apps/sdk-react documentation](https://docs.telegram-mini-apps.com/packages/telegram-apps-sdk-react)
-- [Telegram developers community chat](https://t.me/devs)
+Good luck and enjoy Power Play Arena! 🌟
