@@ -29,7 +29,11 @@ export function CoinFlipChallenge() {
 
 	const initData = useInitData();
 	const userId = BigInt(initData?.user?.id || 0);
-	const { data, isLoading, mutate } = useUserProfile(initData?.user?.id);
+	const {
+		data: profile,
+		isLoading,
+		mutate,
+	} = useUserProfile(initData?.user?.id);
 
 	const [formState, formAction] = useFormState(placeBet.bind(null, userId), {
 		message: {},
@@ -51,14 +55,13 @@ export function CoinFlipChallenge() {
 	if (isLoading) {
 		return (
 			<MessageCard
-				title='Preparing Coin Flip Challenge'
-				message='Polishing the lucky coin and setting up the challenge. Get ready to test your fortune!'
+				title='Setting Up the Coin Flip'
+				message='Polishing the lucky coin for your next big win...'
 				type='loading'
 			/>
 		);
 	}
 
-	const profile = data?.userProfile;
 	const userBalance = profile?.balance as number;
 	const maxBet = Math.floor((userBalance * 0.65) / 10) * 10;
 	const isBetValid = betAmount > 0 && selectedChallenge && selectedSide;

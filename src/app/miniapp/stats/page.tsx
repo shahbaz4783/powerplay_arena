@@ -6,7 +6,7 @@ export default function StatsPage() {
 	return (
 		<div className='space-y-8'>
 			<Header
-				title='Overall Stats'
+				title='Player Statistics'
 				subtitle='Dive into your performance metrics'
 			/>
 			<BettingStats />

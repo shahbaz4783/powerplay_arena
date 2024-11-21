@@ -24,8 +24,8 @@ export function MilestonesPage() {
 					</>
 				) : (
 					<MessageCard
-						title='Loading Challenges'
-						message='Preparing exciting cricket challenges for you...'
+						title='Tracking Your Progress'
+						message='Gathering your achievements and upcoming goals...'
 						type='loading'
 					/>
 				)}

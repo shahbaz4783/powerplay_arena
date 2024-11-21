@@ -23,25 +23,25 @@ import { getStreakStatus } from '@/src/lib/utils';
 export function DailyReward() {
 	const initData = useInitData();
 	const user = initData?.user;
-	const { data, isLoading } = useUserProfile(user?.id);
+	const { data: profile, isLoading } = useUserProfile(user?.id);
 
 	const [response, action] = useFormState(dailyDrop.bind(null, user?.id!), {
 		message: {},
 	});
 
-	const lastClaimed = data?.userProfile.lastClaimedAt
-		? new Date(data.userProfile.lastClaimedAt)
+	const lastClaimed = profile?.lastClaimedAt
+		? new Date(profile?.lastClaimedAt)
 		: null;
-	const currentStreak = data?.userProfile.streakLength || 0;
-	const currentWeeklyStreak = data?.userProfile.weeklyStreak || 0;
+	const currentStreak = profile?.streakLength || 0;
+	const currentWeeklyStreak = profile?.weeklyStreak || 0;
 
 	const { canClaim, isMissed } = getStreakStatus(lastClaimed);
 
 	if (isLoading)
 		return (
 			<MessageCard
-				title='Loading Daily reward'
-				message='We are working on it'
+				title='Preparing Your Rewards'
+				message='Calculating your streaks and bonuses..'
 				type='loading'
 			/>
 		);

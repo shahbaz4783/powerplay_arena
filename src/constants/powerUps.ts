@@ -1,54 +1,45 @@
-import { PowerUp, GameState } from '../types/types';
+import { Crosshair, Gift, Shield, Target, Zap } from 'lucide-react';
 
-export const powerUps: PowerUp[] = [
+export const shopItems = [
 	{
-		id: 'powerHitter',
-		name: 'Power Hitter',
-		description: 'Increases the chance of hitting boundaries for 6 balls',
-		effect: (gameState: GameState) => ({
-			// This effect will be applied in the calculateRunsScored function
-		}),
-		duration: 6,
-		cost: 100,
+		id: 'streak-guardian',
+		title: 'Streak Guardian',
+		description: 'Preserves your daily reward streak if you miss a day.',
+		image: 'placeholderImage',
+		price: 100,
+		icon: Shield,
 	},
 	{
-		id: 'precisionBowling',
-		name: 'Precision Bowling',
-		description: "Reduces the opponent's chance of scoring runs for 6 balls",
-		effect: (gameState: GameState) => ({
-			// This effect will be applied in the calculateRunsScored function
-		}),
-		duration: 6,
-		cost: 100,
+		id: 'fortunes-favor',
+		title: "Fortune's Favor",
+		description:
+			'Increases your chances of better outcomes for a limited time.',
+		image: '',
+		price: 150,
+		icon: Zap,
 	},
 	{
-		id: 'fieldingBoost',
-		name: 'Fielding Boost',
-		description: 'Increases the chance of getting the opponent out for 6 balls',
-		effect: (gameState: GameState) => ({
-			// This effect will be applied in the calculateRunsScored function
-		}),
-		duration: 6,
-		cost: 100,
+		id: 'bounty-booster',
+		title: 'Bounty Booster',
+		description: 'Doubles your daily reward for the next 24 hours.',
+		image: '',
+		price: 200,
+		icon: Gift,
 	},
 	{
-		id: 'secondChance',
-		name: 'Second Chance',
-		description: 'Prevents the next out, consuming the power-up',
-		effect: (gameState: GameState) => ({
-			// This effect will be applied when a wicket is about to fall
-		}),
-		duration: 1,
-		cost: 150,
+		id: 'batsmans-edge',
+		title: "Batsman's Edge",
+		description: 'Enhances your batting performance for the next match.',
+		image: '',
+		price: 250,
+		icon: Target,
 	},
 	{
-		id: 'runBonus',
-		name: 'Run Bonus',
-		description: 'Adds an extra run to every scoring shot for 6 balls',
-		effect: (gameState: GameState) => ({
-			// This effect will be applied after calculating runs
-		}),
-		duration: 6,
-		cost: 120,
+		id: 'bowlers-boon',
+		title: "Bowler's Boon",
+		description: 'Improves your bowling accuracy and speed for one game.',
+		image: '',
+		price: 250,
+		icon: Crosshair,
 	},
 ];

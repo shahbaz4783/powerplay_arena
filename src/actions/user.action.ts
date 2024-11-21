@@ -56,18 +56,18 @@ export const saveOrUpdateUser = async (user: User) => {
 					},
 					transaction: {
 						create: {
-							amount: 100,
+							amount: 500,
 							type: 'REWARD',
 							balanceEffect: 'INCREMENT',
-							description: 'Joining bonus',
+							description: 'Welcome Bonus',
 						},
 					},
 					award: {
 						create: {
 							awardId: 'new_player_join',
-							title: 'Welcome to the Crease',
+							title: 'A New Legend Rises',
 							description:
-								'Your cricket journey begins with the first step onto the pitch',
+								"Your quest for glory begins now. Show the world what you're made of!",
 						},
 					},
 				},

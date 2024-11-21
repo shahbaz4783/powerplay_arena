@@ -11,23 +11,24 @@ export interface PaginatedResponse {
 
 export const getUserProfileById = async (telegramId: number) => {
 	try {
-		const result = await db.$transaction(async (tx) => {
-			const userProfile = await tx.profile.findUnique({
-				where: { telegramId },
-			});
-
-			const userInfo = await tx.user.findUnique({
-				where: { telegramId: telegramId },
-			});
-
-			if (!userProfile) {
-				throw new Error('User wallet not found');
-			}
-
-			return { userProfile, userInfo };
+		return await db.profile.findUnique({
+			where: { telegramId },
 		});
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error('Error fetching user info:', error.message);
+		} else {
+			console.error('Something went wrong while fetching user info');
+		}
+		throw error;
+	}
+};
 
-		return result;
+export const getUserInfoById = async (telegramId: number) => {
+	try {
+		return await db.user.findUnique({
+			where: { telegramId: telegramId },
+		});
 	} catch (error) {
 		if (error instanceof Error) {
 			console.error('Error fetching user info:', error.message);

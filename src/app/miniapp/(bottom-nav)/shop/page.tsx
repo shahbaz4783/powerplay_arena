@@ -13,8 +13,8 @@ export default function ShopPage() {
 	return (
 		<div className='min-h-screen space-y-6 text-gray-100 relative overflow-hidden'>
 			<Header
-				title='Cricket Bazaar'
-				subtitle='Personalize Your Look and Test Your Luck'
+				title='Game Store'
+				subtitle='Get avatars, power passes, and more for your game.'
 			/>
 
 			<Tabs defaultValue='power-pass' className='w-full'>

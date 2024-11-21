@@ -28,8 +28,7 @@ export function ProfileSummary() {
 		fetchData();
 	}, [user]);
 
-	const { data, isLoading } = useUserProfile(user?.id);
-	const profile = data?.userProfile;
+	const { data: profile, isLoading } = useUserProfile(user?.id);
 	const totalXP = profile?.totalXP;
 	const xpForLevelUp = profile?.xpForNextLevel;
 	const xpForNextLevel = xpForLevelUp! - totalXP!;

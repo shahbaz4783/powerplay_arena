@@ -52,8 +52,8 @@ export function ShopItemCard({
 	const initData = useInitData();
 	const user = initData?.user;
 
-	const { data } = useUserProfile(user?.id);
-	const userLevel = data?.userProfile.level || 1;
+	const { data: profile } = useUserProfile(user?.id);
+	const userLevel = profile?.level || 1;
 
 	const [isOpen, setIsOpen] = useState(false);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
