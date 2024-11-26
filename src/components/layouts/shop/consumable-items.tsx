@@ -12,7 +12,10 @@ export function ConsumableItemCard() {
 	return (
 		<div className='space-y-3'>
 			{consumableItems.map((item) => (
-				<motion.div className='bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl overflow-hidden shadow-lg'>
+				<motion.div
+					key={item.id}
+					className='bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl overflow-hidden shadow-lg'
+				>
 					<div className='relative h-40'>
 						<Image
 							src={item.image}
