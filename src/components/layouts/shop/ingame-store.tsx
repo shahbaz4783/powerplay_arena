@@ -23,7 +23,9 @@ export function InGameStore() {
 		async (prevState: PurchaseState, formData: FormData) => {
 			const result = await generateItemInvoice(telegramId, prevState, formData);
 			if (result.success && result.invoiceLink) {
-				invoice.open(result.invoiceLink, 'url');
+				invoice.open(result.invoiceLink, 'url').then((status) => {
+					return alert(status);
+				});
 			}
 			return result;
 		},
