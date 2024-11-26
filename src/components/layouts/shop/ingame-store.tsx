@@ -3,9 +3,9 @@
 import { useCallback } from 'react';
 import { inGameItems } from '@/src/constants/powerUps';
 import { useFormState } from 'react-dom';
-import { useInitData } from '@telegram-apps/sdk-react';
+import { initInvoice, useInitData } from '@telegram-apps/sdk-react';
 import {
-	purchaseInGameItems,
+	generateItemInvoice,
 	PurchaseState,
 } from '@/src/actions/invoice.action';
 import { SubmitButton } from '../../common/buttons/submit-button';
@@ -13,6 +13,7 @@ import { SubmitButton } from '../../common/buttons/submit-button';
 export function InGameStore() {
 	const initData = useInitData();
 	const telegramId = BigInt(initData?.user?.id!);
+	const invoice = initInvoice();
 
 	const initialState: PurchaseState = {
 		success: false,
@@ -20,17 +21,9 @@ export function InGameStore() {
 
 	const handlePurchase = useCallback(
 		async (prevState: PurchaseState, formData: FormData) => {
-			const result = await purchaseInGameItems(telegramId, prevState, formData);
+			const result = await generateItemInvoice(telegramId, prevState, formData);
 			if (result.success && result.invoiceLink) {
-				if (window.Telegram?.WebApp?.openInvoice) {
-					window.Telegram.WebApp.openInvoice(result.invoiceLink, (status) => {
-						if (status === 'paid') {
-							alert('Payment successful!');
-						}
-					});
-				} else {
-					alert('Telegram WebApp SDK not available');
-				}
+				invoice.open(result.invoiceLink, 'url');
 			}
 			return result;
 		},
