@@ -115,3 +115,49 @@ export const inGameItems: InGameItem[] = [
 		],
 	},
 ];
+
+
+export interface RepeatablePurchaseItem {
+	id: string;
+	title: string;
+	description: string;
+	image: string;
+	price: number;
+	coins?: number;
+	passes?: number;
+	stars?: number;
+}
+
+export const consumableItems: RepeatablePurchaseItem[] = [
+	{
+		id: 'star-striker-bundle',
+		title: 'Star Striker Bundle',
+		description:
+			'A powerful combination of in-game coins and power pass to boost your gaming experience!',
+		image:
+			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
+		price: 149,
+		coins: 10000,
+		stars: 500,
+	},
+	{
+		id: 'coin-cache',
+		title: 'Coin Cache',
+		description:
+			'A hefty stash of coins to fuel your gameplay and betting adventures!',
+		image:
+			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
+		price: 49,
+		coins: 5000,
+	},
+	{
+		id: 'pass-pack',
+		title: 'Pass Pack',
+		description:
+			'A bundle of game passes for extended playtime and more opportunities!',
+		image:
+			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
+		price: 49,
+		passes: 250,
+	},
+];

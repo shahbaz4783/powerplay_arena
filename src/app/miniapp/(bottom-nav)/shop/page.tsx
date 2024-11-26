@@ -9,6 +9,7 @@ import { PowerPassStore } from '@/src/components/layouts/shop/powerpass-store';
 import { AvatarStore } from '@/src/components/layouts/shop/avatar-store';
 import { RedemptionStore } from '@/src/components/layouts/shop/redeem-store';
 import { InGameStore } from '@/src/components/layouts/shop/ingame-store';
+import { ConsumableItemCard } from '@/src/components/layouts/shop/consumable-items';
 
 export default function ShopPage() {
 	return (
@@ -49,6 +50,7 @@ export default function ShopPage() {
 				<TabsContent value='redemption'>
 					{/* <RedemptionStore /> */}
 					<InGameStore />
+					<ConsumableItemCard />
 				</TabsContent>
 			</Tabs>
 		</div>
