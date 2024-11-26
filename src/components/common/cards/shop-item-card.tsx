@@ -28,7 +28,7 @@ interface ShopItemProps {
 	onPurchase: (formData: FormData) => void;
 	isPurchased: boolean;
 	description: string;
-	type: 'avatar' | 'powerPass';
+	type: 'avatar' | 'powerPass' | 'paidItem';
 	discount?: number;
 	quantity?: number;
 	xpGain?: number;
@@ -53,7 +53,7 @@ export function ShopItemCard({
 	const user = initData?.user;
 
 	const { data: profile } = useUserProfile(user?.id);
-	const userLevel = profile?.level || 1;
+	const userLevel = profile?.level!;
 
 	const [isOpen, setIsOpen] = useState(false);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -118,7 +118,9 @@ export function ShopItemCard({
 						<div className='flex justify-between items-center'>
 							<div className='flex items-baseline gap-1'>
 								<span className='text-lg font-semibold font-mono'>{price}</span>
-								<span className='text-xs'>{token.symbol} </span>
+								<span className='text-xs'>
+									{type === 'paidItem' ? 'Stars' : token.symbol}
+								</span>
 							</div>
 							<Button
 								size='sm'

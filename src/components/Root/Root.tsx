@@ -52,7 +52,7 @@ function App(props: PropsWithChildren) {
 
 function RootInner({ children }: PropsWithChildren) {
 	// if (process.env.NODE_ENV === 'development') {
-	// useTelegramMock();
+	// 	useTelegramMock();
 	// }
 
 	const debug = useLaunchParams().startParam === 'debug';

@@ -8,6 +8,7 @@ import { Header } from '@/src/components/common/elements/header';
 import { PowerPassStore } from '@/src/components/layouts/shop/powerpass-store';
 import { AvatarStore } from '@/src/components/layouts/shop/avatar-store';
 import { RedemptionStore } from '@/src/components/layouts/shop/redeem-store';
+import { InGameStore } from '@/src/components/layouts/shop/ingame-store';
 
 export default function ShopPage() {
 	return (
@@ -46,7 +47,8 @@ export default function ShopPage() {
 					<AvatarStore />
 				</TabsContent>
 				<TabsContent value='redemption'>
-					<RedemptionStore />
+					{/* <RedemptionStore /> */}
+					<InGameStore />
 				</TabsContent>
 			</Tabs>
 		</div>

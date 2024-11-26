@@ -14,23 +14,23 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {
-  return (
-    <html lang="en">
-      <body>
-        <Root>
-          <AnimatedGridPattern
-            numSquares={30}
-            maxOpacity={0.1}
-            duration={3}
-            repeatDelay={1}
-            className={cn(
-              "[mask-image:radial-gradient(400px_circle_at_center,white,transparent)]",
-              "inset-x-0 inset-y-[-30%] skew-y-12",
-            )}
-          />
-          <TanstackProvider>{children}</TanstackProvider>
-        </Root>
-      </body>
-    </html>
-  );
+	return (
+		<html lang='en'>
+			<body>
+				<Root>
+					<AnimatedGridPattern
+						numSquares={30}
+						maxOpacity={0.1}
+						duration={3}
+						repeatDelay={1}
+						className={cn(
+							'[mask-image:radial-gradient(400px_circle_at_center,white,transparent)]',
+							'inset-x-0 inset-y-[-30%] skew-y-12'
+						)}
+					/>
+					<TanstackProvider>{children}</TanstackProvider>
+				</Root>
+			</body>
+		</html>
+	);
 }
