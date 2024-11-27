@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Coins, Ticket, Star } from 'lucide-react';
 import Image from 'next/image';
 import { consumableItems } from '@/src/constants/powerUps';
-import { token } from '@/src/constants/app-config';
+import { cloudinary_url, token } from '@/src/constants/app-config';
 import { SubmitButton } from '../../common/buttons/submit-button';
 
 export function ConsumableItemCard() {
@@ -17,7 +17,7 @@ export function ConsumableItemCard() {
 				>
 					<div className='relative h-40'>
 						<Image
-							src={item.image}
+							src={cloudinary_url + item.image}
 							alt={item.title}
 							layout='fill'
 							objectFit='cover'

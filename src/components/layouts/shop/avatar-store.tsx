@@ -5,6 +5,7 @@ import { useInitData } from '@telegram-apps/sdk-react';
 import { useFormState } from 'react-dom';
 import { purchaseAvatar, purchasePowerPass } from '@/src/actions/shop.action';
 import { ShopItemCard } from '../../common/cards/shop-item-card';
+import { cloudinary_url } from '@/src/constants/app-config';
 
 export function AvatarStore() {
 	const initData = useInitData();
@@ -24,7 +25,7 @@ export function AvatarStore() {
 					id={avatar.id}
 					key={avatar.id}
 					type='avatar'
-					image={avatar.href}
+					image={cloudinary_url + avatar.href}
 					price={avatar.price}
 					isPurchased={false}
 					name={avatar.name}

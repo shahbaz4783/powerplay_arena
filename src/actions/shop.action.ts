@@ -5,7 +5,7 @@ import { FormResponse } from '../types/types';
 import { avatars, powerPassPacks } from '../constants/shop-items';
 import { responseMessages } from '../constants/messages';
 import { LevelInfo } from '../types/gameState';
-import { calculateLevel } from '../lib/utils';
+import { calculateExchangeValues, calculateLevel } from '../lib/utils';
 import { inGameItems } from '../constants/powerUps';
 
 export const purchasePowerPass = async (
@@ -218,6 +218,87 @@ export const purchaseInGameItems = async (
 		return {
 			message: { success: responseMessages.shop.success.itemPurchased },
 		};
+	} catch (error) {
+		if (error instanceof Error) {
+			return {
+				message: { error: error.message },
+			};
+		} else {
+			return {
+				message: { error: responseMessages.general.error.unexpectedError },
+			};
+		}
+	}
+};
+
+export const executePowerExchange = async (
+	telegramId: bigint,
+	prevState: FormResponse,
+	formData: FormData
+): Promise<FormResponse> => {
+	console.log({ formData });
+
+	const totalPass = Number(formData.get('totalPass'));
+	const exchangeDirection = formData.get('exchangeDirection');
+	const { exchangeFee, netPassSaleAmount, totalPassCost } =
+		calculateExchangeValues(totalPass);
+
+	try {
+		const profile = await db.profile.findUnique({
+			where: { telegramId },
+		});
+
+		if (!profile) {
+			throw new Error(responseMessages.general.error.unexpectedError);
+		}
+
+		return await db.$transaction(async (tx) => {
+			if (exchangeDirection === 'buyPasses') {
+				if (profile.balance < totalPassCost) {
+					return {
+						message: {
+							error: responseMessages.transaction.error.insufficientBalance,
+						},
+					};
+				}
+				await tx.profile.update({
+					where: { telegramId },
+					data: {
+						balance: { decrement: totalPassCost },
+						powerPass: { increment: totalPass },
+					},
+				});
+			}
+
+			if (exchangeDirection === 'sellPasses') {
+				if (profile.powerPass < totalPass) {
+					return {
+						message: {
+							error: responseMessages.transaction.error.insufficientBalance,
+						},
+					};
+				}
+				await tx.profile.update({
+					where: { telegramId },
+					data: {
+						balance: { increment: netPassSaleAmount },
+						powerPass: { decrement: totalPass },
+					},
+				});
+			}
+			// await tx.transaction.create({
+			// 	data: {
+			// 		telegramId,
+			// 		amount: totalCost,
+			// 		balanceEffect: 'DECREMENT',
+			// 		type: 'PURCHASE',
+			// 		description: `Purchase ${itemQuantity} ${packInfo.name}`,
+			// 	},
+			// });
+			return {
+				message: { success: responseMessages.shop.success.itemPurchased },
+			};
+		});
 	} catch (error) {
 		if (error instanceof Error) {
 			return {

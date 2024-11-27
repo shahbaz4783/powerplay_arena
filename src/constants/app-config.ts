@@ -14,6 +14,8 @@ export const token = {
 	symbol: 'PWR',
 };
 
+export const cloudinary_url = process.env.NEXT_PUBLIC_CLOUDINARY_URL!;
+
 export const NAVIGATION_LINKS = [
 	{
 		title: 'Home',

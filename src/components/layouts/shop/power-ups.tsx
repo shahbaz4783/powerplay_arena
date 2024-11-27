@@ -11,8 +11,9 @@ import {
 import { SubmitButton } from '../../common/buttons/submit-button';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { cloudinary_url } from '@/src/constants/app-config';
 
-export function InGameStore() {
+export function PowerUps() {
 	const initData = useInitData();
 	const telegramId = BigInt(initData?.user?.id!);
 	const invoice = initInvoice();
@@ -44,7 +45,7 @@ export function InGameStore() {
 				>
 					<div className='relative h-48'>
 						<Image
-							src={item.image}
+							src={cloudinary_url + item.image}
 							alt={item.title}
 							layout='fill'
 							objectFit='cover'

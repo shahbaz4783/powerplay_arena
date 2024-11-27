@@ -16,8 +16,7 @@ export const inGameItems: InGameItem[] = [
 		id: 'streak-shield',
 		title: 'Streak Shield',
 		description: 'Protects your daily reward streak from interruptions.',
-		image:
-			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
+		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
 		price: 199,
 		levels: [
 			{ level: 1, price: 1000, effect: 'Preserves streak for 1 missed day' },
@@ -33,8 +32,7 @@ export const inGameItems: InGameItem[] = [
 		id: 'fortune-amplifier',
 		title: 'Fortune Amplifier',
 		description: 'Permanently increases your betting payouts.',
-		image:
-			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
+		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
 		price: 299,
 		levels: [
 			{ level: 1, price: 2000, effect: '+5% increase to all betting payouts' },
@@ -54,8 +52,7 @@ export const inGameItems: InGameItem[] = [
 		id: 'reward-multiplier',
 		title: 'Reward Multiplier',
 		description: 'Permanently increases your daily reward.',
-		image:
-			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
+		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
 		price: 299,
 		levels: [
 			{ level: 1, price: 1500, effect: '+5% increase to daily reward' },
@@ -67,8 +64,7 @@ export const inGameItems: InGameItem[] = [
 		id: 'batting-enhancer',
 		title: 'Batting Enhancer',
 		description: 'Permanently boosts your batting skills in cricket matches.',
-		image:
-			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
+		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
 		price: 99,
 		levels: [
 			{
@@ -93,8 +89,7 @@ export const inGameItems: InGameItem[] = [
 		title: 'Bowling Precision',
 		description:
 			'Permanently enhances your bowling accuracy and speed in all games.',
-		image:
-			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
+		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
 		price: 99,
 		levels: [
 			{
@@ -116,7 +111,6 @@ export const inGameItems: InGameItem[] = [
 	},
 ];
 
-
 export interface RepeatablePurchaseItem {
 	id: string;
 	title: string;
@@ -134,8 +128,7 @@ export const consumableItems: RepeatablePurchaseItem[] = [
 		title: 'Star Striker Bundle',
 		description:
 			'A powerful combination of in-game coins and power pass to boost your gaming experience!',
-		image:
-			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
+		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
 		price: 149,
 		coins: 10000,
 		stars: 500,
@@ -145,8 +138,7 @@ export const consumableItems: RepeatablePurchaseItem[] = [
 		title: 'Coin Cache',
 		description:
 			'A hefty stash of coins to fuel your gameplay and betting adventures!',
-		image:
-			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
+		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
 		price: 49,
 		coins: 5000,
 	},
@@ -155,8 +147,7 @@ export const consumableItems: RepeatablePurchaseItem[] = [
 		title: 'Pass Pack',
 		description:
 			'A bundle of game passes for extended playtime and more opportunities!',
-		image:
-			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1731132322/Untitled_design_ueqh9m.jpg',
+		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
 		price: 49,
 		passes: 250,
 	},

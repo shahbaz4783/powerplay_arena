@@ -195,3 +195,32 @@ export const incrementStreak = (
 
 	return { newStreak, newWeeklyStreak };
 };
+
+export const calculateExchangeValues = (
+	passes: number
+): {
+	totalPassCost: number;
+	netPassSaleAmount: number;
+	exchangeFee: number;
+} => {
+	const CONVERSION_RATE = 20;
+	const FEE_RATE = 0.03;
+	const MIN_FEE = 5;
+
+	if (passes <= 0) {
+		return {
+			totalPassCost: 0,
+			netPassSaleAmount: 0,
+			exchangeFee: 0,
+		};
+	}
+
+	const baseAmount = passes * CONVERSION_RATE;
+	const exchangeFee = Math.max(Math.ceil(baseAmount * FEE_RATE), MIN_FEE);
+
+	return {
+		totalPassCost: baseAmount + exchangeFee,
+		netPassSaleAmount: baseAmount - exchangeFee,
+		exchangeFee,
+	};
+};
