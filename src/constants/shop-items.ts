@@ -1,63 +1,133 @@
+export interface FeaturedItem {
+	id: string;
+	title: string;
+	description: string;
+	image: string;
+}
+
+export const featuredItems: FeaturedItem[] = [
+	{
+		id: 'exchange_center',
+		title: 'Exchange Center',
+		description: 'Convert between Power Coins and Power Passes seamlessly.',
+		image:
+			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1732709602/1e882a7d-15f2-4238-87e2-3a8dc735d3d2_y7ornu.jpg',
+	},
+	{
+		id: 'avatars',
+		title: 'Avatars',
+		description: 'Personalize your look and boost XP with unique avatars.',
+		image:
+			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1732710262/81b6b8c4-6eba-4510-aa38-d00a4d8029de_cc246x.jpg',
+	},
+	{
+		id: 'packs',
+		title: 'Packs & Offers',
+		description: 'Unlock exclusive coin and pass packs for greater rewards.',
+		image:
+			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1732709878/4726cf6b-330c-43b6-baf3-1c9a73e9b8ed_usuq5q.jpg',
+	},
+	{
+		id: 'power_ups',
+		title: 'Power-Ups',
+		description:
+			'Enhance your gameplay with upgradable assets for bigger rewards.',
+		image:
+			'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1732710074/de3d8865-c979-4892-9942-812af2db29e5_wf5wfs.jpg',
+	},
+];
+
 export const avatars = [
 	{
-		id: 'classic_cricketer',
-		name: 'Classic Cricketer',
+		id: 'neon_valkyrie',
+		name: 'Neon Valkyrie',
+		price: 500,
+		xpGain: 150,
+		xpBoost: 15,
+		requiredLvl: 1,
+		description:
+			'A symbol of resilience and power, glowing with futuristic energy.',
+		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1732711938/4f6c0ca9-3b1d-4a22-8f51-39a0ef54a9b2_ucud8q.jpg',
+	},
+	{
+		id: 'shadow_wraith',
+		name: 'Shadow Wraith',
 		price: 100,
 		xpGain: 150,
 		requiredLvl: 1,
 		description:
-			"The embodiment of cricket's timeless elegance. This avatar showcases perfect technique, graceful strokes, and an unwavering respect for the game's traditions.",
-		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1730276717/classic-cricketer_eiq3bu.jpg',
+			'An enigmatic force cloaked in mystery, moving silently through the void.',
+		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1732711940/7f792b83-6003-48d5-a758-13de6f980913_yw9wwg.jpg',
 	},
 	{
-		id: 'spin_wizard',
-		name: 'Spin Wizard',
-		price: 100,
-		xpGain: 150,
-		requiredLvl: 1,
-		description:
-			'A master of deception and flight, this avatar can turn the ball on any surface. With a bag full of variations, it keeps batsmen guessing and wickets tumbling.',
-		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1730276717/spin-wizard_w266gy.jpg',
-	},
-	{
-		id: 'all_round_ace',
-		name: 'All-Round Ace',
+		id: 'cyber_ninja',
+		name: 'Cyber Phantom',
 		price: 200,
 		xpGain: 300,
-		requiredLvl: 2,
+		requiredLvl: 1,
 		description:
-			"Excelling in every aspect of the game, this avatar is the complete package. Equally adept at batting, bowling, and fielding, it's a game-changer in any situation.",
-		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1730276719/all-round-ace_txcqh0.jpg',
+			'A stealthy figure with unparalleled precision in the game’s mechanics.',
+		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1732711939/5aa5417d-7a49-4515-a233-c66a1893ffca_lqgcrm.jpg',
 	},
 	{
 		id: 'power_hitter',
-		name: 'Power Hitter',
+		name: 'Core Striker',
 		price: 300,
 		xpGain: 500,
-		requiredLvl: 3,
+		requiredLvl: 1,
 		description:
-			'A formidable batsman known for explosive shots and clearing boundaries with ease. This avatar radiates strength and confidence, ready to dominate any bowling attack.',
-		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1730276713/power-hitter_gavjyl.jpg',
+			'A master tactician driven to achieve peak performance with every move.',
+		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1732711946/e8029123-2f09-47c5-88ed-4173cfe4f737_x6knd3.jpg',
 	},
 	{
 		id: 'the_finisher',
-		name: 'The Finisher',
+		name: 'Digital Oracle',
 		price: 400,
 		xpGain: 1000,
-		requiredLvl: 4,
+		requiredLvl: 1,
 		description:
-			'Cool under pressure, this avatar thrives in high-stakes situations. Known for steering the team to victory in the final overs with calculated risks and precise shots.',
-		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1730276716/the-finisher_hxmbwe.jpg',
+			'An avatar with the power to foresee outcomes and adjust strategies to win.',
+		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1732711943/ab11b923-ea91-4509-8aa7-6eb7851de41a_bw8onw.jpg',
 	},
 	{
 		id: 'captain_charisma',
-		name: 'Captain Charisma',
+		name: 'Glitch Vanguard',
 		price: 500,
 		xpGain: 5000,
-		requiredLvl: 5,
+		requiredLvl: 1,
 		description:
-			'A natural leader with tactical brilliance and the ability to inspire. This avatar embodies the spirit of a captain who leads from the front and brings out the best in their team.',
-		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1730276718/captain-charisma_vtmduk.jpg',
+			'A trailblazer who thrives in unpredictable circumstances, embracing chaos.',
+		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1732711940/a7e49839-37d4-4573-a05c-0ba5a39c199c_kmui33.jpg',
+	},
+	{
+		id: 'quantum_guardian',
+		name: 'Quantum Guardian',
+		price: 500,
+		xpGain: 5000,
+		requiredLvl: 1,
+		description:
+			'A protector of balance in the virtual realms, exuding calm and authority.',
+		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1732711940/5339b73d-f235-4180-ab69-fe0618dd6d92_fogdx9.jpg',
+	},
+	{
+		id: 'luminous_archer',
+		name: 'Luminous Archer',
+		price: 500,
+		xpGain: 5000,
+		requiredLvl: 1,
+		description:
+			'A radiant figure with precision aim, striking with unerring accuracy.',
+		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1732711945/e6b85442-d90e-4b08-b60d-bad4074603a0_xha5j1.jpg',
+	},
+	{
+		id: 'neon_hunter',
+		name: 'Neon Hunter',
+		price: 500,
+		xpGain: 5000,
+		requiredLvl: 1,
+		description:
+			'An elusive figure who stalks the digital realm for untapped potential.',
+		href: 'https://res.cloudinary.com/dw2o2w9zg/image/upload/v1732711945/e69b05af-fc8c-42d4-9bd0-9b1c2666f2df_lqb6bn.jpg',
 	},
 ];
 

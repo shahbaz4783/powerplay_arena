@@ -38,7 +38,10 @@ export function InGameStore() {
 	return (
 		<div className='space-y-4'>
 			{inGameItems.map((item) => (
-				<motion.div key={item.id} className='bg-gradient-to-br from-slate-900 to-stone-900 rounded-xl overflow-hidden shadow-xl'>
+				<motion.div
+					key={item.id}
+					className='bg-gradient-to-br from-slate-900 to-stone-900 rounded-xl overflow-hidden shadow-xl'
+				>
 					<div className='relative h-48'>
 						<Image
 							src={item.image}

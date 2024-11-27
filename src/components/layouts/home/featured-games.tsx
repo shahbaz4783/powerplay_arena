@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { CoinsIcon, HandCoins, Swords } from 'lucide-react';
 import { FaBaseballBatBall } from 'react-icons/fa6';
 
-const GameCard = ({
+export const GameCard = ({
 	title,
 	description,
 	icon: Icon,

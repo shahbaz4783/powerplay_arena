@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { UserPlus, Share2, Bell, ChartLine, Gift } from 'lucide-react';
 import Link from 'next/link';
 
-const ActionButton = ({
+export const ActionButton = ({
 	icon: Icon,
 	label,
 	href,
@@ -14,7 +14,7 @@ const ActionButton = ({
 	label: string;
 	href: string;
 }) => (
-	<motion.button whileTap={{ scale: 0.95 }}>
+	<motion.button className='w-full' whileTap={{ scale: 0.95 }}>
 		<Link
 			href={href}
 			className='w-full bg-gray-800 rounded-xl p-4 flex flex-col items-center justify-center space-y-2 border-b-4 border-blue-500'

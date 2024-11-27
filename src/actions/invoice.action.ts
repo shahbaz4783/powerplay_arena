@@ -35,7 +35,7 @@ export async function generateItemInvoice(
 			telegramId: telegramId.toString(),
 		});
 		const currency = 'XTR';
-		const prices = [{ amount: selectedItem.price, label: selectedItem.title }];
+		const prices = [{ amount: 1, label: selectedItem.title }];
 
 		const invoiceLink = await bot.api.createInvoiceLink(
 			title,

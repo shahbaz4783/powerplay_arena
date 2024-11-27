@@ -8,7 +8,6 @@ import { token } from '@/src/constants/app-config';
 import { SubmitButton } from '../../common/buttons/submit-button';
 
 export function ConsumableItemCard() {
-	const isLoading = false;
 	return (
 		<div className='space-y-3'>
 			{consumableItems.map((item) => (

@@ -1,58 +1,59 @@
-import {
-	Tabs,
-	TabsContent,
-	TabsList,
-	TabsTrigger,
-} from '@/src/components/ui/tabs';
+'use client';
+
 import { Header } from '@/src/components/common/elements/header';
-import { PowerPassStore } from '@/src/components/layouts/shop/powerpass-store';
-import { AvatarStore } from '@/src/components/layouts/shop/avatar-store';
-import { RedemptionStore } from '@/src/components/layouts/shop/redeem-store';
-import { InGameStore } from '@/src/components/layouts/shop/ingame-store';
-import { ConsumableItemCard } from '@/src/components/layouts/shop/consumable-items';
+import { GameCard } from '@/src/components/layouts/home/featured-games';
+import { ActionButton } from '@/src/components/layouts/home/quick-actions';
+import { Shield, Package, Star, UserCircle } from 'lucide-react';
+import { FeaturedCarousel } from '@/src/components/layouts/shop/featured-carousel';
+import { PiSwap } from 'react-icons/pi';
 
 export default function ShopPage() {
 	return (
-		<div className='min-h-screen space-y-6 text-gray-100 relative overflow-hidden'>
+		<div className='space-y-4'>
 			<Header
 				title='Game Store'
 				subtitle='Get avatars, power passes, and more for your game.'
 			/>
-
-			<Tabs defaultValue='power-pass' className='w-full'>
-				<TabsList className='grid grid-cols-3 mb-8 gap-4 rounded-xl bg-slate-400 h-auto'>
-					<TabsTrigger
-						value='power-pass'
-						className='flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900'
-					>
-						Power Pass
-					</TabsTrigger>
-					<TabsTrigger
-						value='avatar'
-						className='flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900'
-					>
-						Avatars
-					</TabsTrigger>
-					<TabsTrigger
-						value='redemption'
-						className='flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900'
-					>
-						Redeem
-					</TabsTrigger>
-				</TabsList>
-
-				<TabsContent value='power-pass'>
-					<PowerPassStore />
-				</TabsContent>
-				<TabsContent value='avatar'>
-					<AvatarStore />
-				</TabsContent>
-				<TabsContent value='redemption'>
-					{/* <RedemptionStore /> */}
-					<InGameStore />
-					<ConsumableItemCard />
-				</TabsContent>
-			</Tabs>
+			<FeaturedCarousel />
+			<div className='grid grid-cols-3 gap-3'>
+				<div className='col-span-2 space-y-3'>
+					<GameCard
+						title='Consumables'
+						description='Stock up on essential items'
+						icon={Package}
+						href='/miniapp/shop/consumables'
+						accentColor='border-blue-500'
+					/>
+					<GameCard
+						title='Upgrades'
+						description='One-time purchases for lasting benefits'
+						icon={Shield}
+						href='/miniapp/shop/upgrades'
+						accentColor='border-blue-500'
+					/>
+				</div>
+				<div className='col-span-1 space-y-3 bg-slate-900 rounded-xl p-2 flex flex-col justify-center'>
+					<ActionButton
+						icon={UserCircle}
+						label='Avatar'
+						href='/miniapp/shop/avatar'
+					/>
+					<ActionButton
+						icon={PiSwap}
+						label='Power Pass'
+						href='/miniapp/shop/exchange'
+					/>
+				</div>
+				<div className='col-span-3'>
+					<GameCard
+						title='Special Offers'
+						description='Limited-time deals and bundles'
+						icon={Star}
+						href='/miniapp/shop/offers'
+						accentColor='border-blue-500'
+					/>
+				</div>
+			</div>
 		</div>
 	);
 }
