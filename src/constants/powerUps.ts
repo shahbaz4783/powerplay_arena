@@ -13,46 +13,23 @@ export interface InGameItem {
 
 export const inGameItems: InGameItem[] = [
 	{
-		id: 'streak-shield',
-		title: 'Streak Shield',
+		id: 'streak-guardian',
+		title: 'Streak Guardian',
 		description: 'Protects your daily reward streak from interruptions.',
-		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
+		image: 'v1732801673/bdfc8b5f-0ba9-4296-b7ab-327af0e29778_cwuatt.jpg',
 		price: 199,
 		levels: [
 			{ level: 1, price: 1000, effect: 'Preserves streak for 1 missed day' },
 			{ level: 5, price: 5000, effect: 'Preserves streak for 2 missed days' },
-			{
-				level: 10,
-				price: 10000,
-				effect: 'Preserves streak for 3 missed days',
-			},
+			{ level: 10, price: 10000, effect: 'Preserves streak for 3 missed days' },
 		],
 	},
+
 	{
-		id: 'fortune-amplifier',
-		title: 'Fortune Amplifier',
-		description: 'Permanently increases your betting payouts.',
-		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
-		price: 299,
-		levels: [
-			{ level: 1, price: 2000, effect: '+5% increase to all betting payouts' },
-			{
-				level: 5,
-				price: 10000,
-				effect: '+25% increase to all betting payouts',
-			},
-			{
-				level: 10,
-				price: 20000,
-				effect: '+50% increase to all betting payouts',
-			},
-		],
-	},
-	{
-		id: 'reward-multiplier',
-		title: 'Reward Multiplier',
+		id: 'daily-bounty-booster',
+		title: 'Daily Bounty Booster',
 		description: 'Permanently increases your daily reward.',
-		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
+		image: 'v1732802010/573f3e02-9976-41a2-a206-2c1e64e6be8c_vwnisk.jpg',
 		price: 299,
 		levels: [
 			{ level: 1, price: 1500, effect: '+5% increase to daily reward' },
@@ -61,10 +38,10 @@ export const inGameItems: InGameItem[] = [
 		],
 	},
 	{
-		id: 'batting-enhancer',
-		title: 'Batting Enhancer',
+		id: 'cricket-bat-maestro',
+		title: 'Cricket Bat Maestro',
 		description: 'Permanently boosts your batting skills in cricket matches.',
-		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
+		image: 'v1732799875/1f7cc70d-d61a-4fb9-a85c-a19c25f9c0af_qqkk9b.jpg',
 		price: 99,
 		levels: [
 			{
@@ -85,12 +62,58 @@ export const inGameItems: InGameItem[] = [
 		],
 	},
 	{
-		id: 'bowling-precision',
-		title: 'Bowling Precision',
+		id: 'winnings-xcelerator',
+		title: 'Winnings Xcelerator',
 		description:
-			'Permanently enhances your bowling accuracy and speed in all games.',
-		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
+			'Increases your betting rewards by up to 25%, with the potential to double them at max level.',
+		image: 'v1732802822/76ae53a7-6abd-426c-af53-b2c4ce111b13_f550n5.jpg',
+		price: 299,
+		levels: [
+			{ level: 1, price: 2000, effect: '+5% increase to all betting payouts' },
+			{
+				level: 5,
+				price: 10000,
+				effect: '+25% increase to all betting payouts',
+			},
+			{
+				level: 10,
+				price: 20000,
+				effect: '+50% increase to all betting payouts',
+			},
+		],
+	},
+	{
+		id: 'bowling-dominator',
+		title: 'Bowling Dominator',
+		description:
+			'Enhances your bowling skills, increasing your chances of taking more wickets in every match.',
+		image: 'v1732803683/48f94361-7b1f-4f38-b648-7bdcf8667807_tjehg5.jpg',
 		price: 99,
+		levels: [
+			{
+				level: 1,
+				price: 2500,
+				effect: '+5% bowling performance in all matches',
+			},
+			{
+				level: 5,
+				price: 12500,
+				effect: '+25% bowling performance in all matches',
+			},
+			{
+				level: 10,
+				price: 25000,
+				effect: '+50% bowling performance in all matches',
+			},
+		],
+	},
+	{
+		id: 'exchange_optimizer',
+		title: 'Exchange Optimizer',
+		description:
+			'Minimizes exchange fees, maximizing your coin’s value during every transaction.',
+		image: 'v1732804104/5604eaaa-3cfe-4bcd-a8ae-9c03c65ca184_h51izx.jpg',
+		price: 199,
 		levels: [
 			{
 				level: 1,
