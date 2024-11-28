@@ -7,6 +7,7 @@ import { responseMessages } from '../constants/messages';
 import { LevelInfo } from '../types/gameState';
 import { calculateExchangeValues, calculateLevel } from '../lib/utils';
 import { inGameItems } from '../constants/powerUps';
+import { token } from '../constants/app-config';
 
 export const purchasePowerPass = async (
 	telegramId: bigint,
@@ -240,7 +241,7 @@ export const executePowerExchange = async (
 
 	const totalPass = Number(formData.get('totalPass'));
 	const exchangeDirection = formData.get('exchangeDirection');
-	const { exchangeFee, netPassSaleAmount, totalPassCost } =
+	const { netPassSaleAmount, totalPassCost } =
 		calculateExchangeValues(totalPass);
 
 	try {
@@ -268,6 +269,15 @@ export const executePowerExchange = async (
 						powerPass: { increment: totalPass },
 					},
 				});
+				await tx.transaction.create({
+					data: {
+						telegramId,
+						amount: totalPassCost,
+						balanceEffect: 'DECREMENT',
+						type: 'PURCHASE',
+						description: `Exchanged ${totalPass} ${token.pass}`,
+					},
+				});
 			}
 
 			if (exchangeDirection === 'sellPasses') {
@@ -285,18 +295,18 @@ export const executePowerExchange = async (
 						powerPass: { decrement: totalPass },
 					},
 				});
+				await tx.transaction.create({
+					data: {
+						telegramId,
+						amount: netPassSaleAmount,
+						balanceEffect: 'INCREMENT',
+						type: 'PURCHASE',
+						description: `Sold ${totalPass} ${token.pass}`,
+					},
+				});
 			}
-			// await tx.transaction.create({
-			// 	data: {
-			// 		telegramId,
-			// 		amount: totalCost,
-			// 		balanceEffect: 'DECREMENT',
-			// 		type: 'PURCHASE',
-			// 		description: `Purchase ${itemQuantity} ${packInfo.name}`,
-			// 	},
-			// });
 			return {
-				message: { success: responseMessages.shop.success.itemPurchased },
+				message: { success: responseMessages.shop.success.exchangeCompleted },
 			};
 		});
 	} catch (error) {

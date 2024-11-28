@@ -21,7 +21,7 @@ export function SubmitButton({
 	return (
 		<>
 			<ShinyButton
-				disabled={pending}
+				disabled={disabled || pending}
 				onClick={onClick}
 				className={className}
 				text={title}

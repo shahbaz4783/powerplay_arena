@@ -124,6 +124,8 @@ export const responseMessages = {
 			subscriptionActivated:
 				'Subscription activated. Enjoy your premium benefits!',
 			auctionBidPlaced: 'Your bid has been placed successfully. Good luck!',
+			exchangeCompleted:
+				'The exchange successfully completed. Your balance has been updated.',
 		},
 		error: {
 			itemNotFound:
