@@ -42,59 +42,63 @@ export function PowerUps() {
 	const [response, formAction] = useFormState(handlePurchase, initialState);
 
 	return (
-		<div className='space-y-6'>
+		<div className='space-y-4'>
 			{inGameItems.map((item) => (
 				<motion.div
 					key={item.id}
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 				>
-					<div className='rounded-xl flex bg-gray-900 border border-gray-800 overflow-hidden'>
-						<div className='relative w-full sm:w-1/3 h-48 sm:h-auto min-w-[200px]'>
-							<Image
-								src={cloudinary_url + item.image}
-								alt={item.title}
-								layout='fill'
-								objectFit='cover'
-								className='transition-transform duration-300 group-hover:scale-105'
-							/>
+					<div className='rounded-xl grid grid-cols-3 bg-gray-900 backdrop-blur-sm border border-gray-800 overflow-hidden'>
+						<aside className='relative col-span-1 h-full'>
+							<div className='absolute inset-0'>
+								<Image
+									src={cloudinary_url + item.image}
+									alt={item.title}
+									fill
+									className='object-cover'
+									draggable={false}
+									priority
+								/>
+							</div>
 							<Button
 								onClick={() => setSelectedItem(item.id)}
 								variant={'ghost'}
-								className='absolute top-3 right-3 bg-black/50 p-2 rounded-full backdrop-blur-sm hover:bg-black/70 transition-colors'
+								className='absolute top-2 right-2 bg-black/50 p-2 rounded-full backdrop-blur-sm hover:bg-black/70 z-10'
 							>
 								<Info className='w-5 h-5 text-white' />
 							</Button>
-						</div>
+						</aside>
 
-						<div className='w-full md:w-2/3 p-6 flex flex-col justify-between'>
+						<aside className='col-span-2 p-4 flex gap-3 flex-col justify-between'>
 							<div>
-								<div className='flex justify-between items-start mb-4'>
-									<h3 className='text-lg font-bold text-white'>
-										{item.title}
-									</h3>
+								<div className='flex justify-between items-start mb-3'>
+									<h3 className='text-lg font-bold text-white'>{item.title}</h3>
 								</div>
-								<p className='text-slate-400 mb-6 text-xs'>
+								<p className='text-slate-400 text-xs leading-relaxed'>
 									{item.description}
 								</p>
 							</div>
-							<div className='flex items-center justify-between'>
-								<div className='flex items-center space-x-2'>
-									<Star className='w-6 h-6 text-yellow-500 fill-yellow-500' />
-									<span className='text-white font-bold text-xl'>
+							<footer className='flex items-center justify-between bg-slate-700/50 backdrop-blur-md p-2 rounded-xl'>
+								<div className='flex items-center space-x-1'>
+									<Star className='w-4 h-4 text-yellow-500 fill-yellow-500' />
+									<span className='text-white font-bold text-'>
 										{item.price}
 									</span>
 								</div>
 
 								<form action={formAction}>
 									<input type='hidden' name='itemId' value={item.id} />
-									<SubmitButton title='Purchase' loadingTitle='Purchasing...' />
+									<SubmitButton
+										title='Purchase'
+										loadingTitle='Purchasing...'
+										className='bg-gradient-to-r from-purple-500 to-pink-500 px-3 py-2'
+									/>
 								</form>
-							</div>
-						</div>
+							</footer>
+						</aside>
 					</div>
 
-					{/* Level Info Modal */}
 					<LevelInfo
 						isOpen={selectedItem === item.id}
 						onClose={() => setSelectedItem(null)}

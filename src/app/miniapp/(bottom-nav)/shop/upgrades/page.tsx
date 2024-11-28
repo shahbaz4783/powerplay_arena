@@ -5,7 +5,10 @@ import React from 'react';
 export default function UpgradeStorePage() {
 	return (
 		<div className='space-y-4'>
-			<Header title='Consumable Store' subtitle='Low on balance? Fill it up.' />
+			<Header
+				title='Power-Ups'
+				subtitle='Level up your gaming experience with powerful upgrades'
+			/>
 			<PowerUps />
 		</div>
 	);
