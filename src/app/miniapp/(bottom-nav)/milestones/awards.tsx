@@ -2,8 +2,8 @@
 
 import { useMilestones } from '@/src/hooks/useMilestone';
 import { motion } from 'framer-motion';
-import { AwardCard } from '../../common/cards/award-card';
-import { MessageCard } from '../../common/cards/message-card';
+import { AwardCard } from '../../../../components/common/cards/award-card';
+import { MessageCard } from '../../../../components/common/cards/message-card';
 
 export function Awards() {
 	const { claimedAwards } = useMilestones();

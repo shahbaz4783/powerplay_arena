@@ -1,8 +1,8 @@
 'use client';
 
 import { useMilestones } from '@/src/hooks/useMilestone';
-import { MilestoneCard } from '../../common/cards/milestone-card';
-import { MessageCard } from '../../common/cards/message-card';
+import { MilestoneCard } from '../../../../components/common/cards/milestone-card';
+import { MessageCard } from '../../../../components/common/cards/message-card';
 
 export function UnclaimedRewards() {
 	const { unclaimedAwards, userId } = useMilestones();

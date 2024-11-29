@@ -1,4 +1,4 @@
-import TasksList from '@/src/components/layouts/other-tasks/tasks';
+import TasksList from '@/src/app/miniapp/tasks/tasks';
 
 const TaskPage = () => {
 	return (

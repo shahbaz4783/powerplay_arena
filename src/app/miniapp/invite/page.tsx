@@ -1,7 +1,7 @@
 import { Header } from '@/src/components/common/elements/header';
-import { InviteBonusInfo } from '@/src/components/layouts/other-tasks/invite-bonus-info';
-import { InviteLink } from '@/src/components/layouts/other-tasks/invite-link';
-import { InviteList } from '@/src/components/layouts/other-tasks/invite-list';
+import { InviteBonusInfo } from '@/src/app/miniapp/invite/invite-bonus-info';
+import { InviteLink } from '@/src/app/miniapp/invite/invite-link';
+import { InviteList } from '@/src/app/miniapp/invite/invite-list';
 
 const InvitePage = () => {
 	return (

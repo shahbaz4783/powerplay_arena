@@ -9,8 +9,8 @@ import { token } from '@/src/constants/app-config';
 import { Card } from '@/src/components/ui/card';
 import { saveOrUpdateUser } from '@/src/actions/user.action';
 import { Coins, Zap } from 'lucide-react';
-import { AvatarDialog } from '../../common/dialog/avatar-dialog';
-import { Skeleton } from '../../ui/skeleton';
+import { AvatarDialog } from '../../../components/common/dialog/avatar-dialog';
+import { Skeleton } from '../../../components/ui/skeleton';
 
 export function ProfileSummary() {
 	const initData = useInitData();
@@ -41,7 +41,7 @@ export function ProfileSummary() {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
 			>
-				<AvatarDialog userId={user?.id!} currentAvatar={profile?.avatarUrl!} />
+				<AvatarDialog userId={user?.id!} currentAvatar={user?.photoUrl!} />
 				<UserStats
 					isLoading={isLoading}
 					level={profile?.level}

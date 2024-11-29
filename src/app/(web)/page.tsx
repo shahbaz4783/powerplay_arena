@@ -1,5 +1,5 @@
-import LeadSection from '@/src/components/layouts/web/lead-section';
-import Navbar from '@/src/components/layouts/web/navbar';
+import LeadSection from '@/src/app/(web)/lead-section';
+import Navbar from '@/src/app/(web)/navbar';
 
 export default function Home() {
 	return (

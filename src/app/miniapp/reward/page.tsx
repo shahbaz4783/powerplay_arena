@@ -1,5 +1,5 @@
 import { Header } from '@/src/components/common/elements/header';
-import { DailyReward } from '@/src/components/layouts/daily-reward/daily-reward';
+import { DailyReward } from '@/src/app/miniapp/reward/daily-reward';
 
 export default function RewardPage() {
 	return (

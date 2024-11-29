@@ -5,14 +5,13 @@ import {
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
+	DialogTrigger,
 } from '@/src/components/ui/dialog';
 import { token } from '@/src/constants/app-config';
 import { motion } from 'framer-motion';
-import { Star, Zap, TrendingUp, Shield } from 'lucide-react';
+import { Star, Zap, TrendingUp, Shield, Info } from 'lucide-react';
 
 interface LevelInfoProps {
-	isOpen: boolean;
-	onClose: () => void;
 	title: string;
 	levels: {
 		level: number;
@@ -20,12 +19,15 @@ interface LevelInfoProps {
 	}[];
 }
 
-export function LevelInfo({ isOpen, onClose, title, levels }: LevelInfoProps) {
+export function LevelInfo({ title, levels }: LevelInfoProps) {
 	const startEffect = levels.find((l) => l.level === 1)?.effect || '';
 	const maxEffect = levels.find((l) => l.level === 10)?.effect || '';
 
 	return (
-		<Dialog open={isOpen} onOpenChange={onClose}>
+		<Dialog>
+			<DialogTrigger className='absolute top-2 right-2 bg-black/50 p-2 rounded-full backdrop-blur-sm hover:bg-black/70 z-10'>
+				<Info className='w-5 h-5 text-white' />
+			</DialogTrigger>
 			<DialogContent className='bg-gray-900 border border-gray-800 w-11/12 rounded-xl p-0 overflow-hidden'>
 				<DialogHeader className='p-6 bg-gradient-to-r from-purple-600/20 to-pink-800 border-b border-gray-800'>
 					<DialogTitle className='text-2xl font-bold text-white flex items-center gap-2'>

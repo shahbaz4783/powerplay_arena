@@ -1,10 +1,10 @@
 'use client';
 
 import { Header } from '@/src/components/common/elements/header';
-import { GameCard } from '@/src/components/layouts/home/featured-games';
-import { ActionButton } from '@/src/components/layouts/home/quick-actions';
+import { GameCard } from '@/src/app/miniapp/(bottom-nav)/featured-games';
+import { ActionButton } from '@/src/app/miniapp/(bottom-nav)/quick-actions';
 import { Shield, Package, Star, UserCircle } from 'lucide-react';
-import { FeaturedCarousel } from '@/src/components/layouts/shop/featured-carousel';
+import { FeaturedCarousel } from '@/src/app/miniapp/(bottom-nav)/shop/featured-carousel';
 import { PiSwap } from 'react-icons/pi';
 
 export default function ShopPage() {
@@ -18,17 +18,17 @@ export default function ShopPage() {
 			<div className='grid grid-cols-3 gap-3'>
 				<div className='col-span-2 space-y-3'>
 					<GameCard
-						title='Consumables'
-						description='Stock up on essential items'
-						icon={Package}
-						href='/miniapp/shop/consumables'
+						title='Power-Ups'
+						description='In-game assets for lasting benefits'
+						icon={Shield}
+						href='/miniapp/shop/powerups'
 						accentColor='border-blue-500'
 					/>
 					<GameCard
-						title='Upgrades'
-						description='One-time purchases for lasting benefits'
-						icon={Shield}
-						href='/miniapp/shop/upgrades'
+						title='Resource Bank'
+						description='Stock up on essential items'
+						icon={Package}
+						href='/miniapp/shop/resource-bank'
 						accentColor='border-blue-500'
 					/>
 				</div>

@@ -1,7 +1,5 @@
 import { Header } from '@/src/components/common/elements/header';
-import { InGameExchange } from '@/src/components/layouts/shop/exchange-center';
-import { PowerPassStore } from '@/src/components/layouts/shop/powerpass-store';
-import React from 'react';
+import { InGameExchange } from '@/src/app/miniapp/(bottom-nav)/shop/exchange/exchange-center';
 
 export default function ExchangeStorePage() {
 	return (
@@ -10,7 +8,6 @@ export default function ExchangeStorePage() {
 				title='Power Exchange'
 				subtitle='Convert between Power Coins and Power Pass seamlessly'
 			/>
-			{/* <PowerPassStore /> */}
 			<InGameExchange />
 		</div>
 	);

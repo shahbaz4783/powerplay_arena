@@ -3,8 +3,8 @@
 import { avatars } from '@/src/constants/shop-items';
 import { useInitData } from '@telegram-apps/sdk-react';
 import { useFormState } from 'react-dom';
-import { purchaseAvatar, purchasePowerPass } from '@/src/actions/shop.action';
-import { ShopItemCard } from '../../common/cards/shop-item-card';
+import { purchaseAvatar } from '@/src/actions/shop.action';
+import { ShopItemCard } from '../../../../../components/common/cards/shop-item-card';
 import { cloudinary_url } from '@/src/constants/app-config';
 
 export function AvatarStore() {

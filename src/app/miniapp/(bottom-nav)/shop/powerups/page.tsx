@@ -1,5 +1,5 @@
 import { Header } from '@/src/components/common/elements/header';
-import { PowerUps } from '@/src/components/layouts/shop/power-ups';
+import { PowerUps } from '@/src/app/miniapp/(bottom-nav)/shop/powerups/power-ups';
 import React from 'react';
 
 export default function UpgradeStorePage() {

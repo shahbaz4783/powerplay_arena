@@ -21,6 +21,7 @@ import { SubmitButton } from '../buttons/submit-button';
 import { cn } from '@/src/lib/utils';
 import { updateAvatar } from '@/src/actions/user.action';
 import { MessageCard } from '../cards/message-card';
+import { cloudinary_url } from '@/src/constants/app-config';
 
 interface AvatarData {
 	id: string;
@@ -94,7 +95,10 @@ export function AvatarDialog({
 										>
 											<div className='relative'>
 												<Avatar className='h-16 w-16'>
-													<AvatarImage src={avatar.href} alt={avatar.title} />
+													<AvatarImage
+														src={cloudinary_url + avatar.href}
+														alt={avatar.title}
+													/>
 													<AvatarFallback>
 														<User className='h-8 w-8' />
 													</AvatarFallback>

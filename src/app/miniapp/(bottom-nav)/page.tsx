@@ -1,7 +1,7 @@
-import { FeaturedGames } from '@/src/components/layouts/home/featured-games';
-import { FeaturedTiles } from '@/src/components/layouts/home/featured-tiles';
-import { ProfileSummary } from '@/src/components/layouts/home/profile-summary';
-import { QuickActions } from '@/src/components/layouts/home/quick-actions';
+import { FeaturedGames } from '@/src/app/miniapp/(bottom-nav)/featured-games';
+import { FeaturedTiles } from '@/src/app/miniapp/(bottom-nav)/featured-tiles';
+import { ProfileSummary } from '@/src/app/miniapp/(bottom-nav)/profile-summary';
+import { QuickActions } from '@/src/app/miniapp/(bottom-nav)/quick-actions';
 
 const MiniAppHomePage = () => {
 	return (

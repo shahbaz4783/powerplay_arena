@@ -1,5 +1,5 @@
 import { Header } from '@/src/components/common/elements/header';
-import { TransactionLists } from '@/src/components/layouts/activity/all-transaction';
+import { TransactionLists } from '@/src/app/miniapp/(bottom-nav)/activity/all-transaction';
 
 export default function Treasury() {
 	return (

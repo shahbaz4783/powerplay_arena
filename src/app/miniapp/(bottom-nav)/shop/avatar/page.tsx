@@ -1,5 +1,5 @@
 import { Header } from '@/src/components/common/elements/header';
-import { AvatarStore } from '@/src/components/layouts/shop/avatar-store';
+import { AvatarStore } from '@/src/app/miniapp/(bottom-nav)/shop/avatar/avatar-store';
 
 export default function AvatarStorePage() {
 	return (

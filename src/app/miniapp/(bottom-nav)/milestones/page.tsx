@@ -1,7 +1,7 @@
 import { Header } from '@/src/components/common/elements/header';
-import { Awards } from '@/src/components/layouts/milestones/awards';
-import { MilestonesPage } from '@/src/components/layouts/milestones/game-milestones';
-import { UnclaimedRewards } from '@/src/components/layouts/milestones/unclaimed-rewards';
+import { Awards } from '@/src/app/miniapp/(bottom-nav)/milestones/awards';
+import { MilestonesPage } from '@/src/app/miniapp/(bottom-nav)/milestones/game-milestones';
+import { UnclaimedRewards } from '@/src/app/miniapp/(bottom-nav)/milestones/unclaimed-rewards';
 import {
 	Tabs,
 	TabsContent,

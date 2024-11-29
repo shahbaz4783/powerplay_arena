@@ -12,13 +12,13 @@ import {
 	CardTitle,
 } from '@/src/components/ui/card';
 import { SubmitButton } from '@/src/components/common/buttons/submit-button';
-import { StreakInfo } from './streak-info';
 import { RewardGrid } from './reward-grid';
-import { WeeklyBoost } from './weekly-boost';
-import { MessageCard } from '../../common/cards/message-card';
-import { ServerResponse } from '../../common/message/server-response';
+import { MessageCard } from '../../../components/common/cards/message-card';
+import { ServerResponse } from '../../../components/common/message/server-response';
 import { AlertCircle } from 'lucide-react';
 import { getStreakStatus } from '@/src/lib/utils';
+import { StreakInfo } from './streak-info';
+import { WeeklyBoost } from './weekly-boost';
 
 export function DailyReward() {
 	const initData = useInitData();

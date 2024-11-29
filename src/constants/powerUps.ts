@@ -144,30 +144,29 @@ export interface RepeatablePurchaseItem {
 
 export const consumableItems: RepeatablePurchaseItem[] = [
 	{
-		id: 'star-striker-bundle',
-		title: 'Star Striker Bundle',
+		id: 'stellar-boost-bundle',
+		title: 'Stellar Boost Bundle',
 		description:
-			'A powerful combination of in-game coins and power pass to boost your gaming experience!',
-		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
+			'A dynamic combo of coins and passes to accelerate your progress!',
+		image: 'v1732874371/dd1adff0-944d-4b4d-aa52-0195c994ddd6_fawqvd.jpg',
 		price: 149,
 		coins: 10000,
-		stars: 500,
+		passes: 500,
 	},
 	{
-		id: 'coin-cache',
-		title: 'Coin Cache',
-		description:
-			'A hefty stash of coins to fuel your gameplay and betting adventures!',
-		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
+		id: 'treasure-vault',
+		title: 'Treasure Vault',
+		description: 'A bountiful reserve of coins to enhance your gameplay!',
+		image: 'v1732874370/0bbe8c70-2d0a-4661-852f-b7b584a8b9a6_z0hbxn.jpg',
 		price: 49,
 		coins: 5000,
 	},
 	{
-		id: 'pass-pack',
-		title: 'Pass Pack',
+		id: 'pass-stash',
+		title: 'Pass Stash',
 		description:
-			'A bundle of game passes for extended playtime and more opportunities!',
-		image: 'v1731132322/Untitled_design_ueqh9m.jpg',
+			'A collection of game passes for uninterrupted play!',
+		image: 'v1732874370/acdb409d-a9e5-44cb-a4e7-dd365c2c13b0_mdo6y2.jpg',
 		price: 49,
 		passes: 250,
 	},

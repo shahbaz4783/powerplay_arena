@@ -1,6 +1,6 @@
 import { SOCIAL_TASKS_LIST } from '@/src/constants/engagement-data';
-import { Header } from '../../common/elements/header';
-import ListItem from '../../common/elements/list-item';
+import { Header } from '../../../components/common/elements/header';
+import ListItem from '../../../components/common/elements/list-item';
 
 const TasksList = () => {
 	return (
