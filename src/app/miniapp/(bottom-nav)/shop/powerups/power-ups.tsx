@@ -38,7 +38,7 @@ export function PowerUps() {
 	return (
 		<main className='space-y-4'>
 			{inGameItems.map((item) => (
-				<ItemCard {...item} onPurchase={formAction} />
+				<ItemCard key={item.id} {...item} onPurchase={formAction} />
 			))}
 		</main>
 	);

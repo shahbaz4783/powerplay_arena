@@ -7,7 +7,7 @@ export function ConsumableItemCard() {
 	return (
 		<div className='space-y-3'>
 			{consumableItems.map((item) => (
-				<ItemCard {...item} onPurchase={() => {}} />
+				<ItemCard key={item.id} {...item} onPurchase={() => {}} />
 			))}
 		</div>
 	);

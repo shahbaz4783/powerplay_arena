@@ -28,7 +28,6 @@ export function ItemCard({
 }: ItemCardProps) {
 	return (
 		<motion.div
-			key={id}
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			className='rounded-xl grid grid-cols-3 bg-gray-900 backdrop-blur-sm border border-gray-800 overflow-hidden'
