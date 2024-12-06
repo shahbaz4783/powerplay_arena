@@ -57,3 +57,32 @@ export async function generateItemInvoice(
 		}
 	}
 }
+
+
+
+export async function mintPowerUp(
+	telegramId: bigint,
+	prevState: PurchaseState,
+	formData: FormData
+) {
+	try {
+		const itemId = formData.get('itemId') as string;
+		const selectedItem = inGameItems.find((item) => item.id === itemId);
+
+		if (!selectedItem) {
+			return {
+				success: false,
+				error: responseMessages.shop.error.itemNotFound,
+			};
+		}
+	} catch (error) {
+		if (error instanceof Error) {
+			return { success: false, error: error.message };
+		} else {
+			return {
+				success: false,
+				error: responseMessages.transaction.error.transactionFailed,
+			};
+		}
+	}
+}

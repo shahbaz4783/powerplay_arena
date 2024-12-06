@@ -39,8 +39,7 @@ export const avatars = [
 		name: 'Neon Valkyrie',
 		price: 500,
 		xpGain: 150,
-		xpBoost: 15,
-		requiredLvl: 1,
+		rarity: 'common',
 		description:
 			'A symbol of resilience and power, glowing with futuristic energy.',
 		href: 'v1732711938/4f6c0ca9-3b1d-4a22-8f51-39a0ef54a9b2_ucud8q.jpg',
@@ -50,47 +49,47 @@ export const avatars = [
 		name: 'Shadow Wraith',
 		price: 100,
 		xpGain: 150,
-		requiredLvl: 1,
+		rarity: 'uncommon',
 		description:
 			'An enigmatic force cloaked in mystery, moving silently through the void.',
 		href: 'v1732711940/7f792b83-6003-48d5-a758-13de6f980913_yw9wwg.jpg',
 	},
 	{
-		id: 'cyber_ninja',
+		id: 'cyber_phantoma',
 		name: 'Cyber Phantom',
 		price: 200,
 		xpGain: 300,
-		requiredLvl: 1,
+		rarity: 'epic',
 		description:
 			'A stealthy figure with unparalleled precision in the game’s mechanics.',
 		href: 'v1732711939/5aa5417d-7a49-4515-a233-c66a1893ffca_lqgcrm.jpg',
 	},
 	{
-		id: 'power_hitter',
+		id: 'core_striker',
 		name: 'Core Striker',
 		price: 300,
 		xpGain: 500,
-		requiredLvl: 1,
+		rarity: 'uncommon',
 		description:
 			'A master tactician driven to achieve peak performance with every move.',
 		href: 'v1732711946/e8029123-2f09-47c5-88ed-4173cfe4f737_x6knd3.jpg',
 	},
 	{
-		id: 'the_finisher',
+		id: 'digital_oracle',
 		name: 'Digital Oracle',
 		price: 400,
 		xpGain: 1000,
-		requiredLvl: 1,
+		rarity: 'rare',
 		description:
 			'An avatar with the power to foresee outcomes and adjust strategies to win.',
 		href: 'v1732711943/ab11b923-ea91-4509-8aa7-6eb7851de41a_bw8onw.jpg',
 	},
 	{
-		id: 'captain_charisma',
+		id: 'glitch_vanguard',
 		name: 'Glitch Vanguard',
 		price: 500,
 		xpGain: 5000,
-		requiredLvl: 1,
+		rarity: 'common',
 		description:
 			'A trailblazer who thrives in unpredictable circumstances, embracing chaos.',
 		href: 'v1732711940/a7e49839-37d4-4573-a05c-0ba5a39c199c_kmui33.jpg',
@@ -100,7 +99,7 @@ export const avatars = [
 		name: 'Quantum Guardian',
 		price: 500,
 		xpGain: 5000,
-		requiredLvl: 1,
+		rarity: 'legendary',
 		description:
 			'A protector of balance in the virtual realms, exuding calm and authority.',
 		href: 'v1732711940/5339b73d-f235-4180-ab69-fe0618dd6d92_fogdx9.jpg',
@@ -110,7 +109,7 @@ export const avatars = [
 		name: 'Luminous Archer',
 		price: 500,
 		xpGain: 5000,
-		requiredLvl: 1,
+		rarity: 'rare',
 		description:
 			'A radiant figure with precision aim, striking with unerring accuracy.',
 		href: 'v1732711945/e6b85442-d90e-4b08-b60d-bad4074603a0_xha5j1.jpg',
@@ -120,7 +119,7 @@ export const avatars = [
 		name: 'Neon Hunter',
 		price: 500,
 		xpGain: 5000,
-		requiredLvl: 1,
+		rarity: 'mythic',
 		description:
 			'An elusive figure who stalks the digital realm for untapped potential.',
 		href: 'v1732711945/e69b05af-fc8c-42d4-9bd0-9b1c2666f2df_lqb6bn.jpg',

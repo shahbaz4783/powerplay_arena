@@ -31,8 +31,8 @@ export function AvatarStore() {
 					name={avatar.name}
 					xpGain={avatar.xpGain}
 					onPurchase={formAction}
-					requiredLevel={avatar.requiredLvl}
 					description={avatar.description}
+					requiredLevel={1}
 					serverResponse={response}
 				/>
 			))}

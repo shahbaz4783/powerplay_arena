@@ -26,6 +26,31 @@ model User {
   betStats     BetStats[]
   award        Award[]
   avatar       Avatar[]
+  powerUps     PowerUps[]
+  starsTransaction StarsTransaction[]
+}
+
+model PowerUps {
+  id String    @id @default(cuid())
+  ownedBy BigInt
+  powerUpId String
+  title String
+  description String
+  image String
+  currentLevel Int
+  currentBoost Decimal
+  user        User   @relation(fields: [ownedBy], references: [telegramId], onDelete: Cascade)
+  
+  @@index([ownedBy])
+}
+
+model StarsTransaction {
+  id             String    @id @default(cuid())
+  telegramId BigInt
+  title String
+  description String
+  image String
+  user          User              @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
 }
 
 model Profile {

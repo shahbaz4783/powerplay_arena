@@ -19,7 +19,7 @@ interface LevelInfoProps {
 	}[];
 }
 
-export function LevelInfo({ title, levels }: LevelInfoProps) {
+export function ItemInfo({ title, levels }: LevelInfoProps) {
 	const startEffect = levels.find((l) => l.level === 1)?.effect || '';
 	const maxEffect = levels.find((l) => l.level === 10)?.effect || '';
 

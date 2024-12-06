@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { cloudinary_url } from '@/src/constants/app-config';
 import { Star } from 'lucide-react';
-import { LevelInfo } from '../../common/dialog/level-info';
+import { ItemInfo } from '../dialog/item-info';
 
 interface ItemCardProps {
 	id: string;
@@ -43,7 +43,7 @@ export function ItemCard({
 						priority
 					/>
 				</div>
-				{levels && <LevelInfo title={title} levels={levels} />}
+				{levels && <ItemInfo title={title} levels={levels} />}
 			</aside>
 
 			<aside className='col-span-2 p-4 flex gap-3 flex-col justify-between'>

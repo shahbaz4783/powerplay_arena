@@ -9,8 +9,8 @@ import { token } from '@/src/constants/app-config';
 import { Card } from '@/src/components/ui/card';
 import { saveOrUpdateUser } from '@/src/actions/user.action';
 import { Coins, Zap } from 'lucide-react';
-import { AvatarDialog } from '../../../components/common/dialog/avatar-dialog';
-import { Skeleton } from '../../../components/ui/skeleton';
+import { AvatarDialog } from '../../common/dialog/avatar-dialog';
+import { Skeleton } from '../../ui/skeleton';
 
 export function ProfileSummary() {
 	const initData = useInitData();
@@ -34,7 +34,7 @@ export function ProfileSummary() {
 	const xpForNextLevel = xpForLevelUp! - totalXP!;
 
 	return (
-		<Card className='rounded-xl p-4 space-y-5 bg-gradient-to-r backdrop-blur-lg from-gray-800/50 to-gray-900 shadow-lg'>
+		<Card className='rounded-xl p-3 space-y-4 bg-gradient-to-r backdrop-blur-lg from-gray-800/50 to-gray-900 shadow-lg'>
 			<motion.div
 				className='flex gap-2 items-center justify-between'
 				initial={{ opacity: 0, y: -20 }}
@@ -145,7 +145,7 @@ function XPProgress({
 			) : (
 				<Progress
 					value={progressValue}
-					className='w-full h-2 bg-slate-400 bg-opacity-20'
+					className='w-full h-1 bg-slate-400 bg-opacity-20'
 				/>
 			)}
 

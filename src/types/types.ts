@@ -14,6 +14,7 @@ export interface FormResponse {
   };
 }
 
+export type InvoiceStatus = 'paid' | 'cancelled';
 
 export interface GameState {
   // Game flow

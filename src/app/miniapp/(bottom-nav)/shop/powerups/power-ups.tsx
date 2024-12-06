@@ -8,7 +8,7 @@ import {
 	generateItemInvoice,
 	PurchaseState,
 } from '@/src/actions/invoice.action';
-import { ItemCard } from '../../../../../components/common/cards/item-card';
+import { ItemCard } from '@/src/components/common/cards/item-card';
 
 export function PowerUps() {
 	const initData = useInitData();
@@ -24,7 +24,9 @@ export function PowerUps() {
 			const result = await generateItemInvoice(telegramId, prevState, formData);
 			if (result.success && result.invoiceLink) {
 				invoice.open(result.invoiceLink, 'url').then((status) => {
-					if (status === 'cancelled') return alert('You cancelled it bro.');
+					if (status === 'cancelled') return alert('You cancelled it.');
+					if (status === 'paid') {
+					}
 					return alert(status);
 				});
 			}
