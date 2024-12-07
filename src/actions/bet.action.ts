@@ -4,7 +4,6 @@ import { db } from '@/src/lib/db';
 import { betOptions } from '../constants/challenges';
 import { calculateBettingPassCost, calculateLevel } from '../lib/utils';
 import { token } from '../constants/app-config';
-import { BetType } from '@prisma/client';
 import { LevelInfo } from '../types/gameState';
 
 interface FormState {
@@ -19,7 +18,7 @@ interface FormState {
 }
 
 export async function placeBet(
-	telegramId: bigint,
+	telegramId: string,
 	prevState: FormState,
 	formData: FormData
 ): Promise<FormState> {
@@ -50,7 +49,11 @@ export async function placeBet(
 		const bettingPassCost = calculateBettingPassCost(betAmount);
 
 		return await db.$transaction(async (tx) => {
-			const profile = await tx.profile.findUnique({
+			const profile = await tx.userInventory.findUnique({
+				where: { telegramId },
+			});
+
+			const progress = await tx.userProgression.findUnique({
 				where: { telegramId },
 			});
 
@@ -58,7 +61,11 @@ export async function placeBet(
 				throw new Error('Profile not found');
 			}
 
-			if (profile.balance < betAmount) {
+			if (!progress) {
+				throw new Error('Profile not found');
+			}
+
+			if (profile.powerCoin < betAmount) {
 				return {
 					message: { error: 'Insufficient balance' },
 					result: 'failed',
@@ -94,19 +101,24 @@ export async function placeBet(
 					: betAmount * challenge.payout * 0.02
 			);
 
-			const newTotalXP = profile.totalXP + xpGain;
+			const newTotalXP = progress.totalXP + xpGain;
 			const newLevelInfo: LevelInfo = calculateLevel(newTotalXP);
 
 			// Update user's balance and betting passes
-			await tx.profile.update({
+			await tx.userProgression.update({
 				where: { telegramId },
 				data: {
-					balance: { increment: netGain },
-					powerPass: { decrement: bettingPassCost },
 					totalXP: { increment: xpGain },
 					level: newLevelInfo.level,
 					levelName: newLevelInfo.name,
 					xpForNextLevel: newLevelInfo.xpForNextLevel,
+				},
+			});
+			await tx.userInventory.update({
+				where: { telegramId },
+				data: {
+					powerCoin: { increment: netGain },
+					powerPass: { decrement: bettingPassCost },
 				},
 			});
 

@@ -16,7 +16,7 @@ import {
 	AvatarFallback,
 } from '@/src/components/ui/avatar';
 import { Button } from '@/src/components/ui/button';
-import { useGetUserAvatar } from '@/src/hooks/useUserData';
+// import { useGetUserAvatar } from '@/src/hooks/useUserData';
 import { SubmitButton } from '../buttons/submit-button';
 import { cn } from '@/src/lib/utils';
 import { updateAvatar } from '@/src/actions/user.action';
@@ -36,18 +36,18 @@ export function AvatarDialog({
 	userId: number;
 	currentAvatar: string;
 }) {
-	const { data: avatars } = useGetUserAvatar(userId);
+	// const { data: avatars } = useGetUserAvatar(userId);
 	const [selectedAvatar, setSelectedAvatar] = useState<AvatarData | null>(null);
 
 	const handleAvatarSelect = (avatar: AvatarData) => {
 		setSelectedAvatar(avatar);
 	};
 
-	const handleSubmit = () => {
-		if (selectedAvatar) {
-			updateAvatar(userId, selectedAvatar.href);
-		}
-	};
+	// const handleSubmit = () => {
+	// 	if (selectedAvatar) {
+	// 		updateAvatar(userId, selectedAvatar.href);
+	// 	}
+	// };
 
 	return (
 		<Dialog>
@@ -61,7 +61,7 @@ export function AvatarDialog({
 					</Avatar>
 				</Button>
 			</DialogTrigger>
-			<DialogContent className='w-11/12 rounded-xl'>
+			{/* <DialogContent className='w-11/12 rounded-xl'>
 				{!avatars?.length ? (
 					<MessageCard
 						title='You dont have Avatars'
@@ -125,7 +125,7 @@ export function AvatarDialog({
 						/>
 					</>
 				)}
-			</DialogContent>
+			</DialogContent> */}
 		</Dialog>
 	);
 }

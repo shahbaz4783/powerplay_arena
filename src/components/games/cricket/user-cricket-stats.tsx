@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { StatCard } from '../../common/cards/stats-card';
-import { useInitData } from '@telegram-apps/sdk-react';
 import { useGetUserStats } from '@/src/hooks/useUserData';
 import {
 	Tabs,
@@ -10,10 +9,9 @@ import {
 	TabsList,
 	TabsTrigger,
 } from '@/src/components/ui/tabs';
-import { ChartContainer, ChartConfig } from '../../ui/chart';
-import { Bar, BarChart } from 'recharts';
 import { MATCH_FORMATS } from '@/src/constants/app-config';
 import { MatchFormat } from '@prisma/client';
+import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 
 interface StatData {
 	key: string;
@@ -159,9 +157,9 @@ const StatSection: React.FC<StatSectionProps> = ({
 );
 
 export function UserCricketStats() {
-	const initData = useInitData();
-	const user = initData?.user;
-	const { data: stats } = useGetUserStats(user?.id);
+	const { telegramId } = useCurrentUser();
+
+	const { data: stats } = useGetUserStats(telegramId);
 
 	return (
 		<motion.section

@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useUserProfile } from '@/src/hooks/useUserData';
+import { useUserInventory, useUserProgress } from '@/src/hooks/useUserData';
 import { useInitData } from '@telegram-apps/sdk-react';
 import { Progress } from '@/src/components/ui/progress';
 import { token } from '@/src/constants/app-config';
@@ -11,10 +11,12 @@ import { saveOrUpdateUser } from '@/src/actions/user.action';
 import { Coins, Zap } from 'lucide-react';
 import { AvatarDialog } from '../../common/dialog/avatar-dialog';
 import { Skeleton } from '../../ui/skeleton';
+import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 
 export function ProfileSummary() {
 	const initData = useInitData();
 	const user = initData?.user;
+	const { telegramId } = useCurrentUser();
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -28,9 +30,11 @@ export function ProfileSummary() {
 		fetchData();
 	}, [user]);
 
-	const { data: profile, isLoading } = useUserProfile(user?.id);
-	const totalXP = profile?.totalXP;
-	const xpForLevelUp = profile?.xpForNextLevel;
+	const { data: inventory, isLoading } = useUserInventory(telegramId);
+
+	const { data: userProgress } = useUserProgress(telegramId);
+	const totalXP = userProgress?.totalXP;
+	const xpForLevelUp = userProgress?.xpForNextLevel;
 	const xpForNextLevel = xpForLevelUp! - totalXP!;
 
 	return (
@@ -44,10 +48,10 @@ export function ProfileSummary() {
 				<AvatarDialog userId={user?.id!} currentAvatar={user?.photoUrl!} />
 				<UserStats
 					isLoading={isLoading}
-					level={profile?.level}
-					balance={profile?.balance}
+					level={userProgress?.level}
+					balance={inventory?.powerCoin}
 					name={user?.firstName}
-					levelName={profile?.levelName}
+					levelName={userProgress?.levelName}
 				/>
 			</motion.div>
 			<motion.div
@@ -59,14 +63,14 @@ export function ProfileSummary() {
 				<BalanceCard
 					icon={<Coins className='w-6 h-6 text-yellow-500' />}
 					title={token.name}
-					value={profile?.balance}
+					value={inventory?.powerCoin}
 					symbol={token.symbol}
 					isLoading={isLoading}
 				/>
 				<BalanceCard
 					icon={<Zap className='w-6 h-6 text-blue-400' />}
 					title={token.pass}
-					value={profile?.powerPass}
+					value={inventory?.powerPass}
 					isLoading={isLoading}
 				/>
 			</motion.div>

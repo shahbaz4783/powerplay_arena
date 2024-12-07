@@ -7,159 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model WaitlistUser {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  createdAt DateTime @default(now())
-}
-
-model User {
-  telegramId   BigInt        @id @unique
-  firstName    String
-  lastName     String?
-  username     String?       @unique
-  languageCode String
-  isPremium    Boolean?
-  profile      Profile?
-  transaction  Transaction[]
-  stats        Stats[]
-  betStats     BetStats[]
-  award        Award[]
-  avatar       Avatar[]
-  powerUps     PowerUps[]
-  starsTransaction StarsTransaction[]
-}
-
-model PowerUps {
-  id String    @id @default(cuid())
-  ownedBy BigInt
-  powerUpId String
-  title String
-  description String
-  image String
-  currentLevel Int
-  currentBoost Decimal
-  user        User   @relation(fields: [ownedBy], references: [telegramId], onDelete: Cascade)
-  
-  @@index([ownedBy])
-}
-
-model StarsTransaction {
-  id             String    @id @default(cuid())
-  telegramId BigInt
-  title String
-  description String
-  image String
-  user          User              @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-}
-
-model Profile {
-  id             String    @id @default(cuid())
-  telegramId     BigInt    @unique
-  user           User      @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-  balance        Int       @default(0)
-  totalXP        Int       @default(0)
-  level          Int       @default(1)
-  levelName      String
-  xpForNextLevel Int
-  streakLength   Int       @default(0)
-  weeklyStreak   Int       @default(0)
-  powerPass      Int
-  avatarUrl      String
-  lastClaimedAt  DateTime?
-
-  @@index([telegramId])
-}
-
-model Avatar {
-  id          String @id @default(cuid())
-  avatarId    String
-  telegramId  BigInt
-  user        User   @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-  title       String
-  description String
-  href        String
-
-  @@index([telegramId])
-}
-
-model Award {
-  id          String   @id @default(cuid())
-  awardId     String
-  telegramId  BigInt
-  user        User     @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-  title       String
-  description String
-  createdAt   DateTime @default(now())
-
-  @@index([telegramId])
-}
-
-model Stats {
-  id         String      @id @default(cuid())
-  telegramId BigInt
-  format     MatchFormat
-  user       User        @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-
-  matchesPlayed Int @default(0)
-  matchesWon    Int @default(0)
-  matchesLost   Int @default(0)
-  matchesTie    Int @default(0)
-
-  runsScored        Int @default(0)
-  highestRunsScored Int @default(0)
-  ballsFaced        Int @default(0)
-  sixes             Int @default(0)
-  fours             Int @default(0)
-
-  wicketsTaken        Int @default(0)
-  runsConceded        Int @default(0)
-  lowestRunsConceded  Int @default(0)
-  highestWicketsTaken Int @default(0)
-  ballsBowled         Int @default(0)
-  hattrik             Int @default(0)
-  maidenOver          Int @default(0)
-
-  @@unique([telegramId, format])
-  @@index([telegramId])
-}
-
-model BetStats {
-  id           String  @id @default(cuid())
-  telegramId   BigInt
-  user         User    @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-  betType      BetType
-  betsPlaced   Int     @default(0)
-  betsWon      Int     @default(0)
-  totalWagered Float   @default(0)
-  totalEarning Float   @default(0)
-  totalLoss    Float   @default(0)
-
-  @@unique([telegramId, betType])
-  @@index([telegramId])
-}
-
+// Enums
 enum BetType {
   SAFE_BET
   CLASSIC_FLIP
   TRIPLE_SHOT
   JACKPOT
-}
-
-model Transaction {
-  id            String            @id @default(cuid())
-  telegramId    BigInt
-  user          User              @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-  amount        Int
-  balanceEffect BalanceEffect
-  type          TransactionType
-  description   String?
-  matchId       String?
-  createdAt     DateTime          @default(now())
-  status        TransactionStatus @default(COMPLETED)
-
-  @@index([telegramId])
-  @@index([type])
 }
 
 enum BalanceEffect {
@@ -188,4 +41,211 @@ enum MatchFormat {
   BLITZ
   POWERPLAY
   CLASSIC
+}
+
+// User-related models
+model User {
+  telegramId    String  @id @unique
+  firstName     String
+  lastName      String?
+  username      String?  @unique
+  isPremium     Boolean  @default(false)
+  inviteCode    String   @unique
+  avatarUrl     String
+  updatedAt     DateTime @updatedAt
+  createdAt     DateTime @default(now())
+
+  inventory         UserInventory?
+  progress          UserProgression?
+
+  transactions      Transaction[]
+  stats             Stats[]
+  betStats          BetStats[]
+  starsTransactions StarsTransaction[]
+  referrals         ReferralRecord[] @relation("Referrer")
+  referredBy        ReferralRecord[] @relation("ReferredUser")
+  @@map("users")
+}
+
+model UserProgression {
+  id             String    @id @default(cuid())
+  telegramId     String    @unique
+  level          Int       @default(1)
+  totalXP        Int       @default(0)
+  levelName      String
+  xpForNextLevel Int
+  streakLength   Int       @default(0)
+  weeklyStreak   Int       @default(0)
+  lastClaimedAt  DateTime?
+
+  user           User      @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+  
+  @@index(telegramId)
+}
+
+model UserInventory {
+  id          String    @id @default(cuid())
+  telegramId  String    @unique
+  powerCoin   Int       @default(0)
+  powerPass   Int       @default(0)
+  starVoucher Int       @default(0)
+  
+  avatars     Avatar[]
+  powerUps    PowerUp[]
+  badge       Badge[]
+  user        User      @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+
+  @@map("user_inventory")
+}
+
+model Avatar {
+  id          String @id @default(cuid())
+  mintNumber  Int @default(autoincrement())
+  avatarId    String
+  telegramId      String
+  title       String
+  description String
+  href        String
+
+  inventory   UserInventory @relation(fields: [telegramId], references: [id], onDelete: Cascade)
+
+  @@index([telegramId])
+  @@map("avatars")
+}
+
+model PowerUp {
+  id           String  @id @default(cuid())
+  mintNumber   Int @default(autoincrement())
+  telegramId       String
+  powerUpId    String
+  title        String
+  description  String
+  image        String
+  currentLevel Int
+  currentBoost Decimal
+
+  inventory   UserInventory @relation(fields: [telegramId], references: [id], onDelete: Cascade)
+
+  @@index([telegramId])
+  @@map("power_ups")
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  awardId     String
+  telegramId      String
+  title       String
+  description String
+  createdAt   DateTime @default(now())
+
+  inventory   UserInventory @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+
+
+  @@index([telegramId])
+  @@map("badges")
+}
+
+// Game-related models
+model Stats {
+  id             String      @id @default(cuid())
+  telegramId         String
+  format         MatchFormat
+
+  matchesPlayed  Int         @default(0)
+  matchesWon     Int         @default(0)
+  matchesLost    Int         @default(0)
+  matchesTie     Int         @default(0)
+
+  runsScored     Int         @default(0)
+  highestRunsScored Int      @default(0)
+  ballsFaced     Int         @default(0)
+  sixes          Int         @default(0)
+  fours          Int         @default(0)
+
+  wicketsTaken   Int         @default(0)
+  runsConceded   Int         @default(0)
+  lowestRunsConceded Int     @default(0)
+  highestWicketsTaken Int    @default(0)
+  ballsBowled    Int         @default(0)
+  hattrick       Int         @default(0)
+  maidenOver     Int         @default(0)
+
+  user           User        @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+
+  @@unique([telegramId, format])
+  @@index([telegramId])
+  @@map("stats")
+}
+
+model BetStats {
+  id           String  @id @default(cuid())
+  telegramId       String
+  betType      BetType
+  betsPlaced   Int     @default(0)
+  betsWon      Int     @default(0)
+  totalWagered Int @default(0)
+  totalEarning Int @default(0)
+  totalLoss    Int @default(0)
+
+  user         User    @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+
+  @@unique([telegramId, betType])
+  @@index([telegramId])
+  @@map("bet_stats")
+}
+
+// Transaction-related models
+model Transaction {
+  id            String            @id @default(cuid())
+  telegramId        String
+  amount        Int
+  balanceEffect BalanceEffect
+  type          TransactionType
+  description   String?
+  matchId       String?
+  createdAt     DateTime          @default(now())
+  status        TransactionStatus @default(COMPLETED)
+
+  user          User              @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+
+  @@index(telegramId)
+  @@index(type)
+  @@map("transactions")
+}
+
+model StarsTransaction {
+  id          String @id @default(cuid())
+  telegramId      String
+  title       String
+  description String
+  image       String
+
+  user        User   @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+
+  @@index([telegramId])
+  @@map("stars_transactions")
+}
+
+// Referral and Waitlist models
+model ReferralRecord {
+  id           String   @id @default(uuid())
+  referrerId   String
+  referredId   String
+  bonusAwarded Int
+  referredAt   DateTime @default(now())
+
+  referrer     User     @relation("Referrer", fields: [referrerId], references: [telegramId], onDelete: Cascade)
+  referredUser User     @relation("ReferredUser", fields: [referredId], references: [telegramId], onDelete: Cascade)
+
+  @@index([referrerId])
+  @@index([referredId])
+  @@map("referral_records")
+}
+
+model WaitlistUser {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  @@map("waitlist_users")
 }

@@ -4,17 +4,13 @@ import { db } from '../lib/db';
 
 export const getUserRankings = async () => {
 	try {
-		return await db.profile.findMany({
+		return await db.userProgression.findMany({
 			where: {
-				totalXP: {
-					gt: 0,
-				},
+				totalXP: { gt: 0 },
 			},
 			select: {
-				totalXP: true,
 				level: true,
 				levelName: true,
-				avatarUrl: true,
 				user: true,
 			},
 			orderBy: { totalXP: 'desc' },
@@ -22,9 +18,9 @@ export const getUserRankings = async () => {
 		});
 	} catch (error) {
 		if (error instanceof Error) {
-			console.error('Error fetching user transaction info:', error.message);
+			console.error(error.message);
 		} else {
-			console.error('Something went wrong while fetching transaction info');
+			console.error('Something went wrong while fetching ranking data');
 		}
 		throw error;
 	}

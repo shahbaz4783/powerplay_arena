@@ -9,92 +9,24 @@ import { calculateExchangeValues, calculateLevel } from '../lib/utils';
 import { inGameItems } from '../constants/powerUps';
 import { token } from '../constants/app-config';
 
-export const purchasePowerPass = async (
-	telegramId: bigint,
-	prevState: FormResponse,
-	formData: FormData
-): Promise<FormResponse> => {
-	console.log({ formData });
-
-	const itemId = formData.get('itemId');
-	const itemQuantity = Number(formData.get('itemQuantity'));
-
-	const packInfo = powerPassPacks.find((pack) => pack.id.toString() === itemId);
-	if (!packInfo)
-		return {
-			message: { error: responseMessages.shop.error.itemNotFound },
-		};
-
-	const totalCost = packInfo?.price * itemQuantity;
-	const totalPass = packInfo.quantity * itemQuantity;
-	try {
-		const profile = await db.profile.findUnique({
-			where: { telegramId },
-		});
-
-		if (!profile) {
-			throw new Error(responseMessages.general.error.unexpectedError);
-		}
-
-		if (profile.balance < totalCost) {
-			return {
-				message: {
-					error: responseMessages.transaction.error.insufficientBalance,
-				},
-			};
-		}
-		const packInfo = powerPassPacks.find(
-			(pack) => pack.id.toString() === itemId
-		);
-		if (!packInfo)
-			return {
-				message: { error: responseMessages.shop.error.itemNotFound },
-			};
-
-		return await db.$transaction(async (tx) => {
-			await tx.profile.update({
-				where: { telegramId },
-				data: {
-					balance: { decrement: totalCost },
-					powerPass: { increment: totalPass },
-				},
-			});
-
-			await tx.transaction.create({
-				data: {
-					telegramId,
-					amount: totalCost,
-					balanceEffect: 'DECREMENT',
-					type: 'PURCHASE',
-					description: `Purchase ${itemQuantity} ${packInfo.name}`,
-				},
-			});
-			return {
-				message: { success: responseMessages.shop.success.itemPurchased },
-			};
-		});
-	} catch (error) {
-		if (error instanceof Error) {
-			return {
-				message: { error: error.message },
-			};
-		} else {
-			return {
-				message: { error: responseMessages.general.error.unexpectedError },
-			};
-		}
-	}
-};
 
 export const purchaseAvatar = async (
-	telegramId: bigint,
+	telegramId: string,
 	prevState: FormResponse,
 	formData: FormData
 ): Promise<FormResponse> => {
 	try {
-		const profile = await db.profile.findUnique({
+		const profile = await db.userInventory.findUnique({
 			where: { telegramId },
 		});
+
+		const progress = await db.userProgression.findUnique({
+			where: { telegramId },
+		});
+
+		if (!progress) {
+			throw new Error(responseMessages.general.error.unexpectedError);
+		}
 
 		if (!profile) {
 			throw new Error(responseMessages.general.error.unexpectedError);
@@ -125,7 +57,7 @@ export const purchaseAvatar = async (
 				message: { error: responseMessages.shop.error.itemNotFound },
 			};
 
-		if (profile.balance < avatarInfo.price) {
+		if (profile.powerCoin < avatarInfo.price) {
 			return {
 				message: {
 					error: responseMessages.transaction.error.insufficientBalance,
@@ -144,13 +76,12 @@ export const purchaseAvatar = async (
 				},
 			});
 
-			const newTotalXP = profile.totalXP + avatarInfo.xpGain;
+			const newTotalXP = progress.totalXP + avatarInfo.xpGain;
 			const newLevelInfo: LevelInfo = calculateLevel(newTotalXP);
 
-			await tx.profile.update({
+			await tx.userProgression.update({
 				where: { telegramId },
 				data: {
-					balance: { decrement: avatarInfo.price },
 					totalXP: { increment: avatarInfo.xpGain },
 					level: newLevelInfo.level,
 					levelName: newLevelInfo.name,
@@ -184,56 +115,8 @@ export const purchaseAvatar = async (
 	}
 };
 
-export const purchaseInGameItems = async (
-	telegramId: bigint,
-	prevState: FormResponse,
-	formData: FormData
-): Promise<FormResponse> => {
-	console.log({ formData });
-
-	const itemId = formData.get('itemId');
-
-	const packInfo = inGameItems.find((pack) => pack.id.toString() === itemId);
-	if (!packInfo)
-		return {
-			message: { error: responseMessages.shop.error.itemNotFound },
-		};
-
-	try {
-		const profile = await db.profile.findUnique({
-			where: { telegramId },
-		});
-
-		if (!profile) {
-			throw new Error(responseMessages.general.error.unexpectedError);
-		}
-
-		if (profile.balance < packInfo?.price) {
-			return {
-				message: {
-					error: responseMessages.transaction.error.insufficientBalance,
-				},
-			};
-		}
-
-		return {
-			message: { success: responseMessages.shop.success.itemPurchased },
-		};
-	} catch (error) {
-		if (error instanceof Error) {
-			return {
-				message: { error: error.message },
-			};
-		} else {
-			return {
-				message: { error: responseMessages.general.error.unexpectedError },
-			};
-		}
-	}
-};
-
 export const executePowerExchange = async (
-	telegramId: bigint,
+	telegramId: string,
 	prevState: FormResponse,
 	formData: FormData
 ): Promise<FormResponse> => {
@@ -245,7 +128,7 @@ export const executePowerExchange = async (
 		calculateExchangeValues(totalPass);
 
 	try {
-		const profile = await db.profile.findUnique({
+		const profile = await db.userInventory.findUnique({
 			where: { telegramId },
 		});
 
@@ -255,17 +138,17 @@ export const executePowerExchange = async (
 
 		return await db.$transaction(async (tx) => {
 			if (exchangeDirection === 'buyPasses') {
-				if (profile.balance < totalPassCost) {
+				if (profile.powerPass < totalPassCost) {
 					return {
 						message: {
 							error: responseMessages.transaction.error.insufficientBalance,
 						},
 					};
 				}
-				await tx.profile.update({
+				await tx.userInventory.update({
 					where: { telegramId },
 					data: {
-						balance: { decrement: totalPassCost },
+						powerCoin: { decrement: totalPassCost },
 						powerPass: { increment: totalPass },
 					},
 				});
@@ -288,10 +171,10 @@ export const executePowerExchange = async (
 						},
 					};
 				}
-				await tx.profile.update({
+				await tx.userInventory.update({
 					where: { telegramId },
 					data: {
-						balance: { increment: netPassSaleAmount },
+						powerCoin: { increment: netPassSaleAmount },
 						powerPass: { decrement: totalPass },
 					},
 				});

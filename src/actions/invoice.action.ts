@@ -13,7 +13,7 @@ export type PurchaseState = {
 };
 
 export async function generateItemInvoice(
-	telegramId: bigint,
+	telegramId: string,
 	prevState: PurchaseState,
 	formData: FormData
 ): Promise<PurchaseState> {

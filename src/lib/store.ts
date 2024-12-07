@@ -5,11 +5,11 @@ import {
   InningsInterface,
   RunOutcome,
 } from "../types/gameState";
-import { saveMatchDataToDatabase } from "../actions/game.action";
-import { useInitData } from "@telegram-apps/sdk-react";
+import { saveMatchDataToDatabase } from '../actions/game.action';
 import { FormResponse } from '../types/types';
+import { useCurrentUser } from '../hooks/useCurrentUser';
 
-const GAME_STATE_KEY = "cricketGameState";
+const GAME_STATE_KEY = 'cricketGameState';
 
 const initialState: GameState = {
 	gamePhase: 'toss',
@@ -68,110 +68,111 @@ const initialState: GameState = {
 };
 
 const getGameState = (): GameState => {
-  if (typeof window !== "undefined") {
-    const storedState = localStorage.getItem(GAME_STATE_KEY);
-    return storedState ? JSON.parse(storedState) : initialState;
-  }
-  return initialState;
+	if (typeof window !== 'undefined') {
+		const storedState = localStorage.getItem(GAME_STATE_KEY);
+		return storedState ? JSON.parse(storedState) : initialState;
+	}
+	return initialState;
 };
 
 const setGameState = (state: GameState): Promise<GameState> => {
-  if (typeof window !== "undefined") {
-    localStorage.setItem(GAME_STATE_KEY, JSON.stringify(state));
-  }
-  return Promise.resolve(state);
+	if (typeof window !== 'undefined') {
+		localStorage.setItem(GAME_STATE_KEY, JSON.stringify(state));
+	}
+	return Promise.resolve(state);
 };
 
 const clearGameState = (): Promise<void> => {
-  if (typeof window !== "undefined") {
-    localStorage.removeItem(GAME_STATE_KEY);
-  }
-  return Promise.resolve();
+	if (typeof window !== 'undefined') {
+		localStorage.removeItem(GAME_STATE_KEY);
+	}
+	return Promise.resolve();
 };
 
 export const useCricketGameState = () => {
-  const queryClient = useQueryClient();
-  const initData = useInitData();
-  const userId = initData?.user?.id;
+	const queryClient = useQueryClient();
+	const { telegramId } = useCurrentUser();
 
-  const { data: gameState } = useQuery({
-    queryKey: [GAME_STATE_KEY],
-    queryFn: getGameState,
-    initialData: initialState,
-  });
+	const { data: gameState } = useQuery({
+		queryKey: [GAME_STATE_KEY],
+		queryFn: getGameState,
+		initialData: initialState,
+	});
 
-  const updateGameState = useMutation({
-    mutationFn: (newState: Partial<GameState>) => {
-      const updatedState = setGameState({ ...gameState, ...newState });
-      return updatedState;
-    },
-    onSuccess: (data) => {
-      queryClient.setQueryData([GAME_STATE_KEY], data);
-    },
-  });
+	const updateGameState = useMutation({
+		mutationFn: (newState: Partial<GameState>) => {
+			const updatedState = setGameState({ ...gameState, ...newState });
+			return updatedState;
+		},
+		onSuccess: (data) => {
+			queryClient.setQueryData([GAME_STATE_KEY], data);
+		},
+	});
 
-  const updateInnings = (
-    inningsType: GameParticipant,
-    runOutcome: RunOutcome,
-  ) => {
-    const currentInnings = gameState[inningsType];
-    const newBallsFaced = currentInnings.ballsFaced + 1;
-    const newOversPlayed = `${Math.floor(newBallsFaced / 6)}.${newBallsFaced % 6}`;
+	const updateInnings = (
+		inningsType: GameParticipant,
+		runOutcome: RunOutcome
+	) => {
+		const currentInnings = gameState[inningsType];
+		const newBallsFaced = currentInnings.ballsFaced + 1;
+		const newOversPlayed = `${Math.floor(newBallsFaced / 6)}.${
+			newBallsFaced % 6
+		}`;
 
-    const newOverInfo = [...currentInnings.overInfo];
-    newOverInfo.push(runOutcome);
+		const newOverInfo = [...currentInnings.overInfo];
+		newOverInfo.push(runOutcome);
 
-    const newStats: InningsInterface = {
-      ...currentInnings,
-      runs:
-        runOutcome > 0 ? currentInnings.runs + runOutcome : currentInnings.runs,
-      wickets:
-        runOutcome === -1 ? currentInnings.wickets + 1 : currentInnings.wickets,
-      ballsFaced: newBallsFaced,
-      runRate: (
-        (currentInnings.runs + (runOutcome > 0 ? runOutcome : 0)) /
-        (newBallsFaced / 6)
-      ).toFixed(2),
-      oversPlayed: newOversPlayed,
-      fours: runOutcome === 4 ? currentInnings.fours + 1 : currentInnings.fours,
-      sixes: runOutcome === 6 ? currentInnings.sixes + 1 : currentInnings.sixes,
-      overInfo: newOverInfo,
-    };
+		const newStats: InningsInterface = {
+			...currentInnings,
+			runs:
+				runOutcome > 0 ? currentInnings.runs + runOutcome : currentInnings.runs,
+			wickets:
+				runOutcome === -1 ? currentInnings.wickets + 1 : currentInnings.wickets,
+			ballsFaced: newBallsFaced,
+			runRate: (
+				(currentInnings.runs + (runOutcome > 0 ? runOutcome : 0)) /
+				(newBallsFaced / 6)
+			).toFixed(2),
+			oversPlayed: newOversPlayed,
+			fours: runOutcome === 4 ? currentInnings.fours + 1 : currentInnings.fours,
+			sixes: runOutcome === 6 ? currentInnings.sixes + 1 : currentInnings.sixes,
+			overInfo: newOverInfo,
+		};
 
-    updateGameState.mutate({
-      [inningsType]: newStats,
-    });
-  };
+		updateGameState.mutate({
+			[inningsType]: newStats,
+		});
+	};
 
-  const endMatchAndClaimReward = async (
-    prevState: FormResponse,
-    formData: FormData,
-  ): Promise<FormResponse> => {
-    try {
-      if (!userId) throw new Error("User ID not found");
-      const result = await saveMatchDataToDatabase(gameState, BigInt(userId));
-      await clearGameState();
+	const endMatchAndClaimReward = async (
+		prevState: FormResponse,
+		formData: FormData
+	): Promise<FormResponse> => {
+		try {
+			if (!telegramId) throw new Error('User ID not found');
+			const result = await saveMatchDataToDatabase(gameState, telegramId);
+			await clearGameState();
 
-      queryClient.setQueryData([GAME_STATE_KEY], initialState);
+			queryClient.setQueryData([GAME_STATE_KEY], initialState);
 
-      console.log("Match ended, reward claimed, and state cleared");
-      console.log(result);
-      return result;
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(error.message);
-        return { message: { error: error.message } };
-      } else {
-        console.error("Error ending match and claiming reward:");
-        return { message: { error: "An unexpected error occurred" } };
-      }
-    }
-  };
+			console.log('Match ended, reward claimed, and state cleared');
+			console.log(result);
+			return result;
+		} catch (error) {
+			if (error instanceof Error) {
+				console.log(error.message);
+				return { message: { error: error.message } };
+			} else {
+				console.error('Error ending match and claiming reward:');
+				return { message: { error: 'An unexpected error occurred' } };
+			}
+		}
+	};
 
-  return {
-    gameState,
-    updateGameState: updateGameState.mutate,
-    updateInnings,
-    endMatchAndClaimReward,
-  };
+	return {
+		gameState,
+		updateGameState: updateGameState.mutate,
+		updateInnings,
+		endMatchAndClaimReward,
+	};
 };

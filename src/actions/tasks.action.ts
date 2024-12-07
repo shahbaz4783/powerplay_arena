@@ -12,22 +12,13 @@ import {
 import { saveAwardToDatabase } from './game.action';
 import { Milestone } from '../types/db.types';
 
-export const giveTaskReward = async (telegramId: number, reward: number) => {
-	await db.profile.update({
-		where: { telegramId },
-		data: {
-			balance: { increment: reward },
-		},
-	});
-};
-
 export const dailyDrop = async (
-	telegramId: number,
+	telegramId: string,
 	prevState: FormResponse,
 	formData: FormData
 ): Promise<FormResponse> => {
 	try {
-		const profile = await db.profile.findUnique({
+		const profile = await db.userProgression.findUnique({
 			where: { telegramId },
 		});
 
@@ -50,14 +41,20 @@ export const dailyDrop = async (
 		const { coins, powerPass } = calculateReward(newStreak);
 
 		const result = await db.$transaction(async (tx) => {
-			await tx.profile.update({
+			await tx.userProgression.update({
 				where: { telegramId },
 				data: {
-					balance: { increment: coins },
-					powerPass: { increment: powerPass },
 					lastClaimedAt: new Date(),
 					streakLength: newStreak,
 					weeklyStreak: newWeeklyStreak,
+				},
+			});
+
+			await tx.userInventory.update({
+				where: { telegramId },
+				data: {
+					powerCoin: { increment: coins },
+					powerPass: { increment: powerPass },
 				},
 			});
 
@@ -102,7 +99,7 @@ export const dailyDrop = async (
 	}
 };
 
-export async function claimAwardAction(telegramId: number, award: Milestone) {
+export async function claimAwardAction(telegramId: string, award: Milestone) {
 	try {
 		const response = await saveAwardToDatabase(telegramId, award);
 		if (response?.message.error) {

@@ -18,7 +18,7 @@ import { token } from '../constants/app-config';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function startQuickMatch(
-	telegramId: number,
+	telegramId: string,
 	prevState: FormResponse,
 	formData: FormData
 ): Promise<FormResponse> {
@@ -32,15 +32,15 @@ export async function startQuickMatch(
 			return { message: { error: 'Invalid entry fee' } };
 		}
 
-		const profile = await db.profile.findUnique({
-			where: { telegramId: BigInt(telegramId) },
+		const profile = await db.userInventory.findUnique({
+			where: { telegramId },
 		});
 
 		if (!profile) {
 			return { message: { error: 'No user found' } };
 		}
 
-		if (profile.balance < entryFee) {
+		if (profile.powerCoin < entryFee) {
 			return { message: { error: `You dont have enough ${token.name}` } };
 		}
 
@@ -57,9 +57,12 @@ export async function startQuickMatch(
 		}
 
 		await db.$transaction(async (tx) => {
-			await tx.profile.update({
+			await tx.userInventory.update({
 				where: { telegramId: profile.telegramId },
-				data: { balance: { decrement: entryFee } },
+				data: {
+					powerCoin: { decrement: entryFee },
+					powerPass: { decrement: passRequired },
+				},
 			});
 
 			await tx.transaction.create({
@@ -84,7 +87,7 @@ export async function startQuickMatch(
 
 export async function saveMatchDataToDatabase(
 	gameState: GameState,
-	telegramId: bigint
+	telegramId: string
 ): Promise<FormResponse> {
 	try {
 		if (!telegramId) return { message: { error: 'No user Found' } };
@@ -128,10 +131,10 @@ export async function saveMatchDataToDatabase(
 				sixerReward + fourReward + wicketTakenReward + winMarginReward;
 
 			if (totalReward > 0) {
-				await tx.profile.update({
+				await tx.userInventory.update({
 					where: { telegramId },
 					data: {
-						balance: { increment: totalReward },
+						powerCoin: { increment: totalReward },
 					},
 				});
 				await tx.transaction.create({
@@ -148,7 +151,7 @@ export async function saveMatchDataToDatabase(
 			// Calculate XP and check for level up
 			const xpGain = calculateXPGain(gameState);
 
-			const currentXPRecord = await tx.profile.findUnique({
+			const currentXPRecord = await tx.userProgression.findUnique({
 				where: { telegramId },
 			});
 
@@ -162,7 +165,7 @@ export async function saveMatchDataToDatabase(
 			// Calculate new level info
 			const newLevelInfo: LevelInfo = calculateLevel(newTotalXP);
 
-			await tx.profile.update({
+			await tx.userProgression.update({
 				where: { telegramId },
 				data: {
 					totalXP: newTotalXP,
@@ -187,15 +190,12 @@ export async function saveMatchDataToDatabase(
 	redirect('/miniapp');
 }
 
-export async function saveAwardToDatabase(
-	telegramId: number,
-	challenge: Milestone
-) {
+export async function saveAwardToDatabase(telegramId: string, challenge: Milestone) {
 	try {
 		if (!telegramId) return { message: { error: 'No user Found' } };
 		console.log('Saving challenge:', challenge);
 
-		const existingAward = await db.award.findFirst({
+		const existingAward = await db.badge.findFirst({
 			where: {
 				telegramId,
 				awardId: challenge.id,
@@ -207,10 +207,10 @@ export async function saveAwardToDatabase(
 		}
 
 		await db.$transaction(async (tx) => {
-			await tx.profile.update({
+			await tx.userInventory.update({
 				where: { telegramId },
 				data: {
-					balance: { increment: challenge.reward },
+					powerCoin: { increment: challenge.reward },
 				},
 			});
 
@@ -224,7 +224,7 @@ export async function saveAwardToDatabase(
 				},
 			});
 
-			await tx.award.create({
+			await tx.badge.create({
 				data: {
 					telegramId,
 					awardId: challenge.id,

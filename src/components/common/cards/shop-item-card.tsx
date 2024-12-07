@@ -14,10 +14,10 @@ import { Button } from '@/src/components/ui/button';
 import { token } from '@/src/constants/app-config';
 import { SubmitButton } from '@/src/components/common/buttons/submit-button';
 import Image from 'next/image';
-import { useInitData } from '@telegram-apps/sdk-react';
-import { useUserProfile } from '@/src/hooks/useUserData';
 import { FormResponse } from '@/src/types/types';
 import { ServerResponse } from '../message/server-response';
+import { useCurrentUser } from '@/src/hooks/useCurrentUser';
+import { useUserProgress } from '@/src/hooks/useUserData';
 
 interface ShopItemProps {
 	id: number | string;
@@ -49,10 +49,9 @@ export function ShopItemCard({
 	xpGain,
 	serverResponse,
 }: ShopItemProps) {
-	const initData = useInitData();
-	const user = initData?.user;
+	const { telegramId } = useCurrentUser();
 
-	const { data: profile } = useUserProfile(user?.id);
+	const { data: profile } = useUserProgress(telegramId);
 	const userLevel = profile?.level!;
 
 	const [isOpen, setIsOpen] = useState(false);

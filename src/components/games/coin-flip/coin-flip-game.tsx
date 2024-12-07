@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useInitData } from '@telegram-apps/sdk-react';
-import { useUserProfile } from '@/src/hooks/useUserData';
 import { MessageCard } from '@/src/components/common/cards/message-card';
 import { betOptions } from '@/src/constants/challenges';
 import { placeBet } from '@/src/actions/bet.action';
@@ -12,6 +10,8 @@ import { BetResult } from './bet-result';
 import { BetAmount } from './bet-amount';
 import { BetChallenge } from './bet-challenge';
 import { BetSideSelection } from './bet-side-selection';
+import { useCurrentUser } from '@/src/hooks/useCurrentUser';
+import { useUserInventory } from '@/src/hooks/useUserData';
 
 interface BetOption {
 	name: string;
@@ -27,19 +27,18 @@ export function CoinFlipChallenge() {
 	const [selectedSide, setSelectedSide] = useState<string | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
-	const initData = useInitData();
-	const userId = BigInt(initData?.user?.id || 0);
-	const {
-		data: profile,
-		isLoading,
-		mutate,
-	} = useUserProfile(initData?.user?.id);
+	const { telegramId } = useCurrentUser();
 
-	const [formState, formAction] = useFormState(placeBet.bind(null, userId), {
-		message: {},
-		result: null,
-		winAmount: 0,
-	});
+	const { data: inventory, isLoading, mutate } = useUserInventory(telegramId);
+
+	const [formState, formAction] = useFormState(
+		placeBet.bind(null, telegramId),
+		{
+			message: {},
+			result: null,
+			winAmount: 0,
+		}
+	);
 
 	useEffect(() => {
 		if (formState.result) {
@@ -62,7 +61,7 @@ export function CoinFlipChallenge() {
 		);
 	}
 
-	const userBalance = profile?.balance as number;
+	const userBalance = inventory?.powerCoin as number;
 	const maxBet = Math.floor((userBalance * 0.65) / 10) * 10;
 	const isBetValid = betAmount > 0 && selectedChallenge && selectedSide;
 
@@ -82,7 +81,7 @@ export function CoinFlipChallenge() {
 					setBetAmount={setBetAmount}
 					userBalance={userBalance}
 					maxBet={maxBet}
-					bettingPasses={profile?.powerPass || 0}
+					bettingPasses={inventory?.powerPass || 0}
 				/>
 
 				<BetChallenge

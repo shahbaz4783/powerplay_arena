@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useInitData } from '@telegram-apps/sdk-react';
-import { useUserProfile } from '@/src/hooks/useUserData';
 import {
 	Card,
 	CardContent,
@@ -27,20 +25,17 @@ import { executePowerExchange } from '@/src/actions/shop.action';
 import { ServerResponse } from '@/src/components/common/message/server-response';
 import { calculateExchangeValues } from '@/src/lib/utils';
 import { FormResponse } from '@/src/types/types';
+import { useUserInventory } from '@/src/hooks/useUserData';
+import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 
 export function InGameExchange() {
-	const initData = useInitData();
-	const telegramId = BigInt(initData?.user?.id || 0);
-	const {
-		data: profile,
-		isLoading,
-		mutate,
-	} = useUserProfile(initData?.user?.id);
+	const { telegramId } = useCurrentUser();
+	const { data: profile, isLoading, mutate } = useUserInventory(telegramId);
 
 	const [response, formAction] = useFormState(
 		async (prevState: FormResponse, formData: FormData) => {
 			const result = await executePowerExchange(
-				telegramId,
+				telegramId!,
 				prevState,
 				formData
 			);
@@ -67,7 +62,7 @@ export function InGameExchange() {
 		if (!profile) return 0;
 		let passes = 0;
 		while (
-			calculateExchangeValues(passes + 1).totalPassCost <= profile.balance
+			calculateExchangeValues(passes + 1).totalPassCost <= profile.powerCoin
 		) {
 			passes++;
 		}
@@ -106,7 +101,7 @@ export function InGameExchange() {
 			<CardContent className='space-y-6 p-6'>
 				<div className='flex justify-between text-sm text-blue-300'>
 					<span>
-						{token.symbol} balance: {profile.balance}
+						{token.symbol} balance: {profile.powerCoin}
 					</span>
 					<span>Available Passes: {profile.powerPass}</span>
 				</div>

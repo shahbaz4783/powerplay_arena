@@ -2,13 +2,13 @@
 
 import React from 'react';
 import { useGetUserTransaction } from '@/src/hooks/useUserData';
-import { useInitData } from '@telegram-apps/sdk-react';
 import { Clock, TrendingDown, TrendingUp } from 'lucide-react';
 import { formatDate } from '@/src/lib/utils';
 import { motion } from 'framer-motion';
 import { token } from '@/src/constants/app-config';
 import { Transaction } from '@prisma/client';
 import { SubmitButton } from '../../../../components/common/buttons/submit-button';
+import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 
 const groupTransactionsByDate = (transactions: Transaction[]) => {
 	const grouped: Record<string, Transaction[]> = {};
@@ -38,12 +38,10 @@ const calculateDailyTotal = (transactions: Transaction[]) => {
 };
 
 export function TransactionLists() {
-	const initData = useInitData();
-	const user = initData?.user;
+	const { telegramId } = useCurrentUser();
 
-	const { data, fetchNextPage, hasNextPage } = useGetUserTransaction(
-		user?.id ? BigInt(user.id) : undefined
-	);
+	const { data, fetchNextPage, hasNextPage } =
+		useGetUserTransaction(telegramId);
 
 	const allTransactions =
 		data?.pages.flatMap((page) => page.transactions) || [];

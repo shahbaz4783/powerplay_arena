@@ -3,7 +3,7 @@
 import { BetType, MatchFormat } from '@prisma/client';
 import { db } from '../lib/db';
 
-export const getUserStats = async (telegramId: number) => {
+export const getUserStats = async (telegramId: string) => {
 	try {
 		const stats = await db.stats.findMany({
 			where: { telegramId },
@@ -25,15 +25,12 @@ export const getUserStats = async (telegramId: number) => {
 	}
 };
 
-export const getUserFormatStats = async (
-	userId: number,
-	format: MatchFormat
-) => {
+export const getUserFormatStats = async (userId: string, format: MatchFormat) => {
 	try {
 		return await db.stats.findUnique({
 			where: {
 				telegramId_format: {
-					telegramId: BigInt(userId),
+					telegramId: userId,
 					format: format,
 				},
 			},
@@ -48,12 +45,12 @@ export const getUserFormatStats = async (
 	}
 };
 
-export const getUserBettingStats = async (userId: number, betType: BetType) => {
+export const getUserBettingStats = async (userId: string, betType: BetType) => {
 	try {
 		return await db.betStats.findUnique({
 			where: {
 				telegramId_betType: {
-					telegramId: BigInt(userId),
+					telegramId: userId,
 					betType,
 				},
 			},

@@ -12,7 +12,7 @@ export type BettingStats = {
 	[key in BetType]: BetStats | null;
 };
 
-export const useStats = (userId: number) => {
+export const useStats = (userId: string) => {
 	const { data: blitzStats } = useGetUserFormatStats(userId, 'BLITZ');
 	const { data: powerplayStats } = useGetUserFormatStats(userId, 'POWERPLAY');
 	const { data: classicStats } = useGetUserFormatStats(userId, 'CLASSIC');

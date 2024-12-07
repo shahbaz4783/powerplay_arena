@@ -34,7 +34,6 @@ import {
 } from 'lucide-react';
 import { startQuickMatch } from '@/src/actions/game.action';
 import { MATCH_FORMATS, token } from '@/src/constants/app-config';
-import { useInitData } from '@telegram-apps/sdk-react';
 import { useFormState } from 'react-dom';
 import { RewardItem } from '../../common/cards/reward-card';
 import { useCricketGameState } from '@/src/lib/store';
@@ -42,17 +41,17 @@ import { SubmitButton } from '../../common/buttons/submit-button';
 import { Header } from '../../common/elements/header';
 import { ServerResponse } from '../../common/message/server-response';
 import { MatchFormat } from '@prisma/client';
+import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 
 export function QuickPlayMode() {
 	const [selectedFormat, setSelectedFormat] = useState<MatchFormat>('BLITZ');
 
 	const { updateGameState } = useCricketGameState();
 
-	const initData = useInitData();
-	const user = initData?.user;
+	const { telegramId } = useCurrentUser();
 
 	const [response, formAction] = useFormState(
-		startQuickMatch.bind(null, user?.id!),
+		startQuickMatch.bind(null, telegramId),
 		{
 			message: {},
 		}

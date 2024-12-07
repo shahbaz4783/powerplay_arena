@@ -2,9 +2,7 @@
 
 import React from 'react';
 import { useFormState } from 'react-dom';
-import { useInitData } from '@telegram-apps/sdk-react';
 import { dailyDrop } from '@/src/actions/tasks.action';
-import { useUserProfile } from '@/src/hooks/useUserData';
 import {
 	Card,
 	CardContent,
@@ -19,13 +17,15 @@ import { AlertCircle } from 'lucide-react';
 import { getStreakStatus } from '@/src/lib/utils';
 import { StreakInfo } from './streak-info';
 import { WeeklyBoost } from './weekly-boost';
+import { useUserProgress } from '@/src/hooks/useUserData';
+import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 
 export function DailyReward() {
-	const initData = useInitData();
-	const user = initData?.user;
-	const { data: profile, isLoading } = useUserProfile(user?.id);
+	const { telegramId } = useCurrentUser();
 
-	const [response, action] = useFormState(dailyDrop.bind(null, user?.id!), {
+	const { data: profile, isLoading } = useUserProgress(telegramId);
+
+	const [response, action] = useFormState(dailyDrop.bind(null, telegramId), {
 		message: {},
 	});
 

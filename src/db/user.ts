@@ -9,9 +9,9 @@ export interface PaginatedResponse {
 	hasMore: boolean;
 }
 
-export const getUserProfileById = async (telegramId: number) => {
+export const getUserProfileById = async (telegramId: string) => {
 	try {
-		return await db.profile.findUnique({
+		return await db.user.findUnique({
 			where: { telegramId },
 		});
 	} catch (error) {
@@ -24,10 +24,10 @@ export const getUserProfileById = async (telegramId: number) => {
 	}
 };
 
-export const getUserInfoById = async (telegramId: number) => {
+export const getUserInfoById = async (telegramId: string) => {
 	try {
 		return await db.user.findUnique({
-			where: { telegramId: telegramId },
+			where: { telegramId },
 		});
 	} catch (error) {
 		if (error instanceof Error) {
@@ -39,8 +39,43 @@ export const getUserInfoById = async (telegramId: number) => {
 	}
 };
 
+export const getUserProgressById = async (telegramId: string) => {
+	try {
+		return await db.userProgression.findUnique({
+			where: { telegramId },
+		});
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error('Error fetching user info:', error.message);
+		} else {
+			console.error('Something went wrong while fetching user info');
+		}
+		throw error;
+	}
+};
+
+export const getUserInventoryById = async (telegramId: string) => {
+	try {
+		return await db.userInventory.findUnique({
+			where: { telegramId },
+			include: {
+				avatars: true,
+				powerUps: true,
+				badge: true,
+			},
+		});
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error('Error fetching user inventory:', error.message);
+		} else {
+			console.error('Something went wrong while fetching user inventory');
+		}
+		throw error;
+	}
+};
+
 export const getUserTransactionById = async (
-	telegramId: bigint,
+	telegramId: string,
 	page: number = 1,
 	pageSize: number = 20
 ): Promise<PaginatedResponse> => {
@@ -70,16 +105,16 @@ export const getUserTransactionById = async (
 	}
 };
 
-export async function fetchClaimedAwards(telegramId: number) {
+export async function fetchClaimedAwards(telegramId: string) {
 	if (!telegramId) return [];
 
-	return await db.award.findMany({
+	return await db.badge.findMany({
 		where: { telegramId },
 		orderBy: { createdAt: 'desc' },
 	});
 }
 
-export const getUserAvatars = async (telegramId: number) => {
+export const getUserAvatars = async (telegramId: string) => {
 	try {
 		return await db.avatar.findMany({
 			where: {

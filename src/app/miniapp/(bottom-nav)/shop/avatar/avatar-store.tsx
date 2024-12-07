@@ -1,15 +1,14 @@
 'use client';
 
 import { avatars } from '@/src/constants/shop-items';
-import { useInitData } from '@telegram-apps/sdk-react';
 import { useFormState } from 'react-dom';
 import { purchaseAvatar } from '@/src/actions/shop.action';
 import { ShopItemCard } from '../../../../../components/common/cards/shop-item-card';
 import { cloudinary_url } from '@/src/constants/app-config';
+import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 
 export function AvatarStore() {
-	const initData = useInitData();
-	const telegramId = BigInt(initData?.user?.id || 0);
+	const { telegramId } = useCurrentUser();
 
 	const [response, formAction] = useFormState(
 		purchaseAvatar.bind(null, telegramId),

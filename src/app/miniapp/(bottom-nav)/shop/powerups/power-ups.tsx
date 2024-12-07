@@ -3,16 +3,17 @@
 import { useCallback } from 'react';
 import { inGameItems } from '@/src/constants/powerUps';
 import { useFormState } from 'react-dom';
-import { initInvoice, useInitData } from '@telegram-apps/sdk-react';
+import { initInvoice } from '@telegram-apps/sdk-react';
 import {
 	generateItemInvoice,
 	PurchaseState,
 } from '@/src/actions/invoice.action';
 import { ItemCard } from '@/src/components/common/cards/item-card';
+import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 
 export function PowerUps() {
-	const initData = useInitData();
-	const telegramId = BigInt(initData?.user?.id!);
+	const { telegramId } = useCurrentUser(); 
+
 	const invoice = initInvoice();
 
 	const initialState: PurchaseState = {

@@ -1,29 +1,29 @@
 import { useState, useEffect } from 'react';
-import { useInitData } from '@telegram-apps/sdk-react';
-import { Award } from '@prisma/client';
 import { Milestone } from '@/src/types/db.types';
 import { fetchClaimedAwards } from '../db/user';
 import { useStats, CricketStats, BettingStats } from './useStats';
 import { calculateMilestones } from '../constants/milestones';
+import { Badge } from '@prisma/client';
+import { useCurrentUser } from './useCurrentUser';
 
 export const useMilestones = () => {
 	const [challenges, setChallenges] = useState<Milestone[]>([]);
 	const [unclaimedAwards, setUnclaimedAwards] = useState<Milestone[]>([]);
-	const [claimedAwards, setClaimedAwards] = useState<Award[]>([]);
+	const [claimedAwards, setClaimedAwards] = useState<Badge[]>([]);
 
-	const initData = useInitData();
-	const user = initData?.user;
-	const { cricketStats, bettingStats } = useStats(user?.id!);
+	const { telegramId } = useCurrentUser();
+
+	const { cricketStats, bettingStats } = useStats(telegramId);
 
 	useEffect(() => {
 		const loadMilestones = async () => {
-			if (!user?.id || !cricketStats || !bettingStats) return;
+			if (!telegramId || !cricketStats || !bettingStats) return;
 
 			const allMilestones = calculateMilestones(
 				cricketStats as CricketStats,
 				bettingStats as BettingStats
 			);
-			const fetchedClaimedAwards = await fetchClaimedAwards(user.id);
+			const fetchedClaimedAwards = await fetchClaimedAwards(telegramId);
 
 			const unclaimedMilestones = allMilestones.filter(
 				(milestone) =>
@@ -38,12 +38,12 @@ export const useMilestones = () => {
 		};
 
 		loadMilestones();
-	}, [user?.id, cricketStats, bettingStats]);
+	}, [telegramId, cricketStats, bettingStats]);
 
 	return {
 		challenges,
 		unclaimedAwards,
 		claimedAwards,
-		userId: user?.id,
+		userId: telegramId,
 	};
 };

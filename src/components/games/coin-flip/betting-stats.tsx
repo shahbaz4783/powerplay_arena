@@ -1,7 +1,6 @@
 'use client';
 
 import { useGetUserBettingStats } from '@/src/hooks/useUserData';
-import { useInitData } from '@telegram-apps/sdk-react';
 import { StatCard } from '../../common/cards/stats-card';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardTitle } from '@/src/components/ui/card';
@@ -12,6 +11,7 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from '@/src/components/ui/carousel';
+import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 
 const betTypes = [
 	'SAFE_BET',
@@ -21,14 +21,13 @@ const betTypes = [
 ] as const;
 
 export function BettingStats() {
-	const initData = useInitData();
-	const user = initData?.user;
+	const { telegramId } = useCurrentUser();
 
 	const bettingStats = {
-		SAFE_BET: useGetUserBettingStats(user?.id, 'SAFE_BET').data,
-		CLASSIC_FLIP: useGetUserBettingStats(user?.id, 'CLASSIC_FLIP').data,
-		TRIPLE_SHOT: useGetUserBettingStats(user?.id, 'TRIPLE_SHOT').data,
-		JACKPOT: useGetUserBettingStats(user?.id, 'JACKPOT').data,
+		SAFE_BET: useGetUserBettingStats(telegramId, 'SAFE_BET').data,
+		CLASSIC_FLIP: useGetUserBettingStats(telegramId, 'CLASSIC_FLIP').data,
+		TRIPLE_SHOT: useGetUserBettingStats(telegramId, 'TRIPLE_SHOT').data,
+		JACKPOT: useGetUserBettingStats(telegramId, 'JACKPOT').data,
 	};
 
 	const renderBettingStatContent = (data: any) => (
