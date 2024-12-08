@@ -1,13 +1,16 @@
+'use client';
+
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
 } from '@/src/components/ui/avatar';
-import { getUserRankings } from '@/src/db/rankings';
+import { useUserRanking } from '@/src/hooks/useUserData';
 import { Trophy, Medal, Award } from 'lucide-react';
+import { MessageCard } from '../../common/cards/message-card';
 
-export const Leaderboard = async () => {
-	const data = await getUserRankings();
+export const Leaderboard = () => {
+	const { data, isPending } = useUserRanking();
 
 	const getRankIcon = (rank: number) => {
 		switch (rank) {
@@ -21,6 +24,16 @@ export const Leaderboard = async () => {
 				return null;
 		}
 	};
+
+	if (isPending) {
+		return (
+			<MessageCard
+				title=''
+				message='Fetching latest rankings...'
+				type='loading'
+			/>
+		);
+	}
 
 	return (
 		<section className='w-full max-w-2xl mx-auto text-white shadow-xl'>
@@ -36,7 +49,7 @@ export const Leaderboard = async () => {
 							{getRankIcon(index + 1) || index + 1}
 						</div>
 						<Avatar className='h-10 w-10'>
-							<AvatarImage src={ranking.avatarUrl} />
+							<AvatarImage src={ranking.user.avatarUrl} />
 							<AvatarFallback>
 								{ranking.user.firstName.charAt(0)}
 							</AvatarFallback>
@@ -47,7 +60,7 @@ export const Leaderboard = async () => {
 						</div>
 						<div className='text-right space-x-1'>
 							<span className='font-bold text-lg font-mono text-cyan-400'>
-								{ranking.totalXP}
+								{ranking.level}
 							</span>
 							<span className='text-xs text-cyan-200'>XP</span>
 						</div>

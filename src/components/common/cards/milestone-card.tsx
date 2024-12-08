@@ -11,7 +11,7 @@ import { iconMap } from '@/src/constants/challenges';
 import { SubmitButton } from '../buttons/submit-button';
 
 interface MilestoneCardProps extends Milestone {
-	userId: number;
+	userId: string;
 }
 
 export function MilestoneCard({

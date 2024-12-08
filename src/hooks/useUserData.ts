@@ -19,7 +19,7 @@ import { getUserRankings } from '../db/rankings';
 export const useUserInfo = (telegramId: string) => {
 	return useQuery({
 		queryKey: ['user-stats', telegramId],
-		queryFn: () => getUserInfoById(telegramId!),
+		queryFn: () => getUserInfoById(telegramId),
 		enabled: !!telegramId,
 		staleTime: 60000,
 		gcTime: 3600000,
@@ -115,12 +115,11 @@ export const useGetUserBettingStats = (userId: string, betType: BetType) => {
 	});
 };
 
-export const useGetUserRanking = () => {
+export const useUserRanking = () => {
 	return useQuery({
 		queryKey: ['user-ranking'],
 		queryFn: () => getUserRankings(),
 		staleTime: 60000,
-		gcTime: 3600000,
 	});
 };
 

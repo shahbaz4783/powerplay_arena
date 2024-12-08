@@ -11,6 +11,7 @@ export const getUserRankings = async () => {
 			select: {
 				level: true,
 				levelName: true,
+				totalXP: true,
 				user: true,
 			},
 			orderBy: { totalXP: 'desc' },
