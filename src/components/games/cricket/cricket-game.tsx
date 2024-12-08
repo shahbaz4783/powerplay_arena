@@ -107,16 +107,14 @@ export default function CricketGame() {
   };
 
   return (
-    <div className="min-h-svh text-gray-100">
-      <div className="flex flex-col justify-between min-h-[85svh]">
-        <main className="flex-grow overflow-auto">
-          {gameState.gamePhase === "toss" && <Toss />}
-          {(gameState.gamePhase === "batting" ||
-            gameState.gamePhase === "bowling") && <Gameplay />}
-          {gameState.gamePhase === "inningsOver" && <MidInnings />}
-          {gameState.gamePhase === "result" && <Result />}
-        </main>
-      </div>
-    </div>
-  );
+		<div className='flex flex-col justify-between min-h-svh p-3'>
+			<main className='flex-grow overflow-auto flex flex-col justify-between'>
+				{gameState.gamePhase === 'toss' && <Toss />}
+				{(gameState.gamePhase === 'batting' ||
+					gameState.gamePhase === 'bowling') && <Gameplay />}
+				{gameState.gamePhase === 'inningsOver' && <MidInnings />}
+				{gameState.gamePhase === 'result' && <Result />}
+			</main>
+		</div>
+	);
 }

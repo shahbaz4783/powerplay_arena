@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { TicketCheck, UserPlus2 } from 'lucide-react';
+import { Activity, UserPlus2 } from 'lucide-react';
 import { FaRankingStar } from 'react-icons/fa6';
 import { IconLabelButton } from '@/src/components/common/buttons/link-button';
 
@@ -15,9 +15,9 @@ export function FeaturedTiles() {
 		>
 			<IconLabelButton href='/miniapp/invite' icon={UserPlus2} label='Invite' />
 			<IconLabelButton
-				href='/miniapp/tasks'
-				icon={TicketCheck}
-				label='Lucky Draw'
+				href='/miniapp/activity'
+				icon={Activity}
+				label='Activity'
 			/>
 			<IconLabelButton
 				href='/miniapp/rankings'

@@ -61,7 +61,7 @@ export async function startQuickMatch(
 				where: { telegramId: profile.telegramId },
 				data: {
 					powerCoin: { decrement: entryFee },
-					powerPass: { decrement: passRequired },
+					// powerPass: { decrement: passRequired },
 				},
 			});
 

@@ -78,7 +78,7 @@ export const useGetUserTransaction = (userId: string) => {
 export const useGetUserStats = (userId: string) => {
 	return useQuery({
 		queryKey: ['user-stats', userId],
-		queryFn: () => getUserStats(userId!),
+		queryFn: () => getUserStats(userId),
 		enabled: !!userId,
 		staleTime: 60000,
 		gcTime: 3600000,

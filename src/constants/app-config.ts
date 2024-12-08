@@ -3,6 +3,7 @@ import {
 	Award,
 	House,
 	ShoppingBag,
+	Trophy,
 	WalletMinimal,
 } from 'lucide-react';
 import { MatchSetup } from '../types/gameState';
@@ -23,9 +24,9 @@ export const NAVIGATION_LINKS = [
 		icon: House,
 	},
 	{
-		title: 'Milestones',
-		href: '/miniapp/milestones',
-		icon: Award,
+		title: 'Low Stakes',
+		href: '/game/low-stakes',
+		icon: Trophy,
 	},
 	{
 		title: 'Shop',
@@ -33,9 +34,9 @@ export const NAVIGATION_LINKS = [
 		icon: ShoppingBag,
 	},
 	{
-		title: 'Activity',
-		href: '/miniapp/activity',
-		icon: Activity,
+		title: 'Milestones',
+		href: '/miniapp/milestones',
+		icon: Award,
 	},
 	{
 		title: 'Wallet',

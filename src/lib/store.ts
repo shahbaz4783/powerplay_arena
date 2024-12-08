@@ -91,7 +91,6 @@ const clearGameState = (): Promise<void> => {
 
 export const useCricketGameState = () => {
 	const queryClient = useQueryClient();
-	const { telegramId } = useCurrentUser();
 
 	const { data: gameState } = useQuery({
 		queryKey: [GAME_STATE_KEY],
@@ -144,35 +143,39 @@ export const useCricketGameState = () => {
 		});
 	};
 
-	const endMatchAndClaimReward = async (
-		prevState: FormResponse,
-		formData: FormData
-	): Promise<FormResponse> => {
-		try {
-			if (!telegramId) throw new Error('User ID not found');
-			const result = await saveMatchDataToDatabase(gameState, telegramId);
-			await clearGameState();
+	// const endMatchAndClaimReward = async (
+	// 	prevState: FormResponse,
+	// 	formData: FormData
+	// ): Promise<FormResponse> => {
+	// 	try {
+	// 		if (!telegramId) throw new Error('User ID not found');
+	// 		const result = await saveMatchDataToDatabase(gameState, telegramId);
+	// 		await clearGameState();
 
-			queryClient.setQueryData([GAME_STATE_KEY], initialState);
+	// 		queryClient.setQueryData([GAME_STATE_KEY], initialState);
 
-			console.log('Match ended, reward claimed, and state cleared');
-			console.log(result);
-			return result;
-		} catch (error) {
-			if (error instanceof Error) {
-				console.log(error.message);
-				return { message: { error: error.message } };
-			} else {
-				console.error('Error ending match and claiming reward:');
-				return { message: { error: 'An unexpected error occurred' } };
-			}
-		}
+	// 		console.log('Match ended, reward claimed, and state cleared');
+	// 		console.log(result);
+	// 		return result;
+	// 	} catch (error) {
+	// 		if (error instanceof Error) {
+	// 			console.log(error.message);
+	// 			return { message: { error: error.message } };
+	// 		} else {
+	// 			console.error('Error ending match and claiming reward:');
+	// 			return { message: { error: 'An unexpected error occurred' } };
+	// 		}
+	// 	}
+	// };
+
+	const resetGame = () => {
+		localStorage.removeItem('cricketGameState');
 	};
 
 	return {
 		gameState,
 		updateGameState: updateGameState.mutate,
 		updateInnings,
-		endMatchAndClaimReward,
+		resetGame,
 	};
 };
