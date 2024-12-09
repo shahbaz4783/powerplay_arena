@@ -22,7 +22,7 @@ export function ProfileSummary() {
 		const fetchData = async () => {
 			try {
 				if (!user) return;
-				await saveOrUpdateUser(user);
+				// await saveOrUpdateUser(user);
 			} catch (error) {
 				console.error('Error saving/updating user data:', error);
 			}

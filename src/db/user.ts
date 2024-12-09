@@ -39,6 +39,21 @@ export const getUserInfoById = async (telegramId: string) => {
 	}
 };
 
+export const getUserInfoByInviteCode = async (inviteCode: string) => {
+	try {
+		return await db.user.findUnique({
+			where: { inviteCode },
+		});
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error('Error fetching user info:', error.message);
+		} else {
+			console.error('Something went wrong while fetching user info');
+		}
+		throw error;
+	}
+};
+
 export const getUserProgressById = async (telegramId: string) => {
 	try {
 		return await db.userProgression.findUnique({

@@ -7,7 +7,7 @@ import { avatars } from '../constants/shop-items';
 import { responseMessages } from '../constants/messages';
 import { revalidatePath } from 'next/cache';
 import { nanoid } from 'nanoid';
-import { User } from '@telegram-apps/sdk-react';
+import { User } from 'grammy/types';
 
 export const saveOrUpdateUser = async (user: User) => {
 	try {
@@ -24,16 +24,16 @@ export const saveOrUpdateUser = async (user: User) => {
 				where: { telegramId: user.id.toString() },
 				update: {
 					username: user.username,
-					firstName: user.firstName,
-					lastName: user.lastName,
-					isPremium: user.isPremium,
+					firstName: user.first_name,
+					lastName: user.last_name,
+					isPremium: user.is_premium,
 				},
 				create: {
 					telegramId: user.id.toString(),
 					username: user.username,
-					firstName: user.firstName,
-					lastName: user.lastName,
-					isPremium: user.isPremium,
+					firstName: user.first_name,
+					lastName: user.last_name,
+					isPremium: user.is_premium,
 					inviteCode: nanoid(8),
 					avatarUrl: avatars[0].href,
 
