@@ -12,6 +12,7 @@ import { useCurrentUser } from '../hooks/useCurrentUser';
 const GAME_STATE_KEY = 'cricketGameState';
 
 const initialState: GameState = {
+	matchId: '',
 	gamePhase: 'toss',
 	currentInnings: 1,
 	target: null,

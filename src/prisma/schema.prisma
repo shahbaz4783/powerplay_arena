@@ -43,6 +43,14 @@ enum MatchFormat {
   CLASSIC
 }
 
+enum GameOutcome {
+  WON
+  LOST
+  TIE
+  ABANDONED
+  ONGOING
+}
+
 // User-related models
 model User {
   telegramId    String  @id @unique
@@ -58,12 +66,14 @@ model User {
   inventory         UserInventory?
   progress          UserProgression?
 
+  cricketMatch      CricketMatchRecord[]
   transactions      Transaction[]
-  stats             Stats[]
+  stats             CricketMatchStats?
   betStats          BetStats[]
   starsTransactions StarsTransaction[]
   referrals         ReferralRecord[] @relation("Referrer")
   referredBy        ReferralRecord[] @relation("ReferredUser")
+
   @@map("users")
 }
 
@@ -145,10 +155,35 @@ model Badge {
   @@map("badges")
 }
 
+model CricketMatchRecord {
+  // match info
+  matchId     String      @id @default(uuid())
+  telegramId  String
+  format      MatchFormat
+  feePaid     Boolean     @default(false)
+
+  // batting info
+  runsScored     Int         @default(0)
+  ballsFaced     Int         @default(0)
+  sixes          Int         @default(0)
+  fours          Int         @default(0)
+
+  // bowling info
+  wicketsTaken   Int         @default(0)
+  runsConceded   Int         @default(0)
+  ballsBowled    Int         @default(0)
+  hattrick       Int         @default(0)
+  maidenOver     Int         @default(0)
+
+  outcome     GameOutcome  @default(ONGOING)
+  createdAt   DateTime    @default(now())
+  user        User        @relation(fields: [telegramId], references: [telegramId])
+}
+
 // Game-related models
-model Stats {
+model CricketMatchStats {
   id             String      @id @default(cuid())
-  telegramId         String
+  telegramId     String @unique
   format         MatchFormat
 
   matchesPlayed  Int         @default(0)

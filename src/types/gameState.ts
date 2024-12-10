@@ -53,6 +53,7 @@ export interface MatchResultInterface {
 
 export interface GameState {
 	// Game flow
+	matchId: string;
 	gamePhase: GamePhase;
 	currentInnings: 1 | 2;
 	matchSetup: MatchSetup;

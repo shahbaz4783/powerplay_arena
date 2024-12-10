@@ -1,13 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useUserInventory, useUserProgress } from '@/src/hooks/useUserData';
 import { useInitData } from '@telegram-apps/sdk-react';
 import { Progress } from '@/src/components/ui/progress';
 import { token } from '@/src/constants/app-config';
 import { Card } from '@/src/components/ui/card';
-import { saveOrUpdateUser } from '@/src/actions/user.action';
 import { Coins, Zap } from 'lucide-react';
 import { AvatarDialog } from '../../common/dialog/avatar-dialog';
 import { Skeleton } from '../../ui/skeleton';
@@ -17,18 +15,6 @@ export function ProfileSummary() {
 	const initData = useInitData();
 	const user = initData?.user;
 	const { telegramId } = useCurrentUser();
-
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				if (!user) return;
-				// await saveOrUpdateUser(user);
-			} catch (error) {
-				console.error('Error saving/updating user data:', error);
-			}
-		};
-		fetchData();
-	}, [user]);
 
 	const { data: inventory, isLoading } = useUserInventory(telegramId);
 

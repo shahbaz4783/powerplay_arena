@@ -14,6 +14,16 @@ export interface FormResponse {
   };
 }
 
+export interface ServerResponseType<T = undefined> {
+	success: boolean;
+	message?: string;
+	data?: T;
+	error?: {
+		code?: string;
+		details?: any;
+	};
+}
+
 export type InvoiceStatus = 'paid' | 'cancelled';
 
 export interface GameState {

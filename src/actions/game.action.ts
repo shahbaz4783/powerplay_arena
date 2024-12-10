@@ -1,10 +1,10 @@
 "use server";
 
-import { FormResponse } from '@/src/types/types';
-import { db } from "../lib/db";
-import { GameState, LevelInfo } from "../types/gameState";
-import { redirect } from "next/navigation";
-import { MatchFormat } from "@prisma/client";
+import { FormResponse, ServerResponseType } from '@/src/types/types';
+import { db } from '../lib/db';
+import { GameState, LevelInfo } from '../types/gameState';
+import { redirect } from 'next/navigation';
+import { MatchFormat } from '@prisma/client';
 import {
 	calculateLevel,
 	calculateXPGain,
@@ -16,73 +16,70 @@ import { revalidatePath } from 'next/cache';
 import { Milestone } from '../types/db.types';
 import { token } from '../constants/app-config';
 import { v4 as uuidv4 } from 'uuid';
+import { getUserInventoryById } from '../db/user';
 
 export async function startQuickMatch(
 	telegramId: string,
-	prevState: FormResponse,
+	prevState: ServerResponseType,
 	formData: FormData
-): Promise<FormResponse> {
+): Promise<ServerResponseType> {
 	try {
 		const formatValue = formData.get('format');
 		const entryFee = parseInt(formData.get('entryFee') as string);
 		const passRequired = parseInt(formData.get('passRequired') as string);
 		const matchFormat: MatchFormat = formatValue as MatchFormat;
 
-		if (isNaN(entryFee)) {
-			return { message: { error: 'Invalid entry fee' } };
-		}
-
-		const profile = await db.userInventory.findUnique({
-			where: { telegramId },
-		});
-
-		if (!profile) {
-			return { message: { error: 'No user found' } };
-		}
-
-		if (profile.powerCoin < entryFee) {
-			return { message: { error: `You dont have enough ${token.name}` } };
-		}
-
-		if (profile.powerPass < passRequired) {
-			return { message: { error: `You dont have enough ${token.pass}` } };
-		}
-
+		const inventory = await getUserInventoryById(telegramId);
 		if (
-			!formatValue ||
-			typeof formatValue !== 'string' ||
-			!isValidMatchFormat(formatValue)
+			!inventory ||
+			inventory.powerCoin < entryFee ||
+			inventory.powerPass < passRequired
 		) {
-			return { message: { error: 'Invalid match format' } };
+			const errorMessage = !inventory
+				? 'Cannot find your inventory data.'
+				: inventory.powerCoin < entryFee
+				? `You don't have enough ${token.name}`
+				: `You don't have enough ${token.pass}`;
+
+			return { success: false, message: errorMessage };
 		}
 
-		await db.$transaction(async (tx) => {
+		const result = await db.$transaction(async (tx) => {
 			await tx.userInventory.update({
-				where: { telegramId: profile.telegramId },
+				where: { telegramId: inventory.telegramId },
 				data: {
 					powerCoin: { decrement: entryFee },
-					// powerPass: { decrement: passRequired },
+					powerPass: { decrement: passRequired },
 				},
 			});
 
-			await tx.transaction.create({
+			const newMatch = await tx.cricketMatchRecord.create({
 				data: {
-					telegramId: profile.telegramId,
-					amount: entryFee,
-					type: 'MATCH_FEE',
-					balanceEffect: 'DECREMENT',
-					description: `${capitalizeFirstLetter(matchFormat)} match entry fees`,
+					format: matchFormat,
+					feePaid: true,
+					user: {
+						connect: {
+							telegramId,
+						},
+					},
 				},
 			});
+
+			return newMatch;
 		});
+
+		console.log(result.matchId);
+		return {
+			success: true,
+			message: result.matchId,
+		};
 	} catch (error) {
 		if (error instanceof Error) {
-			return { message: { error: error.message } };
+			return { success: false, error: { details: error.message } };
 		} else {
-			return { message: { error: 'Something went wrong' } };
+			return { success: false, error: { details: 'Something went wrong' } };
 		}
 	}
-	redirect(`/game/cricket/match-setup/${uuidv4()}`);
 }
 
 export async function saveMatchDataToDatabase(
@@ -93,7 +90,7 @@ export async function saveMatchDataToDatabase(
 		if (!telegramId) return { message: { error: 'No user Found' } };
 		await db.$transaction(async (tx) => {
 			// Update stats
-			await tx.stats.update({
+			await tx.cricketMatchStats.update({
 				where: {
 					telegramId_format: {
 						telegramId,

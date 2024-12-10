@@ -42,18 +42,18 @@ import { Header } from '../../common/elements/header';
 import { ServerResponse } from '../../common/message/server-response';
 import { MatchFormat } from '@prisma/client';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
+import { useRouter } from 'next/navigation';
 
 export function QuickPlayMode() {
 	const [selectedFormat, setSelectedFormat] = useState<MatchFormat>('BLITZ');
 
-	const { updateGameState } = useCricketGameState();
-
 	const { telegramId } = useCurrentUser();
+	const { updateGameState } = useCricketGameState();
 
 	const [response, formAction] = useFormState(
 		startQuickMatch.bind(null, telegramId),
 		{
-			message: {},
+			success: false,
 		}
 	);
 
@@ -66,14 +66,18 @@ export function QuickPlayMode() {
 		}
 	}, [selectedFormat, updateGameState]);
 
+	const router = useRouter();
+
 	useEffect(() => {
-		if (response.message.success) {
+		if (response.success) {
 			updateGameState({
+				matchId: response.message,
 				gamePhase: 'toss',
 				matchSetup: MATCH_FORMATS[selectedFormat],
 			});
+			router.push(`/game/cricket/match-setup/${response.message}`);
 		}
-	}, [response.message.success, selectedFormat, updateGameState]);
+	}, [response.success, selectedFormat, updateGameState]);
 
 	const handleFormatChange = (format: string) => {
 		setSelectedFormat(format as MatchFormat);
@@ -83,6 +87,7 @@ export function QuickPlayMode() {
 		const format = MATCH_FORMATS[selectedFormat];
 		if (format) {
 			formData.append('entryFee', format.entryFee.toString());
+			formData.append('passRequired', format.passRequired.toString());
 			formData.append('overs', format.overs.toString());
 			formData.append('format', format.format);
 		}
@@ -97,7 +102,6 @@ export function QuickPlayMode() {
 				className='mx-4 mt-3'
 			/>
 			<section className='p-4 space-y-4'>
-				<ServerResponse message={response.message} />
 				<Tabs
 					value={selectedFormat}
 					onValueChange={handleFormatChange}
