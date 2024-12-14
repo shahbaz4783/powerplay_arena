@@ -9,6 +9,7 @@ import {
 	Loader2,
 } from 'lucide-react';
 import { Button } from '@/src/components/ui/button';
+import { fakeDelay } from '@/src/lib/utils';
 
 interface MessageCardProps {
 	title: string;
@@ -43,7 +44,6 @@ export function MessageCard({
 }: MessageCardProps) {
 	const Icon = icon || iconMap[type];
 	const gradientColor = colorMap[type];
-
 	return (
 		<motion.div
 			className={`bg-gradient-to-br ${gradientColor} rounded-xl p-1 shadow-lg overflow-hidden`}

@@ -1,40 +1,25 @@
 'use client';
 
 import { useCricketGameState } from '@/src/lib/store';
-import { Trophy, Target, Zap, Award } from 'lucide-react';
+import { Trophy, Target, Zap, Award, Coins } from 'lucide-react';
 import { calculateRewards } from '@/src/lib/game-logics';
 import { RewardItem } from '@/src/components/common/cards/reward-card';
-import { useFormState } from 'react-dom';
-import { calculateXPGain } from '@/src/lib/utils';
-import { SubmitButton } from '../../common/buttons/submit-button';
 import { Header } from '../../common/elements/header';
 import { GradientBorder } from '../../common/elements/gradient-border';
 import { token } from '@/src/constants/app-config';
-import { saveMatchDataToDatabase } from '@/src/actions/game.action';
-import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 
-export function Result() {
-	const { telegramId } = useCurrentUser();
-	const { gameState, resetGame } = useCricketGameState();
+interface ResultProps {
+	rewards: number | null;
+}
+
+export function Result({ rewards }: ResultProps) {
+	const { gameState } = useCricketGameState();
 	const { player, opponent, matchResult } = gameState;
 
 	const { fourReward, sixerReward, wicketTakenReward, winMarginReward } =
 		calculateRewards(gameState);
 	const totalReward =
 		fourReward + sixerReward + wicketTakenReward + winMarginReward;
-
-	const [response, formAction] = useFormState(
-		saveMatchDataToDatabase.bind(null, gameState, telegramId),
-		{
-			message: {},
-		}
-	);
-
-	if (response.message.success) {
-		resetGame();
-	}
-
-	const totalXP = calculateXPGain(gameState);
 
 	const getResultColor = () => {
 		switch (matchResult.winner) {
@@ -112,15 +97,7 @@ export function Result() {
 						<div>
 							<div className='text-sm text-slate-300'>Total {token.name}</div>
 							<div className='text-2xl font-bold text-yellow-400'>
-								{totalReward} {token.symbol}
-							</div>
-						</div>
-					</div>
-					<div className='flex items-center'>
-						<div>
-							<div className='text-sm text-slate-300'>Total XP</div>
-							<div className='text-2xl font-bold text-green-400'>
-								{totalXP} XP
+								{rewards !== null ? rewards : totalReward} {token.symbol}
 							</div>
 						</div>
 					</div>
@@ -137,15 +114,17 @@ export function Result() {
 				</div>
 			</GradientBorder>
 
-			<section className='rounded-xl bg-gradient-to-t from-gray-900 via-gray-900 to-slate-900 p-6 sticky bottom-0'>
-				<form action={formAction}>
-					<SubmitButton
-						title='Claim Rewards and XP'
-						loadingTitle='Claiming...'
-						className='w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold'
-					/>
-				</form>
-			</section>
+			<GradientBorder>
+				<div className='flex items-center justify-center space-x-2'>
+					<Coins className='w-6 h-6 text-yellow-400' />
+					<span className='text-lg font-semibold text-slate-200'>
+						Total Earnings
+					</span>
+				</div>
+				<p className='text-center text-2xl font-bold text-yellow-400 mt-2'>
+					{rewards !== null ? rewards : totalReward} {token.symbol}
+				</p>
+			</GradientBorder>
 		</main>
 	);
 }

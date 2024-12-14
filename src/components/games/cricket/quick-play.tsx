@@ -43,6 +43,7 @@ import { ServerResponse } from '../../common/message/server-response';
 import { MatchFormat } from '@prisma/client';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { useRouter } from 'next/navigation';
+import { MessageCard } from '../../common/cards/message-card';
 
 export function QuickPlayMode() {
 	const [selectedFormat, setSelectedFormat] = useState<MatchFormat>('BLITZ');
@@ -93,6 +94,18 @@ export function QuickPlayMode() {
 		}
 		formAction(formData);
 	};
+
+	if (response.success) {
+		return (
+			<div className='min-h-svh flex items-center'>
+				<MessageCard
+					title='Match Setup Complete!'
+					message='Entry fees have been processed successfully. Preparing your game environment...'
+					type='loading'
+				/>
+			</div>
+		);
+	}
 
 	return (
 		<main className='min-h-svh space-y-2 flex flex-col justify-between'>

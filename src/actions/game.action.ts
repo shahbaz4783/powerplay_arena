@@ -4,7 +4,7 @@ import { FormResponse, ServerResponseType } from '@/src/types/types';
 import { db } from '../lib/db';
 import { GameState, LevelInfo } from '../types/gameState';
 import { redirect } from 'next/navigation';
-import { MatchFormat } from '@prisma/client';
+import { GameOutcome, MatchFormat } from '@prisma/client';
 import {
 	calculateLevel,
 	calculateXPGain,
@@ -79,6 +79,113 @@ export async function startQuickMatch(
 		} else {
 			return { success: false, error: { details: 'Something went wrong' } };
 		}
+	}
+}
+
+export async function updateMatchData(
+	matchId: string,
+	gameState: GameState,
+	isAbandoned: boolean = false
+): Promise<{ success: boolean; message: string; rewards?: number }> {
+	try {
+		const { player, opponent, matchResult } = gameState;
+
+		let outcome: GameOutcome;
+		if (isAbandoned) {
+			outcome = 'ABANDONED';
+		} else if (matchResult.winner === 'player') {
+			outcome = 'WON';
+		} else if (matchResult.winner === 'opponent') {
+			outcome = 'LOST';
+		} else {
+			outcome = 'TIE';
+		}
+
+		const { fourReward, sixerReward, wicketTakenReward, winMarginReward } =
+			calculateRewards(gameState);
+		const totalReward =
+			fourReward + sixerReward + wicketTakenReward + winMarginReward;
+
+		const result = await db.$transaction(async (tx) => {
+			const updatedMatch = await tx.cricketMatchRecord.update({
+				where: { matchId },
+				data: {
+					runsScored: player.runs,
+					ballsFaced: player.ballsFaced,
+					sixes: player.sixes,
+					fours: player.fours,
+					wicketsTaken: opponent.wickets,
+					runsConceded: opponent.runs,
+					ballsBowled: opponent.ballsFaced,
+					outcome,
+					lastUpdated: new Date(),
+				},
+			});
+
+			// Update user inventory with rewards
+			if (!isAbandoned) {
+				await tx.userInventory.update({
+					where: { telegramId: updatedMatch.telegramId },
+					data: {
+						powerCoin: { increment: totalReward },
+					},
+				});
+
+				// Record the transaction
+				await tx.transaction.create({
+					data: {
+						telegramId: updatedMatch.telegramId,
+						amount: totalReward,
+						balanceEffect: 'INCREMENT',
+						type: 'MATCH_EARNINGS',
+						description: `Earnings from match ${matchId}`,
+						matchId,
+					},
+				});
+			}
+
+			return { updatedMatch, totalReward };
+		});
+
+		return {
+			success: true,
+			message: 'Match data updated and rewards distributed successfully',
+			rewards: result.totalReward,
+		};
+	} catch (error) {
+		console.error('Error updating match data:', error);
+		return {
+			success: false,
+			message: 'Failed to update match data and distribute rewards',
+		};
+	}
+}
+
+export async function pingMatchStatus(
+	matchId: string,
+	gameState: GameState
+): Promise<{ success: boolean; message: string }> {
+	try {
+		const { player, opponent } = gameState;
+
+		await db.cricketMatchRecord.update({
+			where: { matchId },
+			data: {
+				runsScored: player.runs,
+				ballsFaced: player.ballsFaced,
+				sixes: player.sixes,
+				fours: player.fours,
+				wicketsTaken: opponent.wickets,
+				runsConceded: opponent.runs,
+				ballsBowled: opponent.ballsFaced,
+
+			},
+		});
+
+		return { success: true, message: 'Match status updated successfully' };
+	} catch (error) {
+		console.error('Error updating match status:', error);
+		return { success: false, message: 'Failed to update match status' };
 	}
 }
 

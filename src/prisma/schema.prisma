@@ -178,6 +178,8 @@ model CricketMatchRecord {
   outcome     GameOutcome  @default(ONGOING)
   createdAt   DateTime    @default(now())
   user        User        @relation(fields: [telegramId], references: [telegramId])
+
+  lastUpdated   DateTime    @default(now())
 }
 
 // Game-related models
