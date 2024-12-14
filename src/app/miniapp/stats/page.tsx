@@ -10,7 +10,7 @@ export default function StatsPage() {
 				subtitle='Dive into your performance metrics'
 			/>
 			<BettingStats />
-			<UserCricketStats />
+			{/* <UserCricketStats /> */}
 		</div>
 	);
 }
