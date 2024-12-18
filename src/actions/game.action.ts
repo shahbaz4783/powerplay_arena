@@ -5,18 +5,13 @@ import { db } from '../lib/db';
 import { GameState, LevelInfo } from '../types/gameState';
 import { redirect } from 'next/navigation';
 import { GameOutcome, MatchFormat } from '@prisma/client';
-import {
-	calculateLevel,
-	calculateXPGain,
-	capitalizeFirstLetter,
-	isValidMatchFormat,
-} from '../lib/utils';
-import { calculateRewards } from '../lib/game-logics';
+import { calculateLevel, calculateCricketXPGain } from '../lib/utils';
 import { revalidatePath } from 'next/cache';
 import { Milestone } from '../types/db.types';
 import { token } from '../constants/app-config';
-import { v4 as uuidv4 } from 'uuid';
 import { getUserInventoryById } from '../db/user';
+import { initializeUserStats } from '../db/stats';
+import { cricketMatchRewards } from '../lib/game-logics';
 
 export async function startQuickMatch(
 	telegramId: string,
@@ -88,7 +83,19 @@ export async function updateMatchData(
 	isAbandoned: boolean = false
 ): Promise<{ success: boolean; message: string; rewards?: number }> {
 	try {
-		const { player, opponent, matchResult } = gameState;
+		const existingMatch = await db.cricketMatchRecord.findUnique({
+			where: { matchId },
+			select: { outcome: true },
+		});
+
+		if (existingMatch && existingMatch.outcome !== 'ONGOING') {
+			return {
+				success: false,
+				message: 'This match has already been completed and cannot be updated.',
+			};
+		}
+
+		const { player, opponent, matchResult, matchSetup } = gameState;
 
 		let outcome: GameOutcome;
 		if (isAbandoned) {
@@ -101,10 +108,7 @@ export async function updateMatchData(
 			outcome = 'TIE';
 		}
 
-		const { fourReward, sixerReward, wicketTakenReward, winMarginReward } =
-			calculateRewards(gameState);
-		const totalReward =
-			fourReward + sixerReward + wicketTakenReward + winMarginReward;
+		const { totalEarnings, totalXP } = cricketMatchRewards(gameState);
 
 		const result = await db.$transaction(async (tx) => {
 			const updatedMatch = await tx.cricketMatchRecord.update({
@@ -122,12 +126,65 @@ export async function updateMatchData(
 				},
 			});
 
-			// Update user inventory with rewards
-			if (!isAbandoned) {
+			// Only update stats if the game is finished (not abandoned and has a result)
+			if (!isAbandoned && outcome !== 'ABANDONED') {
+				// Fetch current stats
+				const currentStats = await tx.cricketMatchStats.findUnique({
+					where: {
+						telegramId_format: {
+							telegramId: updatedMatch.telegramId,
+							format: matchSetup.format as MatchFormat,
+						},
+					},
+				});
+
+				if (!currentStats) {
+					await initializeUserStats(
+						updatedMatch.telegramId,
+						matchSetup.format as MatchFormat
+					);
+				}
+
+				await tx.cricketMatchStats.update({
+					where: {
+						telegramId_format: {
+							telegramId: updatedMatch.telegramId,
+							format: matchSetup.format as MatchFormat,
+						},
+					},
+					data: {
+						matchesPlayed: { increment: 1 },
+						matchesWon: { increment: outcome === 'WON' ? 1 : 0 },
+						matchesLost: { increment: outcome === 'LOST' ? 1 : 0 },
+						matchesTie: { increment: outcome === 'TIE' ? 1 : 0 },
+						runsScored: { increment: player.runs },
+						highestRunsScored: Math.max(
+							currentStats?.highestRunsScored ?? 0,
+							player.runs
+						),
+						ballsFaced: { increment: player.ballsFaced },
+						sixes: { increment: player.sixes },
+						fours: { increment: player.fours },
+						wicketsTaken: { increment: opponent.wickets },
+						runsConceded: { increment: opponent.runs },
+						lowestRunsConceded:
+							(currentStats?.lowestRunsConceded ?? 0) === 0
+								? opponent.runs
+								: Math.min(
+										currentStats?.lowestRunsConceded ?? 0,
+										opponent.runs
+								  ),
+						highestWicketsTaken: Math.max(
+							currentStats?.highestWicketsTaken ?? 0,
+							opponent.wickets
+						),
+						ballsBowled: { increment: opponent.ballsFaced },
+					},
+				});
 				await tx.userInventory.update({
 					where: { telegramId: updatedMatch.telegramId },
 					data: {
-						powerCoin: { increment: totalReward },
+						powerCoin: { increment: totalEarnings },
 					},
 				});
 
@@ -135,163 +192,38 @@ export async function updateMatchData(
 				await tx.transaction.create({
 					data: {
 						telegramId: updatedMatch.telegramId,
-						amount: totalReward,
+						amount: totalEarnings,
 						balanceEffect: 'INCREMENT',
 						type: 'MATCH_EARNINGS',
 						description: `Earnings from match ${matchId}`,
 						matchId,
 					},
 				});
+
+				await tx.userProgression.update({
+					where: { telegramId: updatedMatch.telegramId },
+					data: {
+						totalXP: { increment: totalXP },
+					},
+				});
 			}
 
-			return { updatedMatch, totalReward };
+			return { updatedMatch, totalEarnings };
 		});
 
 		return {
 			success: true,
-			message: 'Match data updated and rewards distributed successfully',
-			rewards: result.totalReward,
+			message:
+				'Match data updated, stats updated, and rewards distributed successfully',
+			rewards: result.totalEarnings,
 		};
 	} catch (error) {
 		console.error('Error updating match data:', error);
 		return {
 			success: false,
-			message: 'Failed to update match data and distribute rewards',
+			message: 'Failed to update match data, stats, and distribute rewards',
 		};
 	}
-}
-
-export async function pingMatchStatus(
-	matchId: string,
-	gameState: GameState
-): Promise<{ success: boolean; message: string }> {
-	try {
-		const { player, opponent } = gameState;
-
-		await db.cricketMatchRecord.update({
-			where: { matchId },
-			data: {
-				runsScored: player.runs,
-				ballsFaced: player.ballsFaced,
-				sixes: player.sixes,
-				fours: player.fours,
-				wicketsTaken: opponent.wickets,
-				runsConceded: opponent.runs,
-				ballsBowled: opponent.ballsFaced,
-
-			},
-		});
-
-		return { success: true, message: 'Match status updated successfully' };
-	} catch (error) {
-		console.error('Error updating match status:', error);
-		return { success: false, message: 'Failed to update match status' };
-	}
-}
-
-export async function saveMatchDataToDatabase(
-	gameState: GameState,
-	telegramId: string
-): Promise<FormResponse> {
-	try {
-		if (!telegramId) return { message: { error: 'No user Found' } };
-		await db.$transaction(async (tx) => {
-			// Update stats
-			await tx.cricketMatchStats.update({
-				where: {
-					telegramId_format: {
-						telegramId,
-						format: gameState.matchSetup.format as MatchFormat,
-					},
-				},
-				data: {
-					matchesPlayed: { increment: 1 },
-					matchesWon:
-						gameState.matchResult.winner === 'player'
-							? { increment: 1 }
-							: undefined,
-					matchesLost:
-						gameState.matchResult.winner === 'opponent'
-							? { increment: 1 }
-							: undefined,
-					matchesTie:
-						gameState.matchResult.winner === 'tie'
-							? { increment: 1 }
-							: undefined,
-					runsScored: { increment: gameState.player.runs },
-					ballsFaced: { increment: gameState.player.ballsFaced },
-					sixes: { increment: gameState.player.sixes },
-					fours: { increment: gameState.player.fours },
-					wicketsTaken: { increment: gameState.opponent.wickets },
-					runsConceded: { increment: gameState.opponent.runs },
-					ballsBowled: { increment: gameState.opponent.ballsFaced },
-				},
-			});
-
-			// Calculate rewards and add to the wallet and create a transaction
-			const { fourReward, sixerReward, wicketTakenReward, winMarginReward } =
-				calculateRewards(gameState);
-			const totalReward =
-				sixerReward + fourReward + wicketTakenReward + winMarginReward;
-
-			if (totalReward > 0) {
-				await tx.userInventory.update({
-					where: { telegramId },
-					data: {
-						powerCoin: { increment: totalReward },
-					},
-				});
-				await tx.transaction.create({
-					data: {
-						telegramId,
-						amount: totalReward,
-						type: 'MATCH_EARNINGS',
-						balanceEffect: 'INCREMENT',
-						description: `Earnings from ${gameState.matchSetup.format.toLowerCase()} match`,
-					},
-				});
-			}
-
-			// Calculate XP and check for level up
-			const xpGain = calculateXPGain(gameState);
-
-			const currentXPRecord = await tx.userProgression.findUnique({
-				where: { telegramId },
-			});
-
-			if (!currentXPRecord) {
-				throw new Error('XP record not found for user');
-			}
-
-			const oldTotalXP = currentXPRecord.totalXP;
-			const newTotalXP = oldTotalXP + xpGain;
-
-			// Calculate new level info
-			const newLevelInfo: LevelInfo = calculateLevel(newTotalXP);
-
-			await tx.userProgression.update({
-				where: { telegramId },
-				data: {
-					totalXP: newTotalXP,
-					level: newLevelInfo.level,
-					levelName: newLevelInfo.name,
-					xpForNextLevel: newLevelInfo.xpForNextLevel,
-				},
-			});
-		});
-	} catch (error) {
-		if (error instanceof Error) {
-			return { message: { error: error.message } };
-		} else {
-			return {
-				message: {
-					error: 'Failed to end match and claim reward. Please try again.',
-				},
-			};
-		}
-	}
-	revalidatePath('/', 'layout');
-	redirect('/miniapp');
 }
 
 export async function saveAwardToDatabase(telegramId: string, challenge: Milestone) {

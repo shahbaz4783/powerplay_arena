@@ -81,7 +81,6 @@ export function Commentary() {
 
     setEvent((prevEvent) => {
       if (prevEvent === newEvent) {
-        // Force a re-render by appending a timestamp
         return `${newEvent}-${Date.now()}` as CommentaryEvent;
       }
       return newEvent;
@@ -97,7 +96,7 @@ export function Commentary() {
       <AnimatePresence mode="wait">
         {showCommentary && (
           <motion.div
-            key={event} // Add this line to force re-render on event change
+            key={event}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
@@ -124,7 +123,7 @@ export function Commentary() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="text-white text-center text-lg"
+                className="text-slate-300 text-center text-sm font-mono"
               >
                 {commentary}
               </motion.p>

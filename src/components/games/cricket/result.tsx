@@ -1,12 +1,24 @@
 'use client';
 
 import { useCricketGameState } from '@/src/lib/store';
-import { Trophy, Target, Zap, Award, Coins } from 'lucide-react';
-import { calculateRewards } from '@/src/lib/game-logics';
+import {
+	Trophy,
+	Target,
+	Zap,
+	Award,
+	PlayCircle,
+	HomeIcon,
+	Rotate3D,
+	RotateCcw,
+} from 'lucide-react';
 import { RewardItem } from '@/src/components/common/cards/reward-card';
 import { Header } from '../../common/elements/header';
 import { GradientBorder } from '../../common/elements/gradient-border';
 import { token } from '@/src/constants/app-config';
+import { useQueryClient } from '@tanstack/react-query';
+import { GameButton } from '../../common/buttons/game-button';
+import { cricketMatchRewards } from '@/src/lib/game-logics';
+import confetti from 'canvas-confetti';
 
 interface ResultProps {
 	rewards: number | null;
@@ -15,11 +27,29 @@ interface ResultProps {
 export function Result({ rewards }: ResultProps) {
 	const { gameState } = useCricketGameState();
 	const { player, opponent, matchResult } = gameState;
+	const queryClient = useQueryClient();
 
-	const { fourReward, sixerReward, wicketTakenReward, winMarginReward } =
-		calculateRewards(gameState);
-	const totalReward =
-		fourReward + sixerReward + wicketTakenReward + winMarginReward;
+	if (matchResult.winner === 'player') {
+		confetti({
+			particleCount: 100,
+			spread: 70,
+			origin: { y: 0.6 },
+		});
+	}
+
+	const {
+		fourReward,
+		sixerReward,
+		wicketTakenReward,
+		winMarginReward,
+		totalEarnings,
+		totalXP,
+	} = cricketMatchRewards(gameState);
+
+	const clearGameState = () => {
+		localStorage.removeItem('cricketGameState');
+		queryClient.invalidateQueries({ queryKey: ['cricketGameState'] });
+	};
 
 	const getResultColor = () => {
 		switch (matchResult.winner) {
@@ -88,21 +118,35 @@ export function Result({ rewards }: ResultProps) {
 				</p>
 			</GradientBorder>
 
-			<GradientBorder>
+			<GradientBorder className='space-y-3'>
 				<h2 className='text-xl font-bold text-center text-cyan-400'>
 					Your Rewards
 				</h2>
-				<div className='flex justify-between items-center  rounded-xl p-4'>
-					<div className='flex items-center'>
-						<div>
-							<div className='text-sm text-slate-300'>Total {token.name}</div>
-							<div className='text-2xl font-bold text-yellow-400'>
-								{rewards !== null ? rewards : totalReward} {token.symbol}
+				<section className='flex justify-between p-4 rounded-xl'>
+					<div className='flex justify-between items-center'>
+						<div className='flex items-center'>
+							<div>
+								<div className='text-sm text-slate-300'>Total {token.name}</div>
+								<div className='text-2xl font-bold text-yellow-400'>
+									{rewards !== null ? rewards : totalEarnings} {token.symbol}
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div className='grid grid-cols-2 gap-4'>
+
+					<div className='flex justify-between items-center text-right'>
+						<div className='flex items-center'>
+							<div>
+								<div className='text-sm text-slate-300'>Total XP</div>
+								<div className='text-2xl font-bold text-yellow-400'>
+									{totalXP}
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<section className='grid grid-cols-2 gap-4'>
 					<RewardItem icon={Zap} label='Sixes' value={sixerReward} />
 					<RewardItem icon={Target} label='Fours' value={fourReward} />
 					<RewardItem icon={Award} label='Wickets' value={wicketTakenReward} />
@@ -111,19 +155,24 @@ export function Result({ rewards }: ResultProps) {
 						label='Win Margin'
 						value={winMarginReward}
 					/>
-				</div>
+				</section>
 			</GradientBorder>
 
-			<GradientBorder>
-				<div className='flex items-center justify-center space-x-2'>
-					<Coins className='w-6 h-6 text-yellow-400' />
-					<span className='text-lg font-semibold text-slate-200'>
-						Total Earnings
-					</span>
-				</div>
-				<p className='text-center text-2xl font-bold text-yellow-400 mt-2'>
-					{rewards !== null ? rewards : totalReward} {token.symbol}
-				</p>
+			<GradientBorder className='flex justify-between gap-3'>
+				<GameButton
+					href='/miniapp'
+					onClick={clearGameState}
+					icon={<HomeIcon className='w-6 h-6' />}
+				>
+					Home
+				</GameButton>
+				<GameButton
+					href='/game/cricket/match-setup'
+					onClick={clearGameState}
+					icon={<RotateCcw className='w-6 h-6' />}
+				>
+					Play Again
+				</GameButton>
 			</GradientBorder>
 		</main>
 	);

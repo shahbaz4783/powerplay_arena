@@ -68,7 +68,7 @@ model User {
 
   cricketMatch      CricketMatchRecord[]
   transactions      Transaction[]
-  stats             CricketMatchStats?
+  stats             CricketMatchStats[]
   betStats          BetStats[]
   starsTransactions StarsTransaction[]
   referrals         ReferralRecord[] @relation("Referrer")
@@ -185,7 +185,7 @@ model CricketMatchRecord {
 // Game-related models
 model CricketMatchStats {
   id             String      @id @default(cuid())
-  telegramId     String @unique
+  telegramId     String
   format         MatchFormat
 
   matchesPlayed  Int         @default(0)

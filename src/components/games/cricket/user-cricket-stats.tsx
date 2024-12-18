@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { StatCard } from '../../common/cards/stats-card';
-import { useGetUserStats } from '@/src/hooks/useUserData';
 import {
 	Tabs,
 	TabsContent,
@@ -159,7 +158,7 @@ const StatSection: React.FC<StatSectionProps> = ({
 export function UserCricketStats() {
 	const { telegramId } = useCurrentUser();
 
-	const { data: stats } = useGetUserStats(telegramId);
+
 
 	return (
 		<motion.section
@@ -180,7 +179,7 @@ export function UserCricketStats() {
 						</TabsTrigger>
 					))}
 				</TabsList>
-				{Object.keys(MATCH_FORMATS).map((format) => (
+				{/* {Object.keys(MATCH_FORMATS).map((format) => (
 					<TabsContent key={format} value={format} className='space-y-10'>
 						{stats &&
 							stats[format as MatchFormat] &&
@@ -193,7 +192,7 @@ export function UserCricketStats() {
 								/>
 							))}
 					</TabsContent>
-				))}
+				))} */}
 			</Tabs>
 		</motion.section>
 	);

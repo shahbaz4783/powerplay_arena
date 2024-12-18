@@ -136,9 +136,12 @@ export const executePowerExchange = async (
 			throw new Error(responseMessages.general.error.unexpectedError);
 		}
 
+		console.log({ profile });
+		console.log(exchangeDirection)
+
 		return await db.$transaction(async (tx) => {
 			if (exchangeDirection === 'buyPasses') {
-				if (profile.powerPass < totalPassCost) {
+				if (profile.powerCoin < totalPassCost) {
 					return {
 						message: {
 							error: responseMessages.transaction.error.insufficientBalance,

@@ -48,7 +48,7 @@ export function GameControls() {
 					onClick={() => handleAction(action)}
 					whileTap={{ scale: 0.75 }}
 					className={cn(
-						'w-full py-4 px-6 text-sm font-bold uppercase tracking-wider',
+						'w-full p-4 text-sm font-bold uppercase tracking-wider',
 						'bg-gradient-to-b from-slate-700 to-slate-800',
 						'text-slate-200 shadow-md rounded-xl',
 						'disabled:opacity-50 disabled:cursor-not-allowed',

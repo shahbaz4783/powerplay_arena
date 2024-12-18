@@ -153,31 +153,75 @@ export const getCurrentInningsData = (
   }
 };
 
-export const calculateRewards = (gameState: GameState) => {
-  const { player, opponent } = gameState;
-  const { margin, marginType } = gameState.matchResult;
-  const {
-    rewards: { four, runMargin, six, wicket },
-  } = gameState.matchSetup;
+// export const calculateRewards = (gameState: GameState) => {
+// 	const { player, opponent } = gameState;
+// 	const { margin, marginType } = gameState.matchResult;
+// 	const {
+// 		rewards: { four, runMargin, six, wicket },
+// 	} = gameState.matchSetup;
 
-  let winMarginReward = 0;
-  const fourReward = player.fours * four;
-  const sixerReward = player.sixes * six;
-  const wicketTakenReward = opponent.wickets * wicket;
+// 	let winMarginReward = 0;
+// 	const fourReward = player.fours * four;
+// 	const sixerReward = player.sixes * six;
+// 	const wicketTakenReward = opponent.wickets * wicket;
 
-  if (gameState.matchResult.winner === "player") {
-    if (margin && marginType === "runs") {
-      winMarginReward = runMargin * margin;
-    }
-    if (margin && marginType === "wickets") {
-      winMarginReward = wicket * margin;
-    }
-  }
+// 	if (gameState.matchResult.winner === 'player') {
+// 		if (margin && marginType === 'runs') {
+// 			winMarginReward = runMargin * margin;
+// 		}
+// 		if (margin && marginType === 'wickets') {
+// 			winMarginReward = wicket * margin;
+// 		}
+// 	}
 
-  return {
-    winMarginReward,
-    fourReward,
-    sixerReward,
-    wicketTakenReward,
-  };
+// 	const totalReward =
+// 		fourReward + sixerReward + wicketTakenReward + winMarginReward;
+
+// 	return {
+// 		winMarginReward,
+// 		fourReward,
+// 		sixerReward,
+// 		wicketTakenReward,
+// 		totalReward,
+// 	};
+// };
+
+export const cricketMatchRewards = (gameState: GameState) => {
+	const { player, opponent } = gameState;
+	const { margin, marginType } = gameState.matchResult;
+	const {
+		rewards: { four, runMargin, six, wicket },
+	} = gameState.matchSetup;
+
+	let winMarginReward = 0;
+	const fourReward = player.fours * four;
+	const sixerReward = player.sixes * six;
+	const wicketTakenReward = opponent.wickets * wicket;
+
+	if (gameState.matchResult.winner === 'player') {
+		if (margin && marginType === 'runs') {
+			winMarginReward = runMargin * margin;
+		}
+		if (margin && marginType === 'wickets') {
+			winMarginReward = wicket * margin;
+		}
+	}
+
+	const totalEarnings =
+		fourReward + sixerReward + wicketTakenReward + winMarginReward;
+
+	const totalXP = Math.floor(
+		winMarginReward * 3 +
+			(fourReward + sixerReward + wicketTakenReward) / 2 +
+			player.runs
+	);
+
+	return {
+		winMarginReward,
+		fourReward,
+		sixerReward,
+		wicketTakenReward,
+		totalEarnings,
+		totalXP,
+	};
 };

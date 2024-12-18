@@ -60,6 +60,12 @@ export const capitalizeFirstLetter = (text: string) => {
 		.join(' ');
 };
 
+export function calculateCricketXPGain(gameState: GameState): number {
+	const winBonus = gameState.matchResult.winner === 'player' ? 50 : 0;
+	const performanceXP = gameState.player.runs + gameState.opponent.wickets * 10;
+	return winBonus + performanceXP;
+}
+
 export function calculateLevel(xp: number): LevelInfo {
 	let level = 1;
 	let xpForNextLevel = LEVEL_DATA[0].xpThreshold;
@@ -79,12 +85,6 @@ export function calculateLevel(xp: number): LevelInfo {
 		currentXP: xp,
 		xpForNextLevel: xpForNextLevel,
 	};
-}
-
-export function calculateXPGain(gameState: GameState): number {
-	const winBonus = gameState.matchResult.winner === 'player' ? 50 : 0;
-	const performanceXP = gameState.player.runs + gameState.opponent.wickets * 10;
-	return winBonus + performanceXP;
 }
 
 export function hasLeveledUp(oldXP: number, newXP: number): boolean {

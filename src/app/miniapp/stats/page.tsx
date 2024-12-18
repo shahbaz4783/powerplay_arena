@@ -1,6 +1,5 @@
 import { Header } from '@/src/components/common/elements/header';
-import { BettingStats } from '@/src/components/games/coin-flip/betting-stats';
-import { UserCricketStats } from '@/src/components/games/cricket/user-cricket-stats';
+import { StatsHomePage } from './stats-home';
 
 export default function StatsPage() {
 	return (
@@ -9,8 +8,7 @@ export default function StatsPage() {
 				title='Player Statistics'
 				subtitle='Dive into your performance metrics'
 			/>
-			<BettingStats />
-			{/* <UserCricketStats /> */}
+			<StatsHomePage />
 		</div>
 	);
 }

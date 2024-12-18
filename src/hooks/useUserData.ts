@@ -1,11 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { BetType, MatchFormat } from '@prisma/client';
 import {
-	getUserBettingStats,
-	getUserFormatStats,
-	getUserStats,
-} from '../db/stats';
-import {
 	getUserAvatars,
 	getUserInfoById,
 	getUserInventoryById,
@@ -15,6 +10,7 @@ import {
 	PaginatedResponse,
 } from '../db/user';
 import { getUserRankings } from '../db/rankings';
+import { getCricketStatsByFormat } from '../db/stats';
 
 export const useUserInfo = (telegramId: string) => {
 	return useQuery({
@@ -75,45 +71,26 @@ export const useGetUserTransaction = (userId: string) => {
 	});
 };
 
-export const useGetUserStats = (userId: string) => {
+
+export const fetchCricketStats = (userId: string, format: MatchFormat) => {
 	return useQuery({
-		queryKey: ['user-stats', userId],
-		queryFn: () => getUserStats(userId),
+		queryKey: ['cricket-format-stats', format],
+		queryFn: () => getCricketStatsByFormat(userId, format),
 		enabled: !!userId,
 		staleTime: 60000,
 		gcTime: 3600000,
 	});
 };
 
-// export const useGetUserAvatar = (userId: string) => {
+// export const useGetUserBettingStats = (userId: string, betType: BetType) => {
 // 	return useQuery({
-// 		queryKey: ['user-avatar', userId],
-// 		queryFn: () => getUserAvatars(userId!),
+// 		queryKey: ['user-betting-stats', userId, betType],
+// 		queryFn: () => getUserBettingStats(userId!, betType),
 // 		enabled: !!userId,
 // 		staleTime: 60000,
 // 		gcTime: 3600000,
 // 	});
 // };
-
-export const useGetUserFormatStats = (userId: string, format: MatchFormat) => {
-	return useQuery({
-		queryKey: ['user-format-stats', userId, format],
-		queryFn: () => getUserFormatStats(userId!, format),
-		enabled: !!userId,
-		staleTime: 60000,
-		gcTime: 3600000,
-	});
-};
-
-export const useGetUserBettingStats = (userId: string, betType: BetType) => {
-	return useQuery({
-		queryKey: ['user-betting-stats', userId, betType],
-		queryFn: () => getUserBettingStats(userId!, betType),
-		enabled: !!userId,
-		staleTime: 60000,
-		gcTime: 3600000,
-	});
-};
 
 export const useUserRanking = () => {
 	return useQuery({

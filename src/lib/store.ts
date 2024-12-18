@@ -1,22 +1,21 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import CryptoJS from 'crypto-js';
 import {
-  GameParticipant,
-  GameState,
-  InningsInterface,
-  RunOutcome,
-} from "../types/gameState";
-import { saveMatchDataToDatabase } from '../actions/game.action';
-import { FormResponse } from '../types/types';
-import { useCurrentUser } from '../hooks/useCurrentUser';
+	GameParticipant,
+	GameState,
+	InningsInterface,
+	RunOutcome,
+} from '../types/gameState';
 
 const GAME_STATE_KEY = 'cricketGameState';
+const SECRET_KEY =
+	process.env.NEXT_PUBLIC_GAME_STATE_SECRET_KEY || 'fallback-secret-key';
 
 const initialState: GameState = {
 	matchId: '',
 	gamePhase: 'toss',
 	currentInnings: 1,
 	target: null,
-
 	matchSetup: {
 		format: 'BLITZ',
 		entryFee: 50,
@@ -30,13 +29,11 @@ const initialState: GameState = {
 			wicket: 20,
 		},
 	},
-
 	toss: {
 		winner: null,
 		choice: null,
 		playMode: null,
 	},
-
 	player: {
 		runs: 0,
 		wickets: 0,
@@ -47,7 +44,6 @@ const initialState: GameState = {
 		runRate: '0.00',
 		overInfo: [],
 	},
-
 	opponent: {
 		runs: 0,
 		wickets: 0,
@@ -58,27 +54,40 @@ const initialState: GameState = {
 		runRate: '0.00',
 		overInfo: [],
 	},
-
 	matchResult: {
 		winner: null,
 		margin: null,
 		marginType: null,
 	},
-
 	achievements: [],
+};
+
+const encryptState = (state: GameState): string => {
+	return CryptoJS.AES.encrypt(JSON.stringify(state), SECRET_KEY).toString();
+};
+
+const decryptState = (encryptedState: string): GameState => {
+	try {
+		const bytes = CryptoJS.AES.decrypt(encryptedState, SECRET_KEY);
+		return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+	} catch (error) {
+		console.error('Failed to decrypt game state:', error);
+		return initialState;
+	}
 };
 
 const getGameState = (): GameState => {
 	if (typeof window !== 'undefined') {
-		const storedState = localStorage.getItem(GAME_STATE_KEY);
-		return storedState ? JSON.parse(storedState) : initialState;
+		const encryptedState = localStorage.getItem(GAME_STATE_KEY);
+		return encryptedState ? decryptState(encryptedState) : initialState;
 	}
 	return initialState;
 };
 
 const setGameState = (state: GameState): Promise<GameState> => {
 	if (typeof window !== 'undefined') {
-		localStorage.setItem(GAME_STATE_KEY, JSON.stringify(state));
+		const encryptedState = encryptState(state);
+		localStorage.setItem(GAME_STATE_KEY, encryptedState);
 	}
 	return Promise.resolve(state);
 };
@@ -88,6 +97,22 @@ const clearGameState = (): Promise<void> => {
 		localStorage.removeItem(GAME_STATE_KEY);
 	}
 	return Promise.resolve();
+};
+
+const validateGameState = (state: GameState): GameState => {
+	// Implement validation logic here
+	// Example: Ensure runs, wickets, and other values are within expected ranges
+	const validatedState = { ...state };
+
+	if (validatedState.player.runs < 0) validatedState.player.runs = 0;
+	if (validatedState.player.wickets < 0) validatedState.player.wickets = 0;
+	if (validatedState.player.wickets > validatedState.matchSetup.totalWickets) {
+		validatedState.player.wickets = validatedState.matchSetup.totalWickets;
+	}
+
+	// Repeat similar validations for opponent and other fields
+
+	return validatedState;
 };
 
 export const useCricketGameState = () => {
@@ -101,8 +126,8 @@ export const useCricketGameState = () => {
 
 	const updateGameState = useMutation({
 		mutationFn: (newState: Partial<GameState>) => {
-			const updatedState = setGameState({ ...gameState, ...newState });
-			return updatedState;
+			const updatedState = validateGameState({ ...gameState, ...newState });
+			return setGameState(updatedState);
 		},
 		onSuccess: (data) => {
 			queryClient.setQueryData([GAME_STATE_KEY], data);
@@ -119,8 +144,7 @@ export const useCricketGameState = () => {
 			newBallsFaced % 6
 		}`;
 
-		const newOverInfo = [...currentInnings.overInfo];
-		newOverInfo.push(runOutcome);
+		const newOverInfo = [...currentInnings.overInfo, runOutcome];
 
 		const newStats: InningsInterface = {
 			...currentInnings,
@@ -144,39 +168,17 @@ export const useCricketGameState = () => {
 		});
 	};
 
-	// const endMatchAndClaimReward = async (
-	// 	prevState: FormResponse,
-	// 	formData: FormData
-	// ): Promise<FormResponse> => {
-	// 	try {
-	// 		if (!telegramId) throw new Error('User ID not found');
-	// 		const result = await saveMatchDataToDatabase(gameState, telegramId);
-	// 		await clearGameState();
-
-	// 		queryClient.setQueryData([GAME_STATE_KEY], initialState);
-
-	// 		console.log('Match ended, reward claimed, and state cleared');
-	// 		console.log(result);
-	// 		return result;
-	// 	} catch (error) {
-	// 		if (error instanceof Error) {
-	// 			console.log(error.message);
-	// 			return { message: { error: error.message } };
-	// 		} else {
-	// 			console.error('Error ending match and claiming reward:');
-	// 			return { message: { error: 'An unexpected error occurred' } };
-	// 		}
-	// 	}
-	// };
-
-	const resetGame = () => {
-		localStorage.removeItem('cricketGameState');
-	};
+	const resetGameState = useMutation({
+		mutationFn: clearGameState,
+		onSuccess: () => {
+			queryClient.setQueryData([GAME_STATE_KEY], initialState);
+		},
+	});
 
 	return {
 		gameState,
 		updateGameState: updateGameState.mutate,
 		updateInnings,
-		resetGame,
+		resetGameState: resetGameState.mutate,
 	};
 };
