@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/src/lib/db';
-import { MatchFormat } from '@prisma/client';
+import { BetType, MatchFormat } from '@prisma/client';
 
 export async function initializeUserStats(
 	telegramId: string,
@@ -46,6 +46,20 @@ export const getCricketStatsByFormat = async (
 			telegramId_format: {
 				telegramId,
 				format,
+			},
+		},
+	});
+};
+
+export const getUserBettingStats = async (
+	telegramId: string,
+	betType: BetType
+) => {
+	return await db.betStats.findUnique({
+		where: {
+			telegramId_betType: {
+				telegramId,
+				betType,
 			},
 		},
 	});

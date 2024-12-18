@@ -1,11 +1,13 @@
 import {
-	useGetUserFormatStats,
-	useGetUserBettingStats,
-} from '@/src/hooks/useUserData';
-import { MatchFormat, BetType, Stats, BetStats } from '@prisma/client';
+	MatchFormat,
+	BetType,
+	CricketMatchStats,
+	BetStats,
+} from '@prisma/client';
+import { useCricketStats, useGetUserBettingStats } from './useUserData';
 
 export type CricketStats = {
-	[key in MatchFormat]: Stats | null;
+	[key in MatchFormat]: CricketMatchStats | null;
 };
 
 export type BettingStats = {
@@ -13,9 +15,9 @@ export type BettingStats = {
 };
 
 export const useStats = (userId: string) => {
-	const { data: blitzStats } = useGetUserFormatStats(userId, 'BLITZ');
-	const { data: powerplayStats } = useGetUserFormatStats(userId, 'POWERPLAY');
-	const { data: classicStats } = useGetUserFormatStats(userId, 'CLASSIC');
+	const { data: blitzStats } = useCricketStats(userId, 'BLITZ');
+	const { data: powerplayStats } = useCricketStats(userId, 'POWERPLAY');
+	const { data: classicStats } = useCricketStats(userId, 'CLASSIC');
 	const { data: safeBet } = useGetUserBettingStats(userId, 'SAFE_BET');
 	const { data: classicFlip } = useGetUserBettingStats(userId, 'CLASSIC_FLIP');
 	const { data: tripleShot } = useGetUserBettingStats(userId, 'TRIPLE_SHOT');

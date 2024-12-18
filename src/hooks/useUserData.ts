@@ -10,7 +10,7 @@ import {
 	PaginatedResponse,
 } from '../db/user';
 import { getUserRankings } from '../db/rankings';
-import { getCricketStatsByFormat } from '../db/stats';
+import { getCricketStatsByFormat, getUserBettingStats } from '../db/stats';
 
 export const useUserInfo = (telegramId: string) => {
 	return useQuery({
@@ -71,8 +71,7 @@ export const useGetUserTransaction = (userId: string) => {
 	});
 };
 
-
-export const fetchCricketStats = (userId: string, format: MatchFormat) => {
+export const useCricketStats = (userId: string, format: MatchFormat) => {
 	return useQuery({
 		queryKey: ['cricket-format-stats', format],
 		queryFn: () => getCricketStatsByFormat(userId, format),
@@ -82,15 +81,15 @@ export const fetchCricketStats = (userId: string, format: MatchFormat) => {
 	});
 };
 
-// export const useGetUserBettingStats = (userId: string, betType: BetType) => {
-// 	return useQuery({
-// 		queryKey: ['user-betting-stats', userId, betType],
-// 		queryFn: () => getUserBettingStats(userId!, betType),
-// 		enabled: !!userId,
-// 		staleTime: 60000,
-// 		gcTime: 3600000,
-// 	});
-// };
+export const useGetUserBettingStats = (userId: string, betType: BetType) => {
+	return useQuery({
+		queryKey: ['user-betting-stats', userId, betType],
+		queryFn: () => getUserBettingStats(userId, betType),
+		enabled: !!userId,
+		staleTime: 60000,
+		gcTime: 3600000,
+	});
+};
 
 export const useUserRanking = () => {
 	return useQuery({
