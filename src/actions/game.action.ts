@@ -85,7 +85,7 @@ export async function updateMatchData(
 	try {
 		const existingMatch = await db.cricketMatchRecord.findUnique({
 			where: { matchId },
-			select: { outcome: true },
+			select: { outcome: true, telegramId: true },
 		});
 
 		if (existingMatch && existingMatch.outcome !== 'ONGOING') {
@@ -111,6 +111,10 @@ export async function updateMatchData(
 		const { totalEarnings, totalXP } = cricketMatchRewards(gameState);
 
 		const result = await db.$transaction(async (tx) => {
+			const progress = await tx.userProgression.findUnique({
+				where: { telegramId: existingMatch?.telegramId },
+			});
+
 			const updatedMatch = await tx.cricketMatchRecord.update({
 				where: { matchId },
 				data: {
@@ -165,6 +169,7 @@ export async function updateMatchData(
 						ballsFaced: { increment: player.ballsFaced },
 						sixes: { increment: player.sixes },
 						fours: { increment: player.fours },
+
 						wicketsTaken: { increment: opponent.wickets },
 						runsConceded: { increment: opponent.runs },
 						lowestRunsConceded:
@@ -179,8 +184,18 @@ export async function updateMatchData(
 							opponent.wickets
 						),
 						ballsBowled: { increment: opponent.ballsFaced },
+
+						...(opponent.wickets > (currentStats?.bestBowlingWickets ?? 0) ||
+						(opponent.wickets === (currentStats?.bestBowlingWickets ?? 0) &&
+							opponent.runs < (currentStats?.bestBowlingRuns ?? Infinity))
+							? {
+									bestBowlingWickets: opponent.wickets,
+									bestBowlingRuns: opponent.runs,
+							  }
+							: {}),
 					},
 				});
+
 				await tx.userInventory.update({
 					where: { telegramId: updatedMatch.telegramId },
 					data: {
@@ -200,10 +215,16 @@ export async function updateMatchData(
 					},
 				});
 
+				const newTotalXP = progress?.totalXP! + totalXP;
+				const newLevelInfo: LevelInfo = calculateLevel(newTotalXP);
+
 				await tx.userProgression.update({
 					where: { telegramId: updatedMatch.telegramId },
 					data: {
 						totalXP: { increment: totalXP },
+						level: newLevelInfo.level,
+						levelName: newLevelInfo.name,
+						xpForNextLevel: newLevelInfo.xpForNextLevel,
 					},
 				});
 			}

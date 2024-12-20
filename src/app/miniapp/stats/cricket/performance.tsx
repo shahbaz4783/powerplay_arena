@@ -85,7 +85,7 @@ export function PerformanceStatCard({
 		<section
 			className={`${bgColor} rounded-xl p-4 flex flex-col items-center justify-center`}
 		>
-			<span className={`text-sm font-mono ${textColor}`}>{label}</span>
+			<span className={`text-xs font-mono ${textColor}`}>{label}</span>
 			<span className={`text-3xl font-bold font-mono ${textColor} glow`}>
 				{value}
 			</span>

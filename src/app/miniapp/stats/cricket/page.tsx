@@ -2,37 +2,18 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BoltIcon, BellIcon } from 'lucide-react';
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from '@/src/components/ui/card';
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
 } from '@/src/components/ui/tabs';
-import {
-	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
-} from '@/src/components/ui/chart';
-import {
-	ResponsiveContainer,
-	BarChart,
-	Bar,
-	XAxis,
-	YAxis,
-	CartesianGrid,
-} from 'recharts';
 import { MATCH_FORMATS } from '@/src/constants/app-config';
-import { StatCard } from '@/src/components/common/cards/stats-card';
 import { useCricketStats } from '@/src/hooks/useUserData';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { OverallPerformance } from './performance';
+import { BattingStats } from './batting-stats';
+import { BowlingStats } from './bowling-stats';
 
 interface MatchStats {
 	matchesPlayed: number;
@@ -48,19 +29,6 @@ interface GameModeContentProps {
 const GameModeContent: React.FC<GameModeContentProps> = ({ gameMode }) => {
 	const { telegramId } = useCurrentUser();
 	const { data: stats } = useCricketStats(telegramId, gameMode);
-
-	const battingData = [
-		{ name: 'Runs', value: stats?.runsScored },
-		{ name: 'Balls', value: stats?.ballsFaced },
-		{ name: 'Sixes', value: stats?.sixes },
-		{ name: 'Fours', value: stats?.fours },
-	];
-
-	const bowlingData = [
-		{ name: 'Wickets', value: stats?.wicketsTaken },
-		{ name: 'Runs Conceded', value: stats?.runsConceded },
-		{ name: 'Balls Bowled', value: stats?.ballsBowled },
-	];
 
 	const defaultStats: MatchStats = {
 		matchesPlayed: 0,
@@ -87,50 +55,8 @@ const GameModeContent: React.FC<GameModeContentProps> = ({ gameMode }) => {
 				total={matchesPlayed}
 			/>
 
-			<Card className='rounded-xl'>
-				<CardHeader>
-					<CardTitle className='text-lg font-semibold flex items-center'>
-						<BoltIcon className='mr-2 text-purple-400 w-5 h-5' /> Batting Stats
-					</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<ChartContainer config={{}} className='w-full h-[200px]'>
-						<ResponsiveContainer width='100%' height='100%'>
-							<BarChart data={battingData}>
-								<CartesianGrid strokeDasharray='3 3' />
-								<XAxis dataKey='name' />
-								<YAxis />
-								<ChartTooltip content={<ChartTooltipContent />} />
-								<Bar dataKey='value' fill='#8884d8' />
-							</BarChart>
-						</ResponsiveContainer>
-					</ChartContainer>
-				</CardContent>
-			</Card>
-
-			<Card className='rounded-xl'>
-				<CardHeader>
-					<CardTitle className='text-lg font-semibold flex items-center'>
-						<BellIcon className='mr-2 text-green-400 w-5 h-5' /> Bowling Stats
-					</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<ChartContainer
-						config={{}}
-						className='w-full pt-3 pr-2 rounded-xl bg-slate-800/50 backdrop-blur-md'
-					>
-						<ResponsiveContainer width='100%' height='100%'>
-							<BarChart data={bowlingData}>
-								<CartesianGrid strokeDasharray='3 3' />
-								<XAxis dataKey='name' />
-								<YAxis />
-								<ChartTooltip content={<ChartTooltipContent />} />
-								<Bar dataKey='value' fill='#82ca9d' />
-							</BarChart>
-						</ResponsiveContainer>
-					</ChartContainer>
-				</CardContent>
-			</Card>
+			<BattingStats gameMode={gameMode} />
+			<BowlingStats gameMode={gameMode} />
 		</motion.div>
 	);
 };

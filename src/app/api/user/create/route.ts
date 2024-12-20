@@ -41,10 +41,11 @@ export async function POST(request: NextRequest) {
 						powerPass: 10,
 						badge: {
 							create: {
-								awardId: 'new_player_join',
-								title: 'A New Legend Rises',
+								badgeId: 'novice_explorer',
+								title: 'Novice Explorer',
 								description:
 									"Your quest for glory begins now. Show the world what you're made of!",
+								photoUrl: 'v1734678155/novice_explorer_tesjrn.jpg',
 							},
 						},
 					},
@@ -59,10 +60,12 @@ export async function POST(request: NextRequest) {
 
 				transactions: {
 					create: {
-						amount: 500,
 						type: 'REWARD',
+						coinAmount: 500,
+						passAmount: 10,
 						balanceEffect: 'INCREMENT',
 						description: 'Welcome Bonus',
+						metadata: { reason: 'new_user_reward' },
 					},
 				},
 			},
@@ -78,7 +81,10 @@ export async function POST(request: NextRequest) {
 					data: {
 						referrerId: referrer.telegramId,
 						referredId: newUser.telegramId,
-						bonusAwarded: 100,
+						totalEarnedCoins: 500,
+						totalEarnedPasses: 10,
+						totalEarnedVouchers: 0,
+						expiresAt: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000),
 					},
 				});
 
@@ -92,7 +98,8 @@ export async function POST(request: NextRequest) {
 				await db.transaction.create({
 					data: {
 						telegramId: referrer.telegramId,
-						amount: 100,
+						coinAmount: 500,
+						passAmount: 10,
 						type: 'REWARD',
 						balanceEffect: 'INCREMENT',
 						description: 'Referral Bonus',

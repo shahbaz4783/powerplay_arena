@@ -5,6 +5,7 @@ import { betOptions } from '../constants/challenges';
 import { calculateBettingPassCost, calculateLevel } from '../lib/utils';
 import { token } from '../constants/app-config';
 import { LevelInfo } from '../types/gameState';
+import { initializeBettingStats } from '../db/stats';
 
 interface FormState {
 	message: {
@@ -16,7 +17,6 @@ interface FormState {
 	xpGain?: number;
 	flipResult?: 'heads' | 'tails';
 }
-
 export async function placeBet(
 	telegramId: string,
 	prevState: FormState,
@@ -49,6 +49,19 @@ export async function placeBet(
 		const bettingPassCost = calculateBettingPassCost(betAmount);
 
 		return await db.$transaction(async (tx) => {
+			const currentStats = await tx.betStats.findUnique({
+				where: {
+					telegramId_betType: {
+						telegramId,
+						betType: challenge.betType,
+					},
+				},
+			});
+
+			if (!currentStats) {
+				await initializeBettingStats(telegramId, challenge.betType);
+			}
+
 			const profile = await tx.userInventory.findUnique({
 				where: { telegramId },
 			});

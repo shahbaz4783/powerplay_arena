@@ -12,25 +12,29 @@ export async function initializeUserStats(
 			data: {
 				telegramId,
 				format,
-				matchesPlayed: 0,
-				matchesWon: 0,
-				matchesLost: 0,
-				matchesTie: 0,
-				runsScored: 0,
-				highestRunsScored: 0,
-				ballsFaced: 0,
-				sixes: 0,
-				fours: 0,
-				wicketsTaken: 0,
-				runsConceded: 0,
-				lowestRunsConceded: 0,
-				highestWicketsTaken: 0,
-				ballsBowled: 0,
-				hattrick: 0,
-				maidenOver: 0,
 			},
 		});
 		console.log(`Initialized stats for user ${telegramId} in ${format} format`);
+	} catch (error) {
+		console.error(`Error initializing stats for user ${telegramId}:`, error);
+		throw error;
+	}
+}
+
+export async function initializeBettingStats(
+	telegramId: string,
+	betType: BetType
+) {
+	try {
+		await db.betStats.create({
+			data: {
+				telegramId,
+				betType,
+			},
+		});
+		console.log(
+			`Initialized betting stats for user ${telegramId} in ${betType} format`
+		);
 	} catch (error) {
 		console.error(`Error initializing stats for user ${telegramId}:`, error);
 		throw error;

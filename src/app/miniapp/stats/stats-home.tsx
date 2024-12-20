@@ -12,6 +12,8 @@ import {
 	BarChart3Icon,
 	ActivityIcon,
 } from 'lucide-react';
+import { FaBaseball } from 'react-icons/fa6';
+import { PiBaseballCap } from 'react-icons/pi';
 
 const StatCard: React.FC<{
 	title: string;
@@ -38,14 +40,14 @@ const StatsHomePage: React.FC = () => {
 	const statCards = [
 		{
 			title: 'Cricket Stats',
-			icon: <BatIcon />,
+			icon: <PiBaseballCap />,
 			href: '/miniapp/stats/cricket',
 			gradient: 'bg-gradient-to-br from-green-400 to-blue-500',
 		},
 		{
 			title: 'Coin Flip Stats',
 			icon: <CoinIcon />,
-			href: '',
+			href: '/miniapp/stats/coin-flip',
 			gradient: 'bg-gradient-to-br from-yellow-400 to-orange-500',
 		},
 		{
@@ -59,18 +61,6 @@ const StatsHomePage: React.FC = () => {
 			icon: <TrophyIcon />,
 			href: '',
 			gradient: 'bg-gradient-to-br from-blue-400 to-indigo-500',
-		},
-		{
-			title: 'Overall Progress',
-			icon: <BarChart3Icon />,
-			href: '',
-			gradient: 'bg-gradient-to-br from-red-400 to-pink-500',
-		},
-		{
-			title: 'Recent Activity',
-			icon: <ActivityIcon />,
-			href: '',
-			gradient: 'bg-gradient-to-br from-teal-400 to-green-500',
 		},
 	];
 

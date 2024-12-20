@@ -1,7 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useUserInventory, useUserProgress } from '@/src/hooks/useUserData';
+import {
+	useUserInfo,
+	useUserInventory,
+	useUserProgress,
+} from '@/src/hooks/useUserData';
 import { useInitData } from '@telegram-apps/sdk-react';
 import { Progress } from '@/src/components/ui/progress';
 import { token } from '@/src/constants/app-config';
@@ -10,11 +14,16 @@ import { Coins, Zap } from 'lucide-react';
 import { AvatarDialog } from '../../common/dialog/avatar-dialog';
 import { Skeleton } from '../../ui/skeleton';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
+import { getUserInfoById } from '@/src/db/user';
+import { redirect } from 'next/navigation';
 
 export function ProfileSummary() {
 	const initData = useInitData();
 	const user = initData?.user;
 	const { telegramId } = useCurrentUser();
+
+	const { data } = useUserInfo(telegramId);
+	if (!data?.telegramId) redirect('/activate-account');
 
 	const { data: inventory, isLoading } = useUserInventory(telegramId);
 

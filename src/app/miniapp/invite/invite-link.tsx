@@ -3,6 +3,7 @@
 import { Copy, Share } from 'lucide-react';
 import ShinyButton from '../../../components/magicui/shiny-button';
 import { motion } from 'framer-motion';
+import { GradientBorder } from '@/src/components/common/elements/gradient-border';
 
 export function InviteLink() {
 	const inviteLink = 'https://t.me/powerplay_arena_bot?start=123';
@@ -13,7 +14,7 @@ export function InviteLink() {
 
 	return (
 		<>
-			<section className='rounded-xl p-4 bg-slate-900/10 border backdrop-blur-sm space-y-4'>
+			<GradientBorder className='backdrop-blur-md space-y-2'>
 				<menu className='flex gap-3 items-center'>
 					<Share size={34} />
 					<div>
@@ -33,7 +34,7 @@ export function InviteLink() {
 						<Copy />
 					</motion.div>
 				</div>
-			</section>
+			</GradientBorder>
 		</>
 	);
 }
