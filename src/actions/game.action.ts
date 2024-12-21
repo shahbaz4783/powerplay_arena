@@ -9,79 +9,76 @@ import { calculateLevel, calculateCricketXPGain } from '../lib/utils';
 import { revalidatePath } from 'next/cache';
 import { Milestone } from '../types/db.types';
 import { token } from '../constants/app-config';
-import { getUserInventoryById } from '../db/user';
-import { initializeUserStats } from '../db/stats';
+import { getUserInventoryById } from '../models/user';
+import { initializeCricketStats } from '../models/stats';
 import { cricketMatchRewards } from '../lib/game-logics';
+import * as models from '@/src/models';
+import { responseMessages } from '../constants/messages';
 
-export async function startQuickMatch(
+interface CricketMatchData {
+	matchId: string;
+}
+export async function setupCricketMatch(
 	telegramId: string,
-	prevState: ServerResponseType,
+	prevState: ServerResponseType<CricketMatchData>,
 	formData: FormData
-): Promise<ServerResponseType> {
+): Promise<ServerResponseType<CricketMatchData>> {
 	try {
-		const formatValue = formData.get('format');
+		const formatValue = formData.get('format') as MatchFormat;
 		const entryFee = parseInt(formData.get('entryFee') as string);
 		const passRequired = parseInt(formData.get('passRequired') as string);
-		const matchFormat: MatchFormat = formatValue as MatchFormat;
 
-		const inventory = await getUserInventoryById(telegramId);
-		if (
-			!inventory ||
-			inventory.powerCoin < entryFee ||
-			inventory.powerPass < passRequired
-		) {
-			const errorMessage = !inventory
-				? 'Cannot find your inventory data.'
-				: inventory.powerCoin < entryFee
-				? `You don't have enough ${token.name}`
-				: `You don't have enough ${token.pass}`;
+		const inventory = await models.getUserInventory(telegramId);
 
-			return { success: false, message: errorMessage };
+		// Validate sufficient resources
+		const errors = [];
+		if (inventory.powerCoin < entryFee)
+			errors.push(responseMessages.transaction.error.insufficientBalance);
+		if (inventory.powerPass < passRequired)
+			errors.push(responseMessages.transaction.error.insufficientPass);
+		if (errors.length) {
+			return {
+				success: false,
+				message: errors.join(' '),
+			};
 		}
 
 		const result = await db.$transaction(async (tx) => {
 			await tx.userInventory.update({
-				where: { telegramId: inventory.telegramId },
+				where: { telegramId },
 				data: {
 					powerCoin: { decrement: entryFee },
 					powerPass: { decrement: passRequired },
 				},
 			});
 
-			const newMatch = await tx.cricketMatchRecord.create({
+			return await tx.cricketMatchRecord.create({
 				data: {
-					format: matchFormat,
-					feePaid: true,
-					user: {
-						connect: {
-							telegramId,
-						},
-					},
+					format: formatValue,
+					user: { connect: { telegramId } },
 				},
 			});
-
-			return newMatch;
 		});
 
-		console.log(result.matchId);
 		return {
 			success: true,
-			message: result.matchId,
+			message: 'Match started successfully',
+			data: { matchId: result.matchId },
 		};
 	} catch (error) {
-		if (error instanceof Error) {
-			return { success: false, error: { details: error.message } };
-		} else {
-			return { success: false, error: { details: 'Something went wrong' } };
-		}
+		console.error('Error starting quick match:', error);
+		return {
+			success: false,
+			message:
+				error instanceof Error ? error.message : 'An unexpected error occurred',
+		};
 	}
 }
 
-export async function updateMatchData(
+export async function updateCricketMatchData(
 	matchId: string,
-	gameState: GameState,
-	isAbandoned: boolean = false
-): Promise<{ success: boolean; message: string; rewards?: number }> {
+	gameState: GameState
+): Promise<ServerResponseType<{ rewards?: number }>> {
 	try {
 		const existingMatch = await db.cricketMatchRecord.findUnique({
 			where: { matchId },
@@ -91,30 +88,47 @@ export async function updateMatchData(
 		if (existingMatch && existingMatch.outcome !== 'ONGOING') {
 			return {
 				success: false,
-				message: 'This match has already been completed and cannot be updated.',
+				message: 'The match has already been completed and cannot be updated.',
 			};
 		}
 
-		const { player, opponent, matchResult, matchSetup } = gameState;
+		const {
+			player,
+			opponent,
+			matchResult,
+			matchSetup,
+			toss: { playMode },
+		} = gameState;
 
 		let outcome: GameOutcome;
-		if (isAbandoned) {
-			outcome = 'ABANDONED';
-		} else if (matchResult.winner === 'player') {
+		if (matchResult.winner === 'player') {
 			outcome = 'WON';
 		} else if (matchResult.winner === 'opponent') {
 			outcome = 'LOST';
-		} else {
+		} else if (matchResult.winner === 'tie') {
 			outcome = 'TIE';
+		} else {
+			outcome = 'ONGOING';
 		}
 
 		const { totalEarnings, totalXP } = cricketMatchRewards(gameState);
 
-		const result = await db.$transaction(async (tx) => {
-			const progress = await tx.userProgression.findUnique({
-				where: { telegramId: existingMatch?.telegramId },
-			});
+		const currentStats = await models.getCricketStatsByFormat(
+			existingMatch?.telegramId!,
+			matchSetup.format as MatchFormat
+		);
+		const progress = await models.getUserProgression(
+			existingMatch?.telegramId!
+		);
 
+		if (!currentStats) {
+			await models.initializeCricketStats(
+				existingMatch?.telegramId!,
+				matchSetup.format as MatchFormat
+			);
+		}
+
+		const result = await db.$transaction(async (tx) => {
 			const updatedMatch = await tx.cricketMatchRecord.update({
 				where: { matchId },
 				data: {
@@ -130,25 +144,8 @@ export async function updateMatchData(
 				},
 			});
 
-			// Only update stats if the game is finished (not abandoned and has a result)
-			if (!isAbandoned && outcome !== 'ABANDONED') {
-				// Fetch current stats
-				const currentStats = await tx.cricketMatchStats.findUnique({
-					where: {
-						telegramId_format: {
-							telegramId: updatedMatch.telegramId,
-							format: matchSetup.format as MatchFormat,
-						},
-					},
-				});
-
-				if (!currentStats) {
-					await initializeUserStats(
-						updatedMatch.telegramId,
-						matchSetup.format as MatchFormat
-					);
-				}
-
+			// Only update stats if the game is finished
+			if (outcome !== 'ONGOING') {
 				await tx.cricketMatchStats.update({
 					where: {
 						telegramId_format: {
@@ -161,29 +158,28 @@ export async function updateMatchData(
 						matchesWon: { increment: outcome === 'WON' ? 1 : 0 },
 						matchesLost: { increment: outcome === 'LOST' ? 1 : 0 },
 						matchesTie: { increment: outcome === 'TIE' ? 1 : 0 },
+
 						runsScored: { increment: player.runs },
-						highestRunsScored: Math.max(
-							currentStats?.highestRunsScored ?? 0,
-							player.runs
-						),
 						ballsFaced: { increment: player.ballsFaced },
 						sixes: { increment: player.sixes },
 						fours: { increment: player.fours },
 
+						highestRunsScored: Math.max(
+							currentStats?.highestRunsScored ?? 0,
+							player.runs
+						),
 						wicketsTaken: { increment: opponent.wickets },
 						runsConceded: { increment: opponent.runs },
-						lowestRunsConceded:
-							(currentStats?.lowestRunsConceded ?? 0) === 0
-								? opponent.runs
-								: Math.min(
-										currentStats?.lowestRunsConceded ?? 0,
-										opponent.runs
-								  ),
-						highestWicketsTaken: Math.max(
-							currentStats?.highestWicketsTaken ?? 0,
-							opponent.wickets
-						),
 						ballsBowled: { increment: opponent.ballsFaced },
+
+						lowestRunsConceded:
+							(playMode !== 'defend' && matchResult.winner !== 'opponent') ||
+							(playMode === 'defend' && matchResult.winner === 'opponent')
+								? Math.min(
+										currentStats?.lowestRunsConceded ?? Infinity,
+										opponent.runs
+								  )
+								: currentStats?.lowestRunsConceded,
 
 						...(opponent.wickets > (currentStats?.bestBowlingWickets ?? 0) ||
 						(opponent.wickets === (currentStats?.bestBowlingWickets ?? 0) &&
@@ -207,11 +203,9 @@ export async function updateMatchData(
 				await tx.transaction.create({
 					data: {
 						telegramId: updatedMatch.telegramId,
-						amount: totalEarnings,
-						balanceEffect: 'INCREMENT',
-						type: 'MATCH_EARNINGS',
+						coinAmount: totalEarnings,
+						type: 'GAME',
 						description: `Earnings from match ${matchId}`,
-						matchId,
 					},
 				});
 
@@ -236,7 +230,9 @@ export async function updateMatchData(
 			success: true,
 			message:
 				'Match data updated, stats updated, and rewards distributed successfully',
-			rewards: result.totalEarnings,
+			data: {
+				rewards: result.totalEarnings,
+			},
 		};
 	} catch (error) {
 		console.error('Error updating match data:', error);
@@ -247,7 +243,10 @@ export async function updateMatchData(
 	}
 }
 
-export async function saveAwardToDatabase(telegramId: string, challenge: Milestone) {
+export async function saveAwardToDatabase(
+	telegramId: string,
+	challenge: Milestone
+) {
 	try {
 		if (!telegramId) return { message: { error: 'No user Found' } };
 		console.log('Saving challenge:', challenge);
@@ -255,7 +254,7 @@ export async function saveAwardToDatabase(telegramId: string, challenge: Milesto
 		const existingAward = await db.badge.findFirst({
 			where: {
 				telegramId,
-				awardId: challenge.id,
+				badgeId: challenge.id,
 			},
 		});
 
@@ -274,9 +273,7 @@ export async function saveAwardToDatabase(telegramId: string, challenge: Milesto
 			await tx.transaction.create({
 				data: {
 					telegramId,
-					amount: challenge.reward,
 					type: 'REWARD',
-					balanceEffect: 'INCREMENT',
 					description: `Reward for completing ${challenge.title} challenge`,
 				},
 			});
@@ -284,9 +281,10 @@ export async function saveAwardToDatabase(telegramId: string, challenge: Milesto
 			await tx.badge.create({
 				data: {
 					telegramId,
-					awardId: challenge.id,
+					badgeId: challenge.id,
 					title: challenge.title,
 					description: challenge.description,
+					photoUrl: '',
 				},
 			});
 		});

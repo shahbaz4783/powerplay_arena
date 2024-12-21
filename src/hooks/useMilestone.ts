@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Milestone } from '@/src/types/db.types';
-import { fetchClaimedAwards } from '../db/user';
+import { fetchClaimedAwards } from '../models/user';
 import { useStats, CricketStats, BettingStats } from './useStats';
 import { calculateMilestones } from '../constants/milestones';
 import { Badge } from '@prisma/client';
@@ -28,7 +28,7 @@ export const useMilestones = () => {
 			const unclaimedMilestones = allMilestones.filter(
 				(milestone) =>
 					!fetchedClaimedAwards.some(
-						(claimed) => claimed.awardId === milestone.id
+						(claimed) => claimed.badgeId === milestone.id
 					)
 			);
 

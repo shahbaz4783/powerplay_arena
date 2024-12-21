@@ -14,7 +14,7 @@ import { Coins, Zap } from 'lucide-react';
 import { AvatarDialog } from '../../common/dialog/avatar-dialog';
 import { Skeleton } from '../../ui/skeleton';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
-import { getUserInfoById } from '@/src/db/user';
+import { getUserInfoById } from '@/src/models/user';
 import { redirect } from 'next/navigation';
 
 export function ProfileSummary() {

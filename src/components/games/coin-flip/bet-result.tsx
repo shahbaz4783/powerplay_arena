@@ -16,12 +16,10 @@ import confetti from 'canvas-confetti';
 interface ResultModalProps {
 	isOpen: boolean;
 	onOpenChange: (open: boolean) => void;
-	result: 'win' | 'lose' | 'failed' | null;
+	success: boolean;
+	result: 'win' | 'lose' | null;
 	winAmount: number;
-	message: {
-		error?: string;
-		success?: string;
-	};
+	message: string | null;
 	flipResult: 'heads' | 'tails' | null;
 	xpGain: number;
 	selectedSide: string | null;
@@ -31,6 +29,7 @@ interface ResultModalProps {
 export function BetResult({
 	isOpen,
 	onOpenChange,
+	success,
 	result,
 	winAmount,
 	message,
@@ -55,8 +54,8 @@ export function BetResult({
 				return 'bg-gradient-to-r from-green-400 to-green-600';
 			case 'lose':
 				return 'bg-gradient-to-r from-red-400 to-red-600';
-			case 'failed':
-				return 'bg-gradient-to-r from-yellow-400 to-yellow-600';
+			// case 'failed':
+			// 	return 'bg-gradient-to-r from-yellow-400 to-yellow-600';
 			default:
 				return 'bg-gradient-to-r from-gray-400 to-gray-600';
 		}
@@ -68,8 +67,8 @@ export function BetResult({
 				return <Trophy className='w-12 h-12 text-white' />;
 			case 'lose':
 				return <X className='w-12 h-12 text-white' />;
-			case 'failed':
-				return <AlertTriangle className='w-12 h-12 text-white' />;
+			// case 'failed':
+			// 	return <AlertTriangle className='w-12 h-12 text-white' />;
 			default:
 				return null;
 		}
@@ -81,8 +80,8 @@ export function BetResult({
 				return 'Congratulations!';
 			case 'lose':
 				return 'Better luck next time!';
-			case 'failed':
-				return 'Bet Failed';
+			// case 'failed':
+			// 	return 'Bet Failed';
 			default:
 				return 'Result';
 		}
@@ -108,7 +107,7 @@ export function BetResult({
 								</div>
 							</DialogHeader>
 							<div className='p-6 space-y-6 bg-gradient-to-b from-gray-900 to-gray-800'>
-								{result !== 'failed' && (
+								{success && (
 									<div className='space-y-4'>
 										<div className='text-center'>
 											<p className='text-lg text-gray-300'>
@@ -161,8 +160,8 @@ export function BetResult({
 											</span>
 										</p>
 									)}
-									{result === 'failed' && (
-										<p className='text-xl text-yellow-400'>{message.error}</p>
+									{!success && (
+										<p className='text-xl text-yellow-400'>{message}</p>
 									)}
 								</motion.div>
 							</div>

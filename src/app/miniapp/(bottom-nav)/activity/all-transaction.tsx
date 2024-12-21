@@ -33,7 +33,7 @@ const groupTransactionsByDate = (transactions: Transaction[]) => {
 
 const calculateDailyTotal = (transactions: Transaction[]) => {
 	return transactions.reduce((total, tx) => {
-		return total + (tx.balanceEffect === 'DECREMENT' ? -tx.amount : tx.amount);
+		return total + tx.coinAmount;
 	}, 0);
 };
 
@@ -85,12 +85,12 @@ export function TransactionLists() {
 										<div className='flex items-center space-x-4'>
 											<div
 												className={`p-2 rounded-xl ${
-													tx.type === 'MATCH_FEE'
+													tx.type === 'GAME'
 														? 'bg-red-500/20'
 														: 'bg-green-500/20'
 												}`}
 											>
-												{tx.balanceEffect === 'DECREMENT' ? (
+												{tx.coinAmount < 0 ? (
 													<TrendingDown className='w-5 h-5 text-red-400' />
 												) : (
 													<TrendingUp className='w-5 h-5 text-green-400' />
@@ -108,14 +108,12 @@ export function TransactionLists() {
 										</div>
 										<div
 											className={`font-bold text-right ${
-												tx.balanceEffect === 'DECREMENT'
-													? 'text-red-400'
-													: 'text-green-400'
+												tx.coinAmount < 0 ? 'text-red-400' : 'text-green-400'
 											}`}
 										>
 											<span className=''>
-												{tx.balanceEffect === 'DECREMENT' ? '-' : '+'}
-												{tx.amount}
+												{tx.coinAmount < 0 ? '-' : '+'}
+												{tx.coinAmount}
 											</span>
 										</div>
 									</motion.li>

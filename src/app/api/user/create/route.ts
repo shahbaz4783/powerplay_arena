@@ -63,7 +63,6 @@ export async function POST(request: NextRequest) {
 						type: 'REWARD',
 						coinAmount: 500,
 						passAmount: 10,
-						balanceEffect: 'INCREMENT',
 						description: 'Welcome Bonus',
 						metadata: { reason: 'new_user_reward' },
 					},
@@ -101,7 +100,6 @@ export async function POST(request: NextRequest) {
 						coinAmount: 500,
 						passAmount: 10,
 						type: 'REWARD',
-						balanceEffect: 'INCREMENT',
 						description: 'Referral Bonus',
 					},
 				});

@@ -72,7 +72,8 @@ export const purchaseAvatar = async (
 					title: avatarInfo.name,
 					avatarId: avatarInfo.id,
 					description: avatarInfo.description,
-					href: avatarInfo.href,
+					photoUrl: avatarInfo.href,
+					xpBoost: 1,
 				},
 			});
 
@@ -92,8 +93,6 @@ export const purchaseAvatar = async (
 			await tx.transaction.create({
 				data: {
 					telegramId,
-					amount: avatarInfo.price,
-					balanceEffect: 'DECREMENT',
 					type: 'PURCHASE',
 					description: `Purchase ${avatarInfo.name} avatar`,
 				},
@@ -137,7 +136,7 @@ export const executePowerExchange = async (
 		}
 
 		console.log({ profile });
-		console.log(exchangeDirection)
+		console.log(exchangeDirection);
 
 		return await db.$transaction(async (tx) => {
 			if (exchangeDirection === 'buyPasses') {
@@ -158,8 +157,6 @@ export const executePowerExchange = async (
 				await tx.transaction.create({
 					data: {
 						telegramId,
-						amount: totalPassCost,
-						balanceEffect: 'DECREMENT',
 						type: 'PURCHASE',
 						description: `Exchanged ${totalPass} ${token.pass}`,
 					},
@@ -184,8 +181,6 @@ export const executePowerExchange = async (
 				await tx.transaction.create({
 					data: {
 						telegramId,
-						amount: netPassSaleAmount,
-						balanceEffect: 'INCREMENT',
 						type: 'PURCHASE',
 						description: `Sold ${totalPass} ${token.pass}`,
 					},

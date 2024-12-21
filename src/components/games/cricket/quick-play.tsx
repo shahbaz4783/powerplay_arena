@@ -32,18 +32,17 @@ import {
 	Shield,
 	Info,
 } from 'lucide-react';
-import { startQuickMatch } from '@/src/actions/game.action';
 import { MATCH_FORMATS, token } from '@/src/constants/app-config';
 import { useFormState } from 'react-dom';
 import { RewardItem } from '../../common/cards/reward-card';
 import { useCricketGameState } from '@/src/lib/store';
 import { SubmitButton } from '../../common/buttons/submit-button';
 import { Header } from '../../common/elements/header';
-import { ServerResponse } from '../../common/message/server-response';
 import { MatchFormat } from '@prisma/client';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { useRouter } from 'next/navigation';
 import { MessageCard } from '../../common/cards/message-card';
+import { setupCricketMatch } from '@/src/actions/game.action';
 
 export function QuickPlayMode() {
 	const [selectedFormat, setSelectedFormat] = useState<MatchFormat>('BLITZ');
@@ -52,9 +51,13 @@ export function QuickPlayMode() {
 	const { updateGameState } = useCricketGameState();
 
 	const [response, formAction] = useFormState(
-		startQuickMatch.bind(null, telegramId),
+		setupCricketMatch.bind(null, telegramId),
 		{
 			success: false,
+			message: '',
+			data: {
+				matchId: '',
+			},
 		}
 	);
 
@@ -72,7 +75,7 @@ export function QuickPlayMode() {
 	useEffect(() => {
 		if (response.success) {
 			updateGameState({
-				matchId: response.message,
+				matchId: response.data?.matchId,
 				gamePhase: 'toss',
 				matchSetup: MATCH_FORMATS[selectedFormat],
 			});

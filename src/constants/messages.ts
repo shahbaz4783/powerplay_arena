@@ -158,8 +158,6 @@ export const responseMessages = {
 				'Failed to load game data. Please check your connection and try again.',
 			maintenanceMode:
 				'The game is currently under maintenance. Please try again later.',
-			versionOutdated:
-				'Your game version is outdated. Please update to the latest version.',
 			unexpectedError: 'An unexpected error occurred. Please try again.',
 			serverOverloaded:
 				'Servers are currently overloaded. Please try again in a few minutes.',

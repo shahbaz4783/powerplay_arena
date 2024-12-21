@@ -3,7 +3,7 @@
 import { db } from '@/src/lib/db';
 import { BetType, MatchFormat } from '@prisma/client';
 
-export async function initializeUserStats(
+export async function initializeCricketStats(
 	telegramId: string,
 	format: MatchFormat
 ) {

@@ -61,9 +61,7 @@ export const dailyDrop = async (
 			await tx.transaction.create({
 				data: {
 					telegramId,
-					amount: coins,
 					type: 'REWARD',
-					balanceEffect: 'INCREMENT',
 					description: `Daily reward claim (Day ${
 						newStreak === 0 ? '7' : newStreak
 					}): ${coins} ${token.symbol} and ${powerPass} Power Pass`,

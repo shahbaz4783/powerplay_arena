@@ -4,120 +4,94 @@ import { db } from '@/src/lib/db';
 import { betOptions } from '../constants/challenges';
 import { calculateBettingPassCost, calculateLevel } from '../lib/utils';
 import { token } from '../constants/app-config';
-import { LevelInfo } from '../types/gameState';
-import { initializeBettingStats } from '../db/stats';
+import { responseMessages } from '../constants/messages';
+import * as models from '../models';
+import { ServerResponseType } from '../types/types';
 
 interface FormState {
-	message: {
-		error?: string;
-		success?: string;
-	};
-	result: 'win' | 'lose' | 'failed' | null;
+	result: 'win' | 'lose' | null;
 	winAmount: number;
-	xpGain?: number;
+	xpGain: number;
 	flipResult?: 'heads' | 'tails';
 }
+
 export async function placeBet(
 	telegramId: string,
-	prevState: FormState,
+	prevState: ServerResponseType<FormState>,
 	formData: FormData
-): Promise<FormState> {
+): Promise<ServerResponseType<FormState>> {
 	try {
 		const betAmount = Number(formData.get('betAmount'));
 		const challengeName = formData.get('challengeName') as string;
 		const selectedSide = formData.get('selectedSide') as 'heads' | 'tails';
-
-		if (!betAmount || !challengeName || !selectedSide) {
-			return {
-				message: { error: 'Invalid input data' },
-				result: 'failed',
-				winAmount: 0,
-			};
-		}
-
 		const challenge = betOptions.find(
 			(option) => option.name === challengeName
 		);
-		if (!challenge) {
+
+		if (!betAmount || !challengeName || !selectedSide || !challenge) {
 			return {
-				message: { error: 'Invalid challenge' },
-				result: 'failed',
-				winAmount: 0,
+				success: false,
+				message: 'Invalid input data',
+				data: {
+					result: null,
+					winAmount: 0,
+					xpGain: 0,
+				},
 			};
 		}
 
 		const bettingPassCost = calculateBettingPassCost(betAmount);
+		const inventory = await models.getUserInventory(telegramId);
+		const progress = await models.getUserProgression(telegramId);
+		let currentStats = await models.getUserBettingStats(
+			telegramId,
+			challenge.betType
+		);
+
+		// Validate sufficient resources
+		const errors = [];
+		if (inventory.powerCoin < betAmount)
+			errors.push(responseMessages.transaction.error.insufficientBalance);
+		if (inventory.powerPass < bettingPassCost)
+			errors.push(responseMessages.transaction.error.insufficientPass);
+		if (errors.length) {
+			return {
+				success: false,
+				message: errors.join(' '),
+				data: {
+					result: null,
+					winAmount: 0,
+					xpGain: 0,
+				},
+			};
+		}
+
+		// Initialize stats if not available
+		if (!currentStats) {
+			await models.initializeBettingStats(telegramId, challenge.betType);
+		}
+
+		// Simulate the coin flip
+		const randomOutcome = Math.random();
+		const isWin = randomOutcome <= challenge.odds;
+		const flipResult = isWin
+			? selectedSide
+			: selectedSide === 'heads'
+			? 'tails'
+			: 'heads';
+
+		const winAmount = isWin ? Math.round(betAmount * challenge.payout) : 0;
+		const netGain = winAmount - betAmount;
+		const xpGain = Math.floor(
+			betAmount * (isWin ? challenge.payout * 0.1 : 0.02)
+		);
+
+		// Calculate new level information
+		const newTotalXP = progress.totalXP + xpGain;
+		const newLevelInfo = calculateLevel(newTotalXP);
 
 		return await db.$transaction(async (tx) => {
-			const currentStats = await tx.betStats.findUnique({
-				where: {
-					telegramId_betType: {
-						telegramId,
-						betType: challenge.betType,
-					},
-				},
-			});
-
-			if (!currentStats) {
-				await initializeBettingStats(telegramId, challenge.betType);
-			}
-
-			const profile = await tx.userInventory.findUnique({
-				where: { telegramId },
-			});
-
-			const progress = await tx.userProgression.findUnique({
-				where: { telegramId },
-			});
-
-			if (!profile) {
-				throw new Error('Profile not found');
-			}
-
-			if (!progress) {
-				throw new Error('Profile not found');
-			}
-
-			if (profile.powerCoin < betAmount) {
-				return {
-					message: { error: 'Insufficient balance' },
-					result: 'failed',
-					winAmount: 0,
-				};
-			}
-
-			if (profile.powerPass < bettingPassCost) {
-				return {
-					message: { error: 'Insufficient betting passes' },
-					result: 'failed',
-					winAmount: 0,
-				};
-			}
-
-			// Simulate the coin flip
-			let flipResult = selectedSide;
-			const randomOutcome = Math.random();
-			const isWin = randomOutcome <= challenge.odds;
-
-			if (isWin) {
-				flipResult === (selectedSide as 'heads' | 'tails');
-			} else {
-				flipResult = selectedSide === 'heads' ? 'tails' : 'heads';
-			}
-
-			const winAmount = isWin ? Math.round(betAmount * challenge.payout) : 0;
-			const netGain = winAmount - betAmount;
-
-			const xpGain = Math.floor(
-				isWin
-					? betAmount * challenge.payout * 0.1
-					: betAmount * challenge.payout * 0.02
-			);
-
-			const newTotalXP = progress.totalXP + xpGain;
-			const newLevelInfo: LevelInfo = calculateLevel(newTotalXP);
-
-			// Update user's balance and betting passes
+			// Update user progression
 			await tx.userProgression.update({
 				where: { telegramId },
 				data: {
@@ -127,6 +101,8 @@ export async function placeBet(
 					xpForNextLevel: newLevelInfo.xpForNextLevel,
 				},
 			});
+
+			// Update user inventory
 			await tx.userInventory.update({
 				where: { telegramId },
 				data: {
@@ -135,10 +111,11 @@ export async function placeBet(
 				},
 			});
 
+			// Update betting stats
 			await tx.betStats.update({
 				where: {
 					telegramId_betType: {
-						telegramId: telegramId,
+						telegramId,
 						betType: challenge.betType,
 					},
 				},
@@ -147,67 +124,49 @@ export async function placeBet(
 					betsWon: { increment: isWin ? 1 : 0 },
 					totalWagered: { increment: betAmount },
 					totalEarning: { increment: isWin ? netGain : 0 },
-					totalLoss: { increment: !isWin ? betAmount : 0 },
+					totalLoss: { increment: isWin ? 0 : betAmount },
 				},
 			});
 
-			// Record the result transaction
-			if (isWin) {
-				await tx.transaction.create({
-					data: {
-						telegramId,
-						amount: netGain,
-						type: 'BET_WON',
-						balanceEffect: 'INCREMENT',
-						description: `${
-							isWin ? 'Won' : 'Lost'
-						} Coin Flip Challenge: ${challengeName}`,
-					},
-				});
+			// Log transaction
+			await tx.transaction.create({
+				data: {
+					telegramId,
+					coinAmount: netGain,
+					passAmount: -bettingPassCost,
+					type: 'GAME',
+					description: `${
+						isWin ? 'Won' : 'Lost'
+					} Coin Flip Challenge: ${challengeName}`,
+				},
+			});
 
-				return {
-					message: {
-						success: `Congratulations! Its ${flipResult}. You won ${netGain} ${token.symbol}!`,
-					},
-					result: 'win',
+			const successMessage = isWin
+				? `Congratulations! It's ${flipResult}. You won ${netGain} ${token.symbol}!`
+				: `It was ${flipResult}. You lost ${betAmount} ${token.symbol}`;
+
+			return {
+				success: true,
+				message: successMessage,
+				data: {
+					message: { success: successMessage },
+					result: isWin ? 'win' : 'lose',
 					winAmount: netGain,
 					flipResult,
 					xpGain,
-				};
-			} else {
-				await tx.transaction.create({
-					data: {
-						telegramId,
-						amount: betAmount,
-						type: 'BET_PLACED',
-						balanceEffect: 'DECREMENT',
-						description: `Coin Flip Challenge: ${challengeName}, Side: ${selectedSide}`,
-					},
-				});
-				return {
-					message: {
-						success: `It was ${flipResult}. You lost ${betAmount} ${token.symbol}`,
-					},
-					result: 'lose',
-					winAmount: 0,
-					flipResult,
-					xpGain,
-				};
-			}
+				},
+			};
 		});
 	} catch (error) {
-		if (error instanceof Error) {
-			return {
-				message: { error: error.message },
-				result: 'failed',
+		return {
+			success: false,
+			message:
+				error instanceof Error ? error.message : 'Unexpected error occurred',
+			data: {
+				result: null,
 				winAmount: 0,
-			};
-		} else {
-			return {
-				message: { error: 'An error occurred while placing the bet' },
-				result: 'failed',
-				winAmount: 0,
-			};
-		}
+				xpGain: 0,
+			},
+		};
 	}
 }

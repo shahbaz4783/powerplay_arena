@@ -34,14 +34,18 @@ export function CoinFlipChallenge() {
 	const [formState, formAction] = useFormState(
 		placeBet.bind(null, telegramId),
 		{
-			message: {},
-			result: null,
-			winAmount: 0,
+			success: true,
+			message: null,
+			data: {
+				result: null,
+				winAmount: 0,
+				xpGain: 0,
+			},
 		}
 	);
 
 	useEffect(() => {
-		if (formState.result) {
+		if (formState.data?.result) {
 			setIsModalOpen(true);
 		}
 	}, [formState]);
@@ -107,13 +111,14 @@ export function CoinFlipChallenge() {
 			<BetResult
 				isOpen={isModalOpen}
 				onOpenChange={handleModalClose}
-				result={formState.result}
-				winAmount={formState.winAmount}
+				success={formState.success}
+				result={formState.data?.result!}
+				winAmount={formState.data?.winAmount!}
 				message={formState.message}
-				flipResult={formState.flipResult!}
+				flipResult={formState.data?.flipResult!}
 				betAmount={betAmount}
 				selectedSide={selectedSide}
-				xpGain={formState.xpGain!}
+				xpGain={formState.data?.xpGain!}
 			/>
 		</div>
 	);

@@ -7,7 +7,7 @@ import { Result } from './result';
 import { Toss } from './toss';
 import { useCricketGameState } from '@/src/lib/store';
 import { getCurrentInningsData } from '@/src/lib/game-logics';
-import { updateMatchData } from '@/src/actions/game.action';
+import { updateCricketMatchData } from '@/src/actions/game.action';
 import { Toast } from '../../common/elements/toast';
 
 export default function CricketGame() {
@@ -29,18 +29,19 @@ export default function CricketGame() {
 	const handleGameOver = useCallback(async () => {
 		setToastMessage({ message: 'Saving your match data...', type: 'info' });
 		try {
-			const result = await updateMatchData(matchId, gameState);
+			const result = await updateCricketMatchData(matchId, gameState);
+
 			if (result.success) {
 				setToastMessage({
-					message: result.message,
+					message: result.message!,
 					type: 'success',
 				});
-				if (result.rewards) {
-					setRewards(result.rewards);
+				if (result.data?.rewards) {
+					setRewards(result.data.rewards);
 				}
 			} else if (!result.success) {
 				setToastMessage({
-					message: result.message,
+					message: result.message!,
 					type: 'info',
 				});
 			} else {

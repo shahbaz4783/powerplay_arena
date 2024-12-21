@@ -17,7 +17,7 @@ export function Awards() {
 			{claimedAwards.length > 0 ? (
 				<>
 					{claimedAwards.map((award) => (
-						<AwardCard key={award.awardId} {...award} />
+						<AwardCard key={award.badgeId} awardId={award.badgeId} {...award} />
 					))}
 				</>
 			) : (

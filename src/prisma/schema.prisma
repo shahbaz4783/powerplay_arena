@@ -15,12 +15,6 @@ enum BetType {
   JACKPOT
 }
 
-enum BalanceEffect {
-  INCREMENT
-  DECREMENT
-  NO_EFFECT
-}
-
 enum TransactionType {
   GAME
   REWARD
@@ -207,9 +201,9 @@ model CricketMatchStats {
   wicketsTaken       Int @default(0)
   runsConceded       Int @default(0)
   ballsBowled        Int @default(0)
-  lowestRunsConceded Int
-  bestBowlingWickets Int
-  bestBowlingRuns    Int
+  lowestRunsConceded Int?
+  bestBowlingWickets Int?
+  bestBowlingRuns    Int?
 
   user User @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
 
@@ -242,7 +236,6 @@ model Transaction {
   passAmount Int @default(0)
   voucherAmount Int @default(0)
   type          TransactionType
-  balanceEffect BalanceEffect
   description   String?
   metadata      Json?
   createdAt     DateTime        @default(now())
@@ -282,17 +275,18 @@ model ReferralRecord {
 
 model VoucherPurchase {
   id                String   @id @default(uuid())
-  userId            String
+  telegramId        String
   voucherAmount     Int
   starAmount        Int
-  telegramPaymentId String
+  telegramPaymentId String  @unique
+  providerPaymentId String
   VoucherPurchaseStatus VoucherPurchasedStatus
   purchasedAt       DateTime @default(now())
   
-  user              User     @relation(fields: [userId], references: [telegramId], onDelete: Cascade)
+  user              User     @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
   voucherRewards    VoucherReward[]
 
-  @@index([userId])
+  @@index([telegramId])
   @@map("voucher_purchases")
 }
 

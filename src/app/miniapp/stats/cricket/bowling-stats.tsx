@@ -52,8 +52,8 @@ export function BowlingStats({ gameMode }: { gameMode: MatchFormat }) {
 					<StatCard title='Wickets' value={stats?.wicketsTaken || 0} />
 					<StatCard
 						title='Best Bowling'
-						value={`${stats?.highestWicketsTaken}/${
-							stats?.lowestRunsConceded || 0
+						value={`${stats?.bestBowlingWickets}/${
+							stats?.bestBowlingRuns || 0
 						}`}
 					/>
 					<StatCard

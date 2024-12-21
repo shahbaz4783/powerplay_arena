@@ -8,9 +8,9 @@ import {
 	getUserProgressById,
 	getUserTransactionById,
 	PaginatedResponse,
-} from '../db/user';
-import { getUserRankings } from '../db/rankings';
-import { getCricketStatsByFormat, getUserBettingStats } from '../db/stats';
+} from '../models/user';
+import { getUserRankings } from '../models/rankings';
+import { getCricketStatsByFormat, getUserBettingStats } from '../models/stats';
 
 export const useUserInfo = (telegramId: string) => {
 	return useQuery({
