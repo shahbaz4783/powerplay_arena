@@ -14,7 +14,7 @@ import { getCricketStatsByFormat, getUserBettingStats } from '../models/stats';
 
 export const useUserInfo = (telegramId: string) => {
 	return useQuery({
-		queryKey: ['user-stats', telegramId],
+		queryKey: ['user-info', telegramId],
 		queryFn: () => getUserInfoById(telegramId),
 		enabled: !!telegramId,
 		staleTime: 60000,
