@@ -17,8 +17,9 @@ import {
 } from '@/src/components/ui/tabs';
 import { InviteLink } from './invite-link';
 import { FriendsList } from './friends-list';
-import { CyberpunkEarnings } from './invite-bonus-info';
+import { OverallEarnings } from './invite-bonus-info';
 import { ReferralBenefits } from './invite-benefits';
+import { ExtensionBonusInfo } from './extention-bonus-benefits';
 
 export interface BenefitCardProps {
 	icon: ReactNode;
@@ -61,17 +62,10 @@ export default function ReferralPage() {
 		setTotalEarnings({ coins: 330, passes: 20, vouchers: 10 });
 	}, []);
 
-	const thisweek = { coins: 130, passes: 10, vouchers: 1 };
-	const overallweek = { coins: 460, passes: 30, vouchers: 12 };
-
 	return (
 		<div className='space-y-4'>
 			<InviteLink />
-			<CyberpunkEarnings
-				percentageIncrease={thisweek}
-				thisWeekEarnings={thisweek}
-				overallEarnings={overallweek}
-			/>
+			<OverallEarnings />
 
 			<Tabs defaultValue='benefits' className='w-full'>
 				<TabsList className='grid w-full grid-cols-2'>

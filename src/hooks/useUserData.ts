@@ -9,12 +9,23 @@ import {
 } from '../models/user';
 import { getUserRankings } from '../models/rankings';
 import { getCricketStatsByFormat, getUserBettingStats } from '../models/stats';
+import { getReferralsList } from '../models/referral';
 
 export const useUserInfo = (telegramId: string) => {
 	return useQuery({
 		queryKey: ['user-info', telegramId],
 		queryFn: () => getUserInfoById(telegramId),
 		enabled: !!telegramId,
+		staleTime: 60000,
+		gcTime: 3600000,
+	});
+};
+
+export const useUserReferrals = (referrerId: string) => {
+	return useQuery({
+		queryKey: ['referral-list', referrerId],
+		queryFn: () => getReferralsList(referrerId),
+		enabled: !!referrerId,
 		staleTime: 60000,
 		gcTime: 3600000,
 	});

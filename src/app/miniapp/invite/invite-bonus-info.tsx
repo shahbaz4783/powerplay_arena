@@ -1,244 +1,200 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Coins, Award, Gift, TrendingUp, Info } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Coins, Ticket, Star, Users, Loader, TrendingUp } from 'lucide-react';
 import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from '@/src/components/ui/dialog';
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from '@/src/components/ui/tooltip';
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from '@/src/components/ui/card';
+import { useCurrentUser } from '@/src/hooks/useCurrentUser';
+import { useUserReferrals } from '@/src/hooks/useUserData';
 
-interface Earnings {
-	coins: number;
-	passes: number;
-	vouchers: number;
-}
+export function OverallEarnings() {
+	const { telegramId } = useCurrentUser();
+	const { data, isLoading, isError } = useUserReferrals(telegramId);
 
-interface CyberpunkEarningsProps {
-	overallEarnings: Earnings;
-	thisWeekEarnings: Earnings;
-	percentageIncrease: Earnings;
-}
+	if (isLoading) {
+		return <LoadingState />;
+	}
 
-const CyberpunkEarnings: React.FC<CyberpunkEarningsProps> = ({
-	overallEarnings,
-	thisWeekEarnings,
-	percentageIncrease,
-}) => {
-	const earningsData = [
-		{
-			key: 'coins' as const,
-			icon: Coins,
-			label: 'Power Coins',
-			color: 'from-yellow-400 to-orange-500',
-			overall: overallEarnings.coins,
-			thisWeek: thisWeekEarnings.coins,
-			increase: percentageIncrease.coins,
-		},
-		{
-			key: 'passes' as const,
-			icon: Award,
-			label: 'Power Passes',
-			color: 'from-blue-400 to-indigo-500',
-			overall: overallEarnings.passes,
-			thisWeek: thisWeekEarnings.passes,
-			increase: percentageIncrease.passes,
-		},
-		{
-			key: 'vouchers' as const,
-			icon: Gift,
-			label: 'Star Vouchers',
-			color: 'from-pink-400 to-purple-500',
-			overall: overallEarnings.vouchers,
-			thisWeek: thisWeekEarnings.vouchers,
-			increase: percentageIncrease.vouchers,
-		},
-	];
+	if (isError || !data) {
+		return <ErrorState />;
+	}
+
+	const totalEarnings = data.reduce(
+		(acc, referral) => ({
+			coins: acc.coins + referral.totalEarnedCoins,
+			passes: acc.passes + referral.totalEarnedPasses,
+			vouchers: acc.vouchers + referral.totalEarnedVouchers,
+		}),
+		{ coins: 0, passes: 0, vouchers: 0 }
+	);
 
 	return (
-		<Card className='bg-gradient-to-br from-gray-900 to-blue-900 border-2 border-purple-500 overflow-hidden rounded-xl shadow-2xl'>
+		<Card className='bg-gradient-to-br from-gray-900/95 to-black border border-gray-800/50 shadow-2xl backdrop-blur-sm'>
 			<CardHeader className='pb-2'>
-				<CardTitle className='text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 flex items-center justify-between'>
-					Referral Earnings
-					<TooltipProvider>
-						<Tooltip>
-							<TooltipTrigger>
-								<Info className='w-5 h-5 text-gray-400' />
-							</TooltipTrigger>
-							<TooltipContent>
-								<p>Your overall and weekly earnings</p>
-							</TooltipContent>
-						</Tooltip>
-					</TooltipProvider>
-				</CardTitle>
+				<div className='flex items-center justify-between'>
+					<CardTitle className='flex items-center gap-3 text-sm font-bold'>
+						<div className='p-2 bg-blue-500/10 rounded-lg'>
+							<TrendingUp className='w-6 h-6 text-blue-400' />
+						</div>
+						<span className='bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent'>
+							Earnings Dashboard
+						</span>
+					</CardTitle>
+					<div className='flex items-center gap-2 bg-blue-500/10 px-4 py-2 rounded-lg'>
+						<Users className='w-4 h-4 text-blue-400' />
+						<span className='text-sm font-medium text-blue-300'>
+							{data.length} Active Referrals
+						</span>
+					</div>
+				</div>
 			</CardHeader>
-			<CardContent className='pt-2'>
-				<div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
-					{earningsData.map(
-						({
-							key,
-							icon: Icon,
-							label,
-							color,
-							overall,
-							thisWeek,
-							increase,
-						}) => (
-							<Dialog key={key}>
-								<DialogTrigger asChild>
-									<motion.div
-										whileHover={{ scale: 1.05 }}
-										whileTap={{ scale: 0.95 }}
-										className='cursor-pointer'
-									>
-										<EarningItem
-											icon={<Icon className='w-8 h-8' />}
-											label={label}
-											color={color}
-											overall={overall}
-											thisWeek={thisWeek}
-											increase={increase}
-										/>
-									</motion.div>
-								</DialogTrigger>
-								<DialogContent className='bg-gray-800 text-white border-2 border-purple-500'>
-									<DialogHeader>
-										<DialogTitle className='text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400'>
-											{label} Details
-										</DialogTitle>
-									</DialogHeader>
-									<EarningDetails
-										label={label}
-										overall={overall}
-										thisWeek={thisWeek}
-										increase={increase}
-									/>
-								</DialogContent>
-							</Dialog>
-						)
-					)}
+
+			<CardContent className='pt-6'>
+				<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+					<AnimatePresence mode='wait'>
+						<EarningCard
+							icon={<Coins className='w-8 h-8' />}
+							title='Power Coin'
+							amount={totalEarnings.coins}
+							color='yellow'
+							description='Total PWR earned through referrals'
+						/>
+						<EarningCard
+							icon={<Ticket className='w-8 h-8' />}
+							title='Power Pass'
+							amount={totalEarnings.passes}
+							color='green'
+							description='Passes earned through referrals'
+						/>
+						<EarningCard
+							icon={<Star className='w-8 h-8' />}
+							title='Star Voucher'
+							amount={totalEarnings.vouchers}
+							color='purple'
+							description='Vouchers earned from referrals'
+						/>
+					</AnimatePresence>
 				</div>
 			</CardContent>
 		</Card>
 	);
-};
-
-interface EarningItemProps {
-	icon: React.ReactNode;
-	label: string;
-	color: string;
-	overall: number;
-	thisWeek: number;
-	increase: number;
 }
 
-const EarningItem: React.FC<EarningItemProps> = ({
+interface EarningCardProps {
+	icon: React.ReactNode;
+	title: string;
+	amount: number;
+	color: 'yellow' | 'green' | 'purple';
+	description: string;
+}
+
+const EarningCard: React.FC<EarningCardProps> = ({
 	icon,
-	label,
+	title,
+	amount,
 	color,
-	overall,
-	thisWeek,
-	increase,
+	description,
 }) => {
+	const colorMap = {
+		yellow: {
+			background: 'from-yellow-500/10 to-yellow-600/5',
+			border: 'border-yellow-500/20',
+			text: 'text-yellow-400',
+			icon: 'bg-yellow-500/10',
+			hover:
+				'hover:border-yellow-500/30 hover:from-yellow-500/15 hover:to-yellow-600/10',
+		},
+		green: {
+			background: 'from-green-500/10 to-green-600/5',
+			border: 'border-green-500/20',
+			text: 'text-green-400',
+			icon: 'bg-green-500/10',
+			hover:
+				'hover:border-green-500/30 hover:from-green-500/15 hover:to-green-600/10',
+		},
+		purple: {
+			background: 'from-purple-500/10 to-purple-600/5',
+			border: 'border-purple-500/20',
+			text: 'text-purple-400',
+			icon: 'bg-purple-500/10',
+			hover:
+				'hover:border-purple-500/30 hover:from-purple-500/15 hover:to-purple-600/10',
+		},
+	};
+
+	const colors = colorMap[color];
+
 	return (
-		<div className='relative overflow-hidden rounded-xl bg-gray-800 p-4'>
-			<div className='flex items-center justify-between mb-2'>
-				<div className='flex items-center'>
-					{icon}
-					<span className='ml-2 text-sm text-gray-400'>{label}</span>
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			exit={{ opacity: 0, y: -20 }}
+			className={`relative group rounded-xl border ${colors.border} bg-gradient-to-br ${colors.background} ${colors.hover} transition-all duration-300`}
+		>
+			<div className='p-4'>
+				<div className='flex items-center gap-3 mb-3'>
+					<div className={`p-2 rounded-lg ${colors.icon}`}>
+						<div className={colors.text}>{icon}</div>
+					</div>
+					<div className='flex flex-col'>
+						<h3 className='text-sm font-medium text-gray-400'>{title}</h3>
+						<p className='text-xs text-gray-500'>{description}</p>
+					</div>
 				</div>
-				<div
-					className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${color}`}
-				>
-					{overall.toLocaleString()}
-				</div>
-			</div>
-			<div className='flex justify-between items-center mt-2'>
-				<div>
-					<p className='text-xs text-gray-400'>This Week</p>
-					<p className='text-lg font-semibold text-white'>
-						{thisWeek.toLocaleString()}
-					</p>
-				</div>
-				<div className='flex items-center'>
-					<TrendingUp className='w-4 h-4 mr-1 text-green-500' />
-					<span className='text-sm text-green-500'>
-						+{increase.toFixed(1)}%
+				<div className='flex items-baseline gap-1'>
+					<span className={`text-2xl font-bold ${colors.text}`}>
+						{amount.toLocaleString()}
 					</span>
 				</div>
 			</div>
 			<motion.div
-				className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r ${color}`}
-				initial={{ width: 0 }}
-				animate={{ width: '100%' }}
-				transition={{ duration: 1, delay: 0.5 }}
+				className={`absolute bottom-0 left-0 right-0 h-1 ${colors.text} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+				layoutId={`underline-${color}`}
 			/>
-		</div>
+		</motion.div>
 	);
 };
 
-interface EarningDetailsProps {
-	label: string;
-	overall: number;
-	thisWeek: number;
-	increase: number;
-}
+const LoadingState: React.FC = () => (
+	<Card className='bg-gradient-to-br from-gray-900 to-black border-gray-800 p-8'>
+		<div className='flex flex-col items-center gap-4'>
+			<motion.div
+				animate={{ rotate: 360 }}
+				transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+			>
+				<Loader className='w-8 h-8 text-blue-400' />
+			</motion.div>
+			<p className='text-gray-400 font-medium'>Loading your earnings data...</p>
+		</div>
+	</Card>
+);
 
-const EarningDetails: React.FC<EarningDetailsProps> = ({
-	label,
-	overall,
-	thisWeek,
-	increase,
-}) => {
-	const dailyAverage = (thisWeek / 7).toFixed(1);
-	const projectedMonthly = (thisWeek * 4).toLocaleString();
-
-	return (
-		<div className='space-y-4'>
-			<div className='grid grid-cols-2 gap-4'>
-				<div>
-					<p className='text-sm text-gray-400'>Overall {label}</p>
-					<p className='text-2xl font-bold text-white'>
-						{overall.toLocaleString()}
-					</p>
-				</div>
-				<div>
-					<p className='text-sm text-gray-400'>This Week</p>
-					<p className='text-2xl font-bold text-white'>
-						{thisWeek.toLocaleString()}
-					</p>
-				</div>
-				<div>
-					<p className='text-sm text-gray-400'>Overall Increase</p>
-					<p className='text-xl font-semibold text-green-500'>
-						+{increase.toFixed(1)}%
-					</p>
-				</div>
-				<div>
-					<p className='text-sm text-gray-400'>Daily Average (This Week)</p>
-					<p className='text-xl font-semibold text-cyan-400'>{dailyAverage}</p>
-				</div>
+const ErrorState: React.FC = () => (
+	<Card className='bg-gradient-to-br from-gray-900 to-black border-gray-800 p-8'>
+		<div className='flex flex-col items-center gap-4 text-center'>
+			<div className='p-3 bg-red-500/10 rounded-full'>
+				<motion.div
+					initial={{ scale: 0 }}
+					animate={{ scale: 1 }}
+					transition={{ type: 'spring', bounce: 0.5 }}
+				>
+					<Star className='w-8 h-8 text-red-400' />
+				</motion.div>
 			</div>
 			<div>
-				<p className='text-sm text-gray-400'>Projected Monthly</p>
-				<p className='text-xl font-semibold text-yellow-400'>
-					{projectedMonthly}
+				<h3 className='text-lg font-semibold text-red-400 mb-1'>
+					Unable to Load Data
+				</h3>
+				<p className='text-gray-400'>
+					Please check your connection and try again later.
 				</p>
 			</div>
-			<p className='text-xs text-gray-500 italic'>
-				*Projections based on current week's performance
-			</p>
 		</div>
-	);
-};
+	</Card>
+);
 
-export { CyberpunkEarnings };
+export default OverallEarnings;

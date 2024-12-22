@@ -1,15 +1,14 @@
 'use client';
 
-import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-	Award,
 	Users,
-	Search,
-	ChevronDown,
-	ChevronUp,
 	Activity,
 	Star,
+	Coins,
+	Ticket,
+	Clock,
+	PlusCircle,
 } from 'lucide-react';
 import {
 	Card,
@@ -18,20 +17,37 @@ import {
 	CardTitle,
 } from '@/src/components/ui/card';
 import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from '@/src/components/ui/dialog';
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from '@/src/components/ui/avatar';
+import { Badge } from '@/src/components/ui/badge';
+import { Button } from '@/src/components/ui/button';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '@/src/components/ui/tooltip';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
-import { useUserInfo } from '@/src/hooks/useUserData';
+import { useUserReferrals } from '@/src/hooks/useUserData';
+import { useFormatDate } from '@/src/hooks/useFormatDate';
+import { useState } from 'react';
+import { ExtendBenefitsModal } from './extend-benefits';
+import { fakeDelay } from '@/src/lib/utils';
+
+interface ReferredUser {
+	telegramId: string;
+	firstName: string;
+	username: string | null;
+}
 
 export interface User {
 	id: string;
 	createdAt: Date;
 	referrerId: string;
 	referredId: string;
+	referredUser?: ReferredUser;
 	expiresAt: Date;
 	totalEarnedCoins: number;
 	totalEarnedPasses: number;
@@ -40,152 +56,157 @@ export interface User {
 
 export function FriendsList() {
 	const { telegramId } = useCurrentUser();
-	const { data } = useUserInfo(telegramId);
-	const friendsList = data?.referrals;
+	const { data } = useUserReferrals(telegramId);
 
 	return (
-		<Card>
-			<CardHeader>
-				<CardTitle className='text-xl font-bold flex items-center gap-2 mb-4'>
-					<Users className='w-6 h-6 text-blue-400' />
-					Your Frens ({friendsList?.length})
-				</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<AnimatePresence>
-					{friendsList?.length! > 0 ? (
-						<motion.ul className='space-y-4'>
-							{friendsList?.map((friend) => (
-								<motion.li
-									key={friend.id}
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									exit={{ opacity: 0, y: -20 }}
-									transition={{ duration: 0.3 }}
-								>
-									<Dialog>
-										<DialogTrigger asChild>
-											<div>
-												<UserCard user={friend} />
-											</div>
-										</DialogTrigger>
-										<UserModal user={friend} />
-									</Dialog>
-								</motion.li>
-							))}
-						</motion.ul>
-					) : (
-						<motion.p
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							className='text-gray-400 text-center py-8'
-						>
-							No friends found. Try adjusting your search.
-						</motion.p>
-					)}
-				</AnimatePresence>
-			</CardContent>
-		</Card>
+		<section className='bg-black border-gray-800'>
+			<AnimatePresence>
+				{data?.length! > 0 ? (
+					<motion.div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+						{data?.map((friend) => (
+							<motion.div
+								key={friend.id}
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								exit={{ opacity: 0, y: -20 }}
+								transition={{ duration: 0.3 }}
+							>
+								<UserCard user={friend} />
+							</motion.div>
+						))}
+					</motion.div>
+				) : (
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						className='text-gray-400 text-center py-8'
+					>
+						<p className='mb-4'>You haven't referred anyone yet.</p>
+						<Badge variant='outline' className='text-gray-300 border-gray-700'>
+							Start referring friends and earn rewards together!
+						</Badge>
+					</motion.div>
+				)}
+			</AnimatePresence>
+		</section>
 	);
 }
 
 const UserCard: React.FC<{ user: User }> = ({ user }) => {
-	const tierColors = {
-		bronze: 'text-orange-400',
-		silver: 'text-gray-300',
-		gold: 'text-yellow-400',
-		platinum: 'text-blue-300',
-	};
+	const { referredUser } = user;
+	const { formatDateDistance, isExpired } = useFormatDate();
+	const expired = isExpired(user.expiresAt);
+	const [isExtendModalOpen, setIsExtendModalOpen] = useState(false);
 
 	return (
-		<motion.div whileTap={{ scale: 0.98 }}>
-			<Card className='bg-gray-800 border-gray-700 cursor-pointer shadow-lg overflow-hidden'>
-				<CardContent className='p-4 flex items-center space-x-4'>
-					<div className='relative'>
-						<img
-							src={''}
-							alt={''}
-							className='w-16 h-16 rounded-full object-cover border-2 border-blue-500'
-						/>
-						{/* <Award
-							className={`absolute -bottom-1 -right-1 w-6 h-6 ${
-								tierColors[user.tier]
-							}`}
-						/> */}
+		<TooltipProvider>
+			<motion.div
+				whileTap={{ scale: 0.98 }}
+				className='bg-gray-900 shadow-lg rounded-xl border-l-2 border-gray-700 overflow-hidden'
+			>
+				<CardContent className='p-4'>
+					<div className='flex items-center space-x-4 mb-3'>
+						<Avatar className='w-12 h-12 border-2 border-gray-700'>
+							<AvatarImage
+								src={''}
+								alt={referredUser?.firstName || 'User Avatar'}
+							/>
+							<AvatarFallback>
+								{referredUser?.firstName?.[0] || 'A'}
+							</AvatarFallback>
+						</Avatar>
+						<div className='flex-grow'>
+							<h3 className='text-lg font-semibold text-gray-200'>
+								{referredUser?.firstName || 'Anonymous User'}
+							</h3>
+							<p className='text-xs text-gray-400'>
+								Joined {formatDateDistance(user.createdAt)}
+							</p>
+						</div>
 					</div>
-					<div className='flex-grow'>
-						<h3 className='text-lg font-semibold text-blue-300'>
-							{user.referredId}
-						</h3>
-						<p className='text-xs text-gray-400'>
-							Joined: {new Date(user.createdAt).toLocaleDateString()}
-						</p>
+					<div className='flex justify-between items-center mb-2'>
+						<div className='flex items-center space-x-2'>
+							<Tooltip>
+								<TooltipTrigger>
+									<div className='flex items-center'>
+										<Coins className='w-4 h-4 text-yellow-500 mr-1' />
+										<span className='text-sm font-semibold text-yellow-500'>
+											{user.totalEarnedCoins}
+										</span>
+									</div>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>Power Coins earned</p>
+								</TooltipContent>
+							</Tooltip>
+							<Tooltip>
+								<TooltipTrigger>
+									<div className='flex items-center'>
+										<Ticket className='w-4 h-4 text-green-500 mr-1' />
+										<span className='text-sm font-semibold text-green-500'>
+											{user.totalEarnedPasses}
+										</span>
+									</div>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>Power Passes earned</p>
+								</TooltipContent>
+							</Tooltip>
+							<Tooltip>
+								<TooltipTrigger>
+									<div className='flex items-center'>
+										<Star className='w-4 h-4 text-purple-500 mr-1' />
+										<span className='text-sm font-semibold text-purple-500'>
+											{user.totalEarnedVouchers}
+										</span>
+									</div>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>Star Vouchers earned</p>
+								</TooltipContent>
+							</Tooltip>
+						</div>
+						<Badge
+							variant={expired ? 'destructive' : 'secondary'}
+							className={
+								expired
+									? 'bg-red-900/20 text-red-400'
+									: 'bg-green-900/20 text-green-400'
+							}
+						>
+							{expired ? (
+								<Clock className='w-3 h-3 mr-1' />
+							) : (
+								<Activity className='w-3 h-3 mr-1' />
+							)}
+							{expired ? 'Expired' : 'Active'}
+						</Badge>
 					</div>
-					<div className='text-right'>
-						<p className='text-sm font-semibold text-yellow-400'>
-							{user.totalEarnedVouchers} <Star className='inline w-4 h-4' />
-						</p>
-						{/* <p className='text-xs text-gray-400'>
-							{user.tier.charAt(0).toUpperCase() + user.tier.slice(1)} Tier
-						</p> */}
+					<div className='flex items-center justify-between text-xs text-gray-400'>
+						<span>
+							Benefits {expired ? 'ended' : 'end'}{' '}
+							{formatDateDistance(user.expiresAt)}
+						</span>
+
+						<Button
+							variant='secondary'
+							size='icon'
+							onClick={() => setIsExtendModalOpen(true)}
+							className='text-blue-400'
+						>
+							<PlusCircle className='w-4 h-4' />
+						</Button>
 					</div>
 				</CardContent>
-			</Card>
-		</motion.div>
+			</motion.div>
+			<ExtendBenefitsModal
+				isOpen={isExtendModalOpen}
+				onClose={() => setIsExtendModalOpen(false)}
+				userId={user.id}
+				currentExpiryDate={user.expiresAt}
+			/>
+		</TooltipProvider>
 	);
 };
 
-const UserModal: React.FC<{ user: User }> = ({ user }) => (
-	<DialogContent className='bg-gray-900 text-white border-gray-700 rounded-xl w-11/12 max-w-md'>
-		<DialogHeader>
-			<DialogTitle className='text-2xl font-bold text-blue-300 flex items-center space-x-2'>
-				<img
-					src={''}
-					alt={''}
-					className='w-12 h-12 rounded-full object-cover border-2 border-blue-500'
-				/>
-				<span>{user.referredId}</span>
-			</DialogTitle>
-		</DialogHeader>
-		<div className='space-y-6'>
-			<p className='text-gray-400'>
-				Joined: {new Date(user.createdAt).toLocaleDateString()}
-			</p>
-			<Card className='bg-gray-800 border-gray-700'>
-				<CardHeader>
-					<CardTitle className='text-blue-300 flex items-center'>
-						<Activity className='w-5 h-5 mr-2' /> Earnings
-					</CardTitle>
-				</CardHeader>
-				<CardContent className='grid grid-cols-3 gap-4'>
-					<div className='text-center'>
-						<p className='text-2xl font-bold text-yellow-400'>
-							{user.totalEarnedCoins}
-						</p>
-						<p className='text-xs text-gray-400'>Power Coins</p>
-					</div>
-					<div className='text-center'>
-						<p className='text-2xl font-bold text-green-400'>
-							{user.totalEarnedPasses}
-						</p>
-						<p className='text-xs text-gray-400'>Power Passes</p>
-					</div>
-					<div className='text-center'>
-						<p className='text-2xl font-bold text-purple-400'>
-							{user.totalEarnedVouchers}
-						</p>
-						<p className='text-xs text-gray-400'>Star Vouchers</p>
-					</div>
-				</CardContent>
-			</Card>
-			<div>
-				<h4 className='text-lg font-semibold text-blue-300 mb-2'>
-					Benefits ends on:
-				</h4>
-				<p className='text-gray-400'>
-					{new Date(user.expiresAt).toLocaleString()}
-				</p>
-			</div>
-		</div>
-	</DialogContent>
-);
+export { UserCard };

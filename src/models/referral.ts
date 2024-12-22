@@ -40,17 +40,16 @@ export const getReferrerInfo = async (userId: string) => {
 	return referralRecord?.referrer || null;
 };
 
-export const getReferralsList = async (userId: string) => {
+export const getReferralsList = async (referrerId: string) => {
 	return await db.referralRecord.findMany({
 		where: {
-			referrerId: userId,
+			referrerId,
 		},
 		include: {
 			referredUser: {
 				select: {
 					telegramId: true,
 					firstName: true,
-					lastName: true,
 					username: true,
 				},
 			},
