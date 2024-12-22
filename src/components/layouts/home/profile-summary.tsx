@@ -15,18 +15,22 @@ import { AvatarDialog } from '../../common/dialog/avatar-dialog';
 import { Skeleton } from '../../ui/skeleton';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export function ProfileSummary() {
 	const initData = useInitData();
 	const user = initData?.user;
 	const { telegramId } = useCurrentUser();
+	const router = useRouter();
 
-	const {
-		data: inventory,
-		isLoading,
-	} = useUserInventory(telegramId);
+	const { data: inventory, isLoading } = useUserInventory(telegramId);
 
-	if (!isLoading && !inventory?.telegramId) redirect('/activate-account');
+	useEffect(() => {
+		if (!isLoading && !inventory?.telegramId) {
+			router.push('/activate-account');
+		}
+	}, [isLoading, inventory, router]);
 
 	const { data: userProgress } = useUserProgress(telegramId);
 	const totalXP = userProgress?.totalXP;

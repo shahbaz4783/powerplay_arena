@@ -90,7 +90,10 @@ export async function POST(request: NextRequest) {
 				// Update referrer's balance
 				await db.userInventory.update({
 					where: { telegramId: referrer.telegramId },
-					data: { powerCoin: { increment: 100 } },
+					data: {
+						powerCoin: { increment: 500 },
+						powerPass: { increment: 10 },
+					},
 				});
 
 				// Create transaction for referrer

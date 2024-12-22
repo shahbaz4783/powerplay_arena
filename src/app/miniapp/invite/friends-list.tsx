@@ -24,101 +24,38 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/src/components/ui/dialog';
-import { Button } from '@/src/components/ui/button';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/src/components/ui/select';
+import { useCurrentUser } from '@/src/hooks/useCurrentUser';
+import { useUserInfo } from '@/src/hooks/useUserData';
 
 export interface User {
 	id: string;
-	username: string;
-	avatar: string;
-	joinDate: string;
-	earnedCoins: number;
-	earnedPasses: number;
-	earnedVouchers: number;
-	tier: 'bronze' | 'silver' | 'gold' | 'platinum';
-	lastActive: string;
+	createdAt: Date;
+	referrerId: string;
+	referredId: string;
+	expiresAt: Date;
+	totalEarnedCoins: number;
+	totalEarnedPasses: number;
+	totalEarnedVouchers: number;
 }
 
-const friendsList: User[] = [
-	{
-		id: '1',
-		username: 'CyberNinja',
-		avatar: 'https://i.pravatar.cc/150?img=1',
-		joinDate: '2023-06-01',
-		earnedCoins: 1000,
-		earnedPasses: 20,
-		earnedVouchers: 15,
-		tier: 'gold',
-		lastActive: '2023-06-28',
-	},
-	{
-		id: '2',
-		username: 'QuantumGamer',
-		avatar: 'https://i.pravatar.cc/150?img=2',
-		joinDate: '2023-06-15',
-		earnedCoins: 1500,
-		earnedPasses: 30,
-		earnedVouchers: 30,
-		tier: 'platinum',
-		lastActive: '2023-06-29',
-	},
-	{
-		id: '3',
-		username: 'NeonRider',
-		avatar: 'https://i.pravatar.cc/150?img=3',
-		joinDate: '2023-07-01',
-		earnedCoins: 800,
-		earnedPasses: 15,
-		earnedVouchers: 5,
-		tier: 'silver',
-		lastActive: '2023-07-02',
-	},
-];
-
 export function FriendsList() {
-	const [searchTerm, setSearchTerm] = useState('');
-	const [sortBy, setSortBy] = useState('username');
-	const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-
-	const filteredAndSortedFriends = friendsList
-		.filter((friend) =>
-			friend.username.toLowerCase().includes(searchTerm.toLowerCase())
-		)
-		.sort((a, b) => {
-			const order = sortOrder === 'asc' ? 1 : -1;
-			if (sortBy === 'username') {
-				return order * a.username.localeCompare(b.username);
-			} else if (sortBy === 'tier') {
-				const tierOrder = ['bronze', 'silver', 'gold', 'platinum'];
-				return order * (tierOrder.indexOf(a.tier) - tierOrder.indexOf(b.tier));
-			} else if (sortBy === 'lastActive') {
-				return (
-					order *
-					(new Date(a.lastActive).getTime() - new Date(b.lastActive).getTime())
-				);
-			}
-			return 0;
-		});
+	const { telegramId } = useCurrentUser();
+	const { data } = useUserInfo(telegramId);
+	const friendsList = data?.referrals;
 
 	return (
 		<Card>
 			<CardHeader>
 				<CardTitle className='text-xl font-bold flex items-center gap-2 mb-4'>
 					<Users className='w-6 h-6 text-blue-400' />
-					Your Frens ({friendsList.length})
+					Your Frens ({friendsList?.length})
 				</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<AnimatePresence>
-					{filteredAndSortedFriends.length > 0 ? (
+					{friendsList?.length! > 0 ? (
 						<motion.ul className='space-y-4'>
-							{filteredAndSortedFriends.map((friend) => (
+							{friendsList?.map((friend) => (
 								<motion.li
 									key={friend.id}
 									initial={{ opacity: 0, y: 20 }}
@@ -166,31 +103,31 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
 				<CardContent className='p-4 flex items-center space-x-4'>
 					<div className='relative'>
 						<img
-							src={user.avatar}
-							alt={user.username}
+							src={''}
+							alt={''}
 							className='w-16 h-16 rounded-full object-cover border-2 border-blue-500'
 						/>
-						<Award
+						{/* <Award
 							className={`absolute -bottom-1 -right-1 w-6 h-6 ${
 								tierColors[user.tier]
 							}`}
-						/>
+						/> */}
 					</div>
 					<div className='flex-grow'>
 						<h3 className='text-lg font-semibold text-blue-300'>
-							{user.username}
+							{user.referredId}
 						</h3>
 						<p className='text-xs text-gray-400'>
-							Joined: {new Date(user.joinDate).toLocaleDateString()}
+							Joined: {new Date(user.createdAt).toLocaleDateString()}
 						</p>
 					</div>
 					<div className='text-right'>
 						<p className='text-sm font-semibold text-yellow-400'>
-							{user.earnedVouchers} <Star className='inline w-4 h-4' />
+							{user.totalEarnedVouchers} <Star className='inline w-4 h-4' />
 						</p>
-						<p className='text-xs text-gray-400'>
+						{/* <p className='text-xs text-gray-400'>
 							{user.tier.charAt(0).toUpperCase() + user.tier.slice(1)} Tier
-						</p>
+						</p> */}
 					</div>
 				</CardContent>
 			</Card>
@@ -203,16 +140,16 @@ const UserModal: React.FC<{ user: User }> = ({ user }) => (
 		<DialogHeader>
 			<DialogTitle className='text-2xl font-bold text-blue-300 flex items-center space-x-2'>
 				<img
-					src={user.avatar}
-					alt={user.username}
+					src={''}
+					alt={''}
 					className='w-12 h-12 rounded-full object-cover border-2 border-blue-500'
 				/>
-				<span>{user.username}</span>
+				<span>{user.referredId}</span>
 			</DialogTitle>
 		</DialogHeader>
 		<div className='space-y-6'>
 			<p className='text-gray-400'>
-				Joined: {new Date(user.joinDate).toLocaleDateString()}
+				Joined: {new Date(user.createdAt).toLocaleDateString()}
 			</p>
 			<Card className='bg-gray-800 border-gray-700'>
 				<CardHeader>
@@ -223,19 +160,19 @@ const UserModal: React.FC<{ user: User }> = ({ user }) => (
 				<CardContent className='grid grid-cols-3 gap-4'>
 					<div className='text-center'>
 						<p className='text-2xl font-bold text-yellow-400'>
-							{user.earnedCoins}
+							{user.totalEarnedCoins}
 						</p>
 						<p className='text-xs text-gray-400'>Power Coins</p>
 					</div>
 					<div className='text-center'>
 						<p className='text-2xl font-bold text-green-400'>
-							{user.earnedPasses}
+							{user.totalEarnedPasses}
 						</p>
 						<p className='text-xs text-gray-400'>Power Passes</p>
 					</div>
 					<div className='text-center'>
 						<p className='text-2xl font-bold text-purple-400'>
-							{user.earnedVouchers}
+							{user.totalEarnedVouchers}
 						</p>
 						<p className='text-xs text-gray-400'>Star Vouchers</p>
 					</div>
@@ -243,10 +180,10 @@ const UserModal: React.FC<{ user: User }> = ({ user }) => (
 			</Card>
 			<div>
 				<h4 className='text-lg font-semibold text-blue-300 mb-2'>
-					Last Active
+					Benefits ends on:
 				</h4>
 				<p className='text-gray-400'>
-					{new Date(user.lastActive).toLocaleString()}
+					{new Date(user.expiresAt).toLocaleString()}
 				</p>
 			</div>
 		</div>

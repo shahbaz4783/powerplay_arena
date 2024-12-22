@@ -41,8 +41,13 @@ export async function placeBet(
 		}
 
 		const bettingPassCost = calculateBettingPassCost(betAmount);
+		const user = await models.getUserInfoById(telegramId);
 		const inventory = await models.getUserInventory(telegramId);
 		const progress = await models.getUserProgression(telegramId);
+		const { referralRewardActive, referrerId } = await models.getReferralData(
+			telegramId
+		);
+
 		let currentStats = await models.getUserBettingStats(
 			telegramId,
 			challenge.betType
@@ -85,12 +90,47 @@ export async function placeBet(
 		const xpGain = Math.floor(
 			betAmount * (isWin ? challenge.payout * 0.1 : 0.02)
 		);
+		const bonusForReferrer = Math.round(netGain * 0.1);
 
 		// Calculate new level information
 		const newTotalXP = progress.totalXP + xpGain;
 		const newLevelInfo = calculateLevel(newTotalXP);
 
 		return await db.$transaction(async (tx) => {
+			// Update Referral bonus for first 4 weeks
+			if (
+				bonusForReferrer >= 1 &&
+				isWin &&
+				referralRewardActive &&
+				referrerId
+			) {
+				await tx.userInventory.update({
+					where: { telegramId: referrerId },
+					data: {
+						powerCoin: { increment: bonusForReferrer },
+					},
+				});
+
+				await tx.referralRecord.updateMany({
+					where: {
+						referrerId: referrerId,
+						referredId: telegramId,
+					},
+					data: {
+						totalEarnedCoins: { increment: bonusForReferrer },
+					},
+				});
+
+				await tx.transaction.create({
+					data: {
+						telegramId: referrerId,
+						coinAmount: bonusForReferrer,
+						type: 'REWARD',
+						description: `Bonus from ${user?.firstName}. Won Coin Flip ${challengeName} Challenge. `,
+					},
+				});
+			}
+
 			// Update user progression
 			await tx.userProgression.update({
 				where: { telegramId },

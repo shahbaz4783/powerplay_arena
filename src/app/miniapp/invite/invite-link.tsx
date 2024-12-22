@@ -19,7 +19,10 @@ export function InviteLink() {
 	const inviteLink = `https://t.me/powerplay_arena_bot?start=${data?.inviteCode}`;
 
 	const handelShare = () => {
-		utils.shareURL(inviteLink, 'Look! Some cool app here!');
+		utils.shareURL(
+			inviteLink,
+			'Hack the system, reap the rewards! Amazing bonuses await in this arena. 💻💰'
+		);
 	};
 
 	const copyLink = () => {

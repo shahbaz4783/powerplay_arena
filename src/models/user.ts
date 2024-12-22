@@ -9,25 +9,14 @@ export interface PaginatedResponse {
 	hasMore: boolean;
 }
 
-export const getUserProfileById = async (telegramId: string) => {
-	try {
-		return await db.user.findUnique({
-			where: { telegramId },
-		});
-	} catch (error) {
-		if (error instanceof Error) {
-			console.error('Error fetching user info:', error.message);
-		} else {
-			console.error('Something went wrong while fetching user info');
-		}
-		throw error;
-	}
-};
-
 export const getUserInfoById = async (telegramId: string) => {
 	try {
 		return await db.user.findUnique({
 			where: { telegramId },
+			include: {
+				referredBy: true,
+				referrals: true,
+			},
 		});
 	} catch (error) {
 		if (error instanceof Error) {

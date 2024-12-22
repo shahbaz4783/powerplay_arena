@@ -58,13 +58,20 @@ export default function ReferralPage() {
 	});
 
 	useEffect(() => {
-		setTotalEarnings({ coins: 0, passes: 0, vouchers: 0 });
+		setTotalEarnings({ coins: 330, passes: 20, vouchers: 10 });
 	}, []);
+
+	const thisweek = { coins: 130, passes: 10, vouchers: 1 };
+	const overallweek = { coins: 460, passes: 30, vouchers: 12 };
 
 	return (
 		<div className='space-y-4'>
 			<InviteLink />
-			<CyberpunkEarnings totalEarnings={totalEarnings} />
+			<CyberpunkEarnings
+				percentageIncrease={thisweek}
+				thisWeekEarnings={thisweek}
+				overallEarnings={overallweek}
+			/>
 
 			<Tabs defaultValue='benefits' className='w-full'>
 				<TabsList className='grid w-full grid-cols-2'>
