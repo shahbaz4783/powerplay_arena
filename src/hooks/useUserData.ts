@@ -1,10 +1,8 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { BetType, MatchFormat } from '@prisma/client';
 import {
-	getUserAvatars,
 	getUserInfoById,
 	getUserInventoryById,
-	getUserProfileById,
 	getUserProgressById,
 	getUserTransactionById,
 	PaginatedResponse,
