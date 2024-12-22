@@ -140,7 +140,6 @@ export async function updateCricketMatchData(
 					runsConceded: opponent.runs,
 					ballsBowled: opponent.ballsFaced,
 					outcome,
-					lastUpdated: new Date(),
 				},
 			});
 
