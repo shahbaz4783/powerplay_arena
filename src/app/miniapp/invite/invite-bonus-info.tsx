@@ -20,6 +20,7 @@ import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { useUserReferrals } from '@/src/hooks/useUserData';
 import { GradientBorder } from '@/src/components/common/elements/gradient-border';
 import { SectionHeader } from '@/src/components/common/elements/section-header';
+import { cn } from '@/src/lib/utils';
 
 export function OverallEarnings() {
 	const { telegramId } = useCurrentUser();
@@ -54,28 +55,28 @@ export function OverallEarnings() {
 			<div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
 				<AnimatePresence mode='wait'>
 					<EarningCard
-						icon={<Users className='w-8 h-8' />}
+						icon={<Users className='w-5 h-5' />}
 						title='Active Referrals'
 						amount={data.length}
 						color='blue'
 						description='Number of active referrals'
 					/>
 					<EarningCard
-						icon={<Coins className='w-8 h-8' />}
+						icon={<Coins className='w-5 h-5' />}
 						title='Power Coin'
 						amount={totalEarnings.coins}
 						color='yellow'
 						description='Total PWR earned through referrals'
 					/>
 					<EarningCard
-						icon={<Ticket className='w-8 h-8' />}
+						icon={<Ticket className='w-5 h-5' />}
 						title='Power Pass'
 						amount={totalEarnings.passes}
 						color='green'
 						description='Passes earned through referrals'
 					/>
 					<EarningCard
-						icon={<Star className='w-8 h-8' />}
+						icon={<Star className='w-5 h-5' />}
 						title='Star Voucher'
 						amount={totalEarnings.vouchers}
 						color='purple'
@@ -146,7 +147,11 @@ const EarningCard: React.FC<EarningCardProps> = ({
 					<div className={`p-2 rounded-lg ${colors.icon}`}>
 						<div className={colors.text}>{icon}</div>
 					</div>
-					<span className={`text-2xl font-bold ${colors.text}`}>
+					<span
+						className={cn(`text-xl font-bold ${colors.text}`, {
+							'text-lg': amount > 99999,
+						})}
+					>
 						{amount.toLocaleString()}
 					</span>
 				</div>
