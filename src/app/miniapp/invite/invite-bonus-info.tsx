@@ -1,7 +1,15 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Coins, Ticket, Star, Users, Loader, TrendingUp } from 'lucide-react';
+import {
+	Coins,
+	Ticket,
+	Star,
+	Users,
+	Loader,
+	TrendingUp,
+	LayoutDashboard,
+} from 'lucide-react';
 import {
 	Card,
 	CardContent,
@@ -11,6 +19,7 @@ import {
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { useUserReferrals } from '@/src/hooks/useUserData';
 import { GradientBorder } from '@/src/components/common/elements/gradient-border';
+import { SectionHeader } from '@/src/components/common/elements/section-header';
 
 export function OverallEarnings() {
 	const { telegramId } = useCurrentUser();
@@ -34,23 +43,13 @@ export function OverallEarnings() {
 	);
 
 	return (
-		<GradientBorder className='backdrop-blur-sm bg-gray-900/80 space-y-6'>
-			<section className='flex items-center gap-4'>
-				<div className='p-3 bg-blue-500/10 rounded-xl'>
-					<Users className='w-6 h-6 text-blue-400' />
-				</div>
-				<div className='flex-1 '>
-					<h2 className='text-xl font-bold font-exo2'>
-						Earnings
-						<span className='bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent ml-2'>
-							Dashboard
-						</span>
-					</h2>
-					<p className='text-gray-400 text-xs font-poppins'>
-						Have a look at your lifetime referral earnings.
-					</p>
-				</div>
-			</section>
+		<GradientBorder>
+			<SectionHeader
+				title='Earnings'
+				highlightedTitle='Dashboard'
+				icon={LayoutDashboard}
+				description='Have a look at your lifetime referral earnings.'
+			/>
 
 			<div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
 				<AnimatePresence mode='wait'>

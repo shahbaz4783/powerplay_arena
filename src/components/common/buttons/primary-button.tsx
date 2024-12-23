@@ -2,17 +2,17 @@ import { motion } from 'framer-motion';
 import { type LucideIcon } from 'lucide-react';
 
 interface IconButtonProps {
-	onClick: () => void;
 	icon: LucideIcon;
-	text: string;
+	text?: string;
 	className?: string;
+	onClick?: () => void;
 }
 
 export function IconButton({
-	onClick,
 	icon: Icon,
 	text,
 	className,
+	onClick,
 }: IconButtonProps) {
 	return (
 		<motion.button

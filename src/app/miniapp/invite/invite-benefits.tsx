@@ -5,64 +5,54 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
 	Coins,
 	Gift,
-	Clock,
+	Rocket,
 	Users,
+	Zap,
 	ChevronLeft,
 	ChevronRight,
-	AlertCircle,
+	Clock,
+	AlarmClockPlus,
 } from 'lucide-react';
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from '@/src/components/ui/card';
-import { Button } from '@/src/components/ui/button';
+import { GradientBorder } from '@/src/components/common/elements/gradient-border';
+import { IconButton } from '@/src/components/common/buttons/primary-button';
 
 const benefits = [
 	{
-		icon: <Users className='w-12 h-12' />,
+		icon: <Zap className='w-8 h-8' />,
 		title: 'Instant Rewards',
 		description:
-			'Both referrer and referee receive 500 Power Coins and 10 Passes upon successful referral.',
-		gradient: 'from-blue-500/20 to-blue-600/20',
-		iconColor: 'text-blue-400',
+			'Earn 500 Power Coins and 10 Passes for both referrer and referee.',
+		gradient: 'from-blue-600 to-cyan-400',
 	},
 	{
-		icon: <Coins className='w-12 h-12' />,
+		icon: <Coins className='w-8 h-8' />,
 		title: 'Ongoing Earnings',
-		description:
-			"Referrers earn 10% of their referral's Power Coin earnings for the first 4 weeks after joining.",
-		gradient: 'from-yellow-500/20 to-yellow-600/20',
-		iconColor: 'text-yellow-400',
+		description: "Get 10% of your referral's Power Coins for 4 weeks.",
+		gradient: 'from-amber-500 to-orange-400',
 	},
 	{
-		icon: <Gift className='w-12 h-12' />,
+		icon: <Gift className='w-8 h-8' />,
 		title: 'Voucher Bonuses',
 		description:
-			'For every 10 vouchers purchased by your referral, both parties receive 1 free voucher (up to 100) for 4 weeks.',
-		gradient: 'from-purple-500/20 to-purple-600/20',
-		iconColor: 'text-purple-400',
+			'Both earns 1 free voucher for every 10 your referral buys (up to 100).',
+		gradient: 'from-purple-600 to-pink-400',
 	},
 	{
-		icon: <Clock className='w-12 h-12' />,
+		icon: <Clock className='w-8 h-8' />,
 		title: 'Time-Limited Offer',
-		description:
-			'Take advantage of these exclusive benefits within 4 weeks of your referral joining.',
-		gradient: 'from-green-500/20 to-green-600/20',
-		iconColor: 'text-green-400',
+		description: 'Enjoy these rewards for the first 4 weeks after joining.',
+		gradient: 'from-green-600 to-emerald-400',
 	},
 	{
-		icon: <AlertCircle className='w-12 h-12' />,
+		icon: <AlarmClockPlus className='w-8 h-8' />,
 		title: 'Extension Rewards',
 		description:
-			'Stay active and earn well! Referrers are more likely to extend the referral benefits period for users who actively participate and generate good earnings.',
-		gradient: 'from-red-500/20 to-red-600/20',
-		iconColor: 'text-red-400',
+			'Referees can extend benefits with Star Vouchers, also unlocks higher limits for both.',
+		gradient: 'from-indigo-600 to-blue-400',
 	},
 ];
 
-const ReferralBenefits = () => {
+export const ReferralBenefits = () => {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
@@ -90,91 +80,51 @@ const ReferralBenefits = () => {
 	};
 
 	return (
-		<div className=''>
-			<Card className='bg-gray-900/95 border-gray-800 shadow-xl backdrop-blur'>
-				<CardContent>
-					<AnimatePresence mode='wait'>
-						<motion.div
-							key={currentIndex}
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: -20 }}
-							transition={{ duration: 0.4, ease: 'easeOut' }}
-							className='min-h-[280px] flex flex-col items-center justify-center text-center px-4'
+		<GradientBorder className='p-0'>
+			<div className='relative h-[240px]'>
+				<AnimatePresence mode='wait'>
+					<motion.div
+						key={currentIndex}
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -20 }}
+						transition={{ duration: 0.3 }}
+						className='absolute inset-0 p-6 flex flex-col items-center justify-center text-center'
+					>
+						<div
+							className={`p-3 rounded-full bg-gradient-to-br ${benefits[currentIndex].gradient} mb-4`}
 						>
-							<motion.div
-								className={`p-6 rounded-full mb-8 bg-gradient-to-br ${benefits[currentIndex].gradient}`}
-								whileHover={{ scale: 1.05 }}
-								transition={{ duration: 0.2 }}
-							>
-								<div className={benefits[currentIndex].iconColor}>
-									{benefits[currentIndex].icon}
-								</div>
-							</motion.div>
-							<motion.h3
-								className='text-2xl font-bold text-white mb-6 font-mono'
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								transition={{ delay: 0.2 }}
-							>
-								{benefits[currentIndex].title}
-							</motion.h3>
-							<motion.p
-								className='text-sm text-slate-400'
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								transition={{ delay: 0.3 }}
-							>
-								{benefits[currentIndex].description}
-							</motion.p>
-						</motion.div>
-					</AnimatePresence>
-
-					<div className='flex justify-between items-center mt-8'>
-						<Button
-							variant='outline'
-							size='icon'
-							onClick={prevSlide}
-							className='bg-gray-800/50 border-gray-700 hover:bg-gray-700/50 text-white'
-						>
-							<ChevronLeft className='h-5 w-5' />
-						</Button>
-
-						<div className='flex space-x-3'>
-							{benefits.map((_, index) => (
-								<button
-									key={index}
-									onClick={() => handleSlideChange(index)}
-									className='group p-1 focus:outline-none'
-								>
-									<motion.div
-										className={`w-2.5 h-2.5 rounded-full transition-colors duration-200 ${
-											index === currentIndex
-												? 'bg-blue-400'
-												: 'bg-gray-600 group-hover:bg-gray-500'
-										}`}
-										animate={{
-											scale: index === currentIndex ? 1.2 : 1,
-										}}
-										transition={{ duration: 0.3 }}
-									/>
-								</button>
-							))}
+							<div className='text-white'>{benefits[currentIndex].icon}</div>
 						</div>
+						<h3 className='text-2xl font-bold text-white mb-2 font-exo2'>
+							{benefits[currentIndex].title}
+						</h3>
+						<p className='text-sm text-slate-400 font-poppins'>
+							{benefits[currentIndex].description}
+						</p>
+					</motion.div>
+				</AnimatePresence>
+			</div>
 
-						<Button
-							variant='outline'
-							size='icon'
-							onClick={nextSlide}
-							className='bg-gray-800/50 border-gray-700 hover:bg-gray-700/50 text-white'
-						>
-							<ChevronRight className='h-5 w-5' />
-						</Button>
-					</div>
-				</CardContent>
-			</Card>
-		</div>
+			<div className='flex justify-between items-center bg-gray-800 p-2'>
+				<IconButton text='' icon={ChevronLeft} onClick={prevSlide} />
+
+				<div className='absolute  left-1/2 transform -translate-x-1/2 flex space-x-2'>
+					{benefits.map((_, index) => (
+						<button
+							key={index}
+							onClick={() => handleSlideChange(index)}
+							className='w-2 h-2 rounded-full focus:outline-none transition-all duration-200 ease-in-out'
+							style={{
+								backgroundColor: index === currentIndex ? '#60A5FA' : '#4B5563',
+								transform: index === currentIndex ? 'scale(1.5)' : 'scale(1)',
+							}}
+						/>
+					))}
+				</div>
+				<IconButton text='' icon={ChevronRight} onClick={nextSlide} />
+			</div>
+		</GradientBorder>
 	);
 };
 
-export { ReferralBenefits };

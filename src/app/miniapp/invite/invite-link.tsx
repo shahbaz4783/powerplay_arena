@@ -9,13 +9,15 @@ import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { useUserInfo } from '@/src/hooks/useUserData';
 import { cn } from '@/src/lib/utils';
 import { IconButton } from '@/src/components/common/buttons/primary-button';
+import { SectionHeader } from '@/src/components/common/elements/section-header';
+import { Skeleton } from '@/src/components/ui/skeleton';
 
 export function InviteLink() {
 	const [isCopied, setIsCopied] = useState(false);
 
 	const utils = initUtils();
 	const { telegramId } = useCurrentUser();
-	const { data } = useUserInfo(telegramId);
+	const { data, isLoading } = useUserInfo(telegramId);
 	const inviteLink = `https://t.me/powerplay_arena_bot?start=${data?.inviteCode}`;
 
 	const handleShare = () => {
@@ -32,23 +34,13 @@ export function InviteLink() {
 	};
 
 	return (
-		<GradientBorder className='backdrop-blur-sm bg-gray-900/80 space-y-6'>
-			<section className='flex items-center gap-4'>
-				<div className='p-3 bg-blue-500/10 rounded-xl'>
-					<Users className='w-6 h-6 text-blue-400' />
-				</div>
-				<div className='flex-1 '>
-					<h2 className='text-xl font-bold font-exo2'>
-						Invite
-						<span className='bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent ml-2'>
-							Friends
-						</span>
-					</h2>
-					<p className='text-gray-400 text-xs font-poppins'>
-						Share your link and earn amazing rewards together
-					</p>
-				</div>
-			</section>
+		<GradientBorder>
+			<SectionHeader
+				title='Invite'
+				highlightedTitle='Friends'
+				icon={Users}
+				description='Share your link and earn amazing rewards together.'
+			/>
 
 			<section className='p-3 bg-gray-800/50 rounded-xl border border-gray-700/50'>
 				<div className='flex items-center gap-3 mb-4'>
@@ -59,13 +51,17 @@ export function InviteLink() {
 				</div>
 
 				<div className='flex items-center gap-2'>
-					<div className='flex-1 overflow-hidden'>
+					<div className='flex-1 overflow-hidden font-jetbrains text-sm bg-gray-900/50 p-3 rounded-lg border border-gray-700/30 truncate'>
 						<motion.div
-							className='font-jetbrains text-sm bg-gray-900/50 p-3 rounded-lg border border-gray-700/30 truncate'
+							className=''
 							whileHover={{ scale: 1.01 }}
 							transition={{ duration: 0.2 }}
 						>
-							{data?.inviteCode}
+							{isLoading ? (
+								<Skeleton className='w-full h-3' />
+							) : (
+								<>{data?.inviteCode}</>
+							)}
 						</motion.div>
 					</div>
 
