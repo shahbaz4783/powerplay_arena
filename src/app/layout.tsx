@@ -7,6 +7,14 @@ import 'normalize.css/normalize.css';
 import './_assets/globals.css';
 import TanstackProvider from '../providers/tanstack-provider';
 import { cn } from '../lib/utils';
+import {
+	exo2,
+	firaCode,
+	jetbrainsMono,
+	nunitoSans,
+	poppins,
+	sourceSansPro,
+} from './_assets/fonts';
 
 export const metadata: Metadata = {
 	title: 'Powerplay Arena',
@@ -15,8 +23,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: PropsWithChildren) {
 	return (
-		<html lang='en'>
-			<body>
+		<html
+			lang='en'
+			className={`${exo2.variable} ${sourceSansPro.variable} ${jetbrainsMono.variable} ${poppins.variable} ${nunitoSans.variable} ${firaCode.variable}`}
+		>
+			<body className={nunitoSans.className}>
 				<Root>
 					<AnimatedGridPattern
 						numSquares={30}

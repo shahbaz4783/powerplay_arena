@@ -10,6 +10,7 @@ import {
 } from '@/src/components/ui/card';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { useUserReferrals } from '@/src/hooks/useUserData';
+import { GradientBorder } from '@/src/components/common/elements/gradient-border';
 
 export function OverallEarnings() {
 	const { telegramId } = useCurrentUser();
@@ -33,54 +34,57 @@ export function OverallEarnings() {
 	);
 
 	return (
-		<Card className='bg-gradient-to-br from-gray-900/95 to-black border border-gray-800/50 shadow-2xl backdrop-blur-sm'>
-			<CardHeader className='pb-2'>
-				<div className='flex items-center justify-between'>
-					<CardTitle className='flex items-center gap-3 text-sm font-bold'>
-						<div className='p-2 bg-blue-500/10 rounded-lg'>
-							<TrendingUp className='w-6 h-6 text-blue-400' />
-						</div>
-						<span className='bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent'>
-							Earnings Dashboard
-						</span>
-					</CardTitle>
-					<div className='flex items-center gap-2 bg-blue-500/10 px-4 py-2 rounded-lg'>
-						<Users className='w-4 h-4 text-blue-400' />
-						<span className='text-sm font-medium text-blue-300'>
-							{data.length} Active Referrals
-						</span>
-					</div>
+		<GradientBorder className='backdrop-blur-sm bg-gray-900/80 space-y-6'>
+			<section className='flex items-center gap-4'>
+				<div className='p-3 bg-blue-500/10 rounded-xl'>
+					<Users className='w-6 h-6 text-blue-400' />
 				</div>
-			</CardHeader>
+				<div className='flex-1 '>
+					<h2 className='text-xl font-bold font-exo2'>
+						Earnings
+						<span className='bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent ml-2'>
+							Dashboard
+						</span>
+					</h2>
+					<p className='text-gray-400 text-xs font-poppins'>
+						Have a look at your lifetime referral earnings.
+					</p>
+				</div>
+			</section>
 
-			<CardContent className='pt-6'>
-				<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-					<AnimatePresence mode='wait'>
-						<EarningCard
-							icon={<Coins className='w-8 h-8' />}
-							title='Power Coin'
-							amount={totalEarnings.coins}
-							color='yellow'
-							description='Total PWR earned through referrals'
-						/>
-						<EarningCard
-							icon={<Ticket className='w-8 h-8' />}
-							title='Power Pass'
-							amount={totalEarnings.passes}
-							color='green'
-							description='Passes earned through referrals'
-						/>
-						<EarningCard
-							icon={<Star className='w-8 h-8' />}
-							title='Star Voucher'
-							amount={totalEarnings.vouchers}
-							color='purple'
-							description='Vouchers earned from referrals'
-						/>
-					</AnimatePresence>
-				</div>
-			</CardContent>
-		</Card>
+			<div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
+				<AnimatePresence mode='wait'>
+					<EarningCard
+						icon={<Users className='w-8 h-8' />}
+						title='Active Referrals'
+						amount={data.length}
+						color='blue'
+						description='Number of active referrals'
+					/>
+					<EarningCard
+						icon={<Coins className='w-8 h-8' />}
+						title='Power Coin'
+						amount={totalEarnings.coins}
+						color='yellow'
+						description='Total PWR earned through referrals'
+					/>
+					<EarningCard
+						icon={<Ticket className='w-8 h-8' />}
+						title='Power Pass'
+						amount={totalEarnings.passes}
+						color='green'
+						description='Passes earned through referrals'
+					/>
+					<EarningCard
+						icon={<Star className='w-8 h-8' />}
+						title='Star Voucher'
+						amount={totalEarnings.vouchers}
+						color='purple'
+						description='Vouchers earned from referrals'
+					/>
+				</AnimatePresence>
+			</div>
+		</GradientBorder>
 	);
 }
 
@@ -88,7 +92,7 @@ interface EarningCardProps {
 	icon: React.ReactNode;
 	title: string;
 	amount: number;
-	color: 'yellow' | 'green' | 'purple';
+	color: 'yellow' | 'green' | 'purple' | 'blue';
 	description: string;
 }
 
@@ -97,7 +101,6 @@ const EarningCard: React.FC<EarningCardProps> = ({
 	title,
 	amount,
 	color,
-	description,
 }) => {
 	const colorMap = {
 		yellow: {
@@ -105,27 +108,26 @@ const EarningCard: React.FC<EarningCardProps> = ({
 			border: 'border-yellow-500/20',
 			text: 'text-yellow-400',
 			icon: 'bg-yellow-500/10',
-			hover:
-				'hover:border-yellow-500/30 hover:from-yellow-500/15 hover:to-yellow-600/10',
 		},
 		green: {
 			background: 'from-green-500/10 to-green-600/5',
 			border: 'border-green-500/20',
 			text: 'text-green-400',
 			icon: 'bg-green-500/10',
-			hover:
-				'hover:border-green-500/30 hover:from-green-500/15 hover:to-green-600/10',
 		},
 		purple: {
 			background: 'from-purple-500/10 to-purple-600/5',
 			border: 'border-purple-500/20',
 			text: 'text-purple-400',
 			icon: 'bg-purple-500/10',
-			hover:
-				'hover:border-purple-500/30 hover:from-purple-500/15 hover:to-purple-600/10',
+		},
+		blue: {
+			background: 'from-blue-500/10 to-blue-600/5',
+			border: 'border-blue-500/20',
+			text: 'text-blue-400',
+			icon: 'bg-blue-500/10',
 		},
 	};
-
 	const colors = colorMap[color];
 
 	return (
@@ -133,19 +135,18 @@ const EarningCard: React.FC<EarningCardProps> = ({
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			exit={{ opacity: 0, y: -20 }}
-			className={`relative group rounded-xl border ${colors.border} bg-gradient-to-br ${colors.background} ${colors.hover} transition-all duration-300`}
+			className={`rounded-lg border ${colors.border} bg-gradient-to-br ${colors.background} ${colors.text}`}
 		>
-			<div className='p-4'>
-				<div className='flex items-center gap-3 mb-3'>
+			<div className='p-2 space-y-2'>
+				<div className='flex items-center gap-3'>
+					<div className='flex flex-col'>
+						<h3 className='text-xs font-jetbrains font-medium'>{title}</h3>
+					</div>
+				</div>
+				<div className='flex items-center gap-2'>
 					<div className={`p-2 rounded-lg ${colors.icon}`}>
 						<div className={colors.text}>{icon}</div>
 					</div>
-					<div className='flex flex-col'>
-						<h3 className='text-sm font-medium text-gray-400'>{title}</h3>
-						<p className='text-xs text-gray-500'>{description}</p>
-					</div>
-				</div>
-				<div className='flex items-baseline gap-1'>
 					<span className={`text-2xl font-bold ${colors.text}`}>
 						{amount.toLocaleString()}
 					</span>
@@ -160,7 +161,7 @@ const EarningCard: React.FC<EarningCardProps> = ({
 };
 
 const LoadingState: React.FC = () => (
-	<Card className='bg-gradient-to-br from-gray-900 to-black border-gray-800 p-8'>
+	<Card className='bg-gradient-to-br backdrop-blur-sm from-gray-900 to-black border-gray-800 p-8'>
 		<div className='flex flex-col items-center gap-4'>
 			<motion.div
 				animate={{ rotate: 360 }}

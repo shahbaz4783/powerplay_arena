@@ -18,6 +18,13 @@ const config = {
 			},
 		},
 		extend: {
+			fontFamily: {
+				sans: ['var(--font-nunito-sans)', 'sans-serif'],
+				poppins: ['var(--font-poppins)', 'sans-serif'],
+				'fira-code': ['var(--font-fira-code)', 'monospace'],
+				exo2: ['var(--font-exo2)', 'sans-serif'],
+				jetbrains: ['var(--font-jetbrains-mono)', 'monospace'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
