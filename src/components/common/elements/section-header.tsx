@@ -18,11 +18,11 @@ export const SectionHeader = ({
 	iconBgColor = 'bg-blue-500/10',
 }: SectionHeaderProps) => {
 	return (
-		<header className='flex items-center gap-4'>
+		<header className='flex items-center gap-3'>
 			<div className={`p-3 ${iconBgColor} rounded-xl`}>
 				<Icon className={`w-6 h-6 ${iconColor}`} />
 			</div>
-			<div className='flex-1'>
+			<div className='flex-1 text-left'>
 				<h2 className='text-xl font-bold font-exo2'>
 					{title}
 					{highlightedTitle && (

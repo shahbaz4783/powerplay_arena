@@ -21,13 +21,14 @@ import { useUserReferrals } from '@/src/hooks/useUserData';
 import { GradientBorder } from '@/src/components/common/elements/gradient-border';
 import { SectionHeader } from '@/src/components/common/elements/section-header';
 import { cn } from '@/src/lib/utils';
+import { SectionLoading } from '@/src/components/layouts/feedback/section-loading';
 
 export function OverallEarnings() {
 	const { telegramId } = useCurrentUser();
 	const { data, isLoading, isError } = useUserReferrals(telegramId);
 
 	if (isLoading) {
-		return <LoadingState />;
+		return <SectionLoading message='Fetching overall earnings info...' />;
 	}
 
 	if (isError || !data) {
@@ -163,20 +164,6 @@ const EarningCard: React.FC<EarningCardProps> = ({
 		</motion.div>
 	);
 };
-
-const LoadingState: React.FC = () => (
-	<Card className='bg-gradient-to-br backdrop-blur-sm from-gray-900 to-black border-gray-800 p-8'>
-		<div className='flex flex-col items-center gap-4'>
-			<motion.div
-				animate={{ rotate: 360 }}
-				transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-			>
-				<Loader className='w-8 h-8 text-blue-400' />
-			</motion.div>
-			<p className='text-gray-400 font-medium'>Loading your earnings data...</p>
-		</div>
-	</Card>
-);
 
 const ErrorState: React.FC = () => (
 	<Card className='bg-gradient-to-br from-gray-900 to-black border-gray-800 p-8'>

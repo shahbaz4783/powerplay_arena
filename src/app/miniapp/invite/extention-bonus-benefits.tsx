@@ -8,7 +8,7 @@ import {
 } from '@/src/components/ui/card';
 import { AlertCircle, ArrowRight } from 'lucide-react';
 
-const ExtensionBonusInfo: React.FC = () => {
+export const ExtensionBonusInfo: React.FC = () => {
 	return (
 		<Card className='bg-gray-900 border-gray-700 overflow-hidden mt-8'>
 			<CardHeader className='text-center pb-2'>
@@ -79,5 +79,3 @@ const ExtensionBonusInfo: React.FC = () => {
 		</Card>
 	);
 };
-
-export { ExtensionBonusInfo };
