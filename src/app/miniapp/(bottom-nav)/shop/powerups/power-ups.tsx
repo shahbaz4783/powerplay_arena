@@ -32,7 +32,7 @@ export function PowerUps() {
 			}
 			return result;
 		},
-		[telegramId]
+		[telegramId, invoice]
 	);
 
 	const [response, formAction] = useActionState(handlePurchase, initialState);

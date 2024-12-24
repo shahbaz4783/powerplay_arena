@@ -69,18 +69,39 @@ export function QuickPlayMode() {
 		}
 	}, [selectedFormat, updateGameState]);
 
-	const router = useRouter();
+	// const router = useRouter();
 
-	useEffect(() => {
-		if (response.success) {
-			updateGameState({
-				matchId: response.data?.matchId,
-				gamePhase: 'toss',
-				matchSetup: MATCH_FORMATS[selectedFormat],
-			});
-			router.push(`/game/cricket/match-setup/${response.message}`);
-		}
-	}, [response.success, selectedFormat, updateGameState]);
+	// useEffect(() => {
+	// 	if (response.success) {
+	// 		updateGameState({
+	// 			matchId: response.data?.matchId,
+	// 			gamePhase: 'toss',
+	// 			matchSetup: MATCH_FORMATS[selectedFormat],
+	// 		});
+	// 		router.push(`/game/cricket/match-setup/${response.message}`);
+	// 	}
+	// }, [response.success, selectedFormat, updateGameState]);
+
+	  const router = useRouter();
+
+		useEffect(() => {
+			if (response.success) {
+				updateGameState({
+					matchId: response.data?.matchId,
+					gamePhase: 'toss',
+					matchSetup: MATCH_FORMATS[selectedFormat],
+				});
+				router.push(`/game/cricket/match-setup/${response.message}`);
+			}
+		}, [
+			response.success,
+			response.data?.matchId,
+			response.message,
+			selectedFormat,
+			updateGameState,
+			router,
+		]);
+
 
 	const handleFormatChange = (format: string) => {
 		setSelectedFormat(format as MatchFormat);
