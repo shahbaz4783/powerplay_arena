@@ -1,7 +1,6 @@
 'use client';
 
-import React from 'react';
-import { useFormState } from 'react-dom';
+import React, { useActionState } from 'react';
 import { dailyDrop } from '@/src/actions/tasks.action';
 import {
 	Card,
@@ -25,7 +24,7 @@ export function DailyReward() {
 
 	const { data: profile, isLoading } = useUserProgress(telegramId);
 
-	const [response, action] = useFormState(dailyDrop.bind(null, telegramId), {
+	const [response, action] = useActionState(dailyDrop.bind(null, telegramId), {
 		message: {},
 	});
 

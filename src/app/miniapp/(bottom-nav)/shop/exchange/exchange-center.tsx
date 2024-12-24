@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useActionState } from 'react';
 import {
 	Card,
 	CardContent,
@@ -20,7 +20,6 @@ import {
 import { MessageCard } from '@/src/components/common/cards/message-card';
 import { token } from '@/src/constants/app-config';
 import { SubmitButton } from '@/src/components/common/buttons/submit-button';
-import { useFormState } from 'react-dom';
 import { executePowerExchange } from '@/src/actions/shop.action';
 import { ServerResponse } from '@/src/components/common/message/server-response';
 import { calculateExchangeValues } from '@/src/lib/utils';
@@ -32,7 +31,7 @@ export function InGameExchange() {
 	const { telegramId } = useCurrentUser();
 	const { data: profile, isLoading, mutate } = useUserInventory(telegramId);
 
-	const [response, formAction] = useFormState(
+	const [response, formAction] = useActionState(
 		async (prevState: FormResponse, formData: FormData) => {
 			const result = await executePowerExchange(
 				telegramId!,

@@ -1,15 +1,15 @@
 'use client';
 
+import { useActionState } from "react";
 import Image from 'next/image';
 import HeroImage from '@/public/hero-image.svg';
 import { addEmailToWaitlist } from '@/src/actions/waitlist.action';
-import { useFormState } from 'react-dom';
 import SparklesText from '../../components/magicui/sparkles-text';
 import { SubmitButton } from '../../components/common/buttons/submit-button';
 import { ServerResponse } from '../../components/common/message/server-response';
 
 const LeadSection = () => {
-	const [formState, formAction] = useFormState(addEmailToWaitlist, {
+	const [formState, formAction] = useActionState(addEmailToWaitlist, {
 		message: {},
 	});
 

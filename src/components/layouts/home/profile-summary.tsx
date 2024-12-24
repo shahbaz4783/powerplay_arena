@@ -1,20 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import {
-	useUserInfo,
-	useUserInventory,
-	useUserProgress,
-} from '@/src/hooks/useUserData';
+import { useUserInventory, useUserProgress } from '@/src/hooks/useUserData';
 import { useInitData } from '@telegram-apps/sdk-react';
 import { Progress } from '@/src/components/ui/progress';
 import { token } from '@/src/constants/app-config';
 import { Card } from '@/src/components/ui/card';
 import { Coins, Zap } from 'lucide-react';
-import { AvatarDialog } from '../../common/dialog/avatar-dialog';
 import { Skeleton } from '../../ui/skeleton';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
-import { redirect } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -33,9 +27,10 @@ export function ProfileSummary() {
 	}, [isLoading, inventory, router]);
 
 	const { data: userProgress } = useUserProgress(telegramId);
-	const totalXP = userProgress?.totalXP;
-	const xpForLevelUp = userProgress?.xpForNextLevel;
-	const xpForNextLevel = xpForLevelUp! - totalXP!;
+
+	const totalXP = userProgress?.totalXP ?? 0;
+	const xpForLevelUp = userProgress?.xpForNextLevel ?? 0;
+	const xpForNextLevel = xpForLevelUp - totalXP;
 
 	return (
 		<Card className='rounded-xl p-3 space-y-4 bg-gradient-to-r backdrop-blur-lg from-gray-800/50 to-gray-900 shadow-lg'>
@@ -45,7 +40,7 @@ export function ProfileSummary() {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
 			>
-				<AvatarDialog userId={user?.id!} currentAvatar={user?.photoUrl!} />
+				{/* <AvatarDialog userId={telegramId} currentAvatar={user?.photoUrl!} /> */}
 				<UserStats
 					isLoading={isLoading}
 					level={userProgress?.level}
@@ -122,9 +117,9 @@ function UserStats({
 }
 
 interface XPProgressProps {
-	totalXP: number | undefined;
-	xpForLevelUp: number | undefined;
-	xpForNextLevel: number | undefined;
+	totalXP: number;
+	xpForLevelUp: number;
+	xpForNextLevel: number;
 	isLoading: boolean;
 }
 
@@ -134,8 +129,7 @@ function XPProgress({
 	xpForNextLevel,
 	isLoading,
 }: XPProgressProps) {
-	const progressValue =
-		totalXP && xpForLevelUp ? (totalXP / xpForLevelUp) * 100 : 0;
+	const progressValue = xpForLevelUp > 0 ? (totalXP / xpForLevelUp) * 100 : 0;
 
 	return (
 		<motion.div

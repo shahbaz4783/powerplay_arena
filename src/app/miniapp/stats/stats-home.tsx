@@ -28,7 +28,7 @@ const StatCard: React.FC<{
 					<div className='text-white text-xl font-bold'>{title}</div>
 					<div className='text-white/80 text-sm'>View Stats</div>
 					<div className='absolute right-4 bottom-4 text-white/30 transform transition-all duration-300 ease-in-out'>
-						{React.cloneElement(icon as React.ReactElement, { size: 64 })}
+						{React.cloneElement(icon as React.ReactElement<any>, { size: 64 })}
 					</div>
 				</CardContent>
 			</Card>

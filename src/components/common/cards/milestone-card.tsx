@@ -1,10 +1,10 @@
 'use client';
 
+import { useActionState } from 'react';
 import { motion } from 'framer-motion';
 import { Award } from 'lucide-react';
 import { Progress } from '../../ui/progress';
 import { token } from '@/src/constants/app-config';
-import { useFormState } from 'react-dom';
 import { Milestone } from '@/src/types/db.types';
 import { claimAwardAction } from '@/src/actions/tasks.action';
 import { iconMap } from '@/src/constants/challenges';
@@ -34,7 +34,7 @@ export function MilestoneCard({
 		total,
 		isCompleted,
 	});
-	const [state, formAction] = useFormState(claimAward, initialState);
+	const [state, formAction] = useActionState(claimAward, initialState);
 
 	const Icon = iconMap[id] || Award;
 

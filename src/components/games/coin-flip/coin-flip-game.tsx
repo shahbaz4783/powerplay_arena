@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useActionState } from 'react';
 import { MessageCard } from '@/src/components/common/cards/message-card';
 import { betOptions } from '@/src/constants/challenges';
 import { placeBet } from '@/src/actions/bet.action';
-import { useFormState } from 'react-dom';
 import { BetSummary } from './bet-summary';
 import { BetResult } from './bet-result';
 import { BetAmount } from './bet-amount';
@@ -31,7 +30,7 @@ export function CoinFlipChallenge() {
 
 	const { data: inventory, isLoading, mutate } = useUserInventory(telegramId);
 
-	const [formState, formAction] = useFormState(
+	const [formState, formAction] = useActionState(
 		placeBet.bind(null, telegramId),
 		{
 			success: true,

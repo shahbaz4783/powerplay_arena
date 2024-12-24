@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useActionState } from 'react';
 import {
 	Tabs,
 	TabsContent,
@@ -33,7 +33,6 @@ import {
 	Info,
 } from 'lucide-react';
 import { MATCH_FORMATS, token } from '@/src/constants/app-config';
-import { useFormState } from 'react-dom';
 import { RewardItem } from '../../common/cards/reward-card';
 import { useCricketGameState } from '@/src/lib/store';
 import { SubmitButton } from '../../common/buttons/submit-button';
@@ -50,7 +49,7 @@ export function QuickPlayMode() {
 	const { telegramId } = useCurrentUser();
 	const { updateGameState } = useCricketGameState();
 
-	const [response, formAction] = useFormState(
+	const [response, formAction] = useActionState(
 		setupCricketMatch.bind(null, telegramId),
 		{
 			success: false,

@@ -11,18 +11,16 @@ import {
 	bindThemeParamsCSSVars,
 	bindViewportCSSVars,
 } from '@telegram-apps/sdk-react';
-import { TonConnectUIProvider } from '@tonconnect/ui-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 
 import { ErrorBoundary } from '@/src/components/layouts/feedback/ErrorBoundary';
 import { ErrorPage } from '@/src/components/layouts/feedback/ErrorPage';
-import { useTelegramMock } from '@/src/hooks/useTelegramMock';
 import { useDidMount } from '@/src/hooks/useDidMount';
 
 import './styles.css';
 import { LoadingUI } from '../layouts/feedback/loading-ui';
 
-function App(props: PropsWithChildren) {
+function App({ children }: PropsWithChildren) {
 	const lp = useLaunchParams();
 	const miniApp = useMiniApp();
 	const themeParams = useThemeParams();
@@ -45,20 +43,13 @@ function App(props: PropsWithChildren) {
 			appearance={miniApp.isDark ? 'dark' : 'light'}
 			platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
 		>
-			{props.children}
+			{children}
 		</AppRoot>
 	);
 }
 
 function RootInner({ children }: PropsWithChildren) {
-	// if (process.env.NODE_ENV === 'development') {
-	// 	useTelegramMock();
-	// }
-
 	const debug = useLaunchParams().startParam === 'debug';
-	const manifestUrl = useMemo(() => {
-		return new URL('tonconnect-manifest.json', window.location.href).toString();
-	}, []);
 
 	useEffect(() => {
 		if (debug) {
@@ -67,22 +58,22 @@ function RootInner({ children }: PropsWithChildren) {
 	}, [debug]);
 
 	return (
-		<TonConnectUIProvider manifestUrl={manifestUrl}>
-			<SDKProvider acceptCustomStyles debug={debug}>
-				<App>{children}</App>
-			</SDKProvider>
-		</TonConnectUIProvider>
+		<SDKProvider acceptCustomStyles debug={debug}>
+			<App>{children}</App>
+		</SDKProvider>
 	);
 }
 
-export function Root(props: PropsWithChildren) {
+export function Root({ children }: PropsWithChildren) {
 	const didMount = useDidMount();
 
-	return didMount ? (
+	if (!didMount) {
+		return <LoadingUI />;
+	}
+
+	return (
 		<ErrorBoundary fallback={ErrorPage}>
-			<RootInner {...props} />
+			<RootInner>{children}</RootInner>
 		</ErrorBoundary>
-	) : (
-		<LoadingUI />
 	);
 }

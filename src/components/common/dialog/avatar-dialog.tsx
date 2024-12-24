@@ -33,7 +33,7 @@ export function AvatarDialog({
 	userId,
 	currentAvatar,
 }: {
-	userId: number;
+	userId: string;
 	currentAvatar: string;
 }) {
 	// const { data: avatars } = useGetUserAvatar(userId);
