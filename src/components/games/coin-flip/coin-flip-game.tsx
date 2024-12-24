@@ -12,6 +12,7 @@ import { BetSideSelection } from './bet-side-selection';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { useUserInventory } from '@/src/hooks/useUserData';
 
+
 interface BetOption {
 	name: string;
 	description: string;
@@ -30,7 +31,7 @@ export function CoinFlipChallenge() {
 
 	const { data: inventory, isLoading, mutate } = useUserInventory(telegramId);
 
-	const [formState, formAction] = useActionState(
+	const [formState, formAction, isPending] = useActionState(
 		placeBet.bind(null, telegramId),
 		{
 			success: true,
@@ -69,7 +70,7 @@ export function CoinFlipChallenge() {
 	const isBetValid = betAmount > 0 && selectedChallenge && selectedSide;
 
 	return (
-		<div className='w-full max-w-2xl mx-auto'>
+		<div className='w-11/12 m-auto'>
 			<form action={formAction} className='space-y-4'>
 				<input
 					type='hidden'
@@ -103,6 +104,7 @@ export function CoinFlipChallenge() {
 						selectedChallenge={selectedChallenge}
 						selectedSide={selectedSide}
 						userBalance={userBalance}
+						isLoading={isPending}
 					/>
 				)}
 			</form>

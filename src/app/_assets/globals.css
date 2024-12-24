@@ -32,6 +32,13 @@
     }
 }
 
+@layer utilities {
+  .sub-card {
+    @apply p-3 bg-slate-800/50 rounded-lg border border-slate-700/50;
+  }
+}
+
+
 @layer base {
     * {
         @apply border-border;

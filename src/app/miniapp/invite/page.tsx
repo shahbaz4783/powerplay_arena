@@ -19,7 +19,6 @@ import { InviteLink } from './invite-link';
 import { FriendsList } from './friends-list';
 import { OverallEarnings } from './invite-bonus-info';
 import { ReferralBenefits } from './invite-benefits';
-import { ExtensionBonusInfo } from './extention-bonus-benefits';
 
 export interface BenefitCardProps {
 	icon: ReactNode;
@@ -32,24 +31,6 @@ export interface TotalEarnings {
 	passes: number;
 	vouchers: number;
 }
-
-const BenefitCard = ({ icon, title, description }: BenefitCardProps) => (
-	<motion.div whileTap={{ scale: 0.95 }}>
-		<Card className='cyberpunk-bg neon-border shadow-lg'>
-			<CardHeader className='flex flex-row items-center space-x-2 pb-2'>
-				<div className='rounded-full bg-[hsl(var(--neon-blue))] p-2'>
-					{icon}
-				</div>
-				<CardTitle className='text-lg neon-text'>{title}</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<p className='text-sm text-[hsl(var(--muted-foreground))]'>
-					{description}
-				</p>
-			</CardContent>
-		</Card>
-	</motion.div>
-);
 
 export default function ReferralPage() {
 	const [totalEarnings, setTotalEarnings] = useState<TotalEarnings>({

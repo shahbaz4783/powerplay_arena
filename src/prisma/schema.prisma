@@ -38,12 +38,14 @@ enum GameOutcome {
   TIE
   ONGOING
 }
+
 enum VoucherRewardStatus {
   PENDING
   CREDITED
   EXPIRED
   CLAIMED
 }
+
 enum VoucherPurchasedStatus {
   CREDITED
   REFUNDED
@@ -63,13 +65,13 @@ model User {
   inventory UserInventory?
   progress  UserProgression?
 
-  voucherPurchases  VoucherPurchase[]
-  transactions Transaction[]
-  cricketMatch CricketMatchRecord[]
-  cricketStats CricketMatchStats[]
-  betStats     BetStats[]
-  referrals    ReferralRecord[]     @relation("Referrer")
-  referredBy   ReferralRecord[]     @relation("ReferredUser")
+  voucherPurchases VoucherPurchase[]
+  transactions     Transaction[]
+  cricketMatch     CricketMatchRecord[]
+  cricketStats     CricketMatchStats[]
+  betStats         BetStats[]
+  referrals        ReferralRecord[]     @relation("Referrer")
+  referredBy       ReferralRecord[]     @relation("ReferredUser")
 
   @@index([telegramId])
   @@map("users")
@@ -108,8 +110,8 @@ model UserInventory {
 }
 
 model Avatar {
-  id          String @id @default(cuid())
-  mintNumber  Int    @default(autoincrement())
+  id          String  @id @default(cuid())
+  mintNumber  Int     @default(autoincrement())
   avatarId    String
   telegramId  String
   title       String
@@ -197,9 +199,9 @@ model CricketMatchStats {
   sixes             Int @default(0)
   fours             Int @default(0)
 
-  wicketsTaken       Int @default(0)
-  runsConceded       Int @default(0)
-  ballsBowled        Int @default(0)
+  wicketsTaken       Int  @default(0)
+  runsConceded       Int  @default(0)
+  ballsBowled        Int  @default(0)
   lowestRunsConceded Int?
   bestBowlingWickets Int?
   bestBowlingRuns    Int?
@@ -210,6 +212,7 @@ model CricketMatchStats {
   @@index([telegramId])
   @@map("stats")
 }
+
 model BetStats {
   id           String  @id @default(cuid())
   telegramId   String
@@ -231,9 +234,9 @@ model BetStats {
 model Transaction {
   id            String          @id @default(cuid())
   telegramId    String
-  coinAmount Int @default(0)
-  passAmount Int @default(0)
-  voucherAmount Int @default(0)
+  coinAmount    Int             @default(0)
+  passAmount    Int             @default(0)
+  voucherAmount Int             @default(0)
   type          TransactionType
   description   String?
   metadata      Json?
@@ -254,18 +257,19 @@ model WaitlistUser {
 }
 
 model ReferralRecord {
-  id                String   @id @default(uuid())
-  referrerId        String
-  referredId        String
-  createdAt         DateTime @default(now())
-  expiresAt         DateTime
-  totalEarnedCoins  Int      @default(0)
-  totalEarnedPasses Int      @default(0)
-  totalEarnedVouchers Int    @default(0)
+  id                  String   @id @default(uuid())
+  referrerId          String
+  referredId          String
+  createdAt           DateTime @default(now())
+  expiresAt           DateTime
+  totalEarnedCoins    Int      @default(0)
+  totalEarnedPasses   Int      @default(0)
+  totalEarnedVouchers Int      @default(0)
+  maxVouchers         Int      @default(100)
 
-  referrer          User     @relation("Referrer", fields: [referrerId], references: [telegramId], onDelete: Cascade)
-  referredUser      User     @relation("ReferredUser", fields: [referredId], references: [telegramId], onDelete: Cascade)
-  voucherRewards    VoucherReward[]
+  referrer       User            @relation("Referrer", fields: [referrerId], references: [telegramId], onDelete: Cascade)
+  referredUser   User            @relation("ReferredUser", fields: [referredId], references: [telegramId], onDelete: Cascade)
+  voucherRewards VoucherReward[]
 
   @@index([referrerId])
   @@index([referredId])
@@ -273,35 +277,35 @@ model ReferralRecord {
 }
 
 model VoucherPurchase {
-  id                String   @id @default(uuid())
-  telegramId        String
-  voucherAmount     Int
-  starAmount        Int
-  telegramPaymentId String  @unique
-  providerPaymentId String
+  id                    String                 @id @default(uuid())
+  telegramId            String
+  voucherAmount         Int
+  starAmount            Int
+  telegramPaymentId     String                 @unique
+  providerPaymentId     String
   VoucherPurchaseStatus VoucherPurchasedStatus
-  purchasedAt       DateTime @default(now())
-  
-  user              User     @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-  voucherRewards    VoucherReward[]
+  purchasedAt           DateTime               @default(now())
+
+  user           User            @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+  voucherRewards VoucherReward[]
 
   @@index([telegramId])
   @@map("voucher_purchases")
 }
 
 model VoucherReward {
-  id                String   @id @default(uuid())
+  id                String              @id @default(uuid())
   referralRecordId  String
   voucherPurchaseId String
   referrerReward    Int
   referredReward    Int
   status            VoucherRewardStatus
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
   claimBy           DateTime
 
-  referralRecord    ReferralRecord @relation(fields: [referralRecordId], references: [id], onDelete: Cascade)
-  voucherPurchase   VoucherPurchase @relation(fields: [voucherPurchaseId], references: [id], onDelete: Cascade)
+  referralRecord  ReferralRecord  @relation(fields: [referralRecordId], references: [id], onDelete: Cascade)
+  voucherPurchase VoucherPurchase @relation(fields: [voucherPurchaseId], references: [id], onDelete: Cascade)
 
   @@index([referralRecordId])
   @@index([voucherPurchaseId])

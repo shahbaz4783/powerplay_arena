@@ -1,5 +1,8 @@
 import { betOptions } from '@/src/constants/challenges';
 import { cn } from '@/src/lib/utils';
+import { GradientBorder } from '../../common/elements/gradient-border';
+import { SectionHeader } from '../../common/elements/section-header';
+import { LayoutDashboardIcon } from 'lucide-react';
 
 interface BetOption {
 	name: string;
@@ -15,10 +18,12 @@ export function BetChallenge({
 	setSelectedChallenge: (challenge: BetOption) => void;
 }) {
 	return (
-		<section className='bg-slate-900 rounded-xl p-3 space-y-4'>
-			<h3 className='text-lg text-center font-semibold text-slate-200'>
-				Pick Your Odds
-			</h3>
+		<GradientBorder>
+			<SectionHeader
+				title='Pick Odds'
+				description='How much risk you can take?'
+				icon={LayoutDashboardIcon}
+			/>
 			<div className='grid grid-cols-2 gap-2'>
 				{betOptions.map((option) => (
 					<button
@@ -40,6 +45,6 @@ export function BetChallenge({
 			<p className='text-sm text-slate-400 text-center'>
 				{selectedChallenge.description}
 			</p>
-		</section>
+		</GradientBorder>
 	);
 }

@@ -18,9 +18,9 @@ export function IconButton({
 		<motion.button
 			whileTap={{ scale: 0.98 }}
 			onClick={onClick}
-			className={`flex font-jetbrains items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg transition-colors duration-200 shadow-lg shadow-blue-500/20 ${className}`}
+			className={`flex font-poppins items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg transition-colors duration-200 shadow-lg shadow-blue-500/20 ${className}`}
 		>
-			<Icon className='w-4 h-4' />
+			<Icon className='w-5 h-5' />
 			{text}
 		</motion.button>
 	);

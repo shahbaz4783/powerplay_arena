@@ -14,7 +14,6 @@ import { Skeleton } from '@/src/components/ui/skeleton';
 
 export function InviteLink() {
 	const [isCopied, setIsCopied] = useState(false);
-
 	const utils = initUtils();
 	const { telegramId } = useCurrentUser();
 	const { data, isLoading } = useUserInfo(telegramId);
@@ -26,7 +25,6 @@ export function InviteLink() {
 			inviteLink
 		);
 	};
-
 	const copyLink = () => {
 		setIsCopied(true);
 		navigator.clipboard.writeText(inviteLink);
@@ -42,11 +40,11 @@ export function InviteLink() {
 				description='Share your link and earn amazing rewards together.'
 			/>
 
-			<section className='p-3 bg-gray-800/50 rounded-xl border border-gray-700/50'>
+			<section className='sub-card'>
 				<div className='flex items-center gap-3 mb-4'>
 					<LinkIcon className='w-4 h-4 text-blue-400' />
-					<span className='text-sm font-exo2 font-medium text-gray-300'>
-						Your Unique Invite Link
+					<span className='text-sm font-exo2 text-gray-300'>
+						Your unique invite link
 					</span>
 				</div>
 
@@ -77,9 +75,7 @@ export function InviteLink() {
 								animate={{ opacity: 1, scale: 1 }}
 								exit={{ opacity: 0, scale: 0.8 }}
 								transition={{ duration: 0.2 }}
-								className={cn('text-blue-400', {
-									'text-green-400': isCopied,
-								})}
+								className='text-blue-400'
 							>
 								{isCopied ? (
 									<Check className='w-5 h-5' />

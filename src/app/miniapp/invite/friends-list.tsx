@@ -2,16 +2,13 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-	Users,
 	Activity,
 	Star,
 	Coins,
 	Ticket,
 	Clock,
 	PlusCircle,
-	TrendingUp,
 	Shield,
-	Award,
 } from 'lucide-react';
 import {
 	Avatar,
@@ -28,6 +25,7 @@ import { useFormatDate } from '@/src/hooks/useFormatDate';
 import { ExtendBenefitsModal } from './extend-benefits';
 import { SectionLoading } from '@/src/components/layouts/feedback/section-loading';
 import { GradientBorder } from '@/src/components/common/elements/gradient-border';
+import { cn } from '@/src/lib/utils';
 
 interface MaxCapInfo {
 	baseLimit: number;
@@ -70,7 +68,12 @@ const calculateMaxCap = (extensionWeeks: number): number => {
 
 const UserCard: React.FC<{ user: User }> = ({ user }) => {
 	const { referredUser } = user;
-	const { formatDateDistance, isExpired } = useFormatDate();
+	const { formatDateDistance, isExpired, formatDate } = useFormatDate();
+	const today = new Date();
+	const expiresAt = new Date(user.expiresAt);
+	const lessThanWeek =
+		(expiresAt.getTime() - today.getTime()) / (1000 * 60 * 60 * 24) <= 7;
+
 	const expired = isExpired(user.expiresAt);
 	const [isExtendModalOpen, setIsExtendModalOpen] = useState(false);
 
@@ -159,27 +162,35 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
 					</div>
 				</div>
 
-				<div className='flex justify-between items-center border-[0.1px] px-2 py-1 cyberpunk-bg rounded-md'>
-					<span className='text-sm text-gray-400'>
+				<div className='flex justify-between items-center sub-card'>
+					<span
+						className={cn('text-sm text-gray-400', {
+							'text-red-400': lessThanWeek,
+						})}
+					>
 						Benefits {expired ? 'ended' : 'end'}{' '}
 						{formatDateDistance(user.expiresAt)}
 					</span>
-					<Button
-						variant='secondary'
-						size='sm'
-						onClick={() => setIsExtendModalOpen(true)}
-						className='bg-blue-500/20 text-blue-400'
-					>
-						<PlusCircle className='w-4 h-4 mr-1' />
-						Extend
-					</Button>
+					{!expired && (
+						<Button
+							variant='secondary'
+							size='sm'
+							onClick={() => setIsExtendModalOpen(true)}
+							className='bg-blue-500/20 text-blue-400'
+						>
+							<PlusCircle className='w-4 h-4 mr-1' />
+							Extend
+						</Button>
+					)}
 				</div>
 			</div>
 
 			<ExtendBenefitsModal
 				isOpen={isExtendModalOpen}
+				currentVouchers={user.totalEarnedVouchers}
+				referredId={user.id}
 				onClose={() => setIsExtendModalOpen(false)}
-				userId={user.id}
+				userId={user.referrerId}
 				currentExpiryDate={user.expiresAt}
 			/>
 		</GradientBorder>

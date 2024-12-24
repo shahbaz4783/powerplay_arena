@@ -1,5 +1,8 @@
 import { betSides } from '@/src/constants/challenges';
 import { cn } from '@/src/lib/utils';
+import { SectionHeader } from '../../common/elements/section-header';
+import { LayoutDashboardIcon } from 'lucide-react';
+import { GradientBorder } from '../../common/elements/gradient-border';
 
 export function BetSideSelection({
 	selectedSide,
@@ -9,10 +12,12 @@ export function BetSideSelection({
 	setSelectedSide: (side: string) => void;
 }) {
 	return (
-		<section className='bg-slate-900 rounded-xl p-3 space-y-4'>
-			<h3 className='text-lg text-center font-semibold text-slate-200'>
-				Choose Your Side
-			</h3>
+		<GradientBorder>
+			<SectionHeader
+				title='Heads or Tails?'
+				description='Whats your call?'
+				icon={LayoutDashboardIcon}
+			/>
 			<div className='grid grid-cols-2 gap-2'>
 				{betSides.map((side) => (
 					<button
@@ -31,6 +36,6 @@ export function BetSideSelection({
 					</button>
 				))}
 			</div>
-		</section>
+		</GradientBorder>
 	);
 }
