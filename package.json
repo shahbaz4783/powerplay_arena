@@ -16,7 +16,7 @@
 		"schema": "./src/prisma/schema.prisma"
 	},
 	"dependencies": {
-		"@prisma/client": "^5.20.0",
+		"@prisma/client": "^6.1.0",
 		"@radix-ui/react-accordion": "^1.2.1",
 		"@radix-ui/react-alert-dialog": "^1.1.1",
 		"@radix-ui/react-avatar": "^1.1.0",
@@ -75,7 +75,7 @@
 		"eslint-config-next": "15.1.2",
 		"mini-css-extract-plugin": "^2.9.0",
 		"postcss": "^8",
-		"prisma": "^5.20.0",
+		"prisma": "^6.1.0",
 		"tailwindcss": "^3.4.7",
 		"ts-node": "^10.9.2",
 		"tslib": "^2.8.0",

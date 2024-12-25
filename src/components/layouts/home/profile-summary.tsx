@@ -129,7 +129,7 @@ function XPProgress({
 	xpForNextLevel,
 	isLoading,
 }: XPProgressProps) {
-	const progressValue = xpForLevelUp > 0 ? (totalXP / xpForLevelUp) * 100 : 0;
+	const progressValue = xpForLevelUp > 0 ? (totalXP / xpForLevelUp) * 100 : 100;
 
 	return (
 		<motion.div
@@ -159,8 +159,14 @@ function XPProgress({
 					<Skeleton className='h-3 w-1/4 bg-slate-100 bg-opacity-20 rounded-xl' />
 				) : (
 					<div className='text-xs font-mono text-slate-300'>
-						<span>Next Level:</span> <span>{xpForNextLevel}</span>{' '}
-						<span>XP</span>
+						{totalXP >= 1000000 ? (
+							'Max Level'
+						) : (
+							<>
+								<span>Next Level:</span> <span>{xpForNextLevel}</span>{' '}
+								<span>XP</span>
+							</>
+						)}
 					</div>
 				)}
 			</div>

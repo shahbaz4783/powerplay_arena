@@ -37,6 +37,14 @@ export const InfoCard = ({ icon, title, amount, color }: InfoCardProps) => {
 	};
 	const colors = colorMap[color];
 
+	// Parse the amount safely
+	const parsedAmount =
+		typeof amount === 'number'
+			? amount
+			: !isNaN(Number(amount))
+			? Number(amount)
+			: amount; // Retain string if not numeric
+
 	return (
 		<motion.div
 			initial={{ opacity: 0, y: 20 }}
@@ -56,10 +64,17 @@ export const InfoCard = ({ icon, title, amount, color }: InfoCardProps) => {
 					</div>
 					<span
 						className={cn(`text-xl font-bold ${colors.text}`, {
-							'text-lg': Number(amount) > 99999,
+							'text-lg':
+								typeof parsedAmount === 'number' && parsedAmount > 99999,
+							'text-md':
+								typeof parsedAmount === 'number' && parsedAmount > 999999,
+							'text-sm':
+								typeof parsedAmount === 'number' && parsedAmount > 9999999,
 						})}
 					>
-						{amount.toLocaleString()}
+						{typeof parsedAmount === 'number'
+							? parsedAmount.toLocaleString()
+							: parsedAmount}
 					</span>
 				</div>
 			</div>

@@ -31,6 +31,7 @@ import {
 	Bolt,
 	Shield,
 	Info,
+	PlayCircle,
 } from 'lucide-react';
 import { MATCH_FORMATS, token } from '@/src/constants/app-config';
 import { RewardItem } from '../../common/cards/reward-card';
@@ -42,14 +43,15 @@ import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { useRouter } from 'next/navigation';
 import { MessageCard } from '../../common/cards/message-card';
 import { setupCricketMatch } from '@/src/actions/game.action';
+import { IconButton } from '../../common/buttons/primary-button';
+import LoadingCricketGame from '@/src/app/game/cricket/match-setup/loading';
 
 export function QuickPlayMode() {
 	const [selectedFormat, setSelectedFormat] = useState<MatchFormat>('BLITZ');
-
 	const { telegramId } = useCurrentUser();
 	const { updateGameState } = useCricketGameState();
 
-	const [response, formAction] = useActionState(
+	const [response, formAction, isLoading] = useActionState(
 		setupCricketMatch.bind(null, telegramId),
 		{
 			success: false,
@@ -69,39 +71,25 @@ export function QuickPlayMode() {
 		}
 	}, [selectedFormat, updateGameState]);
 
-	// const router = useRouter();
+	const router = useRouter();
 
-	// useEffect(() => {
-	// 	if (response.success) {
-	// 		updateGameState({
-	// 			matchId: response.data?.matchId,
-	// 			gamePhase: 'toss',
-	// 			matchSetup: MATCH_FORMATS[selectedFormat],
-	// 		});
-	// 		router.push(`/game/cricket/match-setup/${response.message}`);
-	// 	}
-	// }, [response.success, selectedFormat, updateGameState]);
-
-	  const router = useRouter();
-
-		useEffect(() => {
-			if (response.success) {
-				updateGameState({
-					matchId: response.data?.matchId,
-					gamePhase: 'toss',
-					matchSetup: MATCH_FORMATS[selectedFormat],
-				});
-				router.push(`/game/cricket/match-setup/${response.message}`);
-			}
-		}, [
-			response.success,
-			response.data?.matchId,
-			response.message,
-			selectedFormat,
-			updateGameState,
-			router,
-		]);
-
+	useEffect(() => {
+		if (response.success) {
+			updateGameState({
+				matchId: response.data?.matchId,
+				gamePhase: 'toss',
+				matchSetup: MATCH_FORMATS[selectedFormat],
+			});
+			router.push(`/game/cricket/match-setup/${response.message}`);
+		}
+	}, [
+		response.success,
+		response.data?.matchId,
+		response.message,
+		selectedFormat,
+		updateGameState,
+		router,
+	]);
 
 	const handleFormatChange = (format: string) => {
 		setSelectedFormat(format as MatchFormat);
@@ -119,15 +107,7 @@ export function QuickPlayMode() {
 	};
 
 	if (response.success) {
-		return (
-			<div className='min-h-svh flex items-center'>
-				<MessageCard
-					title='Match Setup Complete!'
-					message='Entry fees have been processed successfully. Preparing your game environment...'
-					type='loading'
-				/>
-			</div>
-		);
+		return <LoadingCricketGame />;
 	}
 
 	return (
@@ -248,9 +228,15 @@ export function QuickPlayMode() {
 			</section>
 			<section className='bg-black bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-gray-900 to-slate-900 p-6 sticky bottom-0'>
 				<form action={handleSubmit} className='w-full'>
-					<SubmitButton
+					{/* <SubmitButton
 						title={'Continue'}
 						loadingTitle={`Paying ${MATCH_FORMATS[selectedFormat].entryFee} ${token.symbol}...`}
+					/> */}
+					<IconButton
+						text={'Place Bet'}
+						loadingText='Placing...'
+						icon={PlayCircle}
+						isLoading={isLoading}
 					/>
 				</form>
 			</section>

@@ -36,6 +36,10 @@
   .sub-card {
     @apply p-3 bg-slate-800/50 rounded-lg border border-slate-700/50;
   }
+  
+  .blue-gradient {
+    @apply bg-gradient-to-br from-blue-500 via-sky-500 to-blue-500
+  }
 }
 
 

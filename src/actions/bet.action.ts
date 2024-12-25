@@ -9,7 +9,7 @@ import * as models from '../models';
 import { ServerResponseType } from '../types/types';
 
 interface FormState {
-	result: 'win' | 'lose' | null;
+	result: 'win' | 'lose' | 'invalid' | null;
 	winAmount: number;
 	xpGain: number;
 	flipResult?: 'heads' | 'tails';
@@ -33,7 +33,7 @@ export async function placeBet(
 				success: false,
 				message: 'Invalid input data',
 				data: {
-					result: null,
+					result: 'invalid',
 					winAmount: 0,
 					xpGain: 0,
 				},
@@ -64,7 +64,7 @@ export async function placeBet(
 				success: false,
 				message: errors.join(' '),
 				data: {
-					result: null,
+					result: 'invalid',
 					winAmount: 0,
 					xpGain: 0,
 				},

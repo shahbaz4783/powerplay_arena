@@ -1,17 +1,15 @@
 import { calculateBettingPassCost } from '@/src/lib/utils';
 import { token } from '@/src/constants/app-config';
 import {
-	ArrowRight,
 	CoinsIcon,
 	Landmark,
 	LayoutDashboard,
 	PlayCircle,
 	Shuffle,
+	Sparkles,
 	SwordIcon,
 } from 'lucide-react';
-import { SubmitButton } from '../../common/buttons/submit-button';
 import { IconButton } from '../../common/buttons/primary-button';
-import { LoadingOverlay } from '../../common/dialog/loading-overlay';
 import { InfoCard } from '../../common/cards/info-card';
 import { SectionHeader } from '../../common/elements/section-header';
 import { GradientBorder } from '../../common/elements/gradient-border';
@@ -42,9 +40,9 @@ export function BetSummary({
 	return (
 		<GradientBorder>
 			<SectionHeader
-				title='Summary'
-				description='Check the summary'
-				icon={LayoutDashboard}
+				title='Ready to Roll'
+				description='Review your bet details before the action begins'
+				icon={Sparkles}
 			/>
 			<div className='grid grid-cols-2 gap-4'>
 				<InfoCard
@@ -84,8 +82,10 @@ export function BetSummary({
 					</p>
 				</div>
 				<IconButton
-					text={isLoading ? 'Placing...' : 'Place Bet'}
+					text={'Place Bet'}
+					loadingText='Placing...'
 					icon={PlayCircle}
+					isLoading={isLoading}
 				/>
 			</div>
 		</GradientBorder>
