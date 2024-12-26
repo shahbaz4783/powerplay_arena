@@ -26,13 +26,16 @@ export interface CricketStats {
 	>;
 }
 
-export const useCricketStatsAggregated = () => {
+export const usePowerStrike = () => {
 	const { telegramId } = useCurrentUser();
 	const formats: MatchFormat[] = ['BLITZ', 'POWERPLAY', 'CLASSIC'];
 
-	const statsData = formats.map((format) =>
-		useCricketStats(telegramId, format)
-	);
+	// Call hooks individually for each format
+	const blitzStats = useCricketStats(telegramId, 'BLITZ');
+	const powerplayStats = useCricketStats(telegramId, 'POWERPLAY');
+	const classicStats = useCricketStats(telegramId, 'CLASSIC');
+
+	const statsData = [blitzStats, powerplayStats, classicStats];
 
 	const isLoading = statsData.some(({ isLoading }) => isLoading);
 	const error = statsData.find(({ error }) => error)?.error;

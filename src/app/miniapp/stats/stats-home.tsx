@@ -8,11 +8,11 @@ import { useFortuneFlip } from '@/src/hooks/useFortuneFlip';
 import { StatCardProps } from '@/src/types/stats.types';
 import { StatCard } from './stats-card';
 import { StatCardSkeleton } from '@/src/components/common/elements/stats-skeleton';
-import { useCricketStatsAggregated } from '@/src/hooks/usePowerStrike';
+import { usePowerStrike } from '@/src/hooks/usePowerStrike';
 
 export const StatsHomePage: React.FC = () => {
 	const { stats: fortuneFlipStats, isLoading } = useFortuneFlip();
-	const { stats: cricketStats } = useCricketStatsAggregated();
+	const { stats: cricketStats } = usePowerStrike();
 
 	const statCards: StatCardProps[] = [
 		{

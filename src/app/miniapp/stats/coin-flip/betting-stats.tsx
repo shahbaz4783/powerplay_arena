@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Coins, Target, TrendingUp, Trophy, Flame } from 'lucide-react';
+import { Coins, Target, TrendingUp, Trophy } from 'lucide-react';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { useGetUserBettingStats } from '@/src/hooks/useUserData';
 import { InfoCard } from '@/src/components/common/cards/info-card';
@@ -14,18 +14,27 @@ import { BetType } from '@prisma/client';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 
 const COLORS = ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B'];
+const betTypes: BetType[] = [
+	'SAFE_BET',
+	'CLASSIC_FLIP',
+	'TRIPLE_SHOT',
+	'JACKPOT',
+];
 
 export function FortuneFlipStats() {
 	const { telegramId } = useCurrentUser();
-	const betTypes: BetType[] = [
-		'SAFE_BET',
-		'CLASSIC_FLIP',
-		'TRIPLE_SHOT',
-		'JACKPOT',
+
+	const safeBetStats = useGetUserBettingStats(telegramId, 'SAFE_BET');
+	const classicFlipStats = useGetUserBettingStats(telegramId, 'CLASSIC_FLIP');
+	const tripleShotStats = useGetUserBettingStats(telegramId, 'TRIPLE_SHOT');
+	const jackpotStats = useGetUserBettingStats(telegramId, 'JACKPOT');
+
+	const statsData = [
+		safeBetStats,
+		classicFlipStats,
+		tripleShotStats,
+		jackpotStats,
 	];
-	const statsData = betTypes.map((betType) =>
-		useGetUserBettingStats(telegramId, betType)
-	);
 
 	const totalEarnings = statsData.reduce(
 		(sum, { data }) => sum + (data?.totalEarning || 0),
@@ -58,7 +67,7 @@ export function FortuneFlipStats() {
 		</div>
 	);
 
-	const isLoading = statsData.some(({ data }) => !data);
+	const isLoading = statsData.some(({ isLoading }) => isLoading);
 
 	return (
 		<div className='space-y-5'>

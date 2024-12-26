@@ -12,9 +12,18 @@ export const useFortuneFlip = () => {
 		'JACKPOT',
 	];
 
-	const statsData = betTypes.map((betType) =>
-		useGetUserBettingStats(telegramId, betType)
-	);
+	// Call hooks individually for each bet type
+	const safeBetStats = useGetUserBettingStats(telegramId, 'SAFE_BET');
+	const classicFlipStats = useGetUserBettingStats(telegramId, 'CLASSIC_FLIP');
+	const tripleShotStats = useGetUserBettingStats(telegramId, 'TRIPLE_SHOT');
+	const jackpotStats = useGetUserBettingStats(telegramId, 'JACKPOT');
+
+	const statsData = [
+		safeBetStats,
+		classicFlipStats,
+		tripleShotStats,
+		jackpotStats,
+	];
 
 	const isLoading = statsData.some(({ isLoading }) => isLoading);
 	const error = statsData.find(({ error }) => error)?.error;

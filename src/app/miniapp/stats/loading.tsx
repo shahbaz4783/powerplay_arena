@@ -90,9 +90,12 @@ const StatsLoadingScreen: React.FC<StatsLoadingScreenProps> = () => {
 										}}
 									>
 										{
-											[<Activity />, <BarChart3 />, <TrendingUp />, <Trophy />][
-												index % 4
-											]
+											[
+												<Activity key={1} />,
+												<BarChart3 key={1} />,
+												<TrendingUp key={1} />,
+												<Trophy key={1} />,
+											][index % 4]
 										}
 									</motion.div>
 								</div>
