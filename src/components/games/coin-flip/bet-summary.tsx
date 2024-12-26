@@ -2,6 +2,8 @@ import { calculateBettingPassCost } from '@/src/lib/utils';
 import { token } from '@/src/constants/app-config';
 import {
 	CoinsIcon,
+	DollarSign,
+	HandCoins,
 	Landmark,
 	LayoutDashboard,
 	PlayCircle,
@@ -84,7 +86,7 @@ export function BetSummary({
 				<IconButton
 					text={'Place Bet'}
 					loadingText='Placing...'
-					icon={PlayCircle}
+					icon={DollarSign}
 					isLoading={isLoading}
 				/>
 			</div>

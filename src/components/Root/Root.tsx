@@ -19,6 +19,7 @@ import { useDidMount } from '@/src/hooks/useDidMount';
 
 import './styles.css';
 import { LoadingUI } from '../layouts/feedback/loading-ui';
+import DatabaseErrorBoundary from '../layouts/feedback/database-error';
 
 function App({ children }: PropsWithChildren) {
 	const lp = useLaunchParams();
@@ -72,8 +73,10 @@ export function Root({ children }: PropsWithChildren) {
 	}
 
 	return (
-		<ErrorBoundary fallback={ErrorPage}>
-			<RootInner>{children}</RootInner>
-		</ErrorBoundary>
+		<DatabaseErrorBoundary>
+			<ErrorBoundary fallback={ErrorPage}>
+				<RootInner>{children}</RootInner>
+			</ErrorBoundary>
+		</DatabaseErrorBoundary>
 	);
 }

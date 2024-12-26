@@ -2,7 +2,7 @@ import { CoinFlipChallenge } from '@/src/components/games/coin-flip/coin-flip-ga
 
 export default function CoinFlipChallengePage() {
 	return (
-		<div className='space-y-6 text-gray-100 relative overflow-hidden'>
+		<div className='space-y-6 text-gray-100 relative overflow-hidden mb-4'>
 			<CoinFlipChallenge />
 		</div>
 	);

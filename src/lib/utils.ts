@@ -9,6 +9,18 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
+export function formatCompactNumber(value: number): string {
+	if (value < 1000) return value.toString();
+
+	const suffixes = ['', 'K', 'M', 'B', 'T'];
+	const tier = Math.floor(Math.log10(value) / 3);
+
+	const scaledValue = value / Math.pow(1000, tier);
+	const formattedValue = scaledValue.toPrecision(3);
+
+	return `${formattedValue}${suffixes[tier]}`;
+}
+
 export const fakeDelay = async (duration: number) => {
 	return await new Promise((resolve) => setTimeout(resolve, duration));
 };

@@ -1,159 +1,173 @@
 'use client';
 
-import { useGetUserBettingStats } from '@/src/hooks/useUserData';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardTitle } from '@/src/components/ui/card';
+import { Coins, Target, TrendingUp, Trophy, Flame } from 'lucide-react';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
-import {
-	ResponsiveContainer,
-	PieChart,
-	Pie,
-	Cell,
-	Tooltip,
-	BarChart,
-	Bar,
-	XAxis,
-	YAxis,
-} from 'recharts';
-import {
-	CurrencyIcon as CurrencyDollarIcon,
-	BarChartIcon as ChartBarIcon,
-	TrophyIcon,
-	PercentIcon,
-	Percent,
-} from 'lucide-react';
-import { StatCard } from '@/src/components/common/cards/stats-card';
+import { useGetUserBettingStats } from '@/src/hooks/useUserData';
+import { InfoCard } from '@/src/components/common/cards/info-card';
+import { PageHeader } from '@/src/components/layouts/global/page-header';
+import { Card, CardContent } from '@/src/components/ui/card';
+import { Skeleton } from '@/src/components/ui/skeleton';
+import StatsCard from './stats-card';
+import { BetType } from '@prisma/client';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 
-const betTypes = [
-	'SAFE_BET',
-	'CLASSIC_FLIP',
-	'TRIPLE_SHOT',
-	'JACKPOT',
-] as const;
+const COLORS = ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B'];
 
-const COLORS = ['#4CAF50', '#FFC107', '#2196F3', '#9C27B0'];
-
-export function BettingStats() {
+export function FortuneFlipStats() {
 	const { telegramId } = useCurrentUser();
+	const betTypes: BetType[] = [
+		'SAFE_BET',
+		'CLASSIC_FLIP',
+		'TRIPLE_SHOT',
+		'JACKPOT',
+	];
+	const statsData = betTypes.map((betType) =>
+		useGetUserBettingStats(telegramId, betType)
+	);
 
-	const bettingStats = {
-		SAFE_BET: useGetUserBettingStats(telegramId, 'SAFE_BET').data,
-		CLASSIC_FLIP: useGetUserBettingStats(telegramId, 'CLASSIC_FLIP').data,
-		TRIPLE_SHOT: useGetUserBettingStats(telegramId, 'TRIPLE_SHOT').data,
-		JACKPOT: useGetUserBettingStats(telegramId, 'JACKPOT').data,
-	};
+	const totalEarnings = statsData.reduce(
+		(sum, { data }) => sum + (data?.totalEarning || 0),
+		0
+	);
+	const totalBets = statsData.reduce(
+		(sum, { data }) => sum + (data?.betsPlaced || 0),
+		0
+	);
+	const totalWins = statsData.reduce(
+		(sum, { data }) => sum + (data?.betsWon || 0),
+		0
+	);
 
-	const renderPieChart = (data: any) => {
-		if (!data || data.betsPlaced === 0) return null;
+	const pieData = statsData
+		.map(({ data }, index) => ({
+			name: betTypes[index]
+				.split('_')
+				.map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+				.join(' '),
+			value: data?.betsPlaced || 0,
+		}))
+		.filter((item) => item.value > 0);
 
-		const chartData = [
-			{ name: 'Won', value: data.betsWon },
-			{ name: 'Lost', value: data.betsPlaced - data.betsWon },
-		];
+	const LoadingOverview = () => (
+		<div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
+			{[...Array(4)].map((_, i) => (
+				<Skeleton key={i} className='h-24 bg-slate-800 rounded-xl' />
+			))}
+		</div>
+	);
 
-		return (
-			<ResponsiveContainer width='100%' height={150}>
-				<PieChart>
-					<Pie
-						data={chartData}
-						cx='50%'
-						cy='50%'
-						innerRadius={40}
-						outerRadius={60}
-						paddingAngle={5}
-						dataKey='value'
-					>
-						{chartData.map((entry, index) => (
-							<Cell
-								key={`cell-${index}`}
-								fill={COLORS[index % COLORS.length]}
-							/>
-						))}
-					</Pie>
-					<Tooltip />
-				</PieChart>
-			</ResponsiveContainer>
-		);
-	};
-
-	const renderBarChart = (data: any) => {
-		if (!data || data.betsPlaced === 0) return null;
-
-		const chartData = [
-			{ name: 'Total Bets', value: data.betsPlaced },
-			{ name: 'Bets Won', value: data.betsWon },
-			{ name: 'Earnings', value: data.totalEarning },
-		];
-
-		return (
-			<ResponsiveContainer width='100%' height={150}>
-				<BarChart data={chartData}>
-					<XAxis dataKey='name' tick={{ fill: '#A0AEC0' }} />
-					<YAxis tick={{ fill: '#A0AEC0' }} />
-					<Tooltip />
-					<Bar dataKey='value' fill='#4FD1C5' />
-				</BarChart>
-			</ResponsiveContainer>
-		);
-	};
+	const isLoading = statsData.some(({ data }) => !data);
 
 	return (
-		<motion.section
-			initial={{ opacity: 0, y: 20 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ duration: 0.5 }}
-			className='space-y-6 bg-gray-900 rounded-xl p-6 shadow-xl'
-		>
-			<h2 className='text-xl font-semibold text-white tracking-wide mb-6 bg-gradient-to-r from-sky-900 to-slate-800 p-3 rounded-xl'>
-				Your Betting Performance
-			</h2>
+		<div className='space-y-5'>
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.5 }}
+			>
+				<PageHeader
+					title='Fortune Flip Dashboard'
+					description='Track your betting performance and statistics'
+				/>
+			</motion.div>
 
-			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-				{betTypes.map((betType, index) => {
-					const data = bettingStats[betType];
-					const winPercentage = data?.betsPlaced
-						? ((data.betsWon / data.betsPlaced) * 100).toFixed(2)
-						: '0';
+			{isLoading ? (
+				<LoadingOverview />
+			) : (
+				<div className='grid grid-cols-2 sub-card backdrop-blur-sm gap-3'>
+					<InfoCard
+						icon={<Target className='w-5 h-5' />}
+						title='Total Bets'
+						amount={totalBets}
+						color='blue'
+					/>
+					<InfoCard
+						icon={<Trophy className='w-5 h-5' />}
+						title='Total Wins'
+						amount={totalWins}
+						color='green'
+					/>
+					<InfoCard
+						icon={<Coins className='w-5 h-5' />}
+						title='Total Earnings'
+						amount={totalEarnings}
+						color='yellow'
+					/>
+					<InfoCard
+						icon={<TrendingUp className='w-5 h-5' />}
+						title='Win Rate'
+						amount={`${((totalWins / totalBets) * 100).toFixed(1)}%`}
+						color='purple'
+					/>
+				</div>
+			)}
 
-					return (
-						<Card
-							key={index}
-							className=' border-gray-700 rounded-xl overflow-hidden'
-						>
-							<CardTitle className='p-4 text-center text-lg font-bold'>
-								{betType.replace(/_/g, ' ')}
-							</CardTitle>
-							<CardContent className='p-4'>
-								{data && data.betsPlaced > 0 ? (
-									<>{renderPieChart(data)}</>
-								) : (
-									<div className='text-center text-gray-400 py-8'>
-										No betting data available
+			<div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+				<div className='lg:col-span-2 space-y-4'>
+					{statsData.map(({ data, error }, index) => {
+						if (error) {
+							return (
+								<Card
+									key={`error-${index}`}
+									className='bg-red-900/10 border-red-900'
+								>
+									<CardContent className='p-4 text-red-400'>
+										Error loading data for {betTypes[index]}
+									</CardContent>
+								</Card>
+							);
+						}
+						return data && <StatsCard key={data.id} stats={data} />;
+					})}
+				</div>
+
+				<div>
+					<Card className='bg-gray-900 border-gray-800 h-full'>
+						<CardContent className='p-6'>
+							<h3 className='text-lg font-semibold mb-4'>Bet Distribution</h3>
+							<div className='h-64'>
+								<ResponsiveContainer width='100%' height='100%'>
+									<PieChart>
+										<Pie
+											data={pieData}
+											cx='50%'
+											cy='50%'
+											innerRadius={60}
+											outerRadius={80}
+											paddingAngle={5}
+											dataKey='value'
+										>
+											{pieData.map((_, index) => (
+												<Cell
+													key={`cell-${index}`}
+													fill={COLORS[index % COLORS.length]}
+												/>
+											))}
+										</Pie>
+										<Tooltip />
+									</PieChart>
+								</ResponsiveContainer>
+							</div>
+							<div className='mt-4 space-y-2'>
+								{pieData.map((entry, index) => (
+									<div
+										key={`legend-${index}`}
+										className='flex items-center gap-2'
+									>
+										<div
+											className='w-3 h-3 rounded-full'
+											style={{ backgroundColor: COLORS[index % COLORS.length] }}
+										/>
+										<span className='text-sm text-gray-400'>{entry.name}</span>
 									</div>
-								)}
-								<section className='col-span-2 bg-yellow-900/30 rounded-xl p-4 flex justify-between items-center'>
-									<div className='flex items-center space-x-3'>
-										<TrophyIcon className='w-8 h-8 text-yellow-400' />
-										<span className='text-sm font-mono text-yellow-300'>
-											Win Rate
-										</span>
-									</div>
-									<div className='flex items-center text-2xl font-bold font-mono text-yellow-400 glow'>
-										<span className=''>{winPercentage}</span>
-										<Percent />
-									</div>
-								</section>
-								<div className='grid grid-cols-2 gap-4 mt-4'>
-									<StatCard title='Total Bets' value={data?.betsPlaced ?? 0} />
-									<StatCard title='Bets Won' value={data?.betsWon ?? 0} />
-									<StatCard title='Earnings' value={data?.totalEarning ?? 0} />
-									<StatCard title='Invested' value={data?.totalWagered ?? 0} />
-								</div>
-							</CardContent>
-						</Card>
-					);
-				})}
+								))}
+							</div>
+						</CardContent>
+					</Card>
+				</div>
 			</div>
-		</motion.section>
+		</div>
 	);
 }

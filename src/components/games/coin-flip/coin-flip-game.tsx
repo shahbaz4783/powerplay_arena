@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback, useActionState } from 'react';
-import { MessageCard } from '@/src/components/common/cards/message-card';
 import { betOptions } from '@/src/constants/challenges';
 import { placeBet } from '@/src/actions/bet.action';
 import { BetSummary } from './bet-summary';
@@ -11,9 +10,10 @@ import { BetChallenge } from './bet-challenge';
 import { BetSideSelection } from './bet-side-selection';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { useUserInventory } from '@/src/hooks/useUserData';
-import LoadingGame from '@/src/app/game/loading';
-import { CoinsIcon, HandCoins } from 'lucide-react';
+import LoadingGame from '@/src/app/game/coin-flip/loading';
+import { CoinsIcon } from 'lucide-react';
 import { GameHeader } from '../../layouts/global/game-header';
+import { GameLoadingScreen } from '../../layouts/global/game-loading-screen';
 
 interface BetOption {
 	name: string;
@@ -58,7 +58,7 @@ export function CoinFlipChallenge() {
 	}, [mutate]);
 
 	if (isLoading) {
-		return <LoadingGame />;
+		return <GameLoadingScreen gameType='fortuneFlip' />;
 	}
 
 	const maxBet = Math.floor((userBalance * 0.65) / 10) * 10;

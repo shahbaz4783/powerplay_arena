@@ -11,6 +11,7 @@ import { token } from '@/src/constants/app-config';
 import { X, Trophy, Coins, TrendingUp, AlertTriangle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { InfoCard } from '../../common/cards/info-card';
+import { formatCompactNumber } from '@/src/lib/utils';
 
 interface ResultModalProps {
 	isOpen: boolean;
@@ -190,7 +191,7 @@ export function BetResult({
 											<p className='text-2xl font-bold text-white'>
 												You won{' '}
 												<span className='text-green-400'>
-													{winAmount} {token.symbol}
+													{formatCompactNumber(winAmount)} {token.symbol}
 												</span>
 											</p>
 										</div>
@@ -200,7 +201,7 @@ export function BetResult({
 											<p className='text-2xl font-bold text-red-400'>
 												You lost{' '}
 												<span className='text-white'>
-													{betAmount} {token.symbol}
+													{formatCompactNumber(betAmount)} {token.symbol}
 												</span>
 											</p>
 										</div>

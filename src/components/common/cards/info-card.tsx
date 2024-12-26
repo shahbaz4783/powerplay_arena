@@ -1,4 +1,4 @@
-import { cn } from '@/src/lib/utils';
+import { cn, formatCompactNumber } from '@/src/lib/utils';
 import { motion } from 'framer-motion';
 
 interface InfoCardProps {
@@ -37,13 +37,12 @@ export const InfoCard = ({ icon, title, amount, color }: InfoCardProps) => {
 	};
 	const colors = colorMap[color];
 
-	// Parse the amount safely
 	const parsedAmount =
 		typeof amount === 'number'
 			? amount
 			: !isNaN(Number(amount))
 			? Number(amount)
-			: amount; // Retain string if not numeric
+			: amount;
 
 	return (
 		<motion.div
@@ -62,18 +61,9 @@ export const InfoCard = ({ icon, title, amount, color }: InfoCardProps) => {
 					<div className={`p-2 rounded-lg ${colors.icon}`}>
 						<div className={colors.text}>{icon}</div>
 					</div>
-					<span
-						className={cn(`text-xl font-bold ${colors.text}`, {
-							'text-lg':
-								typeof parsedAmount === 'number' && parsedAmount > 99999,
-							'text-md':
-								typeof parsedAmount === 'number' && parsedAmount > 999999,
-							'text-sm':
-								typeof parsedAmount === 'number' && parsedAmount > 9999999,
-						})}
-					>
+					<span className={cn(`text-xl font-bold ${colors.text}`)}>
 						{typeof parsedAmount === 'number'
-							? parsedAmount.toLocaleString()
+							? formatCompactNumber(parsedAmount)
 							: parsedAmount}
 					</span>
 				</div>

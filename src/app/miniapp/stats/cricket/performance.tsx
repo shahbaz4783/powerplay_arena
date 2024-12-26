@@ -1,6 +1,5 @@
 import { GradientBorder } from '@/src/components/common/elements/gradient-border';
 import { Crown, Percent, Repeat2Icon, Target, TrophyIcon } from 'lucide-react';
-import { type LucideIcon } from 'lucide-react';
 
 interface OverallPerformanceProps {
 	won: number;
@@ -49,7 +48,7 @@ export function OverallPerformance({
 	];
 
 	return (
-		<GradientBorder className='bg-slate-800/50 backdrop-blur-md rounded-xl shadow-lg grid grid-cols-2 gap-4 p-4'>
+		<GradientBorder className='grid grid-cols-2 gap-3'>
 			<section className='col-span-2 bg-yellow-900/30 rounded-xl p-4 flex justify-between items-center'>
 				<div className='flex items-center space-x-3'>
 					<TrophyIcon className='w-8 h-8 text-yellow-400' />

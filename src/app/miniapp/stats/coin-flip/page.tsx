@@ -1,10 +1,10 @@
 import React from 'react';
-import { BettingStats } from './betting-stats';
+import { FortuneFlipStats } from './betting-stats';
 
 const CoinFlipStatsPage = () => {
 	return (
 		<div>
-			<BettingStats />
+			<FortuneFlipStats />
 		</div>
 	);
 };
