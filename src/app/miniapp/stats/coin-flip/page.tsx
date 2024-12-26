@@ -1,5 +1,5 @@
 import React from 'react';
-import { FortuneFlipStats } from './betting-stats';
+import { FortuneFlipStats } from './coin-flip-stats';
 
 const CoinFlipStatsPage = () => {
 	return (

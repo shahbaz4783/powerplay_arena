@@ -10,6 +10,7 @@ export interface CricketStats {
 	winPercentage: string;
 	totalRunsScored: number;
 	totalWicketsTaken: number;
+	highestScore: number;
 	statsByFormat: Record<
 		MatchFormat,
 		{
@@ -30,7 +31,6 @@ export const usePowerStrike = () => {
 	const { telegramId } = useCurrentUser();
 	const formats: MatchFormat[] = ['BLITZ', 'POWERPLAY', 'CLASSIC'];
 
-	// Call hooks individually for each format
 	const blitzStats = useCricketStats(telegramId, 'BLITZ');
 	const powerplayStats = useCricketStats(telegramId, 'POWERPLAY');
 	const classicStats = useCricketStats(telegramId, 'CLASSIC');
@@ -49,6 +49,7 @@ export const usePowerStrike = () => {
 				acc.totalTies += data.matchesTie;
 				acc.totalRunsScored += data.runsScored;
 				acc.totalWicketsTaken += data.wicketsTaken;
+				acc.highestScore = Math.max(acc.highestScore, data.highestRunsScored);
 				acc.statsByFormat[data.format] = {
 					matchesPlayed: data.matchesPlayed,
 					matchesWon: data.matchesWon,
@@ -71,6 +72,7 @@ export const usePowerStrike = () => {
 			winPercentage: '0%',
 			totalRunsScored: 0,
 			totalWicketsTaken: 0,
+			highestScore: 0,
 			statsByFormat: {} as Record<
 				MatchFormat,
 				{

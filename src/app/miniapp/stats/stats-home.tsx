@@ -63,8 +63,8 @@ export const StatsHomePage: React.FC = () => {
 					color: 'text-orange-400',
 				},
 				{
-					label: 'Wickets',
-					value: cricketStats.totalWicketsTaken,
+					label: 'Highest Score',
+					value: cricketStats.highestScore,
 					color: 'text-green-400',
 				},
 			],
