@@ -32,6 +32,10 @@ import {
 	Shield,
 	Info,
 	PlayCircle,
+	Flag,
+	Circle,
+	Coins,
+	Ticket,
 } from 'lucide-react';
 import { MATCH_FORMATS, token } from '@/src/constants/app-config';
 import { RewardItem } from '../../common/cards/reward-card';
@@ -45,11 +49,19 @@ import { MessageCard } from '../../common/cards/message-card';
 import { setupCricketMatch } from '@/src/actions/game.action';
 import { IconButton } from '../../common/buttons/primary-button';
 import LoadingCricketGame from '@/src/app/game/cricket/match-setup/loading';
+import { GameHeader } from '../../layouts/global/game-header';
+import { RewardDialog } from '../../common/dialog/match-reward';
+import { InfoCard } from '../../common/cards/info-card';
+import { PiBaseballCap, PiCricketBold, PiCricketThin } from 'react-icons/pi';
+import { useUserInventory } from '@/src/hooks/useUserData';
+import { GameBalanceCard } from '../../common/cards/balance-card';
 
 export function QuickPlayMode() {
 	const [selectedFormat, setSelectedFormat] = useState<MatchFormat>('BLITZ');
 	const { telegramId } = useCurrentUser();
 	const { updateGameState } = useCricketGameState();
+
+	const { data, isPending } = useUserInventory(telegramId);
 
 	const [response, formAction, isLoading] = useActionState(
 		setupCricketMatch.bind(null, telegramId),
@@ -111,75 +123,79 @@ export function QuickPlayMode() {
 	}
 
 	return (
-		<main className='min-h-svh space-y-2 flex flex-col justify-between'>
-			<Header
-				title='Match Setup'
-				subtitle='Set up your game and jump into the action'
-				className='mx-4 mt-3'
+		<main className='min-h-svh flex flex-col justify-between'>
+			<GameHeader
+				title='Power Strike'
+				icon={Circle}
+				hasUnsavedProgress={false}
+				quitPath='/miniapp'
+				iconColors='from-blue-400 to-blue-600'
+				titleGradient='from-blue-200 via-blue-300 to-blue-400'
 			/>
-			<section className='p-4 space-y-4'>
+			<section className='p-3 space-y-3'>
+				<div className='grid grid-cols-2 gap-3 sub-card backdrop-blur-sm'>
+					<GameBalanceCard
+						value={data?.powerCoin!}
+						label='Coin Balance'
+						type='balance'
+						variant='green'
+						isLoading={isPending}
+					/>
+					<GameBalanceCard
+						value={data?.powerPass!}
+						label='Pass Balance'
+						type='pass'
+						variant='amber'
+						isLoading={isPending}
+					/>
+				</div>
 				<Tabs
 					value={selectedFormat}
 					onValueChange={handleFormatChange}
 					className='w-full'
 				>
-					<TabsList className='grid grid-cols-3 mb-8 gap-4 rounded-xl bg-slate-400 h-auto'>
+					<TabsList className='grid grid-cols-3 gap-4 rounded-xl h-auto'>
 						{Object.entries(MATCH_FORMATS).map(([key, format]) => (
 							<TabsTrigger
 								key={key}
 								value={key}
-								className='flex flex-col items-center rounded-xl justify-center p-4 bg-gradient-to-br text-gray-900'
+								className='flex flex-col items-center rounded-xl justify-center p-3'
 							>
-								<FormatIcon format={format.format} className='w-6 h-6 mb-2' />
+								<FormatIcon format={format.format} className='w-6 h-6 ' />
 								<span className='font-bold uppercase'>{format.format}</span>
 							</TabsTrigger>
 						))}
 					</TabsList>
 					{Object.entries(MATCH_FORMATS).map(([key, format]) => (
-						<TabsContent key={key} value={key} className='space-y-6'>
-							<div className='bg-slate-800/50 backdrop-blur-md p-6 rounded-xl'>
-								<h4 className='text-lg font-semibold mb-4 text-center'>
-									Match Details
-								</h4>
-								<Table className='rounded-xl'>
-									<TableBody className='space-y-2 bg-muted/50 rounded-xl'>
-										<TableRow>
-											<TableCell className='font-medium text-gray-300 rounded-tl-xl'>
-												Overs
-											</TableCell>
-											<TableCell className='text-right font-bold rounded-tr-xl'>
-												{format.overs}
-											</TableCell>
-										</TableRow>
-
-										<TableRow>
-											<TableCell className='font-medium text-gray-300'>
-												Wickets
-											</TableCell>
-											<TableCell className='text-right font-bold'>
-												{format.totalWickets}
-											</TableCell>
-										</TableRow>
-
-										<TableRow>
-											<TableCell className='font-medium text-gray-300 rounded-bl-xl'>
-												Pass Required
-											</TableCell>
-											<TableCell className='text-right font-bold rounded-br-xl'>
-												{format.passRequired}
-											</TableCell>
-										</TableRow>
-
-										<TableRow>
-											<TableCell className='font-medium text-gray-300 rounded-bl-xl'>
-												Entry Fees
-											</TableCell>
-											<TableCell className='text-right font-bold rounded-br-xl'>
-												{format.entryFee} {token.symbol}
-											</TableCell>
-										</TableRow>
-									</TableBody>
-								</Table>
+						<TabsContent key={key} value={key} className='space-y-4'>
+							<h4 className='text-lg font-semibold mb-4 text-center'>
+								Match Details
+							</h4>
+							<div className='sub-card grid grid-cols-2 gap-2 backdrop-blur-md p-3 rounded-xl'>
+								<InfoCard
+									title='Overs'
+									icon={<PiBaseballCap />}
+									color='blue'
+									amount={format.overs}
+								/>
+								<InfoCard
+									title='Max Wickets'
+									icon={<PiCricketBold />}
+									color='blue'
+									amount={format.totalWickets}
+								/>
+								<InfoCard
+									title='Pass Required'
+									icon={<Ticket />}
+									color='blue'
+									amount={format.passRequired}
+								/>
+								<InfoCard
+									title='Entry Fees (PWR)'
+									icon={<Coins />}
+									color='blue'
+									amount={format.entryFee}
+								/>
 							</div>
 
 							<div className='flex justify-center'>
@@ -222,23 +238,30 @@ export function QuickPlayMode() {
 									</DialogContent>
 								</Dialog>
 							</div>
+
+							<section className='sub-card flex justify-between backdrop-blur-sm p-3 sticky bottom-3 '>
+								<div className='flex flex-col gap-1'>
+									<span className='text-sm text-slate-400'>Required</span>
+									<div className='flex items-center gap-2'>
+										<Coins className='w-4 h-4 text-yellow-400' />
+										<span className='font-bold'>{format.entryFee}</span>
+
+										<Ticket className='w-4 h-4 text-purple-400 ml-2' />
+										<span className='font-bold'>{format.passRequired}</span>
+									</div>
+								</div>
+								<form action={handleSubmit}>
+									<IconButton
+										text={'Start Match'}
+										loadingText='Initiating...'
+										icon={Flag}
+										isLoading={isLoading}
+									/>
+								</form>
+							</section>
 						</TabsContent>
 					))}
 				</Tabs>
-			</section>
-			<section className='bg-black bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-gray-900 to-slate-900 p-6 sticky bottom-0'>
-				<form action={handleSubmit} className='w-full'>
-					{/* <SubmitButton
-						title={'Continue'}
-						loadingTitle={`Paying ${MATCH_FORMATS[selectedFormat].entryFee} ${token.symbol}...`}
-					/> */}
-					<IconButton
-						text={'Place Bet'}
-						loadingText='Placing...'
-						icon={PlayCircle}
-						isLoading={isLoading}
-					/>
-				</form>
 			</section>
 		</main>
 	);

@@ -30,7 +30,7 @@ export function IconButton({
 				<Icon className={cn('w-5 h-5', { 'animate-spin': isLoading })} />
 				{isLoading ? loadingText : text}
 			</motion.button>
-			{isLoading && <LoadingOverlay initialMessage='Placing Bet...' />}
+			{isLoading && <LoadingOverlay initialMessage={loadingText} />}
 		</>
 	);
 }

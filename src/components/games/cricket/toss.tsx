@@ -1,222 +1,216 @@
 'use client';
 
-import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PiCoinThin } from 'react-icons/pi';
-import { useCricketGameState } from '@/src/lib/store';
-import { GameParticipant, TossChoice } from '@/src/types/gameState';
-import { Button } from '@/src/components/ui/button';
+import { Circle, Coins, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/src/components/ui/card';
+import { Button } from '@/src/components/ui/button';
+import { useCricketGameState } from '@/src/lib/store';
 import confetti from 'canvas-confetti';
+import { useCallback, useState } from 'react';
+import { PiCoinThin } from 'react-icons/pi';
+
+type GameParticipant = 'opponent' | 'player';
+type TossChoice = 'bat' | 'bowl';
+
+interface TossState {
+	winner: GameParticipant | null;
+	choice: TossChoice | null;
+	playMode: 'chase' | 'defend' | null;
+}
 
 export function Toss() {
-	const [isCoinSpinning, setIsCoinSpinning] = useState(false);
-	const [showTossResult, setShowTossResult] = useState(false);
+	const [isAnimating, setIsAnimating] = useState(false);
+	const [showResult, setShowResult] = useState(false);
 	const { gameState, updateGameState } = useCricketGameState();
 
-	const performToss = useCallback(() => {
-		setIsCoinSpinning(true);
+	const handleToss = useCallback(() => {
+		setIsAnimating(true);
 
 		setTimeout(() => {
-			const random = Math.floor(Math.random() * 1000);
-			const result: GameParticipant = random % 2 === 0 ? 'opponent' : 'player';
-			setIsCoinSpinning(false);
-			setShowTossResult(true);
+			const result: GameParticipant =
+				Math.random() < 0.5 ? 'player' : 'opponent';
+			setIsAnimating(false);
+			setShowResult(true);
 
 			if (result === 'opponent') {
-				const tossChoice: TossChoice = Math.random() < 0.5 ? 'bat' : 'bowl';
+				const choice: TossChoice = Math.random() < 0.5 ? 'bat' : 'bowl';
 				updateGameState({
 					toss: {
 						winner: 'opponent',
-						choice: tossChoice,
-						playMode: tossChoice === 'bat' ? 'chase' : 'defend',
+						choice,
+						playMode: choice === 'bat' ? 'chase' : 'defend',
 					},
 				});
 				setTimeout(() => {
-					setShowTossResult(false);
+					setShowResult(false);
 					updateGameState({
-						gamePhase: tossChoice === 'bat' ? 'bowling' : 'batting',
+						gamePhase: choice === 'bat' ? 'bowling' : 'batting',
 					});
 				}, 4000);
 			} else {
 				updateGameState({
-					toss: {
-						winner: 'player',
-						choice: null,
-						playMode: null,
-					},
+					toss: { winner: 'player', choice: null, playMode: null },
 				});
 				confetti({
-					particleCount: 100,
-					spread: 70,
+					particleCount: 200,
+					spread: 90,
 					origin: { y: 0.6 },
+					colors: ['#60A5FA', '#34D399', '#FBBF24'],
 				});
 			}
-		}, 3000);
+		}, 2500);
 	}, [updateGameState]);
 
-	const handleTossChoice = useCallback(
+	const selectChoice = useCallback(
 		(choice: TossChoice) => {
 			updateGameState({
 				toss: {
 					...gameState.toss,
-					choice: choice,
+					choice,
 					playMode: choice === 'bat' ? 'defend' : 'chase',
 				},
 				gamePhase: choice === 'bat' ? 'batting' : 'bowling',
 			});
-			setShowTossResult(false);
+			setShowResult(false);
 		},
 		[gameState.toss, updateGameState]
 	);
 
-	const renderTossResult = () => {
-		if (gameState.toss.winner === 'player') {
-			return (
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					exit={{ opacity: 0, y: -20 }}
-					className='space-y-6'
-				>
-					<motion.p
-						className='text-2xl font-medium text-yellow-300'
-						initial={{ scale: 0.9 }}
-						animate={{ scale: 1 }}
-						transition={{
-							repeat: Infinity,
-							repeatType: 'reverse',
-							duration: 1,
-						}}
-					>
-						What's your choice?
-					</motion.p>
-					<div className='flex justify-center gap-4'>
-						<Button
-							onClick={() => handleTossChoice('bat')}
-							className='rounded-xl w-32 h-14 text-lg font-semibold bg-blue-600 text-white active:bg-blue-700'
-						>
-							Bat
-						</Button>
-						<Button
-							onClick={() => handleTossChoice('bowl')}
-							className='rounded-xl w-32 h-14 text-lg font-semibold bg-green-600 text-white active:bg-green-700'
-						>
-							Bowl
-						</Button>
-					</div>
-				</motion.div>
-			);
-		} else if (gameState.toss.winner === 'opponent' && gameState.toss.choice) {
-			return (
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					exit={{ opacity: 0, y: -20 }}
-					className='text-center'
-				>
-					<p className='text-2xl font-semibold text-red-400 mb-4'>
-						Opponent won the toss
-					</p>
-					<motion.p
-						className='text-3xl font-bold text-yellow-300'
-						initial={{ scale: 0.9 }}
-						animate={{ scale: 1 }}
-						transition={{
-							repeat: Infinity,
-							repeatType: 'reverse',
-							duration: 1,
-						}}
-					>
-						They chose to {gameState.toss.choice}
-					</motion.p>
-				</motion.div>
-			);
-		}
-		return null;
-	};
-
-	const renderContent = () => {
-		if (isCoinSpinning) {
-			return (
-				<div className='flex flex-col items-center'>
-					<motion.div
-						animate={{
-							rotateX: [0, 1800, 3600],
-							rotateZ: [0, -10, 0],
-							rotateY: [0, 10, 0],
-						}}
-						transition={{ duration: 3, ease: 'easeInOut', times: [0, 0.5, 1] }}
-						className='w-40 h-40 rounded-full flex items-center justify-center mb-8'
-					>
-						<PiCoinThin size={100} className='text-yellow-400' />
-					</motion.div>
-					<motion.p
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						transition={{ delay: 0.5 }}
-						className='text-2xl font-semibold text-white'
-					>
-						Flipping the coin...
-					</motion.p>
-				</div>
-			);
-		}
-
-		if (showTossResult) {
-			return (
-				<motion.div
-					initial={{ opacity: 0, scale: 0.8 }}
-					animate={{ opacity: 1, scale: 1 }}
-					exit={{ opacity: 0, scale: 0.8 }}
-					className='text-center w-full space-y-6'
-				>
-					<motion.h2
-						className='text-4xl font-bold mb-6 text-white'
-						initial={{ y: -20 }}
-						animate={{ y: 0 }}
-						transition={{ type: 'spring', stiffness: 300, damping: 10 }}
-					>
-						{gameState.toss.winner === 'player'
-							? 'You won the toss!'
-							: 'Toss Result'}
-					</motion.h2>
-					{renderTossResult()}
-				</motion.div>
-			);
-		}
-
-		return (
+	const renderTossChoices = () => (
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			exit={{ opacity: 0, y: -20 }}
+			className='space-y-8 text-center'
+		>
 			<motion.div
-				initial={{ opacity: 0, y: 20 }}
-				animate={{ opacity: 1, y: 0 }}
-				exit={{ opacity: 0, y: -20 }}
-				className='w-full flex flex-col justify-between items-center min-h-[60svh]'
+				animate={{ scale: [1, 1.05, 1] }}
+				transition={{ duration: 2, repeat: Infinity }}
+				className='text-3xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent'
 			>
-				<div className='flex flex-col justify-center items-center flex-grow'>
-					<PiCoinThin className='w-32 h-32 text-yellow-400 mb-6 animate-spin-slow' />
-					<p className='text-slate-200 font-mono font-medium text-center'>
-						The coin toss will determine the starting advantage.
-					</p>
-				</div>
-
-				<Button
-					onClick={performToss}
-					className='w-48 h-14 rounded-xl text-xl font-semibold bg-blue-600 text-white active:bg-yellow-700'
-				>
-					Call the Toss
-				</Button>
+				You won the toss!
 			</motion.div>
-		);
-	};
+			<div className='grid grid-cols-2 gap-6'>
+				{(['bat', 'bowl'] as TossChoice[]).map((choice) => (
+					<Button
+						key={choice}
+						onClick={() => selectChoice(choice)}
+						className={`h-24 rounded-2xl transform transition-all duration-200
+              ${
+								choice === 'bat'
+									? 'bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700'
+									: 'bg-gradient-to-br from-emerald-600 to-emerald-800'
+							}`}
+					>
+						<div className='flex flex-col items-center space-y-2'>
+							<span className='text-2xl font-bold capitalize'>{choice}</span>
+							<span className='text-sm opacity-80'>Choose to {choice}</span>
+						</div>
+					</Button>
+				))}
+			</div>
+		</motion.div>
+	);
+
+	const renderOpponentChoice = () => (
+		<motion.div
+			initial={{ opacity: 0, scale: 0.9 }}
+			animate={{ opacity: 1, scale: 1 }}
+			exit={{ opacity: 0, scale: 0.9 }}
+			className='text-center space-y-6'
+		>
+			<div className='text-2xl font-medium text-red-400'>
+				Opponent won the toss
+			</div>
+			<motion.div
+				animate={{ scale: [1, 1.05, 1] }}
+				transition={{ duration: 1.5, repeat: Infinity }}
+				className='text-3xl font-bold text-yellow-400'
+			>
+				They chose to {gameState.toss.choice}
+			</motion.div>
+		</motion.div>
+	);
+
+	const renderInitialState = () => (
+		<motion.div
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			exit={{ opacity: 0 }}
+			className='space-y-12 text-center'
+		>
+			<motion.div className='space-y-8' initial={{ y: 20 }} animate={{ y: 0 }}>
+				<motion.div
+					animate={{
+						rotateY: 360,
+						boxShadow: [
+							'0 0 20px #FCD34D',
+							'0 0 40px #FCD34D',
+							'0 0 20px #FCD34D',
+						],
+					}}
+					transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+					className='inline-block rounded-full p-6'
+				>
+					<Circle className='w-32 h-32 text-yellow-400' />
+				</motion.div>
+				<motion.p
+					className='text-xl text-gray-300 max-w-sm mx-auto font-medium tracking-wide'
+					animate={{ opacity: [0.7, 1, 0.7] }}
+					transition={{ duration: 3, repeat: Infinity }}
+				>
+					Flip the coin and let the game begin!
+				</motion.p>
+			</motion.div>
+			<motion.button
+				onClick={handleToss}
+				whileTap={{ scale: 0.9 }}
+				className='h-16 px-12 rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 
+          hover:from-indigo-500'
+			>
+				<span className='text-xl font-bold'>Flip the Coin</span>
+			</motion.button>
+		</motion.div>
+	);
+
+	const renderAnimation = () => (
+		<motion.div className='text-center space-y-8'>
+			<motion.div
+				animate={{
+					rotateX: [0, 1440, 2880],
+					scale: [1, 1.2, 1],
+				}}
+				transition={{ duration: 2.5, ease: 'easeInOut' }}
+				className='inline-block'
+			>
+				<PiCoinThin className='w-32 h-32 text-yellow-400' />
+			</motion.div>
+			<div className='flex items-center justify-center space-x-3'>
+				<Loader2 className='w-5 h-5 animate-spin' />
+				<span className='text-xl text-gray-300'>Flipping coin...</span>
+			</div>
+		</motion.div>
+	);
 
 	return (
-		<Card className='w-full max-w-md mx-auto bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 shadow-lg backdrop-blur-sm opacity-80 rounded-xl'>
-			<CardContent className='p-8'>
-				<main className='min-h-[85svh] flex flex-col items-center h-full justify-center'>
-					<AnimatePresence mode='wait'>{renderContent()}</AnimatePresence>
-				</main>
-			</CardContent>
-		</Card>
+		<div
+			className='min-h-screen w-full bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 
+      flex items-center justify-center p-4 overflow-hidden'
+		>
+			<Card className='w-full max-w-lg bg-gray-800/40 border-gray-700 backdrop-blur-xl'>
+				<CardContent className='p-8'>
+					<div className='min-h-[500px] flex items-center justify-center'>
+						<AnimatePresence mode='wait'>
+							{isAnimating && renderAnimation()}
+							{showResult &&
+								(gameState.toss.winner === 'player'
+									? renderTossChoices()
+									: renderOpponentChoice())}
+							{!isAnimating && !showResult && renderInitialState()}
+						</AnimatePresence>
+					</div>
+				</CardContent>
+			</Card>
+		</div>
 	);
 }

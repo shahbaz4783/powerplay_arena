@@ -40,7 +40,6 @@ export function BetAmount({
 	};
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		// Remove any non-numeric characters
 		const value = e.target.value.replace(/[^0-9]/g, '');
 		setInputValue(value);
 
@@ -86,7 +85,7 @@ export function BetAmount({
 				<section className='grid grid-cols-7 gap-3'>
 					<motion.button
 						type='button'
-						onClick={() => adjustBet(betAmount - 10)}
+						onClick={() => adjustBet(betAmount - 1)}
 						disabled={betAmount <= 10 || bettingPasses === 0}
 						className='sub-card flex items-center'
 						whileTap={{ scale: 0.9 }}
@@ -94,38 +93,36 @@ export function BetAmount({
 						<Minus className='h-4 w-4' />
 					</motion.button>
 
-					<div className='col-span-5 flex items-baseline justify-center'>
-						<motion.input
-							type='number'
-							value={inputValue}
-							onChange={handleInputChange}
-							onBlur={handleInputBlur}
-							disabled={bettingPasses === 0}
-							className={cn(
-								'w-full text-center bg-transparent border-none outline-none',
-								'font-poppins font-bold text-blue-400',
-								'placeholder:text-slate-500',
-								'disabled:opacity-50 disabled:cursor-not-allowed',
-								'[appearance:textfield]',
-								'[&::-webkit-outer-spin-button]:appearance-none',
-								'[&::-webkit-inner-spin-button]:appearance-none',
-								{
-									'text-5xl': betAmount <= 99999,
-									'text-2xl': betAmount > 99999,
-									'text-xl': betAmount > 999999,
-								}
-							)}
-							min={10}
-							max={maxBet}
-							whileFocus={{ scale: 1.05 }}
-							transition={{ duration: 0.2 }}
-						/>
-						<span className='text-sm text-blue-300'>{token.symbol}</span>
-					</div>
+					<motion.input
+						type='number'
+						value={inputValue}
+						maxLength={maxBet}
+						onChange={handleInputChange}
+						onBlur={handleInputBlur}
+						disabled={bettingPasses === 0}
+						className={cn(
+							'w-full col-span-5  text-center bg-transparent border rounded-xl outline-none',
+							'font-poppins font-bold text-blue-400',
+							'placeholder:text-slate-500',
+							'disabled:opacity-50 disabled:cursor-not-allowed',
+							'[appearance:textfield]',
+							'[&::-webkit-outer-spin-button]:appearance-none',
+							'[&::-webkit-inner-spin-button]:appearance-none',
+							{
+								'text-5xl': betAmount <= 99999,
+								'text-2xl': betAmount > 99999,
+								'text-xl': betAmount > 999999,
+							}
+						)}
+						min={10}
+						max={maxBet}
+						whileFocus={{ scale: 1.05 }}
+						transition={{ duration: 0.2 }}
+					/>
 
 					<motion.button
 						type='button'
-						onClick={() => adjustBet(betAmount + 10)}
+						onClick={() => adjustBet(betAmount + 1)}
 						disabled={betAmount >= maxBet || bettingPasses === 0}
 						className='sub-card flex items-center'
 						whileTap={{ scale: 0.9 }}
