@@ -26,7 +26,7 @@ export function SubmitButton({
 				className={className}
 				text={title}
 			/>
-			{pending && <LoadingOverlay initialMessage={loadingTitle} />}
+			{pending && <LoadingOverlay />}
 		</>
 	);
 }
