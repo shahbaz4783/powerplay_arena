@@ -16,6 +16,7 @@ import { cn } from '@/src/lib/utils';
 import { motion } from 'framer-motion';
 import { Swords, Shield, Target, Crosshair, Bomb, Hammer } from 'lucide-react';
 import { InfoDialog } from '../../common/dialog/cricket-control';
+import { GradientBorder } from '../../common/elements/gradient-border';
 
 type GameAction = BattingStyle | BowlingType;
 
@@ -144,7 +145,7 @@ export function GameControls() {
 	];
 
 	return (
-		<div className='grid p-4 sticky bottom-0 border-[0.1px] grid-cols-3 gap-4 space-y-4 w-full bg-slate-900/90 backdrop-blur-md rounded-xl shadow-lg border-t-2 border-slate-700'>
+		<GradientBorder className='grid sticky bottom-0 grid-cols-3 gap-4 space-y-4 '>
 			<div className='col-span-3 flex gap-2 justify-between items-center'>
 				<h2 className='text-center font-mono text-lg font-bold text-slate-200'>
 					{gameState.gamePhase === 'batting'
@@ -173,6 +174,6 @@ export function GameControls() {
 			{gameState.gamePhase === 'batting'
 				? renderButtons(battingActions)
 				: renderButtons(bowlingActions)}
-		</div>
+		</GradientBorder>
 	);
 }

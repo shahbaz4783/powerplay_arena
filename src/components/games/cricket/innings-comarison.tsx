@@ -194,7 +194,7 @@ const RunsComparisonChart = () => {
 								dataKey='playerRuns'
 								name='Your Innings'
 								stroke='#3b82f6'
-								strokeWidth={3}
+								strokeWidth={2}
 								dot={false}
 								activeDot={<CustomActiveDot />}
 								connectNulls
@@ -205,7 +205,7 @@ const RunsComparisonChart = () => {
 								dataKey='opponentRuns'
 								name='Opponent Innings'
 								stroke='#ef4444'
-								strokeWidth={3}
+								strokeWidth={2}
 								dot={false}
 								activeDot={<CustomActiveDot />}
 								connectNulls

@@ -9,7 +9,7 @@ import {
 	DialogTrigger,
 } from '@/src/components/ui/dialog';
 import { Info, BoltIcon as Bat, BellIcon as Ball } from 'lucide-react';
-import { Button } from '@/src/components/ui/button';
+import { motion } from 'framer-motion';
 
 interface InfoDialogProps {
 	title: string;
@@ -23,14 +23,13 @@ export function InfoDialog({ title, description, controls }: InfoDialogProps) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button
-					variant='ghost'
-					size='icon'
-					className='bg-black/50 rounded-full backdrop-blur-sm hover:bg-black/70'
+				<motion.button
+					whileTap={{ scale: 0.9 }}
+					className='rounded-full backdrop-blur-sm'
 				>
 					<Info className='h-5 w-5 text-white' />
 					<span className='sr-only'>Open info dialog</span>
-				</Button>
+				</motion.button>
 			</DialogTrigger>
 			<DialogContent className='w-11/12 bg-gray-900 border border-gray-800 rounded-xl p-0 overflow-hidden'>
 				<DialogHeader className='p-6 bg-gradient-to-r from-blue-600/20 to-purple-800 border-b border-gray-800'>
