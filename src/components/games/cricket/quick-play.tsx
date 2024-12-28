@@ -8,12 +8,6 @@ import {
 	TabsTrigger,
 } from '@/src/components/ui/tabs';
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableRow,
-} from '@/src/components/ui/table';
-import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
@@ -31,34 +25,26 @@ import {
 	Bolt,
 	Shield,
 	Info,
-	PlayCircle,
 	Flag,
 	Circle,
 	Coins,
 	Ticket,
 } from 'lucide-react';
 import { MATCH_FORMATS, token } from '@/src/constants/app-config';
-import { RewardItem } from '../../common/cards/reward-card';
 import { useCricketGameState } from '@/src/lib/store';
-import { SubmitButton } from '../../common/buttons/submit-button';
-import { Header } from '../../common/elements/header';
 import { MatchFormat } from '@prisma/client';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { useRouter } from 'next/navigation';
-import { MessageCard } from '../../common/cards/message-card';
 import { setupCricketMatch } from '@/src/actions/game.action';
 import { IconButton } from '../../common/buttons/primary-button';
 import LoadingCricketGame from '@/src/app/game/cricket/match-setup/loading';
 import { GameHeader } from '../../layouts/global/game-header';
-import { RewardDialog } from '../../common/dialog/match-reward';
 import { InfoCard } from '../../common/cards/info-card';
-import { PiBaseballCap, PiCricketBold, PiCricketThin } from 'react-icons/pi';
+import { PiBaseballCap, PiCricketBold } from 'react-icons/pi';
 import { useCricketStats, useUserInventory } from '@/src/hooks/useUserData';
 import { GameBalanceCard } from '../../common/cards/balance-card';
 import { GradientBorder } from '../../common/elements/gradient-border';
-import SubtleGamingBackground from '../../common/elements/bg-pattern';
 import { BackgroundPattern } from '../../common/elements/background-pattern';
-import { QuickStatsCard } from '../../common/cards/stat-card';
 import { SectionHeader } from '../../common/elements/section-header';
 import { LoadingOverlay } from '../../common/dialog/loading-overlay';
 import { GameLoadingScreen } from '../../layouts/global/game-loading-screen';
@@ -72,11 +58,9 @@ export function QuickPlayMode() {
 		telegramId,
 		selectedFormat
 	);
-
 	if (isStatsLoading) {
 		<GameLoadingScreen gameType='powerStrike' />;
 	}
-
 	const winRate = ((stats?.matchesWon ?? 0) / stats?.matchesPlayed!) * 100 || 0;
 
 	const { data, isPending } = useUserInventory(telegramId);
@@ -143,7 +127,8 @@ export function QuickPlayMode() {
 	return (
 		<main className='min-h-svh flex flex-col justify-between border'>
 			<BackgroundPattern />
-			<div className='space-y-2'>
+			{/* Header Section */}
+			<section className='space-y-2'>
 				<GameHeader
 					title='Power Strike'
 					icon={Circle}
@@ -168,7 +153,7 @@ export function QuickPlayMode() {
 						isLoading={isPending}
 					/>
 				</GradientBorder>
-			</div>
+			</section>
 			<section className='p-3 space-y-3'>
 				<Tabs
 					value={selectedFormat}
@@ -201,7 +186,7 @@ export function QuickPlayMode() {
 									<InfoCard
 										title={'Match Played'}
 										amount={stats?.matchesPlayed ?? 0}
-										color='orange'
+										color='teal'
 										isLoading={isStatsLoading}
 										icon={<PiBaseballCap />}
 									/>
@@ -217,7 +202,7 @@ export function QuickPlayMode() {
 									<InfoCard
 										title='Total Runs'
 										amount={stats?.runsScored ?? 0}
-										color='purple'
+										color='teal'
 										isLoading={isStatsLoading}
 										icon={<PiBaseballCap />}
 									/>
@@ -230,14 +215,14 @@ export function QuickPlayMode() {
 									/>
 								</div>
 								<div className='sub-card'>
-									<h4 className='text-lg font-semibold mb-4 text-center'>
+									<h4 className='text-lg font-semibold font-jetbrains mb-4 text-center'>
 										Match Details
 									</h4>
 									<div className='grid grid-cols-2 gap-2'>
 										<InfoCard
 											title='Overs'
 											icon={<PiBaseballCap />}
-											color='pink'
+											color='orange'
 											amount={format.overs}
 											info={{
 												title: 'What are Overs?',
@@ -253,7 +238,7 @@ export function QuickPlayMode() {
 										<InfoCard
 											title='Max Wickets'
 											icon={<PiCricketBold />}
-											color='indigo'
+											color='orange'
 											amount={format.totalWickets}
 											info={{
 												title: 'What are Wickets?',
@@ -271,7 +256,7 @@ export function QuickPlayMode() {
 										<InfoCard
 											title={`Entry Fees ${token.symbol}`}
 											icon={<Coins />}
-											color='yellow'
+											color='teal'
 											amount={format.entryFee}
 										/>
 									</div>
@@ -297,11 +282,11 @@ export function QuickPlayMode() {
 											<InfoCard
 												title='Six'
 												icon={<Zap />}
-												color='yellow'
+												color='orange'
 												amount={format.rewards.six}
 												info={{
 													title: 'Sixer Reward',
-													description: `For example, if you hits 5 sixes in this match, you'll earn ${
+													description: `Example: If you hits 5 sixes in this match, you'll earn ${
 														format.rewards.six * 5
 													} coins.`,
 												}}
@@ -310,11 +295,11 @@ export function QuickPlayMode() {
 											<InfoCard
 												title='Four'
 												icon={<Target />}
-												color='yellow'
+												color='orange'
 												amount={format.rewards.four}
 												info={{
 													title: 'Four Reward',
-													description: `For example, if you hits 7 fours in this match, you'll earn ${
+													description: `Example: If you hits 7 fours in this match, you'll earn ${
 														format.rewards.four * 7
 													} coins.`,
 												}}
@@ -323,7 +308,7 @@ export function QuickPlayMode() {
 											<InfoCard
 												title='Wicket'
 												icon={<Award />}
-												color='yellow'
+												color='green'
 												amount={format.rewards.wicket}
 												info={{
 													title: 'Wicket Reward Points',
@@ -341,9 +326,9 @@ export function QuickPlayMode() {
 											/>
 
 											<InfoCard
-												title='Run Margin'
+												title='Victory Margin'
 												icon={<Trophy />}
-												color='yellow'
+												color='teal'
 												amount={format.rewards.runMargin}
 												info={{
 													title: 'Victory Margin Rewards',
@@ -370,7 +355,7 @@ export function QuickPlayMode() {
 
 							<section className='main-card grid grid-cols-2 sticky bottom-3 '>
 								<div className='flex flex-col gap-1'>
-									<span className='text-sm text-slate-400 font-poppins'>
+									<span className='text-xs text-slate-400 font-jetbrains'>
 										Required
 									</span>
 									<div className='flex items-center gap-2'>
@@ -399,6 +384,7 @@ export function QuickPlayMode() {
 	);
 }
 
+// Match Format Icons
 function FormatIcon({
 	format,
 	className,

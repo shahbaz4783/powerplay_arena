@@ -19,6 +19,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { GameButton } from '../../common/buttons/game-button';
 import { cricketMatchRewards } from '@/src/lib/game-logics';
 import confetti from 'canvas-confetti';
+import RunsComparisonChart from './innings-comarison';
 
 interface ResultProps {
 	rewards: number | null;
@@ -106,6 +107,7 @@ export function Result({ rewards }: ResultProps) {
 					</div>
 				</div>
 			</GradientBorder>
+			<RunsComparisonChart />
 
 			<GradientBorder className={`${getResultColor()} backdrop-blur-sm`}>
 				<h3 className={`text-2xl font-bold text-center `}>{getResultText()}</h3>

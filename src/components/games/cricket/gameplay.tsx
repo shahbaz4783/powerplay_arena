@@ -5,6 +5,7 @@ import { Commentary } from "./commentary";
 import { ScoreBoard } from "./scoreboard";
 import { OverInfo } from "./over-info";
 import { ChaseSummary } from "./chase-summary";
+import RunsComparisonChart from './innings-comarison';
 
 export function Gameplay() {
   return (
@@ -12,6 +13,7 @@ export function Gameplay() {
 			<section className='space-y-6'>
 				<ScoreBoard />
 				<OverInfo />
+				<RunsComparisonChart />
 				<Commentary />
 			</section>
 			<ChaseSummary />

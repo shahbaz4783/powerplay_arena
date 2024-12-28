@@ -76,7 +76,7 @@ export function BetSummary({
 					color='purple'
 				/>
 			</div>
-			<div className='flex items-center justify-between sub-card'>
+			<div className='sub-card grid grid-cols-2'>
 				<div>
 					<p className='text-xs text-slate-300'>Potential Win</p>
 					<p className='text-green-400 font-bold'>

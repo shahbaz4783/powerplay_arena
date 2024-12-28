@@ -1,13 +1,15 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Circle, Coins, Loader2 } from 'lucide-react';
+import { Circle, Coins, HandCoins, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/src/components/ui/card';
 import { Button } from '@/src/components/ui/button';
 import { useCricketGameState } from '@/src/lib/store';
 import confetti from 'canvas-confetti';
 import { useCallback, useState } from 'react';
 import { PiCoinThin } from 'react-icons/pi';
+import { BackgroundPattern } from '../../common/elements/background-pattern';
+import { IconButton } from '../../common/buttons/primary-button';
 
 type GameParticipant = 'opponent' | 'player';
 type TossChoice = 'bat' | 'bowl';
@@ -98,13 +100,13 @@ export function Toss() {
 						className={`h-24 rounded-2xl transform transition-all duration-200
               ${
 								choice === 'bat'
-									? 'bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700'
-									: 'bg-gradient-to-br from-emerald-600 to-emerald-800'
+									? 'blue-gradient text-slate-200'
+									: 'bg-gradient-to-br from-emerald-600 to-emerald-800 text-slate-200'
 							}`}
 					>
 						<div className='flex flex-col items-center space-y-2'>
-							<span className='text-2xl font-bold capitalize'>{choice}</span>
-							<span className='text-sm opacity-80'>Choose to {choice}</span>
+							<span className='text-2xl font-jetbrains font-bold capitalize'>{choice}</span>
+							<span className='text-sm opacity-80 font-poppins'>Choose to {choice}</span>
 						</div>
 					</Button>
 				))}
@@ -137,7 +139,7 @@ export function Toss() {
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
-			className='space-y-12 text-center'
+			className='space-y-12 flex flex-col items-center text-center'
 		>
 			<motion.div className='space-y-8' initial={{ y: 20 }} animate={{ y: 0 }}>
 				<motion.div
@@ -155,21 +157,15 @@ export function Toss() {
 					<Circle className='w-32 h-32 text-yellow-400' />
 				</motion.div>
 				<motion.p
-					className='text-xl text-gray-300 max-w-sm mx-auto font-medium tracking-wide'
+					className='tex text-gray-300 font-exo2 font-medium tracking-wide'
 					animate={{ opacity: [0.7, 1, 0.7] }}
 					transition={{ duration: 3, repeat: Infinity }}
 				>
 					Flip the coin and let the game begin!
 				</motion.p>
 			</motion.div>
-			<motion.button
-				onClick={handleToss}
-				whileTap={{ scale: 0.9 }}
-				className='h-16 px-12 rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 
-          hover:from-indigo-500'
-			>
-				<span className='text-xl font-bold'>Flip the Coin</span>
-			</motion.button>
+
+			<IconButton onClick={handleToss} icon={HandCoins} text='Flip the Coin' />
 		</motion.div>
 	);
 
@@ -193,24 +189,16 @@ export function Toss() {
 	);
 
 	return (
-		<div
-			className='min-h-screen w-full bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 
-      flex items-center justify-center p-4 overflow-hidden'
-		>
-			<Card className='w-full max-w-lg bg-gray-800/40 border-gray-700 backdrop-blur-xl'>
-				<CardContent className='p-8'>
-					<div className='min-h-[500px] flex items-center justify-center'>
-						<AnimatePresence mode='wait'>
-							{isAnimating && renderAnimation()}
-							{showResult &&
-								(gameState.toss.winner === 'player'
-									? renderTossChoices()
-									: renderOpponentChoice())}
-							{!isAnimating && !showResult && renderInitialState()}
-						</AnimatePresence>
-					</div>
-				</CardContent>
-			</Card>
+		<div className='border min-h-[85svh] flex flex-col main-card items-center justify-center'>
+			<BackgroundPattern />
+			<AnimatePresence mode='wait'>
+				{isAnimating && renderAnimation()}
+				{showResult &&
+					(gameState.toss.winner === 'player'
+						? renderTossChoices()
+						: renderOpponentChoice())}
+				{!isAnimating && !showResult && renderInitialState()}
+			</AnimatePresence>
 		</div>
 	);
 }
