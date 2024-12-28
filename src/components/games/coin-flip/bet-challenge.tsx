@@ -20,7 +20,7 @@ export function BetChallenge({
 	setSelectedChallenge: (challenge: BetOption) => void;
 }) {
 	return (
-		<GradientBorder>
+		<GradientBorder className='space-y-4'>
 			<SectionHeader
 				title='Pick Odds'
 				description='How much risk you can take?'

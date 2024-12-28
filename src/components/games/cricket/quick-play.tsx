@@ -53,13 +53,23 @@ import { GameHeader } from '../../layouts/global/game-header';
 import { RewardDialog } from '../../common/dialog/match-reward';
 import { InfoCard } from '../../common/cards/info-card';
 import { PiBaseballCap, PiCricketBold, PiCricketThin } from 'react-icons/pi';
-import { useUserInventory } from '@/src/hooks/useUserData';
+import { useCricketStats, useUserInventory } from '@/src/hooks/useUserData';
 import { GameBalanceCard } from '../../common/cards/balance-card';
+import { GradientBorder } from '../../common/elements/gradient-border';
+import SubtleGamingBackground from '../../common/elements/bg-pattern';
+import { BackgroundPattern } from '../../common/elements/background-pattern';
+import { QuickStatsCard } from '../../common/cards/stat-card';
+import { SectionHeader } from '../../common/elements/section-header';
 
 export function QuickPlayMode() {
 	const [selectedFormat, setSelectedFormat] = useState<MatchFormat>('BLITZ');
 	const { telegramId } = useCurrentUser();
 	const { updateGameState } = useCricketGameState();
+
+	const { data: stats, isPending: isStatsLoading } = useCricketStats(
+		telegramId,
+		selectedFormat
+	);
 
 	const { data, isPending } = useUserInventory(telegramId);
 
@@ -123,17 +133,18 @@ export function QuickPlayMode() {
 	}
 
 	return (
-		<main className='min-h-svh flex flex-col justify-between'>
-			<GameHeader
-				title='Power Strike'
-				icon={Circle}
-				hasUnsavedProgress={false}
-				quitPath='/miniapp'
-				iconColors='from-blue-400 to-blue-600'
-				titleGradient='from-blue-200 via-blue-300 to-blue-400'
-			/>
-			<section className='p-3 space-y-3'>
-				<div className='grid grid-cols-2 gap-3 sub-card backdrop-blur-sm'>
+		<main className='min-h-svh flex flex-col justify-between border'>
+			<BackgroundPattern />
+			<div className='space-y-2'>
+				<GameHeader
+					title='Power Strike'
+					icon={Circle}
+					hasUnsavedProgress={false}
+					quitPath='/miniapp'
+					iconColors='from-blue-400 to-blue-600'
+					titleGradient='from-blue-200 via-blue-300 to-blue-400'
+				/>
+				<GradientBorder className='grid grid-cols-2 gap-3 mx-3'>
 					<GameBalanceCard
 						value={data?.powerCoin!}
 						label='Coin Balance'
@@ -148,55 +159,98 @@ export function QuickPlayMode() {
 						variant='amber'
 						isLoading={isPending}
 					/>
-				</div>
+				</GradientBorder>
+			</div>
+			<section className='p-3 space-y-3'>
 				<Tabs
 					value={selectedFormat}
 					onValueChange={handleFormatChange}
-					className='w-full'
+					className='space-y-2'
 				>
-					<TabsList className='grid grid-cols-3 gap-4 rounded-xl h-auto'>
-						{Object.entries(MATCH_FORMATS).map(([key, format]) => (
-							<TabsTrigger
-								key={key}
-								value={key}
-								className='flex flex-col items-center rounded-xl justify-center p-3'
-							>
-								<FormatIcon format={format.format} className='w-6 h-6 ' />
-								<span className='font-bold uppercase'>{format.format}</span>
-							</TabsTrigger>
-						))}
+					<TabsList className='block space-y-4'>
+						<SectionHeader
+							title='Choose Format'
+							description='Choose the format and dominate the pitch!'
+							icon={Award}
+						/>
+						<div className='grid grid-cols-3 gap-2 '>
+							{Object.entries(MATCH_FORMATS).map(([key, format]) => (
+								<TabsTrigger
+									key={key}
+									value={key}
+									className='flex flex-col gap-1 items-center rounded-xl justify-center'
+								>
+									<FormatIcon format={format.format} className='w-5 h-5 ' />
+									<span className='font-bold uppercase'>{format.format}</span>
+								</TabsTrigger>
+							))}
+						</div>
 					</TabsList>
 					{Object.entries(MATCH_FORMATS).map(([key, format]) => (
 						<TabsContent key={key} value={key} className='space-y-4'>
-							<h4 className='text-lg font-semibold mb-4 text-center'>
-								Match Details
-							</h4>
-							<div className='sub-card grid grid-cols-2 gap-2 backdrop-blur-md p-3 rounded-xl'>
-								<InfoCard
-									title='Overs'
-									icon={<PiBaseballCap />}
-									color='blue'
-									amount={format.overs}
-								/>
-								<InfoCard
-									title='Max Wickets'
-									icon={<PiCricketBold />}
-									color='blue'
-									amount={format.totalWickets}
-								/>
-								<InfoCard
-									title='Pass Required'
-									icon={<Ticket />}
-									color='blue'
-									amount={format.passRequired}
-								/>
-								<InfoCard
-									title='Entry Fees (PWR)'
-									icon={<Coins />}
-									color='blue'
-									amount={format.entryFee}
-								/>
-							</div>
+							<GradientBorder className='space-y-2'>
+								<div className='grid grid-cols-2 gap-3'>
+									<InfoCard
+										title='Match Played'
+										amount={stats?.matchesPlayed ?? 0}
+										color='purple'
+										icon
+									/>
+									<InfoCard
+										title='Total Runs'
+										amount={stats?.runsScored ?? 0}
+										color='purple'
+										icon
+									/>
+								</div>
+								<div className='sub-card'>
+									<h4 className='text-lg font-semibold mb-4 text-center'>
+										Match Details
+									</h4>
+									<div className='grid grid-cols-2 gap-2'>
+										<InfoCard
+											title='Overs'
+											icon={<PiBaseballCap />}
+											color='blue'
+											amount={format.overs}
+											info={{
+												title: 'What are Overs?',
+												description: `An over in cricket consists of 6 legal balls bowled by a bowler.
+											
+											This match has ${
+												format.overs
+											} overs per team, meaning each team will face maximum ${
+													format.overs * 6
+												} balls total.`,
+											}}
+										/>
+										<InfoCard
+											title='Max Wickets'
+											icon={<PiCricketBold />}
+											color='blue'
+											amount={format.totalWickets}
+											info={{
+												title: 'What are Wickets?',
+												description: `Wickets are how teams get batters "out" in cricket.
+											
+											This match starts with ${format.totalWickets} wickets. Once a team loses all their wickets, their batting innings is over.`,
+											}}
+										/>
+										<InfoCard
+											title='Pass Required'
+											icon={<Ticket />}
+											color='blue'
+											amount={format.passRequired}
+										/>
+										<InfoCard
+											title='Entry Fees (PWR)'
+											icon={<Coins />}
+											color='blue'
+											amount={format.entryFee}
+										/>
+									</div>
+								</div>
+							</GradientBorder>
 
 							<div className='flex justify-center'>
 								<Dialog>
@@ -214,34 +268,85 @@ export function QuickPlayMode() {
 											<DialogTitle>Reward Structure</DialogTitle>
 										</DialogHeader>
 										<div className='grid grid-cols-2 gap-4 mt-4'>
-											<RewardItem
-												icon={Zap}
-												label='Six'
-												value={format.rewards.six}
+											<InfoCard
+												title='Six'
+												icon={<Zap />}
+												color='yellow'
+												amount={format.rewards.six}
+												info={{
+													title: 'Sixer Reward',
+													description: `For example, if you hits 5 sixes in this match, you'll earn ${
+														format.rewards.six * 5
+													} coins.`,
+												}}
 											/>
-											<RewardItem
-												icon={Target}
-												label='Four'
-												value={format.rewards.four}
+
+											<InfoCard
+												title='Four'
+												icon={<Target />}
+												color='yellow'
+												amount={format.rewards.four}
+												info={{
+													title: 'Four Reward',
+													description: `For example, if you hits 7 fours in this match, you'll earn ${
+														format.rewards.four * 7
+													} coins.`,
+												}}
 											/>
-											<RewardItem
-												icon={Award}
-												label='Wicket'
-												value={format.rewards.wicket}
+
+											<InfoCard
+												title='Wicket'
+												icon={<Award />}
+												color='yellow'
+												amount={format.rewards.wicket}
+												info={{
+													title: 'Wicket Reward Points',
+													description: `Example: Taking ${
+														format.totalWickets > 2
+															? format.totalWickets - 2
+															: format.totalWickets
+													} wickets will earn you ${
+														format.rewards.wicket *
+														(format.totalWickets > 2
+															? format.totalWickets - 2
+															: format.totalWickets)
+													} coins.`,
+												}}
 											/>
-											<RewardItem
-												icon={Trophy}
-												label='Run Margin'
-												value={format.rewards.runMargin}
+
+											<InfoCard
+												title='Run Margin'
+												icon={<Trophy />}
+												color='yellow'
+												amount={format.rewards.runMargin}
+												info={{
+													title: 'Victory Margin Rewards',
+													description: `For runs: If you win by 20 runs, you get ${
+														format.rewards.runMargin * 20
+													} coins. 
+
+													For wickets: If you win by ${
+														format.totalWickets > 2
+															? format.totalWickets - 2
+															: format.totalWickets
+													} wickets, you get ${
+														format.rewards.wicket *
+														(format.totalWickets > 2
+															? format.totalWickets - 2
+															: format.totalWickets)
+													} coins.`,
+												}}
 											/>
 										</div>
 									</DialogContent>
 								</Dialog>
 							</div>
 
-							<section className='sub-card flex justify-between backdrop-blur-sm p-3 sticky bottom-3 '>
+							<section className='main-card flex justify-between sticky bottom-3 '>
 								<div className='flex flex-col gap-1'>
-									<span className='text-sm text-slate-400'>Required</span>
+									<span className='text-sm text-slate-400 font-poppins'>
+										Required
+									</span>
 									<div className='flex items-center gap-2'>
 										<Coins className='w-4 h-4 text-yellow-400' />
 										<span className='font-bold'>{format.entryFee}</span>

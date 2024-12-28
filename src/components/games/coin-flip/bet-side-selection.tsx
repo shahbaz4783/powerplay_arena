@@ -14,7 +14,7 @@ export function BetSideSelection({
 	setSelectedSide: (side: string) => void;
 }) {
 	return (
-		<GradientBorder>
+		<GradientBorder className='space-y-4'>
 			<SectionHeader
 				title='Choose Your Side'
 				description='Flip the odds in your favor'
