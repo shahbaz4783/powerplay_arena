@@ -40,7 +40,7 @@ export function BetSummary({
 	);
 
 	return (
-		<GradientBorder>
+		<GradientBorder className='space-y-4'>
 			<SectionHeader
 				title='Ready to Roll'
 				description='Review your bet details before the action begins'

@@ -14,6 +14,7 @@ import LoadingGame from '@/src/app/game/coin-flip/loading';
 import { CoinsIcon } from 'lucide-react';
 import { GameHeader } from '../../layouts/global/game-header';
 import { GameLoadingScreen } from '../../layouts/global/game-loading-screen';
+import { LoadingOverlay } from '../../common/dialog/loading-overlay';
 
 interface BetOption {
 	name: string;
@@ -124,6 +125,7 @@ export function CoinFlipChallenge() {
 					selectedSide={selectedSide}
 					xpGain={formState.data?.xpGain!}
 				/>
+				<LoadingOverlay isOpen={isPending} scene='coinFlip' />
 			</div>
 		</>
 	);

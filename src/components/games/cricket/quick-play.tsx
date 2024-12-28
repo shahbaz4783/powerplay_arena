@@ -60,6 +60,7 @@ import SubtleGamingBackground from '../../common/elements/bg-pattern';
 import { BackgroundPattern } from '../../common/elements/background-pattern';
 import { QuickStatsCard } from '../../common/cards/stat-card';
 import { SectionHeader } from '../../common/elements/section-header';
+import { LoadingOverlay } from '../../common/dialog/loading-overlay';
 
 export function QuickPlayMode() {
 	const [selectedFormat, setSelectedFormat] = useState<MatchFormat>('BLITZ');
@@ -342,7 +343,7 @@ export function QuickPlayMode() {
 								</Dialog>
 							</div>
 
-							<section className='main-card flex justify-between sticky bottom-3 '>
+							<section className='main-card grid grid-cols-2 sticky bottom-3 '>
 								<div className='flex flex-col gap-1'>
 									<span className='text-sm text-slate-400 font-poppins'>
 										Required
@@ -367,6 +368,7 @@ export function QuickPlayMode() {
 						</TabsContent>
 					))}
 				</Tabs>
+				<LoadingOverlay isOpen={isLoading} scene='cricket' />
 			</section>
 		</main>
 	);
