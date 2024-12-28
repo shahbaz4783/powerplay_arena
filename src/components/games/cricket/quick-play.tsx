@@ -61,6 +61,7 @@ import { BackgroundPattern } from '../../common/elements/background-pattern';
 import { QuickStatsCard } from '../../common/cards/stat-card';
 import { SectionHeader } from '../../common/elements/section-header';
 import { LoadingOverlay } from '../../common/dialog/loading-overlay';
+import { GameLoadingScreen } from '../../layouts/global/game-loading-screen';
 
 export function QuickPlayMode() {
 	const [selectedFormat, setSelectedFormat] = useState<MatchFormat>('BLITZ');
@@ -71,6 +72,12 @@ export function QuickPlayMode() {
 		telegramId,
 		selectedFormat
 	);
+
+	if (isStatsLoading) {
+		<GameLoadingScreen gameType='powerStrike' />;
+	}
+
+	const winRate = ((stats?.matchesWon ?? 0) / stats?.matchesPlayed!) * 100 || 0;
 
 	const { data, isPending } = useUserInventory(telegramId);
 
@@ -192,16 +199,34 @@ export function QuickPlayMode() {
 							<GradientBorder className='space-y-2'>
 								<div className='grid grid-cols-2 gap-3'>
 									<InfoCard
-										title='Match Played'
+										title={'Match Played'}
 										amount={stats?.matchesPlayed ?? 0}
-										color='purple'
-										icon
+										color='orange'
+										isLoading={isStatsLoading}
+										icon={<PiBaseballCap />}
+									/>
+									<InfoCard
+										title='Win Rate'
+										amount={`${winRate.toFixed(2)}%`}
+										color={
+											winRate < 30 ? 'red' : winRate >= 70 ? 'green' : 'yellow'
+										}
+										isLoading={isStatsLoading}
+										icon={<PiBaseballCap />}
 									/>
 									<InfoCard
 										title='Total Runs'
 										amount={stats?.runsScored ?? 0}
 										color='purple'
-										icon
+										isLoading={isStatsLoading}
+										icon={<PiBaseballCap />}
+									/>
+									<InfoCard
+										title='High Score'
+										amount={stats?.highestRunsScored ?? 0}
+										color='teal'
+										isLoading={isStatsLoading}
+										icon={<PiBaseballCap />}
 									/>
 								</div>
 								<div className='sub-card'>
@@ -212,7 +237,7 @@ export function QuickPlayMode() {
 										<InfoCard
 											title='Overs'
 											icon={<PiBaseballCap />}
-											color='blue'
+											color='pink'
 											amount={format.overs}
 											info={{
 												title: 'What are Overs?',
@@ -228,7 +253,7 @@ export function QuickPlayMode() {
 										<InfoCard
 											title='Max Wickets'
 											icon={<PiCricketBold />}
-											color='blue'
+											color='indigo'
 											amount={format.totalWickets}
 											info={{
 												title: 'What are Wickets?',
@@ -240,13 +265,13 @@ export function QuickPlayMode() {
 										<InfoCard
 											title='Pass Required'
 											icon={<Ticket />}
-											color='blue'
+											color='teal'
 											amount={format.passRequired}
 										/>
 										<InfoCard
-											title='Entry Fees (PWR)'
+											title={`Entry Fees ${token.symbol}`}
 											icon={<Coins />}
-											color='blue'
+											color='yellow'
 											amount={format.entryFee}
 										/>
 									</div>
