@@ -1,14 +1,13 @@
 import React, { useMemo } from 'react';
 import {
-	LineChart,
-	Line,
+	BarChart,
+	Bar,
 	XAxis,
 	YAxis,
 	CartesianGrid,
 	Tooltip,
 	Legend,
 	ResponsiveContainer,
-	Dot,
 } from 'recharts';
 import {
 	Dialog,
@@ -17,60 +16,16 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/src/components/ui/dialog';
-import { Button } from '@/src/components/ui/button';
-import { BarChart3, LineChartIcon } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
 import { useCricketGameState } from '@/src/lib/store';
 import { motion } from 'framer-motion';
-import { IconButton } from '../../common/buttons/primary-button';
-
-interface RunsData {
-	ball: number;
-	playerRuns: number | null;
-	opponentRuns: number | null;
-	playerWicket: boolean;
-	opponentWicket: boolean;
-}
-
-// Custom dot for wickets
-const WicketDot = (props: any) => {
-	const { cx, cy } = props;
-	if (!cx || !cy) return null;
-
-	return (
-		<svg x={cx - 10} y={cy - 10} width={20} height={20}>
-			<circle
-				cx='10'
-				cy='10'
-				r='6'
-				fill='#1e293b'
-				stroke='#ef4444'
-				strokeWidth='2'
-			/>
-			<line x1='5' y1='10' x2='15' y2='10' stroke='#ef4444' strokeWidth='2' />
-			<line x1='10' y1='5' x2='10' y2='15' stroke='#ef4444' strokeWidth='2' />
-		</svg>
-	);
-};
-
-// Custom active dot
-const CustomActiveDot = (props: any) => {
-	const { cx, cy, stroke } = props;
-	if (!cx || !cy) return null;
-
-	return (
-		<svg x={cx - 6} y={cy - 6} width={12} height={12}>
-			<circle cx='6' cy='6' r='5' fill={stroke} />
-			<circle cx='6' cy='6' r='3' fill='white' />
-		</svg>
-	);
-};
 
 const CustomTooltip = ({ active, payload, label }: any) => {
 	if (!active || !payload || !payload.length) return null;
 
 	return (
 		<div className='bg-slate-800 border border-slate-700 rounded-lg p-3 shadow-lg'>
-			<p className='text-slate-300 font-medium mb-2'>Ball {label}</p>
+			<p className='text-slate-300 font-medium mb-2'>Over {label}</p>
 			{payload.map(
 				(entry: any, index: number) =>
 					entry.value !== null && (
@@ -81,6 +36,11 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 							/>
 							<p className='text-slate-300'>
 								{entry.name}: {entry.value} runs
+								{entry.payload.balls && (
+									<span className='text-slate-400 ml-2'>
+										({entry.payload.balls} balls)
+									</span>
+								)}
 							</p>
 						</div>
 					)
@@ -89,41 +49,56 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 	);
 };
 
-const RunsComparisonChart = () => {
+const RunsBarComparison = () => {
 	const { gameState } = useCricketGameState();
 	const { player, opponent } = gameState;
 
 	const chartData = useMemo(() => {
-		const maxLength = Math.max(
-			player.overInfo.length,
-			opponent.overInfo.length
-		);
-		let playerTotal = 0;
-		let opponentTotal = 0;
+		// Function to process runs for an over
+		const processOver = (runs: (number | undefined)[], startIdx: number) => {
+			let totalRuns = 0;
+			let ballsPlayed = 0;
 
-		return Array.from({ length: maxLength }, (_, i) => {
-			const playerRun = player.overInfo[i];
-			const opponentRun = opponent.overInfo[i];
-
-			if (playerRun !== undefined && playerRun !== null && playerRun !== -1) {
-				playerTotal += playerRun;
+			for (let i = 0; i < 6; i++) {
+				const run = runs[startIdx + i];
+				if (run !== undefined && run !== -1) {
+					totalRuns += run;
+					ballsPlayed++;
+				}
 			}
-			if (
-				opponentRun !== undefined &&
-				opponentRun !== null &&
-				opponentRun !== -1
-			) {
-				opponentTotal += opponentRun;
+
+			return { runs: totalRuns, balls: ballsPlayed };
+		};
+
+		// Calculate number of overs needed (including partial overs)
+		const playerOvers = Math.ceil(player.overInfo.length / 6);
+		const opponentOvers = Math.ceil(opponent.overInfo.length / 6);
+		const maxOvers = Math.max(playerOvers, opponentOvers);
+
+		return Array.from({ length: maxOvers }, (_, overIndex) => {
+			const playerOverData =
+				overIndex * 6 < player.overInfo.length
+					? processOver(player.overInfo, overIndex * 6)
+					: { runs: null, balls: 0 };
+
+			const opponentOverData =
+				overIndex * 6 < opponent.overInfo.length
+					? processOver(opponent.overInfo, overIndex * 6)
+					: { runs: null, balls: 0 };
+
+			// Only include overs that have balls played
+			if (playerOverData.balls === 0 && opponentOverData.balls === 0) {
+				return null;
 			}
 
 			return {
-				ball: i + 1,
-				playerRuns: playerRun !== undefined ? playerTotal : null,
-				opponentRuns: opponentRun !== undefined ? opponentTotal : null,
-				playerWicket: playerRun === -1,
-				opponentWicket: opponentRun === -1,
+				over: overIndex + 1,
+				playerRuns: playerOverData.balls > 0 ? playerOverData.runs : null,
+				playerBalls: playerOverData.balls || null,
+				opponentRuns: opponentOverData.balls > 0 ? opponentOverData.runs : null,
+				opponentBalls: opponentOverData.balls || null,
 			};
-		});
+		}).filter(Boolean); // Remove null entries
 	}, [player.overInfo, opponent.overInfo]);
 
 	return (
@@ -133,54 +108,48 @@ const RunsComparisonChart = () => {
 					whileTap={{ scale: 0.9 }}
 					className='flex items-center justify-center bg-gradient-to-br p-3 from-blue-500/10 to-blue-600/5 border border-blue-500/20 text-xl rounded-md shadow-xl'
 				>
-					<LineChartIcon className='h-5 w-5 bg-blue-500/10' />
+					<BarChart3 className='h-5 w-5 bg-blue-500/10' />
 				</motion.button>
 			</DialogTrigger>
 			<DialogContent className='w-11/12 rounded-xl'>
 				<DialogHeader>
 					<DialogTitle className='text-xl font-bold text-white'>
-						Innings Comparison
+						Runs Per Over Comparison
 					</DialogTitle>
 				</DialogHeader>
 
 				<div className='h-[240px] main-card'>
 					<ResponsiveContainer width='100%' height='100%'>
-						<LineChart
+						<BarChart
 							data={chartData}
 							margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
 						>
-							<defs>
-								<linearGradient id='playerGradient' x1='0' y1='0' x2='0' y2='1'>
-									<stop offset='5%' stopColor='#3b82f6' stopOpacity={0.2} />
-									<stop offset='95%' stopColor='#3b82f6' stopOpacity={0} />
-								</linearGradient>
-								<linearGradient
-									id='opponentGradient'
-									x1='0'
-									y1='0'
-									x2='0'
-									y2='1'
-								>
-									<stop offset='5%' stopColor='#ef4444' stopOpacity={0.2} />
-									<stop offset='95%' stopColor='#ef4444' stopOpacity={0} />
-								</linearGradient>
-							</defs>
 							<CartesianGrid
 								strokeDasharray='3 3'
 								stroke='#334155'
 								opacity={0.5}
 							/>
 							<XAxis
-								dataKey='ball'
+								dataKey='over'
 								stroke='#94a3b8'
 								tick={{ fill: '#94a3b8', fontSize: 9 }}
-								tickCount={5}
-								interval='preserveStartEnd'
+								label={{
+									value: 'Overs',
+									position: 'insideBottom',
+									offset: -5,
+									fill: '#94a3b8',
+								}}
 							/>
 							<YAxis
 								stroke='#94a3b8'
 								tick={{ fill: '#94a3b8', fontSize: 9 }}
-								tickCount={5}
+								label={{
+									value: 'Runs',
+									angle: -90,
+									position: 'insideLeft',
+									offset: 10,
+									fill: '#94a3b8',
+								}}
 							/>
 							<Tooltip content={<CustomTooltip />} />
 							<Legend
@@ -189,29 +158,19 @@ const RunsComparisonChart = () => {
 									color: '#94a3b8',
 								}}
 							/>
-							<Line
-								type='monotone'
+							<Bar
 								dataKey='playerRuns'
-								name='Your Innings'
-								stroke='#3b82f6'
-								strokeWidth={2}
-								dot={false}
-								activeDot={<CustomActiveDot />}
-								connectNulls
-								fill='url(#playerGradient)'
+								name='Your Runs'
+								fill='#3b82f6'
+								radius={[4, 4, 0, 0]}
 							/>
-							<Line
-								type='monotone'
+							<Bar
 								dataKey='opponentRuns'
-								name='Opponent Innings'
-								stroke='#ef4444'
-								strokeWidth={2}
-								dot={false}
-								activeDot={<CustomActiveDot />}
-								connectNulls
-								fill='url(#opponentGradient)'
+								name='Opponent Runs'
+								fill='#ef4444'
+								radius={[4, 4, 0, 0]}
 							/>
-						</LineChart>
+						</BarChart>
 					</ResponsiveContainer>
 				</div>
 
@@ -250,4 +209,4 @@ const RunsComparisonChart = () => {
 	);
 };
 
-export default RunsComparisonChart;
+export default RunsBarComparison;

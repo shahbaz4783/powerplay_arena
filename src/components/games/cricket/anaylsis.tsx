@@ -7,6 +7,7 @@ import { InfoCard } from '../../common/cards/info-card';
 import { Target } from 'lucide-react';
 import { GameBalanceCard } from '../../common/cards/balance-card';
 import { PiMathOperations } from 'react-icons/pi';
+import RunsBarComparison from './bar-compare';
 
 export function Anaylsis() {
 	const { gameState } = useCricketGameState();
@@ -26,9 +27,12 @@ export function Anaylsis() {
 		((gameState?.target - runs) / ((overs * 6 - ballsFaced) / 6)).toFixed(2);
 
 	return (
-		<section className='space-y-4'>
-			<aside className='grid grid-cols-3 gap-x-3'>
-				<RunsComparisonChart />
+		<section className=''>
+			<aside className='grid grid-cols-3 gap-x-2'>
+				<div className='grid grid-cols-2 gap-2'>
+					<RunsComparisonChart />
+					<RunsBarComparison />
+				</div>
 				<InfoCard
 					iconSize={3}
 					icon={<PiMathOperations />}
@@ -57,9 +61,9 @@ export function Anaylsis() {
 				/>
 			</aside>
 			{gameState.target && (
-				<div className='sub-card'>
+				<div className='sub-card mt-2'>
 					<p className='text-center text-slate-400'>
-						<span className='text-blue-500 font-fira-code'>
+						<span className='text-blue-400 font-semibold font-poppins'>
 							{gameState.toss.playMode === 'chase' ? 'You' : 'Opponent'}
 						</span>
 						<span> need </span>

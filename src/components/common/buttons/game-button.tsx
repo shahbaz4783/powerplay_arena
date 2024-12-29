@@ -18,17 +18,17 @@ export const GameButton: React.FC<CyberPulseButtonProps> = ({
 	return (
 		<Link href={href} className='w-full'>
 			<motion.button
-				className='w-full p-4 bg-gray-900 text-purple-400 font-bold rounded-xl shadow-lg flex items-center justify-center space-x-3 relative overflow-hidden'
+				className='w-full p-4 bg-gray-900 text-blue-400 font-bold rounded-xl shadow-lg flex items-center justify-center space-x-3 relative overflow-hidden'
 				onClick={onClick}
 				whileTap={{ scale: 0.95 }}
 				transition={{ type: 'spring', stiffness: 400, damping: 17 }}
 			>
 				<motion.div
-					className='absolute inset-0 bg-purple-800 opacity-30'
+					className='absolute inset-0 bg-blue-800 opacity-30'
 					animate={{
 						background: [
-							'radial-gradient(circle, rgba(147,51,234,0.3) 0%, rgba(17,24,39,0) 70%)',
-							'radial-gradient(circle, rgba(147,51,234,0.3) 100%, rgba(17,24,39,0) 100%)',
+							'radial-gradient(circle, rgba(59,130,246,0.3) 0%, rgba(17,24,39,0) 70%)',
+							'radial-gradient(circle, rgba(59,130,246,0.3) 100%, rgba(17,24,39,0) 100%)',
 						],
 					}}
 					transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
@@ -39,8 +39,8 @@ export const GameButton: React.FC<CyberPulseButtonProps> = ({
 					className='absolute inset-0 border  rounded-xl'
 					animate={{
 						boxShadow: [
-							'0 0 0 0 rgba(147,51,234,0.7)',
-							'0 0 0 10px rgba(147,51,234,0)',
+							'0 0 0 0 rgba(59,130,246,0.7)',
+							'0 0 0 10px rgba(59,130,246,0)',
 						],
 					}}
 					transition={{ duration: 1.5, repeat: Infinity }}

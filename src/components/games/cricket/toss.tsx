@@ -189,7 +189,7 @@ export function Toss() {
 	);
 
 	return (
-		<div className='border min-h-[85svh] flex flex-col main-card items-center justify-center'>
+		<div className='min-h-svh flex flex-col main-card items-center justify-center'>
 			<BackgroundPattern />
 			<AnimatePresence mode='wait'>
 				{isAnimating && renderAnimation()}

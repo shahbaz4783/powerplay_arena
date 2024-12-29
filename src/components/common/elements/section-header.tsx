@@ -4,7 +4,7 @@ interface SectionHeaderProps {
 	icon: LucideIcon;
 	title: string;
 	highlightedTitle?: string;
-	description: string;
+	description?: string;
 	iconColor?: string;
 	iconBgColor?: string;
 }

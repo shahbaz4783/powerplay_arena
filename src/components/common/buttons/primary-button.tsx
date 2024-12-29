@@ -33,7 +33,9 @@ export function IconButton({
 						<Icon className={'w-5 h-5'} />
 					)}
 				</div>
-				<div className='col-span-5 text-right'>{isLoading ? loadingText : text}</div>
+				<div className='col-span-5 text-center'>
+					{isLoading ? loadingText : text}
+				</div>
 			</motion.button>
 		</>
 	);

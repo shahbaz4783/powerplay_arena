@@ -174,8 +174,8 @@ export default function CricketGame() {
 	]);
 
 	return (
-		<div className='flex flex-col justify-between min-h-svh p-3 bg-gray-900'>
-			<main className='flex-grow overflow-auto flex flex-col justify-between'>
+		<div className='flex flex-col justify-between min-h-svh bg-gray-900'>
+			<main className='flex-grow flex flex-col justify-between'>
 				{gameState.gamePhase === 'toss' && <Toss />}
 				{(gameState.gamePhase === 'batting' ||
 					gameState.gamePhase === 'bowling') && <Gameplay />}

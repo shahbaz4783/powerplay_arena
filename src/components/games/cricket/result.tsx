@@ -6,13 +6,12 @@ import {
 	Target,
 	Zap,
 	Award,
-	PlayCircle,
 	HomeIcon,
-	Rotate3D,
 	RotateCcw,
+	Gift,
+	SquareChartGantt,
 } from 'lucide-react';
 import { RewardItem } from '@/src/components/common/cards/reward-card';
-import { Header } from '../../common/elements/header';
 import { GradientBorder } from '../../common/elements/gradient-border';
 import { token } from '@/src/constants/app-config';
 import { useQueryClient } from '@tanstack/react-query';
@@ -20,6 +19,11 @@ import { GameButton } from '../../common/buttons/game-button';
 import { cricketMatchRewards } from '@/src/lib/game-logics';
 import confetti from 'canvas-confetti';
 import RunsComparisonChart from './innings-comarison';
+import { SectionHeader } from '../../common/elements/section-header';
+import RunsBarComparison from './bar-compare';
+import { InfoCard } from '../../common/cards/info-card';
+import { FaFoursquare, FaSitrox } from 'react-icons/fa6';
+import { PiCoinDuotone } from 'react-icons/pi';
 
 interface ResultProps {
 	rewards: number | null;
@@ -55,15 +59,16 @@ export function Result({ rewards }: ResultProps) {
 	const getResultColor = () => {
 		switch (matchResult.winner) {
 			case 'player':
-				return 'bg-gradient-to-r from-green-700/50 to-green-800/20';
+				return 'text-green-500';
 			case 'opponent':
-				return 'bg-gradient-to-r from-red-700/50 to-red-800/20';
+				return 'text-red-600';
 			case 'tie':
-				return 'bg-gradient-to-r from-yellow-700/50 to-yellow-800/20';
+				return 'text-yellow-600';
 			default:
-				return 'bg-gradient-to-r from-slate-700/50 to-slate-800/20';
+				return 'text-slate-200';
 		}
 	};
+
 	const getResultText = () => {
 		switch (matchResult.winner) {
 			case 'player':
@@ -78,89 +83,134 @@ export function Result({ rewards }: ResultProps) {
 	};
 
 	return (
-		<main className='space-y-4 flex flex-col justify-between'>
-			<Header
-				title='Match Concluded'
-				subtitle='The dust settles on the Cricket Pitch'
-			/>
-
-			<GradientBorder className='bg-slate-800/50 backdrop-blur-md'>
-				<div className='flex justify-between items-center'>
-					<div className='text-center'>
-						<div className='text-sm text-slate-400 mb-1'>Your Score</div>
-						<div className='text-4xl font-bold text-white'>
-							{player.runs}/{player.wickets}
-						</div>
-						<div className='text-sm text-slate-400 mt-1'>
-							({player.oversPlayed})
-						</div>
-					</div>
-					<div className='text-4xl font-bold text-cyan-400'>VS</div>
-					<div className='text-center'>
-						<div className='text-sm text-slate-400 mb-1'>Opponent Score</div>
-						<div className='text-4xl font-bold text-white'>
-							{opponent.runs}/{opponent.wickets}
-						</div>
-						<div className='text-sm text-slate-400 mt-1'>
-							({opponent.oversPlayed})
-						</div>
-					</div>
-				</div>
-			</GradientBorder>
-			<RunsComparisonChart />
-
-			<GradientBorder className={`${getResultColor()} backdrop-blur-sm`}>
-				<h3 className={`text-2xl font-bold text-center `}>{getResultText()}</h3>
-				<p className='text-slate-300 mt-2 text-center text-sm font-mono'>
-					{matchResult.winner === 'tie'
-						? 'The match ended in a tie!'
-						: `${matchResult.winner === 'player' ? 'You' : 'Opponent'} won by ${
-								matchResult.margin
-						  } ${matchResult.marginType}`}
-				</p>
-			</GradientBorder>
-
-			<GradientBorder className='space-y-3'>
-				<h2 className='text-xl font-bold text-center text-cyan-400'>
-					Your Rewards
-				</h2>
-				<section className='flex justify-between p-4 rounded-xl'>
+		<main className='space-y-4 flex flex-col justify-between p-3'>
+			<GradientBorder className='space-y-2'>
+				<SectionHeader
+					title='Match'
+					highlightedTitle='Summary'
+					icon={SquareChartGantt}
+				/>
+				<section className='sub-card'>
 					<div className='flex justify-between items-center'>
-						<div className='flex items-center'>
-							<div>
-								<div className='text-sm text-slate-300'>Total {token.name}</div>
-								<div className='text-2xl font-bold text-yellow-400'>
-									{rewards !== null ? rewards : totalEarnings} {token.symbol}
-								</div>
+						<div className='text-center'>
+							<div className='text-xs text-slate-400 mb-1 font-jetbrains'>
+								Your Score
+							</div>
+							<div className='text-4xl font-bold text-white font-exo2'>
+								{player.runs}/{player.wickets}
+							</div>
+							<div className='text-xs text-slate-400 mt-1 tracking-wider'>
+								({player.oversPlayed})
 							</div>
 						</div>
-					</div>
-
-					<div className='flex justify-between items-center text-right'>
-						<div className='flex items-center'>
-							<div>
-								<div className='text-sm text-slate-300'>Total XP</div>
-								<div className='text-2xl font-bold text-yellow-400'>
-									{totalXP}
-								</div>
+						<div className='text-4xl font-bold text-cyan-400'>VS</div>
+						<div className='text-center'>
+							<div className='text-xs text-slate-400 mb-1 font-jetbrains'>
+								Opponent Score
+							</div>
+							<div className='text-4xl font-bold text-white font-exo2'>
+								{opponent.runs}/{opponent.wickets}
+							</div>
+							<div className='text-xs text-slate-400 mt-1 tracking-wider'>
+								({opponent.oversPlayed})
 							</div>
 						</div>
 					</div>
 				</section>
 
-				<section className='grid grid-cols-2 gap-4'>
-					<RewardItem icon={Zap} label='Sixes' value={sixerReward} />
-					<RewardItem icon={Target} label='Fours' value={fourReward} />
-					<RewardItem icon={Award} label='Wickets' value={wicketTakenReward} />
-					<RewardItem
-						icon={Trophy}
-						label='Win Margin'
-						value={winMarginReward}
+				<section className='grid grid-cols-3 gap-2'>
+					<div className='grid grid-cols-2 gap-2'>
+						<RunsComparisonChart />
+						<RunsBarComparison />
+					</div>
+
+					<InfoCard
+						iconSize={3}
+						amount={gameState.player.sixes + gameState.opponent.sixes}
+						icon={<FaSitrox />}
+						color='yellow'
+						title='Sixes'
+						info={{
+							title: 'Total Sixes',
+							description: 'Total sixes hit in this match',
+						}}
+					/>
+					<InfoCard
+						iconSize={3}
+						amount={gameState.player.fours + gameState.opponent.fours}
+						icon={<FaFoursquare />}
+						color='green'
+						title='Fours'
+						info={{
+							title: 'Total Fours',
+							description: 'Total fours hit in this match',
+						}}
+					/>
+				</section>
+
+				<section className={`sub-card space-y-1`}>
+					<h3
+						className={`text-2xl font-bold font-jetbrains ${getResultColor()} text-center `}
+					>
+						{getResultText()}
+					</h3>
+					<p className={`text-slate-300 text-center text-sm font-fira-code`}>
+						{matchResult.winner === 'tie'
+							? 'The match ended in a tie!'
+							: `${
+									matchResult.winner === 'player' ? 'You' : 'Opponent'
+							  } won by ${matchResult.margin} ${matchResult.marginType}`}
+					</p>
+				</section>
+			</GradientBorder>
+
+			<GradientBorder className='space-y-3'>
+				<SectionHeader title='Your' highlightedTitle='Rewards' icon={Gift} />
+
+				<section className='grid grid-cols-2 gap-3'>
+					<InfoCard
+						amount={rewards !== null ? rewards : totalEarnings}
+						icon={<PiCoinDuotone />}
+						color='yellow'
+						title={`Total ${token.name}`}
+					/>
+					<InfoCard
+						amount={totalXP}
+						icon={<FaSitrox />}
+						color='green'
+						title={'Total XP'}
+					/>
+				</section>
+
+				<section className='grid grid-cols-2 gap-2 sub-card'>
+					<InfoCard
+						amount={sixerReward}
+						icon={<FaSitrox />}
+						color='green'
+						title={'Sixes'}
+					/>
+					<InfoCard
+						amount={fourReward}
+						icon={<FaFoursquare />}
+						color='green'
+						title={'Four'}
+					/>
+					<InfoCard
+						amount={wicketTakenReward}
+						icon={<Award />}
+						color='purple'
+						title={'Wickets'}
+					/>
+					<InfoCard
+						amount={winMarginReward}
+						icon={<Trophy />}
+						color='teal'
+						title={'Win Margin'}
 					/>
 				</section>
 			</GradientBorder>
 
-			<GradientBorder className='flex justify-between gap-3'>
+			<section className='flex justify-between gap-3 main-card backdrop-blur-md sticky bottom-2 shadow-2xl'>
 				<GameButton
 					href='/miniapp'
 					onClick={clearGameState}
@@ -175,7 +225,7 @@ export function Result({ rewards }: ResultProps) {
 				>
 					Play Again
 				</GameButton>
-			</GradientBorder>
+			</section>
 		</main>
 	);
 }

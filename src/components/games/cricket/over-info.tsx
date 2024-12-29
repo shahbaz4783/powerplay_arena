@@ -19,7 +19,7 @@ const BallResult = ({ result }: { result: RunOutcome }) => {
 	switch (result) {
 		case 0:
 			bgColor = 'bg-slate-600';
-			icon = <PiNumberZeroBold className='w-4 h-4' />;
+			icon = <PiNumberZeroBold className='size-4' />;
 			break;
 		case 1:
 		case 2:
@@ -28,15 +28,15 @@ const BallResult = ({ result }: { result: RunOutcome }) => {
 			break;
 		case 4:
 			bgColor = 'bg-green-500';
-			icon = <PiNumberFourBold className='w-4 h-4' />;
+			icon = <PiNumberFourBold className='size-4' />;
 			break;
 		case 6:
 			bgColor = 'bg-yellow-500';
-			icon = <PiNumberSixBold className='w-4 h-4 font-bold' />;
+			icon = <PiNumberSixBold className='size-4 font-bold' />;
 			break;
 		case -1:
 			bgColor = 'bg-red-600';
-			icon = <FaW className='w-4 h-4' />;
+			icon = <FaW className='size-4' />;
 			break;
 	}
 
@@ -45,7 +45,7 @@ const BallResult = ({ result }: { result: RunOutcome }) => {
 			initial={{ scale: 0, rotate: -180 }}
 			animate={{ scale: 1, rotate: 0 }}
 			transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-			className={`w-10 h-10 ${bgColor} ${textColor} rounded-full flex items-center justify-center font-bold text-lg shadow-lg`}
+			className={`size-8  ${bgColor} ${textColor} rounded-full flex items-center justify-center font-bold text-lg shadow-lg`}
 		>
 			{icon || result}
 		</motion.div>
@@ -93,15 +93,13 @@ export function OverInfo() {
 	);
 
 	return (
-		<section className='sub-card space-y-2'>
+		<section className='space-y-2'>
 			{/* Current Over */}
 			{currentOverInfo.length > 0 && (
-				<>
-					<div className='flex justify-between'>
-						<h3 className='text-sm text-slate-300 font-jetbrains'>This Over</h3>
-						<p className='text-sm font-jetbrains'>
-							Runs: {totalRunsInCurrentOver}
-						</p>
+				<section className='mt-2 sub-card'>
+					<div className='flex justify-between text-xs text-slate-300 mb-1'>
+						<h3 className='font-jetbrains'>This Over</h3>
+						<p className='font-exo2'>Runs: {totalRunsInCurrentOver}</p>
 					</div>
 					<div className='flex gap-2'>
 						<AnimatePresence>
@@ -118,18 +116,14 @@ export function OverInfo() {
 							))}
 						</AnimatePresence>
 					</div>
-				</>
+				</section>
 			)}
 			{/* Previous Over */}
 			{currentOverIndex > 0 && (
-				<div className='mt-4'>
-					<div className='flex justify-between'>
-						<h3 className='text-sm text-slate-300 font-jetbrains'>
-							Previous Over
-						</h3>
-						<p className='text-sm font-jetbrains'>
-							Runs: {totalRunsInPreviousOver}
-						</p>
+				<div className='mt-4 sub-card'>
+					<div className='flex justify-between text-xs text-slate-300 mb-1'>
+						<h3 className='font-jetbrains'>Previous Over</h3>
+						<p className='font-exo2'>Runs: {totalRunsInPreviousOver}</p>
 					</div>
 					<div className='flex gap-2'>
 						{previousOverInfo.map((result, index) => (

@@ -7,11 +7,11 @@ import { OverInfo } from "./over-info";
 import { Anaylsis } from './anaylsis';
 
 export function Gameplay() {
-	return (
-		<main className='flex flex-col min-h-svh justify-between gap-3 '>
+  return (
+		<main className='flex flex-col min-h-svh p-3 justify-between gap-3 '>
 			<section className='space-y-2'>
 				<ScoreBoard />
-				<div className='main-card space-y-2'>
+				<div className='main-card'>
 					<Anaylsis />
 					<OverInfo />
 				</div>

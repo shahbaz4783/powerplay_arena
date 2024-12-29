@@ -222,7 +222,7 @@ export function QuickPlayMode() {
 										<InfoCard
 											title='Overs'
 											icon={<PiBaseballCap />}
-											color='orange'
+											color='teal'
 											amount={format.overs}
 											info={{
 												title: 'What are Overs?',
@@ -238,7 +238,7 @@ export function QuickPlayMode() {
 										<InfoCard
 											title='Max Wickets'
 											icon={<PiCricketBold />}
-											color='orange'
+											color='teal'
 											amount={format.totalWickets}
 											info={{
 												title: 'What are Wickets?',
@@ -250,13 +250,13 @@ export function QuickPlayMode() {
 										<InfoCard
 											title='Pass Required'
 											icon={<Ticket />}
-											color='teal'
+											color='pink'
 											amount={format.passRequired}
 										/>
 										<InfoCard
 											title={`Entry Fees ${token.symbol}`}
 											icon={<Coins />}
-											color='teal'
+											color='pink'
 											amount={format.entryFee}
 										/>
 									</div>
