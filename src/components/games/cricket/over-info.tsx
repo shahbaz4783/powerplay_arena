@@ -9,8 +9,7 @@ import {
 import { FaW } from "react-icons/fa6";
 import { getCurrentInningsData } from "@/src/lib/game-logics";
 import { useCricketGameState } from "@/src/lib/store";
-import { RunOutcome } from "@/src/types/gameState";
-import { GradientBorder } from '../../common/elements/gradient-border';
+import { RunOutcome } from '@/src/types/gameState';
 
 const BallResult = ({ result }: { result: RunOutcome }) => {
 	let bgColor = 'bg-gray-700';
@@ -57,46 +56,96 @@ export function OverInfo() {
 	const { gameState } = useCricketGameState();
 	const { overInfo, ballsFaced } = getCurrentInningsData(gameState);
 
+	// Determine the current over index and balls faced
 	const currentOverIndex = Math.floor(ballsFaced / 6);
 	const ballsInCurrentOver = ballsFaced % 6;
+
+	// Get the current over's data
 	const startIndex = currentOverIndex * 6;
 	const currentOverInfo = overInfo.slice(
 		startIndex,
 		startIndex + ballsInCurrentOver
 	);
 
+	// Calculate runs in the current over
 	const runsInCurrentOver = currentOverInfo.filter(
 		(run) => run !== -1 && run !== null
 	) as number[];
-
 	const totalRunsInCurrentOver = runsInCurrentOver.reduce(
 		(sum, run) => sum + run,
 		0
 	);
 
+	// Get the previous over's data
+	const previousOverStartIndex = (currentOverIndex - 1) * 6;
+	const previousOverInfo =
+		currentOverIndex > 0
+			? overInfo.slice(previousOverStartIndex, previousOverStartIndex + 6)
+			: [];
+
+	// Calculate runs in the previous over
+	const runsInPreviousOver = previousOverInfo.filter(
+		(run) => run !== -1 && run !== null
+	) as number[];
+	const totalRunsInPreviousOver = runsInPreviousOver.reduce(
+		(sum, run) => sum + run,
+		0
+	);
+
 	return (
-		<GradientBorder className=' space-y-2'>
-			<div className='flex justify-between'>
-				<h3 className='text-sm text-slate-300 mb-2 font-jetbrains'>
-					This Over
-				</h3>
-				<p className='text-sm font-jetbrains'>Runs: {totalRunsInCurrentOver}</p>
-			</div>
-			<div className='flex gap-2'>
-				<AnimatePresence>
-					{currentOverInfo.map((result, index) => (
-						<motion.div
-							key={`current-${index}`}
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: -20 }}
-							transition={{ duration: 0.3, delay: index * 0.1 }}
-						>
-							<BallResult result={result} />
-						</motion.div>
-					))}
-				</AnimatePresence>
-			</div>
-		</GradientBorder>
+		<section className='sub-card space-y-2'>
+			{/* Current Over */}
+			{currentOverInfo.length > 0 && (
+				<>
+					<div className='flex justify-between'>
+						<h3 className='text-sm text-slate-300 font-jetbrains'>This Over</h3>
+						<p className='text-sm font-jetbrains'>
+							Runs: {totalRunsInCurrentOver}
+						</p>
+					</div>
+					<div className='flex gap-2'>
+						<AnimatePresence>
+							{currentOverInfo.map((result, index) => (
+								<motion.div
+									key={`current-${index}`}
+									initial={{ opacity: 0, y: 20 }}
+									animate={{ opacity: 1, y: 0 }}
+									exit={{ opacity: 0, y: -20 }}
+									transition={{ duration: 0.3, delay: index * 0.1 }}
+								>
+									<BallResult result={result} />
+								</motion.div>
+							))}
+						</AnimatePresence>
+					</div>
+				</>
+			)}
+			{/* Previous Over */}
+			{currentOverIndex > 0 && (
+				<div className='mt-4'>
+					<div className='flex justify-between'>
+						<h3 className='text-sm text-slate-300 font-jetbrains'>
+							Previous Over
+						</h3>
+						<p className='text-sm font-jetbrains'>
+							Runs: {totalRunsInPreviousOver}
+						</p>
+					</div>
+					<div className='flex gap-2'>
+						{previousOverInfo.map((result, index) => (
+							<motion.div
+								key={`previous-${index}`}
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								exit={{ opacity: 0, y: -20 }}
+								transition={{ duration: 0.3, delay: index * 0.1 }}
+							>
+								<BallResult result={result} />
+							</motion.div>
+						))}
+					</div>
+				</div>
+			)}
+		</section>
 	);
 }

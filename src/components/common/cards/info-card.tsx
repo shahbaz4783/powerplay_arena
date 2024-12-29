@@ -7,6 +7,7 @@ import {
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
+	DialogTrigger,
 } from '@/src/components/ui/dialog';
 
 interface InfoCardProps {
@@ -29,6 +30,7 @@ interface InfoCardProps {
 		description: string;
 	};
 	isLoading?: boolean;
+	iconSize?: number;
 }
 
 export const InfoCard = ({
@@ -38,9 +40,8 @@ export const InfoCard = ({
 	color,
 	info,
 	isLoading,
+	iconSize = 4,
 }: InfoCardProps) => {
-	const [isOpen, setIsOpen] = React.useState(false);
-
 	const colorMap = {
 		yellow: {
 			background: 'from-yellow-500/10 to-yellow-600/5',
@@ -130,14 +131,14 @@ export const InfoCard = ({
 				/>
 				{info && (
 					<div
-						className='w-4 h-4 rounded-full animate-pulse'
+						className={`size-${iconSize} rounded-full animate-pulse`}
 						style={{ background: `${color}-500/10` }}
 					/>
 				)}
 			</div>
 			<div className='flex items-center gap-2'>
 				<div className={cn('p-2 rounded-lg animate-pulse', colors.shimmer)}>
-					<div className='w-4 h-4' />
+					<div className={`size-${iconSize}`} />
 				</div>
 				<div
 					className='h-6 w-20 rounded animate-pulse'
@@ -148,92 +149,87 @@ export const InfoCard = ({
 	);
 
 	return (
-		<>
-			<motion.div
-				initial={{ opacity: 0, y: 20 }}
-				animate={{ opacity: 1, y: 0 }}
-				exit={{ opacity: 0, y: -20 }}
-				className={cn(
-					'relative rounded-lg border',
-					colors.border,
-					'bg-gradient-to-br',
-					colors.background,
-					colors.text,
-					'overflow-hidden'
-				)}
-			>
-				<div className='p-2'>
-					{isLoading ? (
-						<LoadingAnimation />
-					) : (
-						<div className='space-y-2'>
-							<div className='flex items-center justify-between gap-3'>
-								<div className='flex flex-col'>
-									<h3 className='text-xs font-jetbrains font-medium'>
-										{title}
-									</h3>
-								</div>
-								{info && (
-									<motion.button
-										whileTap={{ scale: 0.9 }}
-										onClick={() => setIsOpen(true)}
-										className='rounded-full'
-									>
-										<Info className='w-4 h-4' />
-									</motion.button>
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			exit={{ opacity: 0, y: -20 }}
+			className={cn(
+				'relative rounded-lg border',
+				colors.border,
+				'bg-gradient-to-br',
+				colors.background,
+				colors.text,
+				'overflow-hidden'
+			)}
+		>
+			<div className='p-2'>
+				{isLoading ? (
+					<LoadingAnimation />
+				) : (
+					<div className='space-y-2'>
+						<div className='flex items-center justify-between gap-3'>
+							<div className='flex flex-col'>
+								<h3 className='text-xs font-jetbrains font-medium'>{title}</h3>
+							</div>
+							{info && (
+								<Dialog>
+									<DialogTrigger asChild>
+										<motion.button
+											whileTap={{ scale: 0.9 }}
+											className='rounded-full'
+										>
+											<Info className={`size-${iconSize}`} />
+										</motion.button>
+									</DialogTrigger>
+									<DialogContent className='w-11/12 rounded-xl'>
+										<DialogHeader>
+											<DialogTitle className={colors.text}>
+												{info.title || title}
+											</DialogTitle>
+										</DialogHeader>
+										<p className='text-sm text-muted-foreground whitespace-pre-line'>
+											{info.description}
+										</p>
+									</DialogContent>
+								</Dialog>
+							)}
+						</div>
+						<div className='flex items-center gap-2'>
+							<div className={cn('p-2 rounded-lg relative', colors.icon)}>
+								{isLoading ? (
+									<Loader2 className={`size-${iconSize} animate-spin`} />
+								) : (
+									<div className={colors.text}>{icon}</div>
 								)}
 							</div>
-							<div className='flex items-center gap-2'>
-								<div className={cn('p-2 rounded-lg relative', colors.icon)}>
-									{isLoading ? (
-										<Loader2 className='w-4 h-4 animate-spin' />
-									) : (
-										<div className={colors.text}>{icon}</div>
-									)}
-								</div>
-								<span className={cn(`text-xl font-bold ${colors.text}`)}>
-									{typeof parsedAmount === 'number'
-										? formatCompactNumber(parsedAmount)
-										: parsedAmount}
-								</span>
-							</div>
+							<span className={cn(`text-xl font-bold ${colors.text}`)}>
+								{typeof parsedAmount === 'number'
+									? formatCompactNumber(parsedAmount)
+									: parsedAmount}
+							</span>
 						</div>
-					)}
-				</div>
-
-				{/* Loading shimmer effect */}
-				{isLoading && (
-					<div
-						className='absolute inset-0 -translate-x-full animate-[shimmer_1s_infinite]'
-						style={{
-							background: `linear-gradient(90deg, transparent, ${color}-500/5, transparent)`,
-						}}
-					/>
+					</div>
 				)}
+			</div>
 
-				<motion.div
-					className={cn(
-						'absolute bottom-0 left-0 right-0 h-1',
-						colors.text,
-						'opacity-0 group-hover:opacity-100 transition-opacity duration-300'
-					)}
-					layoutId={`underline-${color}`}
+			{/* Loading shimmer effect */}
+			{isLoading && (
+				<div
+					className='absolute inset-0 -translate-x-full animate-[shimmer_1s_infinite]'
+					style={{
+						background: `linear-gradient(90deg, transparent, ${color}-500/5, transparent)`,
+					}}
 				/>
-			</motion.div>
+			)}
 
-			<Dialog open={isOpen} onOpenChange={setIsOpen}>
-				<DialogContent className='w-11/12 rounded-xl'>
-					<DialogHeader>
-						<DialogTitle className={colors.text}>
-							{info?.title || title}
-						</DialogTitle>
-					</DialogHeader>
-
-					<p className='text-sm text-muted-foreground whitespace-pre-line'>
-						{info?.description}
-					</p>
-				</DialogContent>
-			</Dialog>
-		</>
+			<motion.div
+				className={cn(
+					'absolute bottom-0 left-0 right-0 h-1',
+					colors.text,
+					'opacity-0 group-hover:opacity-100 transition-opacity duration-300'
+				)}
+				layoutId={`underline-${color}`}
+			/>
+		</motion.div>
 	);
 };
