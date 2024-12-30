@@ -123,7 +123,7 @@ export const executePowerExchange = async (
 
 	const totalPass = Number(formData.get('totalPass'));
 	const exchangeDirection = formData.get('exchangeDirection');
-	const { netPassSaleAmount, totalPassCost } =
+	const { netPassSaleAmount, totalPassCost, exchangeFee } =
 		calculateExchangeValues(totalPass);
 
 	try {
@@ -134,9 +134,6 @@ export const executePowerExchange = async (
 		if (!profile) {
 			throw new Error(responseMessages.general.error.unexpectedError);
 		}
-
-		console.log({ profile });
-		console.log(exchangeDirection);
 
 		return await db.$transaction(async (tx) => {
 			if (exchangeDirection === 'buyPasses') {
@@ -157,8 +154,13 @@ export const executePowerExchange = async (
 				await tx.transaction.create({
 					data: {
 						telegramId,
-						type: 'PURCHASE',
-						description: `Exchanged ${totalPass} ${token.pass}`,
+						type: 'EXCHANGE',
+						description: `Exchanged ${token.name} for ${token.pass}`,
+						coinAmount: -totalPassCost,
+						passAmount: totalPass,
+						metadata: {
+							exchangeFee: `${exchangeFee} ${token.symbol}`,
+						},
 					},
 				});
 			}
@@ -181,8 +183,13 @@ export const executePowerExchange = async (
 				await tx.transaction.create({
 					data: {
 						telegramId,
-						type: 'PURCHASE',
-						description: `Sold ${totalPass} ${token.pass}`,
+						type: 'EXCHANGE',
+						coinAmount: netPassSaleAmount,
+						passAmount: -totalPass,
+						description: `Exchanged ${token.pass} for ${token.name}`,
+						metadata: {
+							exchangeFee: `${exchangeFee} ${token.symbol}`,
+						},
 					},
 				});
 			}

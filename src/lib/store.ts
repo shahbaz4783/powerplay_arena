@@ -13,6 +13,7 @@ const SECRET_KEY =
 
 const initialState: GameState = {
 	matchId: '',
+	transactionId: '',
 	gamePhase: 'toss',
 	currentInnings: 1,
 	target: null,

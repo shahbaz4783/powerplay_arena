@@ -1,22 +1,19 @@
-"use server";
+'use server';
 
-import { FormResponse, ServerResponseType } from '@/src/types/types';
+import { ServerResponseType } from '@/src/types/types';
 import { db } from '../lib/db';
 import { GameState, LevelInfo } from '../types/gameState';
-import { redirect } from 'next/navigation';
 import { GameOutcome, MatchFormat } from '@prisma/client';
-import { calculateLevel, calculateCricketXPGain } from '../lib/utils';
+import { calculateLevel } from '../lib/utils';
 import { revalidatePath } from 'next/cache';
 import { Milestone } from '../types/db.types';
-import { token } from '../constants/app-config';
-import { getUserInventoryById } from '../models/user';
-import { initializeCricketStats } from '../models/stats';
 import { cricketMatchRewards } from '../lib/game-logics';
 import * as models from '@/src/models';
 import { responseMessages } from '../constants/messages';
 
 interface CricketMatchData {
 	matchId: string;
+	transactionId: string;
 }
 export async function setupCricketMatch(
 	telegramId: string,
@@ -52,18 +49,35 @@ export async function setupCricketMatch(
 				},
 			});
 
-			return await tx.cricketMatchRecord.create({
+			const transaction = await tx.transaction.create({
+				data: {
+					telegramId,
+					type: 'GAME',
+					coinAmount: -entryFee,
+					passAmount: -passRequired,
+					description: `Entry fees paid for ${formatValue} match.`,
+					metadata: {
+						format: formatValue,
+						fees: entryFee,
+						result: 'The match was not completed.',
+					},
+				},
+			});
+
+			const match = await tx.cricketMatchRecord.create({
 				data: {
 					format: formatValue,
 					user: { connect: { telegramId } },
 				},
 			});
+
+			return { transactionId: transaction.id, matchId: match.matchId };
 		});
 
 		return {
 			success: true,
 			message: 'Match started successfully',
-			data: { matchId: result.matchId },
+			data: { matchId: result.matchId, transactionId: result.transactionId },
 		};
 	} catch (error) {
 		console.error('Error starting quick match:', error);
@@ -111,7 +125,24 @@ export async function updateCricketMatchData(
 			outcome = 'ONGOING';
 		}
 
+		const resultString = `${
+			gameState.matchResult.winner === 'player'
+				? `You won by ${gameState.matchResult.margin} ${
+						gameState.matchResult.marginType === 'runs' ? 'runs' : 'wickets'
+				  }`
+				: gameState.matchResult.winner === 'opponent'
+				? `opponent won by ${gameState.matchResult.margin} ${
+						gameState.matchResult.marginType === 'runs' ? 'runs' : 'wickets'
+				  }`
+				: 'Match tied.'
+		}`;
+
+		const { referralRewardActive, referrerId } = await models.getReferralData(
+			existingMatch?.telegramId!
+		);
+
 		const { totalEarnings, totalXP } = cricketMatchRewards(gameState);
+		const isLoss = totalEarnings - gameState.matchSetup.entryFee < 0;
 
 		const currentStats = await models.getCricketStatsByFormat(
 			existingMatch?.telegramId!,
@@ -142,7 +173,6 @@ export async function updateCricketMatchData(
 					outcome,
 				},
 			});
-
 			// Only update stats if the game is finished
 			if (outcome !== 'ONGOING') {
 				await tx.cricketMatchStats.update({
@@ -198,13 +228,23 @@ export async function updateCricketMatchData(
 					},
 				});
 
-				// Record the transaction
-				await tx.transaction.create({
+				// Update the transaction
+				await tx.transaction.update({
+					where: { id: gameState.transactionId },
 					data: {
-						telegramId: updatedMatch.telegramId,
-						coinAmount: totalEarnings,
-						type: 'GAME',
-						description: `Earnings from match ${matchId}`,
+						coinAmount: { increment: totalEarnings },
+						description: `${
+							isLoss
+								? 'Lost'
+								: totalEarnings - gameState.matchSetup.entryFee === 0
+								? 'No gain of'
+								: 'Earned'
+						} coins in ${gameState.matchSetup.format} match.`,
+						metadata: {
+							format: gameState.matchSetup.format,
+							fees: gameState.matchSetup.entryFee,
+							result: resultString,
+						},
 					},
 				});
 
@@ -220,6 +260,37 @@ export async function updateCricketMatchData(
 						xpForNextLevel: newLevelInfo.xpForNextLevel,
 					},
 				});
+
+				const bonusForReferrer = Math.round(totalEarnings * 0.1);
+
+				// Update Referral bonus for first 4 weeks
+				if (bonusForReferrer >= 1 && referralRewardActive && referrerId) {
+					await tx.userInventory.update({
+						where: { telegramId: referrerId },
+						data: {
+							powerCoin: { increment: bonusForReferrer },
+						},
+					});
+
+					await tx.referralRecord.updateMany({
+						where: {
+							referrerId: referrerId,
+							referredId: existingMatch?.telegramId,
+						},
+						data: {
+							totalEarnedCoins: { increment: bonusForReferrer },
+						},
+					});
+
+					await tx.transaction.create({
+						data: {
+							telegramId: referrerId,
+							coinAmount: bonusForReferrer,
+							type: 'REWARD',
+							description: ``,
+						},
+					});
+				}
 			}
 
 			return { updatedMatch, totalEarnings };

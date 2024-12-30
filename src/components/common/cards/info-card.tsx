@@ -11,7 +11,7 @@ import {
 } from '@/src/components/ui/dialog';
 
 interface InfoCardProps {
-	icon: React.ReactNode;
+	icon?: React.ReactNode;
 	title: string;
 	amount: number | string;
 	color:
@@ -137,9 +137,11 @@ export const InfoCard = ({
 				)}
 			</div>
 			<div className='flex items-center gap-2'>
-				<div className={cn('p-2 rounded-lg animate-pulse', colors.shimmer)}>
-					<div className={`size-${iconSize}`} />
-				</div>
+				{icon && (
+					<div className={cn('p-2 rounded-lg animate-pulse', colors.shimmer)}>
+						<div className={`size-${iconSize}`} />
+					</div>
+				)}
 				<div
 					className='h-6 w-20 rounded animate-pulse'
 					style={{ background: `${color}-500/10` }}
@@ -195,13 +197,15 @@ export const InfoCard = ({
 							)}
 						</div>
 						<div className='flex items-center gap-2'>
-							<div className={cn('p-2 rounded-lg relative', colors.icon)}>
-								{isLoading ? (
-									<Loader2 className={`size-${iconSize} animate-spin`} />
-								) : (
-									<div className={colors.text}>{icon}</div>
-								)}
-							</div>
+							{icon && (
+								<div className={cn('p-2 rounded-lg relative', colors.icon)}>
+									{isLoading ? (
+										<Loader2 className={`size-${iconSize} animate-spin`} />
+									) : (
+										<div className={colors.text}>{icon}</div>
+									)}
+								</div>
+							)}
 							<span className={cn(`text-xl font-bold ${colors.text}`)}>
 								{typeof parsedAmount === 'number'
 									? formatCompactNumber(parsedAmount)

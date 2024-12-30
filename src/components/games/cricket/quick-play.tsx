@@ -72,6 +72,7 @@ export function QuickPlayMode() {
 			message: '',
 			data: {
 				matchId: '',
+				transactionId: '',
 			},
 		}
 	);
@@ -91,6 +92,7 @@ export function QuickPlayMode() {
 		if (response.success) {
 			updateGameState({
 				matchId: response.data?.matchId,
+				transactionId: response.data?.transactionId,
 				gamePhase: 'toss',
 				matchSetup: MATCH_FORMATS[selectedFormat],
 			});
