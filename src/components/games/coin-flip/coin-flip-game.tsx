@@ -33,10 +33,6 @@ export function CoinFlipChallenge() {
 	} = useUserInventory(telegramId);
 	const userBalance = inventory?.powerCoin as number;
 
-	if (isError) {
-		return <p>{error.message}</p>;
-	}
-
 	const [betAmount, setBetAmount] = useState(100);
 	const [selectedChallenge, setSelectedChallenge] = useState<BetOption>(
 		betOptions[0]
@@ -70,6 +66,10 @@ export function CoinFlipChallenge() {
 
 	if (isLoading) {
 		return <GameLoadingScreen gameType='fortuneFlip' />;
+	}
+
+	if (isError) {
+		return <p>{error.message}</p>;
 	}
 
 	const maxBet = Math.floor((userBalance * 0.65) / 10) * 10;

@@ -63,10 +63,7 @@ export function QuickPlayMode() {
 		isError,
 		error,
 	} = useCricketStats(telegramId, selectedFormat);
-	
-	if (isError) {
-		return <ErrorComponent error={error} />;
-	}
+
 	if (isStatsLoading) {
 		<GameLoadingScreen gameType='powerStrike' />;
 	}
@@ -110,6 +107,7 @@ export function QuickPlayMode() {
 	}, [
 		response.success,
 		response.data?.matchId,
+		response.data?.transactionId,
 		response.message,
 		selectedFormat,
 		updateGameState,
@@ -133,6 +131,9 @@ export function QuickPlayMode() {
 
 	if (response.success) {
 		return <LoadingCricketGame />;
+	}
+	if (isError) {
+		return <ErrorComponent error={error} />;
 	}
 
 	return (

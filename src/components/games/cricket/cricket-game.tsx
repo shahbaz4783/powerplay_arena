@@ -70,35 +70,6 @@ export default function CricketGame() {
 		[currentInningsData, overs, totalWickets]
 	);
 
-	useEffect(() => {
-		const checkInningsEnd = () => {
-			if (currentInnings === 1) {
-				if (isInningsOver) {
-					updateGameState({
-						target: currentInningsData.runs + 1,
-						gamePhase: 'inningsOver',
-					});
-				}
-			} else {
-				checkMatchResult();
-			}
-		};
-
-		checkInningsEnd();
-
-		if (gamePhase === 'result') {
-			handleGameOver();
-		}
-	}, [
-		gamePhase,
-		handleGameOver,
-		matchId,
-		gameState,
-		currentInnings,
-		isInningsOver,
-		currentInningsData.runs,
-	]);
-
 	const checkMatchResult = useCallback(() => {
 		const { player, opponent, target } = gameState;
 
@@ -170,6 +141,35 @@ export default function CricketGame() {
 		playMode,
 		overs,
 		totalWickets,
+		updateGameState,
+	]);
+
+	useEffect(() => {
+		const checkInningsEnd = () => {
+			if (currentInnings === 1) {
+				if (isInningsOver) {
+					updateGameState({
+						target: currentInningsData.runs + 1,
+						gamePhase: 'inningsOver',
+					});
+				}
+			} else {
+				checkMatchResult();
+			}
+		};
+
+		checkInningsEnd();
+
+		if (gamePhase === 'result') {
+			handleGameOver();
+		}
+	}, [
+		gamePhase,
+		handleGameOver,
+		currentInnings,
+		isInningsOver,
+		currentInningsData.runs,
+		checkMatchResult,
 		updateGameState,
 	]);
 
