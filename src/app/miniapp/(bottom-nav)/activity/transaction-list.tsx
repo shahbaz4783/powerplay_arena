@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '@/src/lib/utils';
+import { cn, formatCompactNumber } from '@/src/lib/utils';
 import { ScrollArea } from '@/src/components/ui/scroll-area';
 import { Dialog, DialogTrigger } from '@/src/components/ui/dialog';
 import {
@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { TransactionDialog } from './transaction-dialog';
 import { Transaction } from '@prisma/client';
+import { InfoCard } from '@/src/components/common/cards/info-card';
 
 const getTransactionIcon = (type: string) =>
 	({
@@ -25,7 +26,7 @@ const getTransactionIcon = (type: string) =>
 const getDisplayAmount = (tx: Transaction) => {
 	if (tx.voucherAmount !== 0) {
 		return {
-			icon: <Gift className='w-4 h-4 text-purple-500' />,
+			icon: <Gift className='size-3' />,
 			amount: tx.voucherAmount,
 			type: 'voucher',
 		};
@@ -33,7 +34,7 @@ const getDisplayAmount = (tx: Transaction) => {
 
 	if (tx.coinAmount !== 0) {
 		return {
-			icon: <Coins className='w-4 h-4 text-yellow-500' />,
+			icon: <Coins className='size-3' />,
 			amount: tx.coinAmount,
 			type: 'coin',
 		};
@@ -41,7 +42,7 @@ const getDisplayAmount = (tx: Transaction) => {
 
 	if (tx.passAmount !== 0) {
 		return {
-			icon: <Ticket className='w-4 h-4 text-blue-500' />,
+			icon: <Ticket className='size-3' />,
 			amount: tx.passAmount,
 			type: 'pass',
 		};
@@ -56,8 +57,9 @@ const TransactionCard = ({ tx }: { tx: Transaction }) => {
 
 	return (
 		<div className='pb-2 border-b-[1px] border-slate-700/50'>
-			<div className='flex items-center justify-between'>
-				<div className='flex items-center gap-3 flex-1 min-w-0'>
+			<div className='grid grid-cols-8 gap-1'>
+				{/* Main */}
+				<div className='col-span-6 flex items-center gap-3 flex-1 min-w-0'>
 					<div
 						className={cn(
 							'p-2 rounded-lg transition-colors shrink-0',
@@ -67,13 +69,13 @@ const TransactionCard = ({ tx }: { tx: Transaction }) => {
 						{getTransactionIcon(tx.type)}
 					</div>
 
-					<div className='flex flex-col min-w-0'>
-						<p className='font-medium text-sm text-slate-200 truncate'>
+					<div className='flex flex-col min-w-0 font-exo2'>
+						<p className=' text-sm text-slate-300  truncate'>
 							{tx.description || tx.type}
 						</p>
 						<div className='flex items-center gap-2'>
 							<div className='flex items-center text-xs text-slate-400'>
-								<Clock className='w-3 h-3 mr-1' />
+								<Clock className='size-3 mr-1' />
 								{tx.createdAt.toLocaleTimeString()}
 							</div>
 							{isDebit ? (
@@ -81,32 +83,35 @@ const TransactionCard = ({ tx }: { tx: Transaction }) => {
 							) : (
 								<ArrowUpFromLine className='w-3 h-3 text-green-400' />
 							)}
+							<TransactionDialog transaction={tx} />
 						</div>
 					</div>
 				</div>
 
-				<div className='flex items-center gap-2 shrink-0'>
-					{displayAmount && (
-						<div
+				{/* Amount Info */}
+				{displayAmount && (
+					<div
+						className={cn(
+							'col-span-2 grid grid-cols-3 items-center border rounded-md bg-gradient-to-br',
+							displayAmount.amount >= 0
+								? 'from-teal-500/10 to-teal-600/5 border-teal-500/20 text-teal-400'
+								: 'from-red-500/10 to-red-600/5 border-red-500/20 text-red-400'
+						)}
+					>
+						<div className='col-span-1 grid place-items-center'>
+							{displayAmount.icon}
+						</div>
+						<p
 							className={cn(
-								'flex items-center gap-1.5 px-3 py-1.5 rounded-md',
-								displayAmount.amount >= 0 ? 'bg-green-500/10' : 'bg-red-500/10'
+								'font-exo2 text-center text-sm col-span-2',
+								displayAmount.amount > 999 && 'text-xs',
+								displayAmount.amount < -999 && 'text-xs'
 							)}
 						>
-							{displayAmount.icon}
-							<span
-								className={cn(
-									'font-medium text-sm',
-									displayAmount.amount >= 0 ? 'text-green-400' : 'text-red-400'
-								)}
-							>
-								{displayAmount.amount}
-							</span>
-						</div>
-					)}
-
-					<TransactionDialog transaction={tx} />
-				</div>
+							{formatCompactNumber(displayAmount.amount)}
+						</p>
+					</div>
+				)}
 			</div>
 		</div>
 	);

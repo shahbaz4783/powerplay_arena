@@ -5,119 +5,135 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/src/components/ui/dialog';
+import { motion } from 'framer-motion';
+import { format } from 'date-fns';
+import { Calendar, ChevronRight, Clock, Info } from 'lucide-react';
 import { Transaction } from '@prisma/client';
-import { Clock, Coins, Gift, Info, Ticket } from 'lucide-react';
+import { InfoCard } from '@/src/components/common/cards/info-card';
+import { token } from '@/src/constants/app-config';
 
 export const TransactionDialog = ({
 	transaction,
 }: {
 	transaction: Transaction;
 }) => {
+	const MetadataView = ({ data, depth = 0 }: { data: any; depth?: number }) => {
+		if (typeof data !== 'object' || data === null) {
+			return (
+				<span
+					className={`text-sm font-mono ${
+						typeof data === 'number'
+							? 'text-emerald-400'
+							: typeof data === 'boolean'
+							? 'text-amber-400'
+							: typeof data === 'string'
+							? 'text-blue-400'
+							: 'text-slate-300'
+					}`}
+				>
+					{String(data)}
+				</span>
+			);
+		}
+
+		return (
+			<div className={`${depth > 0 ? 'ml-3' : ''}`}>
+				{Object.entries(data).map(([key, value], index) => (
+					<div
+						key={key}
+						className={`
+            ${depth === 0 ? 'bg-slate-900/40 rounded-lg' : ''}
+            ${depth === 0 && index > 0 ? 'mt-2' : ''}
+          `}
+					>
+						<div className='flex items-center gap-1'>
+							{depth === 0 && (
+								<ChevronRight className='w-3 h-3 text-slate-500' />
+							)}
+							<span className='text-sm text-slate-400'>{key}:</span>
+							{typeof value !== 'object' ? (
+								<MetadataView data={value} depth={depth + 1} />
+							) : (
+								<span>{Array.isArray(value) ? 'Array' : 'Object'}</span>
+							)}
+						</div>
+						{typeof value === 'object' && (
+							<div className='border-l border-slate-700/50'>
+								<MetadataView data={value} depth={depth + 1} />
+							</div>
+						)}
+					</div>
+				))}
+			</div>
+		);
+	};
+
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<button className='p-2 rounded-full hover:bg-slate-700/50 transition-colors'>
-					<Info className='w-4 h-4 text-slate-400 hover:text-slate-200' />
-				</button>
+				<motion.button className='rounded-full' whileTap={{ scale: 0.9 }}>
+					<Info className='size-3 text-slate-400' />
+				</motion.button>
 			</DialogTrigger>
 
-			<DialogContent className='w-11/12 rounded-xl'>
+			<DialogContent className='w-[95%] max-w-md bg-slate-950/95 backdrop-blur-xl border-slate-800'>
 				<DialogHeader>
-					<DialogTitle className='text-xl font-bold flex items-center gap-2'>
-						<Info className='w-5 h-5 text-blue-400' />
+					<DialogTitle className='text-lg font-semibold flex items-center gap-2 text-slate-200'>
+						<Info className='w-4 h-4 text-blue-400' />
 						Transaction Details
 					</DialogTitle>
 				</DialogHeader>
-				<div className='space-y-4'>
-					<div className='flex items-center justify-between p-4 bg-slate-800/50 rounded-xl backdrop-blur-sm'>
-						<span className='text-slate-300'>Transaction ID</span>
-						<span className='font-mono text-sm bg-slate-950/50 px-3 py-1 rounded-lg'>
-							{transaction.id.slice(0, 8)}
-						</span>
+
+				<div className='space-y-3'>
+					<div className='grid grid-cols-3 gap-2'>
+						<InfoCard
+							title={token.name}
+							amount={transaction.coinAmount}
+							color={transaction.coinAmount >= 0 ? 'teal' : 'red'}
+						/>
+						<InfoCard
+							title={token.pass}
+							amount={transaction.passAmount}
+							color={transaction.passAmount >= 0 ? 'teal' : 'red'}
+						/>
+						<InfoCard
+							title='Voucher'
+							amount={transaction.voucherAmount}
+							color={transaction.voucherAmount >= 0 ? 'teal' : 'red'}
+						/>
 					</div>
-
-					<div className='grid grid-cols-2 gap-3'>
-						<div className='p-4 bg-slate-800/50 rounded-xl backdrop-blur-sm hover:bg-slate-800/70 transition-colors'>
-							<div className='flex items-center gap-2 mb-2'>
-								<Coins className='w-5 h-5 text-yellow-500' />
-								<span className='text-slate-300 font-medium'>Coins</span>
-							</div>
-							<span
-								className={`text-xl font-bold ${
-									transaction.coinAmount >= 0
-										? 'text-green-400'
-										: 'text-red-400'
-								}`}
-							>
-								{transaction.coinAmount >= 0 ? '+' : ''}
-								{transaction.coinAmount}
-							</span>
-						</div>
-
-						<div className='p-4 bg-slate-800/50 rounded-xl backdrop-blur-sm hover:bg-slate-800/70 transition-colors'>
-							<div className='flex items-center gap-2 mb-2'>
-								<Ticket className='w-5 h-5 text-blue-500' />
-								<span className='text-slate-300 font-medium'>Pass</span>
-							</div>
-							<span
-								className={`text-xl font-bold ${
-									transaction.passAmount >= 0
-										? 'text-green-400'
-										: 'text-red-400'
-								}`}
-							>
-								{transaction.passAmount >= 0 ? '+' : ''}
-								{transaction.passAmount}
-							</span>
-						</div>
-
-						<div className='p-4 bg-slate-800/50 rounded-xl backdrop-blur-sm hover:bg-slate-800/70 transition-colors'>
-							<div className='flex items-center gap-2 mb-2'>
-								<Gift className='w-5 h-5 text-purple-500' />
-								<span className='text-slate-300 font-medium'>Voucher</span>
-							</div>
-							<span
-								className={`text-xl font-bold ${
-									transaction.voucherAmount >= 0
-										? 'text-green-400'
-										: 'text-red-400'
-								}`}
-							>
-								{transaction.voucherAmount >= 0 ? '+' : ''}
-								{transaction.voucherAmount}
-							</span>
-						</div>
-
-						<div className='p-4 bg-slate-800/50 rounded-xl backdrop-blur-sm hover:bg-slate-800/70 transition-colors'>
-							<div className='flex items-center gap-2 mb-2'>
-								<Clock className='w-5 h-5 text-slate-400' />
-								<span className='text-slate-300 font-medium'>Time</span>
-							</div>
-							<span className='text-sm font-medium text-slate-200'>
-								{transaction.createdAt.toLocaleString()}
-							</span>
-						</div>
-					</div>
-
 					{transaction.description && (
-						<div className='p-4 bg-slate-800/50 rounded-xl backdrop-blur-sm'>
-							<span className='text-slate-300 font-medium block mb-2'>
-								Description
-							</span>
-							<p className='text-sm text-slate-200'>
-								{transaction.description}
-							</p>
+						<div className='main-card space-y-3'>
+							<div className='flex items-center justify-between border-b border-slate-700/50 pb-2'>
+								<span className='text-sm font-medium text-slate-300'>
+									Description
+								</span>
+								<span className='text-xs text-slate-500 bg-slate-800/50 px-2 py-1 rounded-full'>
+									#{transaction.id.slice(0, 8)}
+								</span>
+							</div>
+
+							<div className='flex items-center gap-2 text-xs text-slate-400'>
+								<Calendar className='w-3 h-3' />
+								{format(transaction.createdAt, 'MMM dd, yyyy, hh:mm:ss a')}
+							</div>
+
+							<div className='relative'>
+								<div className='absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500/50 to-purple-500/50 rounded-full' />
+								<div className='pl-4'>
+									<p className='text-sm leading-relaxed text-slate-200'>
+										{transaction.description}
+									</p>
+								</div>
+							</div>
 						</div>
 					)}
-
 					{transaction.metadata && (
-						<div className='p-4 bg-slate-800/50 rounded-xl backdrop-blur-sm'>
-							<span className='text-slate-300 font-medium block mb-2'>
+						<div className='main-card'>
+							<span className='text-sm text-slate-400 block border-b border-slate-700/50 pb-2 mb-2'>
 								Additional Info
 							</span>
-							<pre className='text-sm overflow-x-auto bg-slate-950/50 p-3 rounded-lg'>
-								{JSON.stringify(transaction.metadata, null, 2)}
-							</pre>
+							<MetadataView data={transaction.metadata} />
 						</div>
 					)}
 				</div>
@@ -125,3 +141,5 @@ export const TransactionDialog = ({
 		</Dialog>
 	);
 };
+
+export default TransactionDialog;
