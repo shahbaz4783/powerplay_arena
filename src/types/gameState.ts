@@ -51,6 +51,15 @@ export interface MatchResultInterface {
 	marginType: MarginType | null;
 }
 
+export interface GameControls {
+	loft: 2 | 3 | 4 | 6;
+	yorker: 2 | 3 | 4 | 6;
+}
+export interface CurrentOver {
+	loftUsed: number;
+	yorkerUsed: number;
+}
+
 export interface GameState {
 	// Game flow
 	matchId: string;
@@ -58,6 +67,9 @@ export interface GameState {
 	gamePhase: GamePhase;
 	currentInnings: 1 | 2;
 	matchSetup: MatchSetup;
+
+	gameControls: GameControls;
+	currentOver: CurrentOver;
 
 	// Toss
 	toss: TossInterface;

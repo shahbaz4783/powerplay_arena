@@ -11,6 +11,7 @@ import { Skeleton } from '@/src/components/ui/skeleton';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { InfoCard } from '../../common/cards/info-card';
 import { GradientBorder } from '../../common/elements/gradient-border';
+import { ErrorComponent } from '../feedback/error-ui';
 
 const MAX_LEVEL = 10;
 
@@ -19,8 +20,17 @@ export function ProfileSummary() {
 	const user = initData?.user;
 	const { telegramId } = useCurrentUser();
 
-	const { data: inventory, isLoading } = useUserInventory(telegramId);
+	const {
+		data: inventory,
+		isLoading,
+		isError,
+		error,
+	} = useUserInventory(telegramId);
 	const { data: userProgress } = useUserProgress(telegramId);
+
+	if (isError) {
+		return <ErrorComponent error={error} />;
+	}
 
 	const totalXP = userProgress?.totalXP ?? 0;
 	const xpForLevelUp = userProgress?.xpForNextLevel ?? 0;

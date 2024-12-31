@@ -106,12 +106,12 @@ const RunsBarComparison = () => {
 			<DialogTrigger asChild>
 				<motion.button
 					whileTap={{ scale: 0.9 }}
-					className='flex items-center justify-center bg-gradient-to-br p-3 from-blue-500/10 to-blue-600/5 border border-blue-500/20 text-xl rounded-md shadow-xl'
+					className='flex items-center text-blue-400 justify-center bg-gradient-to-br p-3 from-blue-500/10 to-blue-600/5 border border-blue-500/20 text-xl rounded-md shadow-xl'
 				>
-					<BarChart3 className='h-5 w-5 bg-blue-500/10' />
+					<BarChart3 className='h-5 w-5' />
 				</motion.button>
 			</DialogTrigger>
-			<DialogContent className='w-11/12 rounded-xl'>
+			<DialogContent className='w-11/12 rounded-xl z-[200]'>
 				<DialogHeader>
 					<DialogTitle className='text-xl font-bold text-white'>
 						Runs Per Over Comparison

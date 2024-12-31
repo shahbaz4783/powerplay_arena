@@ -16,7 +16,6 @@ import { cn } from '@/src/lib/utils';
 import { motion } from 'framer-motion';
 import { Swords, Shield, Target, Crosshair, Bomb, Hammer } from 'lucide-react';
 import { InfoDialog } from '../../common/dialog/cricket-control';
-import { GradientBorder } from '../../common/elements/gradient-border';
 
 type GameAction = BattingStyle | BowlingType;
 
@@ -27,6 +26,7 @@ export function GameControls() {
 	const handleAction = (action: GameAction) => {
 		setDisableControls(true);
 		const isBatting = gameState.gamePhase === 'batting';
+
 		const runsScored = isBatting
 			? calculateRunsScored(action as BattingStyle, opponentBowling(gameState))
 			: calculateRunsScored(
@@ -36,59 +36,46 @@ export function GameControls() {
 
 		const battingTeam: GameParticipant = isBatting ? 'player' : 'opponent';
 
-		updateInnings(battingTeam, runsScored);
+		updateInnings(battingTeam, runsScored, action);
 
 		setTimeout(() => setDisableControls(false), 2000);
 	};
 
-	const renderButtons = (actions: GameAction[]) => (
-		<>
-			{actions.map((action, index) => (
-				<motion.button
-					key={action}
-					onClick={() => handleAction(action)}
-					whileTap={{ scale: 0.75 }}
-					className={cn(
-						'w-full p-4 text-sm font-bold uppercase tracking-wider',
-						'bg-gradient-to-b from-slate-700 to-slate-800',
-						'text-slate-200 shadow-md rounded-xl',
-						'disabled:opacity-50 disabled:cursor-not-allowed',
-						{ 'animate-pulse': disableControls },
-						getButtonColor(index)
-					)}
-					disabled={disableControls}
-				>
-					{getBattingLabel(action as BattingStyle) ||
-						getBowlingLabel(action as BowlingType)}
-				</motion.button>
-			))}
-		</>
-	);
-
-	const getButtonColor = (index: number): string => {
-		const colors = [
-			'border-l-4 border-red-500',
-			'border-l-4 border-yellow-500',
-			'border-l-4 border-blue-500',
-		];
-		return colors[index];
+	const isActionDisabled = (action: GameAction) => {
+		if (action === 'aggressive') {
+			return gameState.currentOver.loftUsed >= gameState.gameControls.loft;
+		}
+		if (action === 'yorker') {
+			return gameState.currentOver.yorkerUsed >= gameState.gameControls.yorker;
+		}
+		return false;
 	};
 
-	const getBattingLabel = (action: BattingStyle): string => {
+	const getActionIcon = (action: GameAction) => {
 		switch (action) {
 			case 'aggressive':
-				return 'Slog';
+				return <Swords className='w-6 h-6' />;
+			case 'normal':
+				return <Target className='w-6 h-6' />;
+			case 'defensive':
+				return <Shield className='w-6 h-6' />;
+			case 'seam':
+				return <Crosshair className='w-6 h-6' />;
+			case 'bouncer':
+				return <Bomb className='w-6 h-6' />;
+			case 'yorker':
+				return <Hammer className='w-6 h-6' />;
+		}
+	};
+
+	const getActionLabel = (action: GameAction): string => {
+		switch (action) {
+			case 'aggressive':
+				return 'Loft';
 			case 'normal':
 				return 'Drive';
 			case 'defensive':
 				return 'Guard';
-			default:
-				return '';
-		}
-	};
-
-	const getBowlingLabel = (action: BowlingType): string => {
-		switch (action) {
 			case 'seam':
 				return 'Seam';
 			case 'bouncer':
@@ -100,54 +87,89 @@ export function GameControls() {
 		}
 	};
 
+	const renderUsageDots = (action: GameAction) => {
+		const maxUses =
+			action === 'aggressive'
+				? gameState.gameControls.loft
+				: gameState.gameControls.yorker;
+		const usedCount =
+			action === 'aggressive'
+				? gameState.currentOver.loftUsed
+				: gameState.currentOver.yorkerUsed;
+
+		return (
+			<div className='flex justify-center mt-2'>
+				{[...Array(maxUses)].map((_, index) => (
+					<div
+						key={index}
+						className={cn(
+							'w-2 h-2 rounded-full mx-1',
+							index < usedCount ? 'bg-red-500' : 'bg-slate-400'
+						)}
+					/>
+				))}
+			</div>
+		);
+	};
+
+	const renderButtons = (actions: GameAction[]) => (
+		<div className='grid grid-cols-3 gap-4'>
+			{actions.map((action) => (
+				<motion.button
+					key={action}
+					onClick={() => handleAction(action)}
+					whileTap={{ scale: 0.95 }}
+					className={cn(
+						'flex flex-col items-center justify-center p-4 rounded-lg',
+						'bg-gradient-to-br from-slate-700 to-slate-800',
+						'text-slate-200 shadow-lg transition-all duration-200',
+						'disabled:opacity-50 disabled:cursor-not-allowed',
+						{ 'animate-pulse': disableControls }
+					)}
+					disabled={disableControls || isActionDisabled(action)}
+				>
+					<div className='mb-2'>{getActionIcon(action)}</div>
+					<span className='text-sm font-semibold'>
+						{getActionLabel(action)}
+					</span>
+					{(action === 'aggressive' || action === 'yorker') && (
+						<>
+							{renderUsageDots(action)}
+							
+						</>
+					)}
+				</motion.button>
+			))}
+		</div>
+	);
+
 	const battingActions: BattingStyle[] = ['aggressive', 'normal', 'defensive'];
 	const bowlingActions: BowlingType[] = ['seam', 'bouncer', 'yorker'];
 
-	const battingControls = [
-		{
-			name: 'Slog',
-			description:
-				'High risk, high reward shot. Chance for boundaries but also wickets.',
-			icon: <Swords className='w-5 h-5 text-red-400' />,
-		},
-		{
-			name: 'Drive',
-			description: 'Balanced shot. Good chance for runs with moderate risk.',
-			icon: <Target className='w-5 h-5 text-yellow-400' />,
-		},
-		{
-			name: 'Guard',
-			description:
-				'Defensive shot. Low chance of getting out, but also low scoring.',
-			icon: <Shield className='w-5 h-5 text-blue-400' />,
-		},
-	];
+	const controls =
+		gameState.gamePhase === 'batting' ? battingActions : bowlingActions;
 
-	const bowlingControls = [
-		{
-			name: 'Seam',
-			description:
-				'Standard delivery. Balanced between wicket-taking and run prevention.',
-			icon: <Crosshair className='w-5 h-5 text-green-400' />,
-		},
-		{
-			name: 'Bumper',
-			description:
-				'Short-pitched delivery. Can surprise batsmen but risky if played well.',
-			icon: <Bomb className='w-5 h-5 text-red-400' />,
-		},
-		{
-			name: 'Yorker',
-			description:
-				'Full-length delivery. Hard to hit but difficult to bowl consistently.',
-			icon: <Hammer className='w-5 h-5 text-yellow-400' />,
-		},
-	];
+	const getActionDescription = (action: GameAction): string => {
+		switch (action) {
+			case 'aggressive':
+				return 'High-risk, high-reward shot. Chance for boundaries but also wickets. Max 2 lofts allowed per over. Upgrade to increase limit!';
+			case 'normal':
+				return 'Balanced shot. Good chance for runs with moderate risk.';
+			case 'defensive':
+				return 'Low-risk shot. Reduces chance of getting out, but also limits scoring.';
+			case 'seam':
+				return 'Standard delivery. Balanced between wicket-taking and run prevention.';
+			case 'bouncer':
+				return 'Short-pitched delivery. Can surprise batsmen but risky if played well.';
+			case 'yorker':
+				return 'Full-length delivery. Hard to hit but difficult to bowl consistently. Max 2 yorkers allowed per over. Upgrade to increase limit!';
+		}
+	};
 
 	return (
-		<GradientBorder className='grid sticky bottom-0 grid-cols-3 gap-4 space-y-4 '>
-			<div className='col-span-3 flex gap-2 justify-between items-center'>
-				<h2 className='text-center font-mono text-lg font-bold text-slate-200'>
+		<div className='main-card sticky bottom-3'>
+			<div className='flex justify-between items-center mb-6'>
+				<h2 className='text-xl font-bold text-slate-200'>
 					{gameState.gamePhase === 'batting'
 						? 'Choose Your Shot'
 						: 'Select Your Delivery'}
@@ -160,20 +182,17 @@ export function GameControls() {
 					}
 					description={
 						gameState.gamePhase === 'batting'
-							? 'Master these batting techniques to dominate the game and score big!'
-							: 'Perfect these bowling styles to outsmart batsmen and take crucial wickets!'
+							? 'Master these batting techniques to dominate the game and score big! Upgrade your Loft ability to use it more often.'
+							: 'Perfect these bowling styles to outsmart batsmen and take crucial wickets! Upgrade your Yorker ability to use it more frequently.'
 					}
-					controls={
-						gameState.gamePhase === 'batting'
-							? battingControls
-							: bowlingControls
-					}
+					controls={controls.map((action) => ({
+						name: getActionLabel(action),
+						description: getActionDescription(action),
+						icon: getActionIcon(action),
+					}))}
 				/>
 			</div>
-
-			{gameState.gamePhase === 'batting'
-				? renderButtons(battingActions)
-				: renderButtons(bowlingActions)}
-		</GradientBorder>
+			{renderButtons(controls)}
+		</div>
 	);
 }

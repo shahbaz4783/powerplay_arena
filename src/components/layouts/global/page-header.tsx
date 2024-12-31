@@ -28,7 +28,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 	const gradient = bgGradient || defaultGradient;
 
 	return (
-		<div className='relative backdrop-blur-sm rounded-2xl overflow-hidden'>
+		<div className='relative backdrop-blur-sm rounded-2xl overflow-hidden text-slate-200'>
 			<div
 				className={`absolute inset-0 bg-gradient-to-r ${gradient} opacity-50`}
 			/>

@@ -14,8 +14,8 @@ export function ScoreBoard() {
 	const { runs, runRate, wickets, oversPlayed, ballsFaced } =
 		getCurrentInningsData(gameState);
 	return (
-		<GradientBorder className='space-y-4'>
-			<div className='flex justify-between items-center'>
+		<GradientBorder className='space-y-4 sticky top-3 z-[100]'>
+			<div className='flex justify-between items-center text-slate-200'>
 				<div>
 					<p className='text-4xl font-bold font-exo2'>
 						{runs}/{wickets}

@@ -7,16 +7,12 @@ import {
 } from '@/src/components/ui/dialog';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
-import { Calendar, ChevronRight, Clock, Info } from 'lucide-react';
+import { Calendar, ChevronRight, Info } from 'lucide-react';
 import { Transaction } from '@prisma/client';
 import { InfoCard } from '@/src/components/common/cards/info-card';
 import { token } from '@/src/constants/app-config';
 
-export const TransactionDialog = ({
-	transaction,
-}: {
-	transaction: Transaction;
-}) => {
+export const TransactionDialog = ({ transaction }: { transaction: Transaction }) => {
 	const MetadataView = ({ data, depth = 0 }: { data: any; depth?: number }) => {
 		if (typeof data !== 'object' || data === null) {
 			return (
@@ -76,7 +72,7 @@ export const TransactionDialog = ({
 				</motion.button>
 			</DialogTrigger>
 
-			<DialogContent className='w-[95%] max-w-md bg-slate-950/95 backdrop-blur-xl border-slate-800'>
+			<DialogContent className='w-11/12 rounded-lg'>
 				<DialogHeader>
 					<DialogTitle className='text-lg font-semibold flex items-center gap-2 text-slate-200'>
 						<Info className='w-4 h-4 text-blue-400' />
@@ -141,5 +137,3 @@ export const TransactionDialog = ({
 		</Dialog>
 	);
 };
-
-export default TransactionDialog;

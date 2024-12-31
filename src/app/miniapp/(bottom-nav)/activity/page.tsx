@@ -1,7 +1,7 @@
 import { TransactionLists } from '@/src/app/miniapp/(bottom-nav)/activity/all-transaction';
 import { PageHeader } from '@/src/components/layouts/global/page-header';
 
-export default function Treasury() {
+export default function TransactionPage() {
 	return (
 		<div className='space-y-4'>
 			<PageHeader

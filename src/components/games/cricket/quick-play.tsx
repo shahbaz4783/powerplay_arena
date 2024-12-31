@@ -48,16 +48,25 @@ import { BackgroundPattern } from '../../common/elements/background-pattern';
 import { SectionHeader } from '../../common/elements/section-header';
 import { LoadingOverlay } from '../../common/dialog/loading-overlay';
 import { GameLoadingScreen } from '../../layouts/global/game-loading-screen';
+import { motion } from 'framer-motion';
+import BalanceWarning from '../../layouts/global/balance-warning';
+import { ErrorComponent } from '../../layouts/feedback/error-ui';
 
 export function QuickPlayMode() {
 	const [selectedFormat, setSelectedFormat] = useState<MatchFormat>('BLITZ');
 	const { telegramId } = useCurrentUser();
 	const { updateGameState } = useCricketGameState();
 
-	const { data: stats, isPending: isStatsLoading } = useCricketStats(
-		telegramId,
-		selectedFormat
-	);
+	const {
+		data: stats,
+		isPending: isStatsLoading,
+		isError,
+		error,
+	} = useCricketStats(telegramId, selectedFormat);
+	
+	if (isError) {
+		return <ErrorComponent error={error} />;
+	}
 	if (isStatsLoading) {
 		<GameLoadingScreen gameType='powerStrike' />;
 	}
@@ -217,7 +226,7 @@ export function QuickPlayMode() {
 									/>
 								</div>
 								<div className='sub-card'>
-									<h4 className='text-lg font-semibold font-jetbrains mb-4 text-center'>
+									<h4 className='text-lg text-slate-200 font-semibold font-jetbrains mb-4 text-center'>
 										Match Details
 									</h4>
 									<div className='grid grid-cols-2 gap-2'>
@@ -268,13 +277,13 @@ export function QuickPlayMode() {
 							<div className='flex justify-center'>
 								<Dialog>
 									<DialogTrigger asChild>
-										<Button
-											variant='outline'
-											className='rounded-xl flex items-center gap-2'
+										<motion.button
+											whileTap={{ scale: 0.9 }}
+											className='rounded-lg p-2 text-slate-200 border flex items-center gap-2'
 										>
 											<Info className='w-4 h-4' />
 											View Reward Structure
-										</Button>
+										</motion.button>
 									</DialogTrigger>
 									<DialogContent className='w-11/12 rounded-xl'>
 										<DialogHeader>

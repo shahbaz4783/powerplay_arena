@@ -24,8 +24,18 @@ interface BetOption {
 
 export function CoinFlipChallenge() {
 	const { telegramId } = useCurrentUser();
-	const { data: inventory, isLoading, mutate } = useUserInventory(telegramId);
+	const {
+		data: inventory,
+		isLoading,
+		mutate,
+		isError,
+		error,
+	} = useUserInventory(telegramId);
 	const userBalance = inventory?.powerCoin as number;
+
+	if (isError) {
+		return <p>{error.message}</p>;
+	}
 
 	const [betAmount, setBetAmount] = useState(100);
 	const [selectedChallenge, setSelectedChallenge] = useState<BetOption>(

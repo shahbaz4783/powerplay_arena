@@ -41,7 +41,7 @@ export const GameHeader = ({
 
 	return (
 		<>
-			<div className='fixed top-0 left-0 right-0 z-[999]'>
+			<div className='fixed top-0 left-0 right-0 z-[999] text-slate-200'>
 				<div className='bg-gradient-to-b from-gray-900/95 to-gray-900/75 backdrop-blur-sm border-b border-gray-800'>
 					<div className='max-w-7xl mx-auto px-4 h-16 flex items-center justify-between'>
 						{/* Game Title */}

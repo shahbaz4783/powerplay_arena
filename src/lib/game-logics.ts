@@ -12,31 +12,31 @@ interface OutcomeChances {
 
 const baseOutcomeChances: OutcomeChances = {
 	normal: {
-		'-1': 0.08,
-		0: 0.22,
-		1: 0.25,
-		2: 0.2,
-		3: 0.01,
-		4: 0.12,
-		6: 0.08,
+		'-1': 0.08, // 8% chance
+		0: 0.2, // 20% chance
+		1: 0.25, // 25% chance
+		2: 0.25, // 25% chance
+		3: 0.02, // 2% chance
+		4: 0.15, // 15% chance
+		6: 0.05, // 5% chance
 	},
 	aggressive: {
-		'-1': 0.2,
-		0: 0.15,
-		1: 0.15,
-		2: 0.1,
-		3: 0.01,
-		4: 0.2,
-		6: 0.2,
+		'-1': 0.2, // 20% chance
+		0: 0.14, // 14% chance
+		1: 0.15, // 15% chance
+		2: 0.1, // 10% chance
+		3: 0.01, // 1% chance
+		4: 0.2, // 20% chance
+		6: 0.2, // 20% chance
 	},
 	defensive: {
-		'-1': 0.02,
-		0: 0.3,
-		1: 0.4,
-		2: 0.15,
-		3: 0.01,
-		4: 0.04,
-		6: 0.01,
+		'-1': 0.01, // 1% chance
+		0: 0.3, // 30% chance
+		1: 0.4, // 40% chance
+		2: 0.2, // 20% chance
+		3: 0.03, // 3% chance
+		4: 0.05, // 5% chance
+		6: 0.01, // 1% chance
 	},
 };
 

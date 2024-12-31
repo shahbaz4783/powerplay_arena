@@ -23,7 +23,7 @@ export const SectionHeader = ({
 				<Icon className={`w-6 h-6 ${iconColor}`} />
 			</div>
 			<div className='flex-1 text-left'>
-				<h2 className='text-xl font-bold font-exo2'>
+				<h2 className='text-xl text-slate-200 font-bold font-exo2'>
 					{title}
 					{highlightedTitle && (
 						<span className='bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent ml-2'>
@@ -31,7 +31,7 @@ export const SectionHeader = ({
 						</span>
 					)}
 				</h2>
-				<p className='text-gray-400 text-xs font-poppins'>{description}</p>
+				<p className='text-slate-400 text-xs font-poppins'>{description}</p>
 			</div>
 		</header>
 	);

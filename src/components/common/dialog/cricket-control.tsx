@@ -31,7 +31,7 @@ export function InfoDialog({ title, description, controls }: InfoDialogProps) {
 					<span className='sr-only'>Open info dialog</span>
 				</motion.button>
 			</DialogTrigger>
-			<DialogContent className='w-11/12 bg-gray-900 border border-gray-800 rounded-xl p-0 overflow-hidden'>
+			<DialogContent className='w-11/12 bg-gray-900 border border-gray-800 rounded-xl p-0 overflow-hidden z-[200]'>
 				<DialogHeader className='p-6 bg-gradient-to-r from-blue-600/20 to-purple-800 border-b border-gray-800'>
 					<DialogTitle className='text-2xl font-bold text-white flex items-center gap-2'>
 						{title === 'Batting Controls' ? (

@@ -8,7 +8,7 @@ import { Anaylsis } from './anaylsis';
 
 export function Gameplay() {
   return (
-		<main className='flex flex-col min-h-svh p-3 justify-between gap-3 '>
+		<main className='flex flex-col min-h-svh p-3 justify-between gap-3'>
 			<section className='space-y-2'>
 				<ScoreBoard />
 				<div className='main-card'>
@@ -17,9 +17,8 @@ export function Gameplay() {
 				</div>
 				<Commentary />
 			</section>
-			<div className='sticky bottom-0'>
-				<GameControls />
-			</div>
+
+			<GameControls />
 		</main>
 	);
 }

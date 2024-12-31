@@ -59,7 +59,7 @@ export function MidInnings() {
 						/>
 						<div className='flex justify-between items-center'>
 							<div className='text-center'>
-								<div className='text-4xl font-bold font-exo2'>
+								<div className='text-4xl text-slate-200 font-bold font-exo2'>
 									<span>{runs}</span>
 									<span>/</span>
 									<span>{wickets}</span>

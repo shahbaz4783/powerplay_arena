@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import CryptoJS from 'crypto-js';
 import {
+	BattingStyle,
+	BowlingType,
 	GameParticipant,
 	GameState,
 	InningsInterface,
@@ -17,6 +19,16 @@ const initialState: GameState = {
 	gamePhase: 'toss',
 	currentInnings: 1,
 	target: null,
+
+	gameControls: {
+		loft: 2,
+		yorker: 2,
+	},
+	currentOver: {
+		loftUsed: 0,
+		yorkerUsed: 0,
+	},
+
 	matchSetup: {
 		format: 'BLITZ',
 		entryFee: 50,
@@ -101,8 +113,6 @@ const clearGameState = (): Promise<void> => {
 };
 
 const validateGameState = (state: GameState): GameState => {
-	// Implement validation logic here
-	// Example: Ensure runs, wickets, and other values are within expected ranges
 	const validatedState = { ...state };
 
 	if (validatedState.player.runs < 0) validatedState.player.runs = 0;
@@ -110,9 +120,6 @@ const validateGameState = (state: GameState): GameState => {
 	if (validatedState.player.wickets > validatedState.matchSetup.totalWickets) {
 		validatedState.player.wickets = validatedState.matchSetup.totalWickets;
 	}
-
-	// Repeat similar validations for opponent and other fields
-
 	return validatedState;
 };
 
@@ -135,39 +142,62 @@ export const useCricketGameState = () => {
 		},
 	});
 
-	const updateInnings = (
-		inningsType: GameParticipant,
-		runOutcome: RunOutcome
-	) => {
-		const currentInnings = gameState[inningsType];
-		const newBallsFaced = currentInnings.ballsFaced + 1;
-		const newOversPlayed = `${Math.floor(newBallsFaced / 6)}.${
-			newBallsFaced % 6
-		}`;
+	 const updateInnings = (
+			inningsType: GameParticipant,
+			runOutcome: RunOutcome,
+			action: BattingStyle | BowlingType
+		) => {
+			const currentInnings = gameState[inningsType];
+			const newBallsFaced = currentInnings.ballsFaced + 1;
+			const newOversPlayed = `${Math.floor(newBallsFaced / 6)}.${
+				newBallsFaced % 6
+			}`;
 
-		const newOverInfo = [...currentInnings.overInfo, runOutcome];
+			const newOverInfo = [...currentInnings.overInfo, runOutcome];
 
-		const newStats: InningsInterface = {
-			...currentInnings,
-			runs:
-				runOutcome > 0 ? currentInnings.runs + runOutcome : currentInnings.runs,
-			wickets:
-				runOutcome === -1 ? currentInnings.wickets + 1 : currentInnings.wickets,
-			ballsFaced: newBallsFaced,
-			runRate: (
-				(currentInnings.runs + (runOutcome > 0 ? runOutcome : 0)) /
-				(newBallsFaced / 6)
-			).toFixed(2),
-			oversPlayed: newOversPlayed,
-			fours: runOutcome === 4 ? currentInnings.fours + 1 : currentInnings.fours,
-			sixes: runOutcome === 6 ? currentInnings.sixes + 1 : currentInnings.sixes,
-			overInfo: newOverInfo,
+			const newStats: InningsInterface = {
+				...currentInnings,
+				runs:
+					runOutcome > 0
+						? currentInnings.runs + runOutcome
+						: currentInnings.runs,
+				wickets:
+					runOutcome === -1
+						? currentInnings.wickets + 1
+						: currentInnings.wickets,
+				ballsFaced: newBallsFaced,
+				runRate: (
+					(currentInnings.runs + (runOutcome > 0 ? runOutcome : 0)) /
+					(newBallsFaced / 6)
+				).toFixed(2),
+				oversPlayed: newOversPlayed,
+				fours:
+					runOutcome === 4 ? currentInnings.fours + 1 : currentInnings.fours,
+				sixes:
+					runOutcome === 6 ? currentInnings.sixes + 1 : currentInnings.sixes,
+				overInfo: newOverInfo,
+			};
+
+			let newCurrentOver = { ...gameState.currentOver };
+			if (action === 'aggressive') {
+				newCurrentOver.loftUsed += 1;
+			} else if (action === 'yorker') {
+				newCurrentOver.yorkerUsed += 1;
+			}
+
+			// Reset currentOver if a new over starts
+			if (newBallsFaced % 6 === 0) {
+				newCurrentOver = {
+					loftUsed: 0,
+					yorkerUsed: 0,
+				};
+			}
+
+			updateGameState.mutate({
+				[inningsType]: newStats,
+				currentOver: newCurrentOver,
+			});
 		};
-
-		updateGameState.mutate({
-			[inningsType]: newStats,
-		});
-	};
 
 	const resetGameState = useMutation({
 		mutationFn: clearGameState,

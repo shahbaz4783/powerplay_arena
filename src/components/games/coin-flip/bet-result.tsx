@@ -11,7 +11,8 @@ import { token } from '@/src/constants/app-config';
 import { X, Trophy, Coins, TrendingUp, AlertTriangle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { InfoCard } from '../../common/cards/info-card';
-import { formatCompactNumber } from '@/src/lib/utils';
+import { calculateBettingPassCost, formatCompactNumber } from '@/src/lib/utils';
+import BalanceWarning from '../../layouts/global/balance-warning';
 
 interface ResultModalProps {
 	isOpen: boolean;
@@ -212,6 +213,12 @@ export function BetResult({
 												{message ||
 													"Your bet couldn't be processed. Please try again."}
 											</p>
+											<BalanceWarning
+												coins={1}
+												minCoin={betAmount}
+												passes={0}
+												minPass={calculateBettingPassCost(betAmount)}
+											/>
 										</div>
 									)}
 								</motion.div>
