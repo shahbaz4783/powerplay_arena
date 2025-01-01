@@ -159,7 +159,7 @@ export const executePowerExchange = async (
 						coinAmount: -totalPassCost,
 						passAmount: totalPass,
 						metadata: {
-							exchangeFee: `${exchangeFee} ${token.symbol}`,
+							fees: `${exchangeFee} ${token.symbol}`,
 						},
 					},
 				});
