@@ -17,7 +17,7 @@ export const responseMessages = {
 				'Trade completed successfully. Check your inventory for updates.',
 		},
 		error: {
-			insufficientBalance: `You dont have enough ${token.name} to complete this transaction`,
+			insufficientBalance: `You dont have enough ${token.name} to complete this transaction.`,
 			insufficientPass: `You dont have enough ${token.pass}.`,
 			betFailed: 'Unable to place bet. Please try again.',
 			rewardAlreadyClaimed: 'Daily reward already claimed. Come back tomorrow!',

@@ -14,7 +14,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/src/components/ui/dialog';
-import { Button } from '@/src/components/ui/button';
 
 import {
 	Zap,
@@ -49,8 +48,8 @@ import { SectionHeader } from '../../common/elements/section-header';
 import { LoadingOverlay } from '../../common/dialog/loading-overlay';
 import { GameLoadingScreen } from '../../layouts/global/game-loading-screen';
 import { motion } from 'framer-motion';
-import BalanceWarning from '../../layouts/global/balance-warning';
 import { ErrorComponent } from '../../layouts/feedback/error-ui';
+import { ServerResponseDialog } from '../../layouts/feedback/error-dialog';
 
 export function QuickPlayMode() {
 	const [selectedFormat, setSelectedFormat] = useState<MatchFormat>('BLITZ');
@@ -167,6 +166,9 @@ export function QuickPlayMode() {
 				</GradientBorder>
 			</section>
 			<section className='p-3 space-y-3'>
+				{!response.success && response.message && (
+					<ServerResponseDialog message={response.message} />
+				)}
 				<Tabs
 					value={selectedFormat}
 					onValueChange={handleFormatChange}
