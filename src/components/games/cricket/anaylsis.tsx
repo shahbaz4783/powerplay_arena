@@ -27,7 +27,7 @@ export function Anaylsis() {
 		((gameState?.target - runs) / ((overs * 6 - ballsFaced) / 6)).toFixed(2);
 
 	return (
-		<section className=''>
+		<section>
 			<aside className='grid grid-cols-3 gap-x-2'>
 				<div className='grid grid-cols-2 gap-2'>
 					<RunsComparisonChart />

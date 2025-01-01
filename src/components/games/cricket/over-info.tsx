@@ -120,7 +120,7 @@ export function OverInfo() {
 			)}
 			{/* Previous Over */}
 			{currentOverIndex > 0 && (
-				<div className='mt-4 sub-card'>
+				<div className='mt-2 sub-card'>
 					<div className='flex justify-between text-xs text-slate-300 mb-1'>
 						<h3 className='font-jetbrains'>Previous Over</h3>
 						<p className='font-exo2'>Runs: {totalRunsInPreviousOver}</p>

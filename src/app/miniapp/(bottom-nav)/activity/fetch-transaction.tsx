@@ -18,7 +18,7 @@ export const FetchTransaction = ({ transactions }: FetchTransactionProps) => {
 				'grid-cols-2 gap-1': transactions.hasNextPage,
 			})}
 		>
-			{transactions.hasNextPage && (
+			{transactions.hasNextPage ? (
 				<>
 					<div className=''>
 						<p className='text-slate-400 text-xs'>Total</p>
@@ -34,9 +34,7 @@ export const FetchTransaction = ({ transactions }: FetchTransactionProps) => {
 						isLoading={transactions.isFetching}
 					/>
 				</>
-			)}
-
-			{!transactions.hasNextPage && length > 0 && (
+			) : (
 				<div className='text-center text-slate-400 font-exo2'>
 					<div>
 						<span className='text-xs text-slate-300 font-fira-code'>

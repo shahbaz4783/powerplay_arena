@@ -21,8 +21,8 @@ const initialState: GameState = {
 	target: null,
 
 	gameControls: {
-		loft: 2,
-		yorker: 2,
+		loft: 6,
+		yorker: 6,
 	},
 	currentOver: {
 		loftUsed: 0,
