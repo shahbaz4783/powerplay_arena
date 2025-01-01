@@ -24,6 +24,8 @@ import RunsBarComparison from './bar-compare';
 import { InfoCard } from '../../common/cards/info-card';
 import { FaFoursquare, FaSitrox } from 'react-icons/fa6';
 import { PiCoinDuotone } from 'react-icons/pi';
+import { IconButton } from '../../common/buttons/primary-button';
+import Link from 'next/link';
 
 interface ResultProps {
 	rewards: number | null;
@@ -172,7 +174,7 @@ export function Result({ rewards }: ResultProps) {
 						amount={rewards !== null ? rewards : totalEarnings}
 						icon={<PiCoinDuotone />}
 						color='yellow'
-						title={`Total ${token.name}`}
+						title={token.name}
 					/>
 					<InfoCard
 						amount={totalXP}
@@ -181,8 +183,10 @@ export function Result({ rewards }: ResultProps) {
 						title={'Total XP'}
 					/>
 				</section>
-
-				<section className='grid grid-cols-2 gap-2 sub-card'>
+				<h3 className='text-center text-sm font-fira-code text-slate-300'>
+					Reward Breakdown
+				</h3>
+				<section className='grid grid-cols-2 gap-2 '>
 					<InfoCard
 						amount={sixerReward}
 						icon={<FaSitrox />}
@@ -210,21 +214,18 @@ export function Result({ rewards }: ResultProps) {
 				</section>
 			</GradientBorder>
 
-			<section className='flex justify-between gap-3 main-card backdrop-blur-md sticky bottom-2 shadow-2xl'>
-				<GameButton
-					href='/miniapp'
-					onClick={clearGameState}
-					icon={<HomeIcon className='w-6 h-6' />}
-				>
-					Home
-				</GameButton>
-				<GameButton
-					href='/game/cricket/match-setup'
-					onClick={clearGameState}
-					icon={<RotateCcw className='w-6 h-6' />}
-				>
-					Play Again
-				</GameButton>
+			<section className='flex justify-between gap-3 sub-card backdrop-blur-md sticky bottom-2 shadow-2xl'>
+				<Link href='/miniapp'>
+					<IconButton
+						text='Home'
+						icon={HomeIcon}
+						className='bg-gray-700'
+						variant={'glass'}
+					/>
+				</Link>
+				<Link href='/game/cricket/match-setup'>
+					<IconButton text='Play Again' icon={RotateCcw} />
+				</Link>
 			</section>
 		</main>
 	);

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import {
 	BarChart,
 	Bar,
@@ -19,13 +19,14 @@ import {
 import { BarChart3 } from 'lucide-react';
 import { useCricketGameState } from '@/src/lib/store';
 import { motion } from 'framer-motion';
+import { ScoreCard } from '../../common/cards/score-card';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
 	if (!active || !payload || !payload.length) return null;
 
 	return (
-		<div className='bg-slate-800 border border-slate-700 rounded-lg p-3 shadow-lg'>
-			<p className='text-slate-300 font-medium mb-2'>Over {label}</p>
+		<div className='main-card backdrop-blur-lg shadow-lg'>
+			<p className='text-slate-300 text-sm font-exo2 mb-2'>Over {label}</p>
 			{payload.map(
 				(entry: any, index: number) =>
 					entry.value !== null && (
@@ -34,7 +35,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 								className='w-3 h-3 rounded-full'
 								style={{ backgroundColor: entry.color }}
 							/>
-							<p className='text-slate-300'>
+							<p className='text-slate-300 text-sm'>
 								{entry.name}: {entry.value} runs
 								{entry.payload.balls && (
 									<span className='text-slate-400 ml-2'>
@@ -98,7 +99,7 @@ const RunsBarComparison = () => {
 				opponentRuns: opponentOverData.balls > 0 ? opponentOverData.runs : null,
 				opponentBalls: opponentOverData.balls || null,
 			};
-		}).filter(Boolean); // Remove null entries
+		}).filter(Boolean);
 	}, [player.overInfo, opponent.overInfo]);
 
 	return (
@@ -118,7 +119,7 @@ const RunsBarComparison = () => {
 					</DialogTitle>
 				</DialogHeader>
 
-				<div className='h-[240px] main-card'>
+				<div className='h-[240px] '>
 					<ResponsiveContainer width='100%' height='100%'>
 						<BarChart
 							data={chartData}
@@ -174,35 +175,21 @@ const RunsBarComparison = () => {
 					</ResponsiveContainer>
 				</div>
 
-				<div className='grid grid-cols-2 gap-4 main-card'>
-					<div className='space-y-2 sub-card'>
-						<h3 className='text-sm font-medium text-slate-400'>Your Score</h3>
-						<div className='text-2xl font-bold text-blue-400'>
-							{player.runs}
-							<span className='text-sm text-slate-400 ml-2'>
-								({player.ballsFaced} balls)
-							</span>
-						</div>
-						<div className='flex gap-3 text-sm text-slate-300'>
-							<span>{player.fours} fours</span>
-							<span>{player.sixes} sixes</span>
-						</div>
-					</div>
-					<div className='space-y-2 sub-card'>
-						<h3 className='text-sm font-medium text-slate-400'>
-							Opponent Score
-						</h3>
-						<div className='text-2xl font-bold text-red-400'>
-							{opponent.runs}
-							<span className='text-sm text-slate-400 ml-2'>
-								({opponent.ballsFaced} balls)
-							</span>
-						</div>
-						<div className='flex gap-3 text-sm text-slate-300'>
-							<span>{opponent.fours} fours</span>
-							<span>{opponent.sixes} sixes</span>
-						</div>
-					</div>
+				<div className='grid grid-cols-2 gap-4'>
+					<ScoreCard
+						title='Your Score'
+						fours={player.fours}
+						sixes={player.sixes}
+						ballsFaced={player.ballsFaced}
+						runs={player.runs}
+					/>
+					<ScoreCard
+						title='Opponent Score'
+						fours={opponent.fours}
+						sixes={opponent.sixes}
+						ballsFaced={opponent.ballsFaced}
+						runs={opponent.runs}
+					/>
 				</div>
 			</DialogContent>
 		</Dialog>

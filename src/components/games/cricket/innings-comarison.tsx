@@ -22,6 +22,7 @@ import { BarChart3, LineChartIcon } from 'lucide-react';
 import { useCricketGameState } from '@/src/lib/store';
 import { motion } from 'framer-motion';
 import { IconButton } from '../../common/buttons/primary-button';
+import { ScoreCard } from '../../common/cards/score-card';
 
 interface RunsData {
 	ball: number;
@@ -143,7 +144,7 @@ const RunsComparisonChart = () => {
 					</DialogTitle>
 				</DialogHeader>
 
-				<div className='h-[240px] main-card'>
+				<div className='h-[240px]'>
 					<ResponsiveContainer width='100%' height='100%'>
 						<LineChart
 							data={chartData}
@@ -215,35 +216,21 @@ const RunsComparisonChart = () => {
 					</ResponsiveContainer>
 				</div>
 
-				<div className='grid grid-cols-2 gap-4 main-card'>
-					<div className='space-y-2 sub-card'>
-						<h3 className='text-sm font-medium text-slate-400'>Your Score</h3>
-						<div className='text-2xl font-bold text-blue-400'>
-							{player.runs}
-							<span className='text-sm text-slate-400 ml-2'>
-								({player.ballsFaced} balls)
-							</span>
-						</div>
-						<div className='flex gap-3 text-sm text-slate-300'>
-							<span>{player.fours} fours</span>
-							<span>{player.sixes} sixes</span>
-						</div>
-					</div>
-					<div className='space-y-2 sub-card'>
-						<h3 className='text-sm font-medium text-slate-400'>
-							Opponent Score
-						</h3>
-						<div className='text-2xl font-bold text-red-400'>
-							{opponent.runs}
-							<span className='text-sm text-slate-400 ml-2'>
-								({opponent.ballsFaced} balls)
-							</span>
-						</div>
-						<div className='flex gap-3 text-sm text-slate-300'>
-							<span>{opponent.fours} fours</span>
-							<span>{opponent.sixes} sixes</span>
-						</div>
-					</div>
+				<div className='grid grid-cols-2 gap-4'>
+					<ScoreCard
+						title='Your Score'
+						fours={player.fours}
+						sixes={player.sixes}
+						ballsFaced={player.ballsFaced}
+						runs={player.runs}
+					/>
+					<ScoreCard
+						title='Opponent Score'
+						fours={opponent.fours}
+						sixes={opponent.sixes}
+						ballsFaced={opponent.ballsFaced}
+						runs={opponent.runs}
+					/>
 				</div>
 			</DialogContent>
 		</Dialog>
