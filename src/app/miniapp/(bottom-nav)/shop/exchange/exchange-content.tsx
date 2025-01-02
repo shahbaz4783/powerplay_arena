@@ -82,11 +82,10 @@ export const ExchangeContent = ({
 								setPassesToExchange(Math.min(btn.value, maxPasses))
 							}
 							whileTap={{ scale: 0.9 }}
-							className='bg-gradient-to-r from-blue-600/20 to-blue-400/10 
-                         border border-blue-500/20 py-2 px-3 rounded-lg disabled:opacity-50'
 							disabled={btn.value > maxPasses}
+							className='bg-gradient-to-r from-blue-600/20 to-blue-400/10 border border-blue-500/20 py-2 px-3 rounded-lg disabled:opacity-50'
 						>
-							<span className='relative z-10 text-sm font-medium text-white'>
+							<span className='relative z-10 text-sm font-jetbrains font-medium text-white'>
 								{btn.label}
 							</span>
 						</motion.button>
@@ -98,7 +97,7 @@ export const ExchangeContent = ({
 						<span className='text-slate-300 font-poppins'>
 							{direction === 'buyPasses' ? 'Base Cost' : 'Base Amount'}
 						</span>
-						<div className='flex items-baseline gap-2'>
+						<div className='flex items-baseline gap-1'>
 							<span className='text-xl font-exo2 font-bold text-white'>
 								{baseAmount}
 							</span>

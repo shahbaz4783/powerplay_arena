@@ -15,121 +15,78 @@ export const inGameItems: InGameItem[] = [
 	{
 		id: 'streak-guardian',
 		title: 'Streak Guardian',
-		description: 'Protects your daily reward streak from interruptions.',
+		description: 'Shield your reward streak from resets.',
 		image: 'v1732801673/bdfc8b5f-0ba9-4296-b7ab-327af0e29778_cwuatt.jpg',
 		price: 249,
 		levels: [
-			{ level: 1, price: 1000, effect: 'Preserves streak for 1 missed day' },
-			{ level: 5, price: 5000, effect: 'Preserves streak for 2 missed days' },
-			{ level: 10, price: 10000, effect: 'Preserves streak for 3 missed days' },
+			{ level: 1, price: 1000, effect: '1 missed day protected.' },
+			{ level: 5, price: 5000, effect: '2 missed days protected.' },
+			{ level: 10, price: 10000, effect: '3 missed days protected.' },
 		],
 	},
 
 	{
 		id: 'daily-bounty-booster',
 		title: 'Daily Bounty Booster',
-		description: 'Permanently increases your daily reward.',
+		description: 'Boost your daily rewards permanently.',
 		image: 'v1732802010/573f3e02-9976-41a2-a206-2c1e64e6be8c_vwnisk.jpg',
 		price: 299,
 		levels: [
-			{ level: 1, price: 1500, effect: '+5% increase to daily reward' },
-			{ level: 5, price: 7500, effect: '+25% increase to daily reward' },
-			{ level: 10, price: 15000, effect: '+50% increase to daily reward' },
+			{ level: 1, price: 1500, effect: '+5% to daily rewards.' },
+			{ level: 5, price: 7500, effect: '+25% to daily rewards.' },
+			{ level: 10, price: 15000, effect: '+50% to daily rewards.' },
 		],
 	},
 	{
 		id: 'cricket-bat-maestro',
 		title: 'Cricket Bat Maestro',
-		description: 'Enhance your batting performance in every match.',
+		description: 'Master the art of lofted shots.',
 		image: 'v1732799875/1f7cc70d-d61a-4fb9-a85c-a19c25f9c0af_qqkk9b.jpg',
 		price: 99,
 		levels: [
-			{
-				level: 1,
-				price: 2500,
-				effect: '+5% batting performance in all matches',
-			},
-			{
-				level: 5,
-				price: 12500,
-				effect: '+25% batting performance in all matches',
-			},
-			{
-				level: 10,
-				price: 25000,
-				effect: '+50% batting performance in all matches',
-			},
+			{ level: 1, price: 2500, effect: '3 lofted shots/over.' },
+			{ level: 5, price: 12500, effect: '4 lofted shots/over.' },
+			{ level: 10, price: 25000, effect: '6 lofted shots/over.' },
 		],
 	},
 	{
 		id: 'exchange_optimizer',
 		title: 'Exchange Optimizer',
-		description: 'Save coins with reduced exchange fees.',
+		description: 'Slash exchange fees and save coins.',
 		image: 'v1732804104/5604eaaa-3cfe-4bcd-a8ae-9c03c65ca184_h51izx.jpg',
 		price: 149,
 		levels: [
-			{
-				level: 1,
-				price: 2500,
-				effect: '+5% bowling performance in all matches',
-			},
-			{
-				level: 5,
-				price: 12500,
-				effect: '+25% bowling performance in all matches',
-			},
-			{
-				level: 10,
-				price: 25000,
-				effect: '+50% bowling performance in all matches',
-			},
+			{ level: 1, price: 2500, effect: '-5% exchange fees.' },
+			{ level: 5, price: 12500, effect: '-15% exchange fees.' },
+			{ level: 10, price: 25000, effect: '-30% exchange fees.' },
 		],
 	},
 	{
 		id: 'winnings-xcelerator',
 		title: 'Winnings Xcelerator',
-		description: 'Increase betting payouts up to double rewards',
+		description: 'Amplify your betting payouts.',
 		image: 'v1732802822/76ae53a7-6abd-426c-af53-b2c4ce111b13_f550n5.jpg',
 		price: 299,
 		levels: [
-			{ level: 1, price: 2000, effect: '+5% increase to all betting payouts' },
-			{
-				level: 5,
-				price: 10000,
-				effect: '+25% increase to all betting payouts',
-			},
-			{
-				level: 10,
-				price: 20000,
-				effect: '+50% increase to all betting payouts',
-			},
+			{ level: 1, price: 2000, effect: '+5% betting payouts.' },
+			{ level: 5, price: 10000, effect: '+25% betting payouts.' },
+			{ level: 10, price: 20000, effect: '+50% betting payouts.' },
 		],
 	},
 	{
 		id: 'bowling-dominator',
 		title: 'Bowling Dominator',
-		description: 'Improve bowling accuracy and wicket-taking abilities.',
+		description: 'Command the pitch with precision yorkers.',
 		image: 'v1732803683/48f94361-7b1f-4f38-b648-7bdcf8667807_tjehg5.jpg',
 		price: 99,
 		levels: [
-			{
-				level: 1,
-				price: 2500,
-				effect: '+5% bowling performance in all matches',
-			},
-			{
-				level: 5,
-				price: 12500,
-				effect: '+25% bowling performance in all matches',
-			},
-			{
-				level: 10,
-				price: 25000,
-				effect: '+50% bowling performance in all matches',
-			},
+			{ level: 1, price: 2500, effect: '3 yorkers/over.' },
+			{ level: 5, price: 12500, effect: '4 yorkers/over.' },
+			{ level: 10, price: 25000, effect: '6 yorkers/over.' },
 		],
 	},
 ];
+
 
 export interface RepeatablePurchaseItem {
 	id: string;

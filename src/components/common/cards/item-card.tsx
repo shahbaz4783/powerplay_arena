@@ -1,11 +1,11 @@
 'use client';
 
-import { SubmitButton } from '../../common/buttons/submit-button';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { cloudinary_url } from '@/src/constants/app-config';
-import { Star } from 'lucide-react';
+import { ShoppingCart, Star } from 'lucide-react';
 import { ItemInfo } from '../dialog/item-info';
+import { IconButton } from '../buttons/primary-button';
 
 interface ItemCardProps {
 	id: string;
@@ -30,7 +30,7 @@ export function ItemCard({
 		<motion.div
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
-			className='rounded-xl grid grid-cols-3 bg-gray-900 backdrop-blur-sm border border-gray-800 overflow-hidden'
+			className='rounded-xl mx-3 grid grid-cols-3 bg-gray-900 backdrop-blur-sm border border-gray-800 overflow-hidden'
 		>
 			<aside className='relative col-span-1 h-full'>
 				<div className='absolute inset-0'>
@@ -55,19 +55,16 @@ export function ItemCard({
 						{description}
 					</p>
 				</div>
-				<footer className='flex items-center justify-between bg-slate-700/50 backdrop-blur-md p-2 rounded-xl'>
-					<div className='flex items-center space-x-1'>
+				<footer className='grid grid-cols-6 gap-2 justify-between bg-slate-700/50 backdrop-blur-md p-2 rounded-xl'>
+					<div className='flex items-center space-x-1 col-span-2'>
 						<Star className='w-4 h-4 text-yellow-500 fill-yellow-500' />
 						<span className='text-white font-bold text-'>{price}</span>
 					</div>
 
-					<form action={onPurchase}>
+					<form action={onPurchase} className='col-span-4'>
 						<input type='hidden' name='itemId' value={id} />
-						<SubmitButton
-							title='Purchase'
-							loadingTitle='Purchasing...'
-							className='bg-gradient-to-r from-purple-500 to-pink-500 px-3 py-2'
-						/>
+
+						<IconButton icon={ShoppingCart} text='Purchase' />
 					</form>
 				</footer>
 			</aside>

@@ -3,6 +3,7 @@
 import { Bot } from 'grammy';
 import { inGameItems } from '@/src/constants/powerUps';
 import { responseMessages } from '../constants/messages';
+import { db } from '../lib/db';
 
 const bot = new Bot(process.env.BOT_TOKEN!);
 
@@ -31,7 +32,7 @@ export async function generateItemInvoice(
 		const title = selectedItem.title;
 		const description = selectedItem.description;
 		const payload = JSON.stringify({
-			itemId,
+			itemId: selectedItem.id,
 			telegramId: telegramId.toString(),
 		});
 		const currency = 'XTR';
@@ -59,23 +60,57 @@ export async function generateItemInvoice(
 }
 
 
+export interface PurchaseStates {
+	success: boolean;
+	error?: string;
+	message?: string;
+}
 
 export async function mintPowerUp(
-	telegramId: bigint,
-	prevState: PurchaseState,
+	telegramId: string,
+	prevState: PurchaseStates,
 	formData: FormData
-) {
+): Promise<PurchaseStates> {
+	console.log('Starting mintPowerUp function');
+	console.log('Telegram ID:', telegramId);
+	console.log('Form data:', Object.fromEntries(formData));
+
 	try {
 		const itemId = formData.get('itemId') as string;
+		console.log('Item ID:', itemId);
+
 		const selectedItem = inGameItems.find((item) => item.id === itemId);
+		console.log('Selected item:', selectedItem);
 
 		if (!selectedItem) {
+			console.error('Item not found');
 			return {
 				success: false,
 				error: responseMessages.shop.error.itemNotFound,
 			};
 		}
+
+		console.log('Creating power-up in database');
+		const createdPowerUp = await db.powerUp.create({
+			data: {
+				title: selectedItem.title,
+				description: selectedItem.description,
+				currentBoost: selectedItem.price,
+				currentLevel: 1,
+				photoUrl: selectedItem.image,
+				powerUpId: selectedItem.id,
+				telegramId,
+			},
+		});
+
+		console.log('Created power-up:', createdPowerUp);
+
+		return {
+			success: true,
+			message: 'Power-up minted successfully',
+		};
 	} catch (error) {
+		console.error('Error in mintPowerUp:', error);
 		if (error instanceof Error) {
 			return { success: false, error: error.message };
 		} else {
@@ -86,3 +121,4 @@ export async function mintPowerUp(
 		}
 	}
 }
+

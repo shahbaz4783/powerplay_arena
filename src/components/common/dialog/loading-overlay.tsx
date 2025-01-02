@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2, Sparkles } from 'lucide-react';
 
 type ThemeColor = 'blue' | 'purple' | 'green' | 'orange' | 'gold' | 'rainbow';
@@ -24,57 +24,56 @@ interface LoadingOverlayProps {
 // Enhanced scene-specific messages
 const sceneMessages: Record<LoadingScene, string[]> = {
 	cricket: [
-		'⚡ Powering up the stadium...',
-		'🏏 Rolling the pitch...',
-		'🎯 Setting up wickets...',
-		'📊 Loading match stats...',
-		'🌟 Preparing for an epic match...',
+		'Powering up the stadium...',
+		'Rolling the pitch...',
+		'Setting up wickets...',
+		'Loading match stats...',
+		'Preparing for an epic match...',
 	],
 	coinFlip: [
-		'✨ Fortune awaits...',
-		'🎲 Testing your luck...',
-		'🌟 The coin dances in the air...',
-		'🎯 Destiny is spinning...',
-		'💫 Magic in motion...',
+		'Fortune awaits...',
+		'Testing your luck...',
+		'The coin dances in the air...',
+		'Destiny is spinning...',
+		'Magic in motion...',
 	],
 	purchase: [
-		'💎 Securing your treasure...',
-		'✨ Processing magic...',
-		'🌟 Creating something special...',
-		'🎁 Wrapping up your goodies...',
-		'⚡ Almost there...',
+		'Securing your treasure...',
+		'Processing magic...',
+		'Creating something special...',
+		'Wrapping up your goodies...',
+		'Almost there...',
 	],
 	exchange: [
-		'💫 Converting your power...',
-		'⚡ Channeling energy...',
-		'✨ Transforming assets...',
-		'🌟 Making the exchange...',
-		'💎 Perfecting the balance...',
+		'Converting your power...',
+		'Channeling energy...',
+		'Transforming assets...',
+		'Making the exchange...',
+		'Perfecting the balance...',
 	],
 	saving: [
-		'💾 Preserving your glory...',
-		'🏆 Recording achievements...',
-		'⚡ Securing your legacy...',
-		'✨ Saving your journey...',
-		'🌟 Making it permanent...',
+		'Preserving your glory...',
+		'Recording achievements...',
+		'Securing your legacy...',
+		'Saving your journey...',
+		'Making it permanent...',
 	],
 	victory: [
-		'🏆 Preparing your triumph...',
-		'🌟 Calculating rewards...',
-		'💫 Creating memories...',
-		'✨ Glory awaits...',
-		'🎉 Almost ready to celebrate...',
+		'Preparing your triumph...',
+		'Calculating rewards...',
+		'Creating memories...',
+		'Glory awaits...',
+		'Almost ready to celebrate...',
 	],
 	generic: [
-		'✨ Creating magic...',
-		'💫 Preparing wonders...',
-		'⚡ Loading excitement...',
-		'🌟 Almost there...',
-		'✨ Making it awesome...',
+		'Creating magic...',
+		'Preparing wonders...',
+		'Loading excitement...',
+		'Almost there...',
+		'Making it awesome...',
 	],
 };
 
-// Enhanced Neon Animation
 const NeonLoading = ({ theme }: { theme: ThemeColor }) => (
 	<div className='relative w-52 h-52 flex items-center justify-center'>
 		{/* Glowing background effect */}
@@ -269,7 +268,7 @@ const FluxLoading = ({ theme }: { theme: ThemeColor }) => (
 );
 
 export const LoadingOverlay = ({
-	variant = 'neon',
+	variant = 'flux',
 	scene = 'generic',
 	isOpen = true,
 	theme = 'blue',
@@ -291,7 +290,7 @@ export const LoadingOverlay = ({
 	if (!isOpen) return null;
 
 	return (
-		<div className='fixed inset-0 bg-slate-900/95 backdrop-blur-lg flex items-center justify-center z-[9999]'>
+		<div className='fixed top-0 inset-0 bg-slate-900/95 backdrop-blur-lg flex items-center justify-center z-[1000]'>
 			<div className='flex flex-col items-center gap-6 p-8 max-w-md animate-[fadeIn_0.3s_ease-out]'>
 				{/* Title Area */}
 				{title && (
@@ -312,7 +311,7 @@ export const LoadingOverlay = ({
 
 				{/* Message */}
 				<div className='text-center'>
-					<p className='text-xl text-white font-medium animate-[pulse_2s_infinite]'>
+					<p className=' text-slate-400 font-fira-code font-medium animate-pulse'>
 						{messages[currentMessage]}
 					</p>
 				</div>
@@ -320,38 +319,5 @@ export const LoadingOverlay = ({
 		</div>
 	);
 };
-
-// Add these keyframes to your global CSS
-const styles = `
-@keyframes neonPulse {
-  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.5; }
-  50% { transform: scale(1.1) rotate(180deg); opacity: 0.8; }
-}
-
-@keyframes floatParticle {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
-  50% { transform: translate(5px, -5px) scale(1.5); opacity: 1; }
-}
-
-@keyframes prismRotate {
-  0% { transform: rotate(0deg) translateX(10px) rotate(0deg); }
-  100% { transform: rotate(360deg) translateX(10px) rotate(-360deg); }
-}
-
-@keyframes sparkle {
-  0%, 100% { transform: scale(1); opacity: 0.3; }
-  50% { transform: scale(2); opacity: 1; }
-}
-
-@keyframes fluxPulse {
-  0%, 100% { transform: scale(1); opacity: 0.2; }
-  50% { transform: scale(1.2); opacity: 0.4; }
-}
-
-@keyframes fluxOrbit {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.5); }
-}
-`;
 
 export default LoadingOverlay;

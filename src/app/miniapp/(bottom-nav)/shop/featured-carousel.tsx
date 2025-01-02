@@ -11,12 +11,12 @@ import { cloudinary_url } from '@/src/constants/app-config';
 
 export function FeaturedCarousel() {
 	return (
-		<Carousel className='w-full' opts={{ loop: true }}>
+		<Carousel opts={{ loop: true }}>
 			<CarouselContent>
 				{featuredItems.map((item) => (
 					<CarouselItem key={item.id}>
-						<div className='p-1'>
-							<div className='relative border border-blue-600 aspect-video overflow-hidden rounded-xl'>
+						<div>
+							<div className='relative aspect-video overflow-hidden'>
 								<Image
 									src={cloudinary_url + item.image}
 									alt={item.title}
