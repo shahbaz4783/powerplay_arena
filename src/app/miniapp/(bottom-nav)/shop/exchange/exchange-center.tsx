@@ -7,7 +7,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/src/components/ui/card';
-import { ArrowLeftRight, Coins, Ticket } from 'lucide-react';
+import { ArrowLeftRight, ArrowRight, Coins, Ticket } from 'lucide-react';
 import {
 	Tabs,
 	TabsContent,
@@ -18,7 +18,7 @@ import { token } from '@/src/constants/app-config';
 import { executePowerExchange } from '@/src/actions/shop.action';
 import { ServerResponse } from '@/src/components/common/message/server-response';
 import { calculateExchangeValues } from '@/src/lib/utils';
-import { FormResponse } from '@/src/types/types';
+import { FormResponse, ServerResponseType } from '@/src/types/types';
 import { useUserInventory } from '@/src/hooks/useUserData';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import { GameBalanceCard } from '@/src/components/common/cards/balance-card';
@@ -27,24 +27,28 @@ import { PageLoadingScreen } from '@/src/components/layouts/global/page-loading-
 import LoadingOverlay from '@/src/components/common/dialog/loading-overlay';
 import { ExchangeContent } from './exchange-content';
 import { InfoCard } from '@/src/components/common/cards/info-card';
+import NotificationDialog from '@/src/components/layouts/global/notification';
+import { FaLongArrowAltRight } from 'react-icons/fa';
+import { PiCoinDuotone } from 'react-icons/pi';
+import { SectionHeader } from '@/src/components/common/elements/section-header';
 
 export function InGameExchange() {
 	const { telegramId } = useCurrentUser();
 	const { data: profile, isPending, mutate } = useUserInventory(telegramId);
 
 	const [response, formAction, isLoading] = useActionState(
-		async (prevState: FormResponse, formData: FormData) => {
+		async (prevState: ServerResponseType, formData: FormData) => {
 			const result = await executePowerExchange(
 				telegramId!,
 				prevState,
 				formData
 			);
-			if (result.message.success) {
+			if (result.success) {
 				mutate();
 			}
 			return result;
 		},
-		{ message: {} }
+		{ success: false, message: '' }
 	);
 
 	const [passesToExchange, setPassesToExchange] = useState<number>(0);
@@ -94,18 +98,28 @@ export function InGameExchange() {
 		calculateExchangeValues(passesToExchange);
 
 	return (
-		<main className='main-card'>
+		<main className='main-card mx-3'>
 			<section className='space-y-4'>
-				<div className='grid grid-cols-2 gap-2'>
+				<SectionHeader
+					title='Exchange'
+					highlightedTitle={
+						exchangeDirection === 'buyPasses' ? 'Coins' : 'Pass'
+					}
+					icon={ArrowLeftRight}
+					description={`How many pass you want to ${
+						exchangeDirection === 'buyPasses' ? 'purchase' : 'exchange'
+					}`}
+				/>
+				<div className='grid grid-cols-2 gap-3'>
 					<InfoCard
 						title={token.name}
 						amount={profile.powerCoin}
-						color='blue'
+						color={profile.powerCoin < 100 ? 'red' : 'teal'}
 					/>
 					<InfoCard
 						title={token.pass}
 						amount={profile.powerPass}
-						color='blue'
+						color={profile.powerPass < 5 ? 'red' : 'teal'}
 					/>
 				</div>
 				<Tabs
@@ -117,12 +131,28 @@ export function InGameExchange() {
 				>
 					<TabsList className='grid grid-cols-2 gap-3'>
 						<TabsTrigger value='buyPasses'>
-							<Coins className='mr-2 h-4 w-4' />
-							Coin to Pass
+							<div className='text-xs flex flex-col items-center justify-center'>
+								<PiCoinDuotone className='size-4' />
+								<p>Coin</p>
+							</div>
+
+							<FaLongArrowAltRight className='size-4 w-full' />
+
+							<div className='text-xs flex flex-col items-center justify-center'>
+								<Ticket className='size-4' />
+								<p>Pass</p>
+							</div>
 						</TabsTrigger>
 						<TabsTrigger value='sellPasses'>
-							<Ticket className='mr-2 h-4 w-4' />
-							Pass to Coin
+							<div className='text-xs flex flex-col items-center justify-center'>
+								<Ticket className='size-4' />
+								<p>Pass</p>
+							</div>
+							<FaLongArrowAltRight className='size-4 w-full' />
+							<div className='text-xs flex flex-col items-center justify-center'>
+								<PiCoinDuotone className='size-4' />
+								<p>Coin</p>
+							</div>
 						</TabsTrigger>
 					</TabsList>
 					<TabsContent value='buyPasses' className='mt-4 space-y-4'>
@@ -144,20 +174,20 @@ export function InGameExchange() {
 						/>
 					</TabsContent>
 				</Tabs>
-
-				<ServerResponse message={response.message} />
 				<div className='sub-card grid grid-cols-2 gap-1'>
-					<div className=''>
+					<div>
 						<p className='text-gray-300 text-xs font-medium'>
 							{exchangeDirection === 'buyPasses' ? 'Total Cost' : 'You Receive'}
 						</p>
-						<div className='flex items-center gap-2'>
-							<span className='text-xl font-bold text-white'>
+						<div className='flex gap-1 items-baseline'>
+							<span className='text-xl font-exo2 font-bold text-white'>
 								{exchangeDirection === 'buyPasses'
 									? totalPassCost
 									: netPassSaleAmount}
 							</span>
-							<span className='text-sm text-gray-400'>{token.symbol}</span>
+							<span className='text-xs font-poppins text-gray-400'>
+								{token.symbol}
+							</span>
 						</div>
 					</div>
 					<form action={formAction}>
@@ -172,10 +202,15 @@ export function InGameExchange() {
 							loadingText='Exchanging...'
 							icon={ArrowLeftRight}
 							isLoading={isLoading}
+							disabled={totalPassCost <= 0}
 						/>
 					</form>
 				</div>
 			</section>
+			<NotificationDialog
+				message={response.message!}
+				success={response.success}
+			/>
 			<LoadingOverlay isOpen={isLoading} scene='exchange' />
 		</main>
 	);

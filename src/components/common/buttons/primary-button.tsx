@@ -108,6 +108,7 @@ interface IconButtonProps extends VariantProps<typeof buttonVariants> {
 	className?: string;
 	onClick?: () => void;
 	isLoading?: boolean;
+	disabled?: boolean;
 }
 
 export function IconButton({
@@ -120,12 +121,13 @@ export function IconButton({
 	variant,
 	size,
 	fullWidth,
+	disabled,
 }: IconButtonProps) {
 	return (
 		<motion.button
 			whileTap={{ scale: 0.9 }}
 			onClick={onClick}
-			disabled={isLoading}
+			disabled={isLoading || disabled}
 			className={cn(buttonVariants({ variant, size, fullWidth }), className)}
 		>
 			<div className='col-span-1'>

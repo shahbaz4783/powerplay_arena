@@ -1,14 +1,13 @@
 'use server';
 
 import { db } from '@/src/lib/db';
-import { FormResponse } from '../types/types';
+import { FormResponse, ServerResponseType } from '../types/types';
 import { avatars, powerPassPacks } from '../constants/shop-items';
 import { responseMessages } from '../constants/messages';
 import { LevelInfo } from '../types/gameState';
 import { calculateExchangeValues, calculateLevel } from '../lib/utils';
 import { inGameItems } from '../constants/powerUps';
 import { token } from '../constants/app-config';
-
 
 export const purchaseAvatar = async (
 	telegramId: string,
@@ -116,9 +115,9 @@ export const purchaseAvatar = async (
 
 export const executePowerExchange = async (
 	telegramId: string,
-	prevState: FormResponse,
+	prevState: ServerResponseType,
 	formData: FormData
-): Promise<FormResponse> => {
+): Promise<ServerResponseType> => {
 	console.log({ formData });
 
 	const totalPass = Number(formData.get('totalPass'));
@@ -126,22 +125,28 @@ export const executePowerExchange = async (
 	const { netPassSaleAmount, totalPassCost, exchangeFee } =
 		calculateExchangeValues(totalPass);
 
+	if (totalPass <= 0 || totalPassCost === 0) {
+		return {
+			success: false,
+			message: 'Invalid input: values must be greater than 0.',
+		};
+	}
+
 	try {
-		const profile = await db.userInventory.findUnique({
+		const inventory = await db.userInventory.findUnique({
 			where: { telegramId },
 		});
 
-		if (!profile) {
+		if (!inventory) {
 			throw new Error(responseMessages.general.error.unexpectedError);
 		}
 
 		return await db.$transaction(async (tx) => {
 			if (exchangeDirection === 'buyPasses') {
-				if (profile.powerCoin < totalPassCost) {
+				if (inventory.powerCoin < totalPassCost) {
 					return {
-						message: {
-							error: responseMessages.transaction.error.insufficientBalance,
-						},
+						success: false,
+						message: responseMessages.transaction.error.insufficientBalance,
 					};
 				}
 				await tx.userInventory.update({
@@ -163,14 +168,17 @@ export const executePowerExchange = async (
 						},
 					},
 				});
+				return {
+					success: true,
+					message: responseMessages.shop.success.exchangeCompleted,
+				};
 			}
 
 			if (exchangeDirection === 'sellPasses') {
-				if (profile.powerPass < totalPass) {
+				if (inventory.powerPass < totalPass) {
 					return {
-						message: {
-							error: responseMessages.transaction.error.insufficientBalance,
-						},
+						success: false,
+						message: responseMessages.transaction.error.insufficientBalance,
 					};
 				}
 				await tx.userInventory.update({
@@ -192,19 +200,28 @@ export const executePowerExchange = async (
 						},
 					},
 				});
+				return {
+					success: true,
+					message: responseMessages.shop.success.exchangeCompleted,
+				};
 			}
+
+			// If exchangeDirection is neither 'buyPasses' nor 'sellPasses'
 			return {
-				message: { success: responseMessages.shop.success.exchangeCompleted },
+				success: false,
+				message: responseMessages.general.error.unexpectedError,
 			};
 		});
 	} catch (error) {
 		if (error instanceof Error) {
 			return {
-				message: { error: error.message },
+				success: false,
+				message: error.message,
 			};
 		} else {
 			return {
-				message: { error: responseMessages.general.error.unexpectedError },
+				success: false,
+				message: responseMessages.general.error.unexpectedError,
 			};
 		}
 	}
