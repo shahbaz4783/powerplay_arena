@@ -136,7 +136,7 @@ model PowerUp {
   currentLevel Int
   currentBoost Decimal
 
-  inventory UserInventory @relation(fields: [telegramId], references: [id], onDelete: Cascade)
+  inventory UserInventory @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
 
   @@index([telegramId])
   @@map("power_ups")

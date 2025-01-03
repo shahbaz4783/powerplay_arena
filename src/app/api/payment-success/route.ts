@@ -6,8 +6,6 @@ interface PaymentData {
 	paymentId: string;
 	amount: number;
 	itemId: string;
-	title?: string;
-	description?: string;
 }
 
 export async function POST(request: Request) {
@@ -19,14 +17,7 @@ export async function POST(request: Request) {
 			throw new Error('Invalid request body');
 		}
 
-		const {
-			telegramId,
-			paymentId,
-			amount,
-			itemId,
-			title = 'Item purchase',
-			description = 'No description provided',
-		} = body;
+		const { telegramId, paymentId, amount, itemId } = body;
 
 		if (!telegramId || !paymentId || !amount || !itemId) {
 			throw new Error('Missing required fields');
@@ -39,11 +30,10 @@ export async function POST(request: Request) {
 					telegramId,
 					voucherAmount: amount,
 					type: 'PURCHASE',
-					description: `Purchased ${title}`,
+					description: '',
 					metadata: {
 						paymentId,
 						itemId,
-						itemDescription: description,
 					},
 				},
 			});

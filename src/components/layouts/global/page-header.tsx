@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { CircleChevronLeft } from 'lucide-react';
+import { CircleChevronLeft, SquareChevronLeft, Undo2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface PageHeaderProps {
@@ -22,7 +22,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
 	const gradient = 'from-gray-950 via-gray-900 to-gray-950';
 
 	return (
-		<header className='relative bg-gray-900 border-b p-3 border-gray-800'>
+		<header className='sticky top-0 z-[10] bg-gray-900 border-b px-6 py-4 border-gray-800'>
 			<div
 				className={`absolute inset-0 bg-gradient-to-r ${gradient} opacity-90`}
 			/>

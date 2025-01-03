@@ -17,7 +17,7 @@ export const TransactionDialog = ({ transaction }: { transaction: Transaction })
 		if (typeof data !== 'object' || data === null) {
 			return (
 				<span
-					className={`text-sm font-mono ${
+					className={`text-sm font-exo2 break-all line-clamp-2 col-span-6 ${
 						typeof data === 'number'
 							? 'text-emerald-400'
 							: typeof data === 'boolean'
@@ -42,11 +42,13 @@ export const TransactionDialog = ({ transaction }: { transaction: Transaction })
             ${depth === 0 && index > 0 ? 'mt-2' : ''}
           `}
 					>
-						<div className='flex items-center gap-1'>
-							{depth === 0 && (
-								<ChevronRight className='w-3 h-3 text-slate-500' />
-							)}
-							<span className='text-sm text-slate-400'>{key}:</span>
+						<div className='grid grid-cols-8 items-start gap-1'>
+							<div className='col-span-2 flex gap-1 items-center break-all'>
+								{depth === 0 && (
+									<ChevronRight className='w-3 h-3 text-slate-500' />
+								)}
+								<span className='text-sm text-slate-400 '>{key}</span>
+							</div>
 							{typeof value !== 'object' ? (
 								<MetadataView data={value} depth={depth + 1} />
 							) : (
@@ -124,15 +126,16 @@ export const TransactionDialog = ({ transaction }: { transaction: Transaction })
 							</div>
 						</div>
 					)}
-					{transaction.metadata && (
-						<div className='main-card'>
-							<span className='text-sm text-slate-400 block border-b border-slate-700/50 pb-2 mb-2'>
-								Additional Info
-							</span>
-							<MetadataView data={transaction.metadata} />
-						</div>
-					)}
 				</div>
+
+				{transaction.metadata && (
+					<div className='main-card'>
+						<span className='text-sm word-wrap text-slate-400 block border-b border-slate-700/50 pb-2 mb-2 overflow-hidden'>
+							Additional Info
+						</span>
+						<MetadataView data={transaction.metadata} />
+					</div>
+				)}
 			</DialogContent>
 		</Dialog>
 	);

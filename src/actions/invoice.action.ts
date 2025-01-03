@@ -4,28 +4,27 @@ import { Bot } from 'grammy';
 import { inGameItems } from '@/src/constants/powerUps';
 import { responseMessages } from '../constants/messages';
 import { db } from '../lib/db';
+import { ServerResponseType } from '../types/types';
 
 const bot = new Bot(process.env.BOT_TOKEN!);
 
-export type PurchaseState = {
-	success: boolean;
-	invoiceLink?: string;
-	error?: string;
-};
+// export type PurchaseState = {
+// 	success: boolean;
+// 	invoiceLink?: string;
+// 	error?: string;
+// };
 
 export async function generateItemInvoice(
 	telegramId: string,
-	prevState: PurchaseState,
-	formData: FormData
-): Promise<PurchaseState> {
+	itemId: string
+): Promise<ServerResponseType<{ invoiceLink?: string }>> {
 	try {
-		const itemId = formData.get('itemId') as string;
 		const selectedItem = inGameItems.find((item) => item.id === itemId);
 
 		if (!selectedItem) {
 			return {
 				success: false,
-				error: responseMessages.shop.error.itemNotFound,
+				message: responseMessages.shop.error.itemNotFound,
 			};
 		}
 
@@ -46,38 +45,31 @@ export async function generateItemInvoice(
 			currency,
 			prices
 		);
-		return { success: true, invoiceLink };
+		return {
+			success: true,
+			message: 'Successfully generated invoice link.',
+			data: { invoiceLink },
+		};
 	} catch (error) {
 		if (error instanceof Error) {
-			return { success: false, error: error.message };
+			return { success: false, message: error.message };
 		} else {
 			return {
 				success: false,
-				error: responseMessages.transaction.error.transactionFailed,
+				message: responseMessages.transaction.error.transactionFailed,
 			};
 		}
 	}
 }
 
-
-export interface PurchaseStates {
-	success: boolean;
-	error?: string;
-	message?: string;
-}
-
-export async function mintPowerUp(
-	telegramId: string,
-	prevState: PurchaseStates,
-	formData: FormData
-): Promise<PurchaseStates> {
+export async function mintPowerUp(telegramId: string, itemId: string) {
 	console.log('Starting mintPowerUp function');
-	console.log('Telegram ID:', telegramId);
-	console.log('Form data:', Object.fromEntries(formData));
+	console.log('Item ID:', itemId);
 
 	try {
-		const itemId = formData.get('itemId') as string;
-		console.log('Item ID:', itemId);
+		if (!itemId) {
+			throw new Error('FormData is null or undefined');
+		}
 
 		const selectedItem = inGameItems.find((item) => item.id === itemId);
 		console.log('Selected item:', selectedItem);
@@ -121,4 +113,3 @@ export async function mintPowerUp(
 		}
 	}
 }
-

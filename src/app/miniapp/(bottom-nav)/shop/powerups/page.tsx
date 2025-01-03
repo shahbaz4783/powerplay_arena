@@ -1,6 +1,4 @@
-import { Header } from '@/src/components/common/elements/header';
 import { PowerUps } from '@/src/app/miniapp/(bottom-nav)/shop/powerups/power-ups';
-import React from 'react';
 import { PageHeader } from '@/src/components/layouts/global/page-header';
 
 export default function UpgradeStorePage() {

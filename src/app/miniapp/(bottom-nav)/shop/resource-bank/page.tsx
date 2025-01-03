@@ -1,13 +1,12 @@
-import { Header } from '@/src/components/common/elements/header';
 import { ConsumableItemCard } from '@/src/app/miniapp/(bottom-nav)/shop/resource-bank/resource-bank';
-import React from 'react';
+import { PageHeader } from '@/src/components/layouts/global/page-header';
 
-export default function ConsumableStorePage() {
+export default function ResourceBankPage() {
 	return (
 		<div className='space-y-4'>
-			<Header
+			<PageHeader
 				title='Resource Bank'
-				subtitle='Stock up on resources for endless play.'
+				description='Stock up on resources for endless play'
 			/>
 			<ConsumableItemCard />
 		</div>

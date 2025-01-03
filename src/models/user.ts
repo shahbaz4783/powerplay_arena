@@ -58,13 +58,14 @@ export const getUserProgressById = async (telegramId: string) => {
 	}
 };
 
+// ToDo: Fix Decimal Issue
 export const getUserInventoryById = async (telegramId: string) => {
 	try {
 		return await db.userInventory.findUnique({
 			where: { telegramId },
 			include: {
 				avatars: true,
-				powerUps: true,
+				// powerUps: true,
 				badge: true,
 			},
 		});
