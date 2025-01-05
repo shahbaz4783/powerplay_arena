@@ -51,6 +51,14 @@ enum VoucherPurchasedStatus {
   REFUNDED
 }
 
+enum Rarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
 // User-related models
 model User {
   telegramId String   @id @unique
@@ -110,14 +118,14 @@ model UserInventory {
 }
 
 model Avatar {
-  id          String  @id @default(cuid())
-  mintNumber  Int     @default(autoincrement())
+  id          String @id @default(cuid())
+  mintNumber  Int    @default(autoincrement())
   avatarId    String
   telegramId  String
   title       String
   description String
   photoUrl    String
-  xpBoost     Decimal
+  xpBoost     Float
 
   inventory UserInventory @relation(fields: [telegramId], references: [id], onDelete: Cascade)
 
@@ -126,17 +134,21 @@ model Avatar {
 }
 
 model PowerUp {
-  id           String  @id @default(cuid())
-  mintNumber   Int     @default(autoincrement())
+  id           String @id @default(cuid())
+  mintNumber   Int    @default(autoincrement())
   telegramId   String
   powerUpId    String
+
   title        String
   description  String
   photoUrl     String
-  currentLevel Int
-  currentBoost Decimal
+  rarity Rarity @default(COMMON)
+  currentBoost Float
+  currentBenefit String
 
   inventory UserInventory @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 
   @@index([telegramId])
   @@map("power_ups")

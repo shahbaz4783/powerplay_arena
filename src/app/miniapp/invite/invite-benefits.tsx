@@ -106,10 +106,10 @@ export const ReferralBenefits = () => {
 				</AnimatePresence>
 			</div>
 
-			<div className='flex justify-between items-center bg-gray-800 p-2'>
-				<IconButton text='' icon={ChevronLeft} onClick={prevSlide} />
+			<div className='flex justify-between items-center p-2'>
+				{/* <IconButton icon={ChevronLeft} onClick={prevSlide} /> */}
 
-				<div className='absolute  left-1/2 transform -translate-x-1/2 flex space-x-2'>
+				<div className='absolute bottom-3  left-1/2 transform -translate-x-1/2 flex space-x-2'>
 					{benefits.map((_, index) => (
 						<button
 							key={index}
@@ -122,7 +122,7 @@ export const ReferralBenefits = () => {
 						/>
 					))}
 				</div>
-				<IconButton text='' icon={ChevronRight} onClick={nextSlide} />
+				{/* <IconButton icon={ChevronRight} onClick={nextSlide} /> */}
 			</div>
 		</GradientBorder>
 	);

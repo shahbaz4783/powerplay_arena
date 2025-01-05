@@ -1,4 +1,4 @@
-export { getUserInventory } from './inventory';
+export { getUserInventory, fetchUserPowerUps } from './inventory';
 export { getUserProgression } from './progression';
 
 export {

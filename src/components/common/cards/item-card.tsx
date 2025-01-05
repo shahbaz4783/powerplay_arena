@@ -2,14 +2,15 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { cloudinary_url } from '@/src/constants/app-config';
 import { ShoppingCart, Star } from 'lucide-react';
-import { ItemInfo } from '../dialog/item-info';
+import { PowerUpInfo } from '../dialog/power_up-info';
 import { IconButton } from '../buttons/primary-button';
+import { cloudinary_url } from '@/src/lib/config';
 
 interface ItemCardProps {
 	id: string;
 	image: string;
+	type: 'POWERUP' | 'RESOURCE';
 	title: string;
 	levels?: any;
 	price: number;
@@ -20,8 +21,8 @@ interface ItemCardProps {
 export function ItemCard({
 	id,
 	image,
+	type,
 	title,
-	levels,
 	price,
 	onPurchase,
 	description,
@@ -43,7 +44,8 @@ export function ItemCard({
 						priority
 					/>
 				</div>
-				{levels && <ItemInfo title={title} levels={levels} />}
+
+				{type === 'POWERUP' && <PowerUpInfo powerUpId={id} title={title} />}
 			</aside>
 
 			<aside className='col-span-2 p-4 flex gap-3 flex-col justify-between'>

@@ -44,12 +44,12 @@ export default function ReferralPage() {
 	}, []);
 
 	return (
-		<div className='space-y-4'>
+		<div className='space-y-4 p-3'>
 			<InviteLink />
 			<OverallEarnings />
 
 			<Tabs defaultValue='benefits' className='w-full'>
-				<TabsList className='grid w-full grid-cols-2'>
+				<TabsList className='grid w-full grid-cols-2 gap-3'>
 					<TabsTrigger value='benefits' className='neon-text'>
 						Benefits
 					</TabsTrigger>

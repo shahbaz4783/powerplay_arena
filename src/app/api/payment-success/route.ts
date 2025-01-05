@@ -6,6 +6,7 @@ interface PaymentData {
 	paymentId: string;
 	amount: number;
 	itemId: string;
+	title: string;
 }
 
 export async function POST(request: Request) {
@@ -17,23 +18,21 @@ export async function POST(request: Request) {
 			throw new Error('Invalid request body');
 		}
 
-		const { telegramId, paymentId, amount, itemId } = body;
+		const { telegramId, paymentId, amount, itemId, title } = body;
 
 		if (!telegramId || !paymentId || !amount || !itemId) {
 			throw new Error('Missing required fields');
 		}
 
-		// Start a transaction
 		const result = await db.$transaction(async (prisma) => {
 			const transaction = await prisma.transaction.create({
 				data: {
 					telegramId,
-					voucherAmount: amount,
+					voucherAmount: -amount,
 					type: 'PURCHASE',
-					description: '',
+					description: `Paid telegram stars to purchase ${title}`,
 					metadata: {
-						paymentId,
-						itemId,
+						payId: paymentId,
 					},
 				},
 			});

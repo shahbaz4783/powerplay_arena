@@ -88,7 +88,7 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
 	const usagePercentage = (maxCapInfo.currentUsage / totalLimit) * 100;
 
 	return (
-		<GradientBorder>
+		<GradientBorder className='space-y-3'>
 			<div className='flex items-center space-x-4 mb-4'>
 				<div className='relative'>
 					<Avatar className='w-16 h-16 border-2 border-blue-500/50 shadow-lg'>

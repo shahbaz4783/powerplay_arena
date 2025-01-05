@@ -15,3 +15,23 @@ export const getUserInventory = async (
 
 	return userInventory;
 };
+
+export const fetchUserPowerUps = async (telegramId: string) => {
+	try {
+		const userPowerUps = await db.powerUp.findMany({
+			where: {
+				telegramId,
+			},
+			select: {
+				powerUpId: true,
+				title: true,
+				rarity: true,
+			},
+		});
+
+		return userPowerUps;
+	} catch (error) {
+		console.error('Error fetching power-ups:', error);
+		throw new Error('Failed to fetch power-ups.');
+	}
+};

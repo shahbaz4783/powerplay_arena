@@ -32,7 +32,7 @@ export function InviteLink() {
 	};
 
 	return (
-		<GradientBorder>
+		<GradientBorder className='space-y-3'>
 			<SectionHeader
 				title='Invite'
 				highlightedTitle='Friends'

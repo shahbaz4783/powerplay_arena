@@ -1,13 +1,16 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { inGameItems } from '@/src/constants/powerUps';
 import { initInvoice } from '@telegram-apps/sdk-react';
-import { generateItemInvoice, mintPowerUp } from '@/src/actions/invoice.action';
+import { generateItemInvoice } from '@/src/actions/invoice.action';
 import { ItemCard } from '@/src/components/common/cards/item-card';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 import LoadingOverlay from '@/src/components/common/dialog/loading-overlay';
 import NotificationDialog from '@/src/components/layouts/global/notification';
+import { mintPowerUp } from '@/src/actions/powerups.action';
+import { powerUps } from '@/src/constants/powerUps';
+import { AllPowerUpsOwned } from '@/src/components/layouts/feedback/all-powerups-owned';
+import { useUserInventory } from '@/src/hooks/useUserData';
 
 type ActionState = {
 	success: boolean;
@@ -23,6 +26,21 @@ const initialState: ActionState = {
 export function PowerUps() {
 	const invoice = initInvoice();
 	const { telegramId } = useCurrentUser();
+	const {
+		data: userInventory,
+		isPending,
+		refetch: refetchInventory,
+	} = useUserInventory(telegramId); // Added refetch method
+
+	const availablePowerUps =
+		userInventory?.powerUps && !isPending
+			? powerUps.filter(
+					(powerup) =>
+						!userInventory.powerUps.some(
+							(item) => item.powerUpId === powerup.powerUp_Id
+						)
+			  )
+			: []; // Default empty array during loading
 
 	const [showNotification, setShowNotification] = useState(false);
 	const [notificationMessage, setNotificationMessage] = useState('');
@@ -40,6 +58,12 @@ export function PowerUps() {
 					setNotificationMessage(mintResult.message || 'Purchase successful');
 					setNotificationSuccess(mintResult.success);
 					setShowNotification(true);
+
+					// Trigger a refresh of the inventory after successful minting
+					if (mintResult.success) {
+						await refetchInventory(); // Refresh the inventory
+					}
+
 					return {
 						success: mintResult.success,
 						message: mintResult.message || 'Purchase successful',
@@ -54,7 +78,13 @@ export function PowerUps() {
 					};
 				}
 			} else {
-				throw new Error('Failed to generate invoice');
+				setNotificationMessage(result?.message!);
+				setNotificationSuccess(false);
+				setShowNotification(true);
+				return {
+					success: result.success,
+					message: result.message || 'Purchase Failed',
+				};
 			}
 		} catch (error) {
 			console.error('Error in handlePurchase:', error);
@@ -77,12 +107,25 @@ export function PowerUps() {
 
 	return (
 		<main className='space-y-4'>
-			{isLoading && <LoadingOverlay scene='purchase' />}
+			{/* Show loading overlay while loading user data */}
+			{(isLoading || isPending) && <LoadingOverlay scene='purchase' />}
 
-			{inGameItems.map((item) => (
-				<ItemCard key={item.id} {...item} onPurchase={action} />
-			))}
+			{/* Show power-ups if available */}
+			{!isPending &&
+				availablePowerUps.map((item) => (
+					<ItemCard
+						key={item.powerUp_Id}
+						id={item.powerUp_Id}
+						{...item}
+						type='POWERUP'
+						onPurchase={action}
+					/>
+				))}
 
+			{/* Show "AllPowerUpsOwned" only when inventory is fully loaded */}
+			{!isPending && availablePowerUps.length === 0 && <AllPowerUpsOwned />}
+
+			{/* Notification Dialog */}
 			{showNotification && (
 				<NotificationDialog
 					message={notificationMessage}

@@ -1,25 +1,19 @@
 'use server';
 
 import { Bot } from 'grammy';
-import { inGameItems } from '@/src/constants/powerUps';
+import { powerUps } from '@/src/constants/powerUps';
 import { responseMessages } from '../constants/messages';
-import { db } from '../lib/db';
 import { ServerResponseType } from '../types/types';
+import * as models from '@/src/models';
 
 const bot = new Bot(process.env.BOT_TOKEN!);
-
-// export type PurchaseState = {
-// 	success: boolean;
-// 	invoiceLink?: string;
-// 	error?: string;
-// };
 
 export async function generateItemInvoice(
 	telegramId: string,
 	itemId: string
 ): Promise<ServerResponseType<{ invoiceLink?: string }>> {
 	try {
-		const selectedItem = inGameItems.find((item) => item.id === itemId);
+		const selectedItem = powerUps.find((item) => item.powerUp_Id === itemId);
 
 		if (!selectedItem) {
 			return {
@@ -28,11 +22,22 @@ export async function generateItemInvoice(
 			};
 		}
 
+		const powerUp = await models.fetchUserPowerUps(telegramId);
+		const existingPowerUp = powerUp?.find(
+			(item) => item.powerUpId === selectedItem.powerUp_Id
+		);
+		if (existingPowerUp) {
+			return {
+				success: false,
+				message: `You already own ${selectedItem.title}`,
+			};
+		}
+
 		const title = selectedItem.title;
 		const description = selectedItem.description;
 		const payload = JSON.stringify({
-			itemId: selectedItem.id,
-			telegramId: telegramId.toString(),
+			itemId: selectedItem.powerUp_Id,
+			title,
 		});
 		const currency = 'XTR';
 		const prices = [{ amount: 1, label: selectedItem.title }];
@@ -62,53 +67,60 @@ export async function generateItemInvoice(
 	}
 }
 
-export async function mintPowerUp(telegramId: string, itemId: string) {
-	console.log('Starting mintPowerUp function');
-	console.log('Item ID:', itemId);
-
+export async function generateResourceInvoice(
+	telegramId: string,
+	itemId: string
+): Promise<ServerResponseType<{ invoiceLink?: string }>> {
 	try {
-		if (!itemId) {
-			throw new Error('FormData is null or undefined');
-		}
-
-		const selectedItem = inGameItems.find((item) => item.id === itemId);
-		console.log('Selected item:', selectedItem);
+		const selectedItem = powerUps.find((item) => item.powerUp_Id === itemId);
 
 		if (!selectedItem) {
-			console.error('Item not found');
 			return {
 				success: false,
-				error: responseMessages.shop.error.itemNotFound,
+				message: responseMessages.shop.error.itemNotFound,
 			};
 		}
 
-		console.log('Creating power-up in database');
-		const createdPowerUp = await db.powerUp.create({
-			data: {
-				title: selectedItem.title,
-				description: selectedItem.description,
-				currentBoost: selectedItem.price,
-				currentLevel: 1,
-				photoUrl: selectedItem.image,
-				powerUpId: selectedItem.id,
-				telegramId,
-			},
+		const powerUp = await models.fetchUserPowerUps(telegramId);
+		const existingPowerUp = powerUp?.find(
+			(item) => item.powerUpId === selectedItem.powerUp_Id
+		);
+		if (existingPowerUp) {
+			return {
+				success: false,
+				message: `You already own ${selectedItem.title}`,
+			};
+		}
+
+		const title = selectedItem.title;
+		const description = selectedItem.description;
+		const payload = JSON.stringify({
+			itemId: selectedItem.powerUp_Id,
+			title,
 		});
+		const currency = 'XTR';
+		const prices = [{ amount: 1, label: selectedItem.title }];
 
-		console.log('Created power-up:', createdPowerUp);
-
+		const invoiceLink = await bot.api.createInvoiceLink(
+			title,
+			description,
+			payload,
+			'',
+			currency,
+			prices
+		);
 		return {
 			success: true,
-			message: 'Power-up minted successfully',
+			message: 'Successfully generated invoice link.',
+			data: { invoiceLink },
 		};
 	} catch (error) {
-		console.error('Error in mintPowerUp:', error);
 		if (error instanceof Error) {
-			return { success: false, error: error.message };
+			return { success: false, message: error.message };
 		} else {
 			return {
 				success: false,
-				error: responseMessages.transaction.error.transactionFailed,
+				message: responseMessages.transaction.error.transactionFailed,
 			};
 		}
 	}

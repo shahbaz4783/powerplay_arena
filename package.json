@@ -10,7 +10,8 @@
 		"start": "next start",
 		"lint": "next lint",
 		"vercel-build": "prisma generate && prisma migrate deploy && next build",
-		"prisma:generate": "prisma generate"
+		"prisma:generate": "prisma generate",
+		"studio": "prisma studio --browser none"
 	},
 	"prisma": {
 		"schema": "./src/prisma/schema.prisma"

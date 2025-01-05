@@ -46,7 +46,7 @@ export function OverallEarnings() {
 	);
 
 	return (
-		<GradientBorder>
+		<GradientBorder className='space-y-3'>
 			<SectionHeader
 				title='Earnings'
 				highlightedTitle='Dashboard'

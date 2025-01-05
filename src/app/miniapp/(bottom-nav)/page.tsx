@@ -4,7 +4,7 @@ import { FeaturedTiles } from '@/src/components/layouts/home/featured-tiles';
 
 const MiniAppHomePage = () => {
 	return (
-		<div className='space-y-4 min-h-[84svh]'>
+		<div className='space-y-4 min-h-[84svh] p-3'>
 			<ProfileSummary />
 			<FeaturedTiles />
 			<FeaturedGames />

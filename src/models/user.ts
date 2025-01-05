@@ -65,7 +65,7 @@ export const getUserInventoryById = async (telegramId: string) => {
 			where: { telegramId },
 			include: {
 				avatars: true,
-				// powerUps: true,
+				powerUps: true,
 				badge: true,
 			},
 		});
