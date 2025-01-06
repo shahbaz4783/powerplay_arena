@@ -15,21 +15,24 @@ enum BetType {
   JACKPOT
 }
 
-enum TransactionType {
-  GAME
-  REWARD
-  PRIZE
-  EXCHANGE
-  PURCHASE
-  WITHDRAWAL
-  REFUND
-  OTHERS
-}
-
 enum MatchFormat {
   BLITZ
   POWERPLAY
   CLASSIC
+}
+
+enum TransactionType {
+  GAME
+  REWARD
+  PRIZE
+  REDEEM
+  EXCHANGE
+  PURCHASE
+  UPGRADE
+  DEPOSIT
+  WITHDRAWAL
+  REFUND
+  OTHERS
 }
 
 enum GameOutcome {
@@ -44,11 +47,6 @@ enum VoucherRewardStatus {
   CREDITED
   EXPIRED
   CLAIMED
-}
-
-enum VoucherPurchasedStatus {
-  CREDITED
-  REFUNDED
 }
 
 enum Rarity {
@@ -67,19 +65,19 @@ model User {
   username   String?  @unique
   isPremium  Boolean  @default(false)
   inviteCode String   @unique
-  avatarUrl  String
+  avatarUrl  String?
   createdAt  DateTime @default(now())
 
   inventory UserInventory?
   progress  UserProgression?
 
-  voucherPurchases VoucherPurchase[]
-  transactions     Transaction[]
-  cricketMatch     CricketMatchRecord[]
-  cricketStats     CricketMatchStats[]
-  betStats         BetStats[]
-  referrals        ReferralRecord[]     @relation("Referrer")
-  referredBy       ReferralRecord[]     @relation("ReferredUser")
+  transactions Transaction[]
+  cricketMatch CricketMatchRecord[]
+  cricketStats CricketMatchStats[]
+  betStats     BetStats[]
+
+  referrals  ReferralRecord[] @relation("Referrer")
+  referredBy ReferralRecord[] @relation("ReferredUser")
 
   @@index([telegramId])
   @@map("users")
@@ -103,47 +101,52 @@ model UserProgression {
 }
 
 model UserInventory {
-  id          String @id @default(cuid())
-  telegramId  String @unique
-  powerCoin   Int    @default(0)
-  powerPass   Int    @default(0)
-  starVoucher Int    @default(0)
+  id         String @id @default(cuid())
+  telegramId String @unique
 
-  avatars  Avatar[]
-  powerUps PowerUp[]
-  badge    Badge[]
-  user     User      @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+  powerCoin Int @default(0)
+  powerPass Int @default(0)
+
+  avatars   Avatar[]
+  powerUps  PowerUp[]
+  resources Resource[]
+  badge     Badge[]
+
+  user User @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
 
   @@map("user_inventory")
 }
 
 model Avatar {
-  id          String @id @default(cuid())
-  mintNumber  Int    @default(autoincrement())
-  avatarId    String
-  telegramId  String
-  title       String
-  description String
-  photoUrl    String
-  xpBoost     Float
+  id         String @id @default(cuid())
+  mintNumber Int    @default(autoincrement())
+  avatarId   String
+  telegramId String
 
-  inventory UserInventory @relation(fields: [telegramId], references: [id], onDelete: Cascade)
+  title          String
+  description    String
+  photoUrl       String
+  rarity         Rarity @default(COMMON)
+  xpBoost        Float
+  currentBenefit String
+
+  inventory UserInventory @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
 
   @@index([telegramId])
   @@map("avatars")
 }
 
 model PowerUp {
-  id           String @id @default(cuid())
-  mintNumber   Int    @default(autoincrement())
-  telegramId   String
-  powerUpId    String
+  id         String @id @default(cuid())
+  mintNumber Int    @default(autoincrement())
+  telegramId String
+  powerUpId  String
 
-  title        String
-  description  String
-  photoUrl     String
-  rarity Rarity @default(COMMON)
-  currentBoost Float
+  title          String
+  description    String
+  photoUrl       String
+  rarity         Rarity @default(COMMON)
+  currentBoost   Float
   currentBenefit String
 
   inventory UserInventory @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
@@ -152,6 +155,27 @@ model PowerUp {
 
   @@index([telegramId])
   @@map("power_ups")
+}
+
+model Resource {
+  id         String @id @default(cuid())
+  mintNumber Int    @default(autoincrement())
+  telegramId String
+  resourceId String
+
+  title       String
+  description String
+  photoUrl    String
+  isRedeem    Boolean @default(false)
+  coinAmount  Int     @default(0)
+  passAmount  Int     @default(0)
+
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  inventory UserInventory @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+
+  @@index([telegramId])
+  @@map("resources")
 }
 
 model Badge {
@@ -244,20 +268,39 @@ model BetStats {
 
 // Transaction-related models
 model Transaction {
-  id            String          @id @default(cuid())
-  telegramId    String
-  coinAmount    Int             @default(0)
-  passAmount    Int             @default(0)
-  voucherAmount Int             @default(0)
-  type          TransactionType
-  description   String?
-  metadata      Json?
-  createdAt     DateTime        @default(now())
-  user          User            @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+  id          String          @id @default(cuid())
+  telegramId  String
+  coinAmount  Int             @default(0)
+  passAmount  Int             @default(0)
+  starAmount  Int             @default(0)
+  type        TransactionType
+  description String?
+  metadata    Json?
+  createdAt   DateTime        @default(now())
+  user        User            @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
 
   @@index(telegramId)
   @@index(type)
   @@map("transactions")
+}
+
+model ReferralRecord {
+  id                String   @id @default(uuid())
+  referrerId        String
+  referredId        String
+  createdAt         DateTime @default(now())
+  expiresAt         DateTime
+  totalEarnedCoins  Int      @default(0)
+  totalEarnedPasses Int      @default(0)
+  totalEarnedStars  Int      @default(0)
+  maxStars          Int      @default(100)
+
+  referrer     User @relation("Referrer", fields: [referrerId], references: [telegramId], onDelete: Cascade)
+  referredUser User @relation("ReferredUser", fields: [referredId], references: [telegramId], onDelete: Cascade)
+
+  @@index([referrerId])
+  @@index([referredId])
+  @@map("referral_records")
 }
 
 model WaitlistUser {
@@ -266,60 +309,4 @@ model WaitlistUser {
   createdAt DateTime @default(now())
 
   @@map("waitlist_users")
-}
-
-model ReferralRecord {
-  id                  String   @id @default(uuid())
-  referrerId          String
-  referredId          String
-  createdAt           DateTime @default(now())
-  expiresAt           DateTime
-  totalEarnedCoins    Int      @default(0)
-  totalEarnedPasses   Int      @default(0)
-  totalEarnedVouchers Int      @default(0)
-  maxVouchers         Int      @default(100)
-
-  referrer       User            @relation("Referrer", fields: [referrerId], references: [telegramId], onDelete: Cascade)
-  referredUser   User            @relation("ReferredUser", fields: [referredId], references: [telegramId], onDelete: Cascade)
-  voucherRewards VoucherReward[]
-
-  @@index([referrerId])
-  @@index([referredId])
-  @@map("referral_records")
-}
-
-model VoucherPurchase {
-  id                    String                 @id @default(uuid())
-  telegramId            String
-  voucherAmount         Int
-  starAmount            Int
-  telegramPaymentId     String                 @unique
-  providerPaymentId     String
-  VoucherPurchaseStatus VoucherPurchasedStatus
-  purchasedAt           DateTime               @default(now())
-
-  user           User            @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-  voucherRewards VoucherReward[]
-
-  @@index([telegramId])
-  @@map("voucher_purchases")
-}
-
-model VoucherReward {
-  id                String              @id @default(uuid())
-  referralRecordId  String
-  voucherPurchaseId String
-  referrerReward    Int
-  referredReward    Int
-  status            VoucherRewardStatus
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  claimBy           DateTime
-
-  referralRecord  ReferralRecord  @relation(fields: [referralRecordId], references: [id], onDelete: Cascade)
-  voucherPurchase VoucherPurchase @relation(fields: [voucherPurchaseId], references: [id], onDelete: Cascade)
-
-  @@index([referralRecordId])
-  @@index([voucherPurchaseId])
-  @@map("voucher_rewards")
 }

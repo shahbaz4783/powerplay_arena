@@ -3,9 +3,8 @@
 import { useActionState } from "react";
 import { avatars } from '@/src/constants/shop-items';
 import { purchaseAvatar } from '@/src/actions/shop.action';
-import { ShopItemCard } from '../../../../../components/common/cards/shop-item-card';
-import { cloudinary_url } from '@/src/constants/app-config';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
+import { ItemCard } from '@/src/components/common/cards/item-card';
 
 export function AvatarStore() {
 	const { telegramId } = useCurrentUser();
@@ -20,19 +19,15 @@ export function AvatarStore() {
 	return (
 		<>
 			{avatars.map((avatar) => (
-				<ShopItemCard
-					id={avatar.id}
+				<ItemCard
 					key={avatar.id}
-					type='avatar'
-					image={cloudinary_url + avatar.href}
-					price={avatar.price}
-					isPurchased={false}
-					name={avatar.name}
-					xpGain={avatar.xpGain}
-					onPurchase={formAction}
+					type='RESOURCE'
 					description={avatar.description}
-					requiredLevel={1}
-					serverResponse={response}
+					id={avatar.id}
+					image={avatar.href}
+					onPurchase={() => response}
+					price={avatar.price}
+					title={avatar.name}
 				/>
 			))}
 		</>

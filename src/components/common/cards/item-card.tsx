@@ -31,7 +31,7 @@ export function ItemCard({
 		<motion.div
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
-			className='rounded-xl mx-3 grid grid-cols-3 bg-gray-900 backdrop-blur-sm border border-gray-800 overflow-hidden'
+			className='rounded-xl grid grid-cols-3 bg-gray-900 backdrop-blur-sm border border-gray-800 overflow-hidden'
 		>
 			<aside className='relative col-span-1 h-full'>
 				<div className='absolute inset-0'>

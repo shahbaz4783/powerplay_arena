@@ -28,7 +28,7 @@ export const calculateDailyTotals = (transactions: Transaction[]) => {
 			return {
 				coins: totals.coins + tx.coinAmount,
 				pass: totals.pass + tx.passAmount,
-				voucher: totals.voucher + tx.voucherAmount,
+				voucher: totals.voucher + tx.starAmount,
 			};
 		},
 		{ coins: 0, pass: 0, voucher: 0 }

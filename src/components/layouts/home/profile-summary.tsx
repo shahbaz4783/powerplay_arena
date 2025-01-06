@@ -1,17 +1,17 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useUserInventory, useUserProgress } from '@/src/hooks/useUserData';
 import { useInitData } from '@telegram-apps/sdk-react';
 import { Progress } from '@/src/components/ui/progress';
 import { token } from '@/src/constants/app-config';
-import { Coins, Zap, Star, Award, Crown } from 'lucide-react';
+import { Coins, Zap, Star, Award, Crown, Sparkles } from 'lucide-react';
 import { Skeleton } from '@/src/components/ui/skeleton';
 import { useCurrentUser } from '@/src/hooks/useCurrentUser';
+import { ErrorComponent } from '../feedback/error-ui';
 import { InfoCard } from '../../common/cards/info-card';
 import { GradientBorder } from '../../common/elements/gradient-border';
-import { ErrorComponent } from '../feedback/error-ui';
 
 const MAX_LEVEL = 10;
 
@@ -19,7 +19,6 @@ export function ProfileSummary() {
 	const initData = useInitData();
 	const user = initData?.user;
 	const { telegramId } = useCurrentUser();
-
 	const {
 		data: inventory,
 		isLoading,
@@ -28,116 +27,136 @@ export function ProfileSummary() {
 	} = useUserInventory(telegramId);
 	const { data: userProgress } = useUserProgress(telegramId);
 
-	if (isError) {
-		return <ErrorComponent error={error} />;
-	}
+	if (isError) return <ErrorComponent error={error} />;
 
 	const totalXP = userProgress?.totalXP ?? 0;
 	const xpForLevelUp = userProgress?.xpForNextLevel ?? 0;
 	const xpForNextLevel = xpForLevelUp - totalXP;
 	const currentLevel = userProgress?.level ?? 0;
 	const isMaxLevel = currentLevel >= MAX_LEVEL;
+	const progressPercentage = Math.round((totalXP / xpForLevelUp) * 100);
 
 	const getLevelIcon = (level: number) => {
-		if (level < 5) return <Star className='h-6 w-6 text-yellow-400' />;
-		if (level < 10) return <Award className='h-6 w-6 text-blue-400' />;
-		return <Crown className='h-6 w-6 text-purple-400' />;
+		if (level < 5) return <Star className='h-8 w-8 text-yellow-400' />;
+		if (level < 10) return <Award className='h-8 w-8 text-blue-400' />;
+		return <Crown className='h-8 w-8 text-purple-400' />;
 	};
 
-	const MaxLevelIndicator = () => (
-		<motion.div
-			initial={{ opacity: 0, scale: 0.9 }}
-			animate={{ opacity: 1, scale: 1 }}
-			transition={{ duration: 0.5 }}
-			className='flex items-center p-2 justify-between rounded-lg'
-		>
-			<div className='flex items-center'>
-				<Crown className='h-5 w-5 text-yellow-400 mr-2' />
-				<span className='text-sm font-semibold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-purple-400'>
-					Max Level
-				</span>
-			</div>
-			<span className='text font-exo2 font-medium text-gray-300'>
-				<span className='text-xs font-poppins '>Total XP:</span>{' '}
-				{totalXP.toLocaleString()}
-			</span>
-		</motion.div>
-	);
-
 	return (
-		<GradientBorder className='overflow-hidden backdrop-blur-sm rounded-xl bg-gradient-to-br from-gray-800/50 via-gray-900/50 to-gray-900/80 shadow-xl'>
+		<GradientBorder>
 			<motion.div
 				initial={{ opacity: 0, y: -20 }}
 				animate={{ opacity: 1, y: 0 }}
-				className='relative space-y-3'
+				className='relative rounded-2xl'
 			>
-				<div className='flex items-center justify-between'>
-					<div className='flex items-center gap-3'>
-						<div className='rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 p-2'>
-							{getLevelIcon(currentLevel)}
-						</div>
-						<div>
-							<h2 className='text-2xl font-bold text-white'>
-								{user?.firstName ?? 'Guest User'}
-							</h2>
-							{isLoading ? (
-								<Skeleton className='h-4 w-24 bg-gray-700' />
-							) : (
-								<div className='flex items-center space-x-2'>
-									<p className='text-sm font-medium text-yellow-400/80'>
-										Level {currentLevel}
-									</p>
-									<span className='text-xs text-gray-400'>•</span>
-									<p className='text-sm font-medium text-gray-300'>
-										{userProgress?.levelName}
-									</p>
-								</div>
-							)}
+				<div className='relative space-y-6'>
+					{/* Profile Header */}
+					<div className='flex items-center justify-between'>
+						<div className='flex items-center gap-4'>
+							<motion.div
+								whileHover={{ scale: 1.05, rotate: 5 }}
+								className='relative rounded-xl bg-gradient-to-br from-gray-800 to-gray-700 p-3'
+							>
+								<div className='absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 blur-md' />
+								<div className='relative'>{getLevelIcon(currentLevel)}</div>
+							</motion.div>
+
+							<div>
+								<motion.div
+									initial={{ opacity: 0 }}
+									animate={{ opacity: 1 }}
+									className='relative'
+								>
+									<h2 className='text-3xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-300 bg-clip-text text-transparent'>
+										{user?.firstName ?? 'Guest User'}
+									</h2>
+									{isLoading ? (
+										<Skeleton className='h-4 w-24 bg-gray-700' />
+									) : (
+										<div className='flex items-center space-x-2 mt-1'>
+											<Sparkles className='h-4 w-4 text-yellow-400' />
+											<p className='text-sm font-medium bg-gradient-to-r from-yellow-400 to-yellow-200 bg-clip-text text-transparent'>
+												Level {currentLevel}
+											</p>
+											<span className='text-gray-500'>•</span>
+											<p className='text-sm font-medium text-gray-300'>
+												{userProgress?.levelName}
+											</p>
+										</div>
+									)}
+								</motion.div>
+							</div>
 						</div>
 					</div>
-				</div>
 
-				<div className='grid grid-cols-2 gap-4'>
-					<InfoCard
-						icon={<Coins />}
-						title={token.name}
-						amount={inventory?.powerCoin!}
-						color='blue'
-					/>
-					<InfoCard
-						icon={<Zap />}
-						title={token.pass}
-						amount={inventory?.powerPass!}
-						color='blue'
-					/>
-				</div>
+					{/* Stats Grid */}
+					<div className='grid grid-cols-2 gap-4'>
+						<InfoCard
+							icon={<Coins />}
+							title={token.name}
+							amount={inventory?.powerCoin ?? 0}
+							color='yellow'
+						/>
+						<InfoCard
+							icon={<Zap />}
+							title={token.pass}
+							amount={inventory?.powerPass ?? 0}
+							color='yellow'
+						/>
+					</div>
 
-				<div className='space-y-2 sub-card'>
-					{isMaxLevel ? (
-						<MaxLevelIndicator />
-					) : (
-						<>
-							<div className='flex justify-between text-sm text-gray-400'>
-								<span>Progress to Next Level</span>
-								<span>{Math.round((totalXP / xpForLevelUp) * 100)}%</span>
-							</div>
-							{isLoading ? (
-								<Skeleton className='h-2 w-full bg-gray-700' />
+					{/* Progress Section */}
+					<AnimatePresence mode='wait'>
+						<motion.div
+							key={isMaxLevel ? 'max' : 'progress'}
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -10 }}
+							className='space-y-3 rounded-xl p-3 border'
+						>
+							{isMaxLevel ? (
+								<div className='flex items-center justify-between'>
+									<div className='flex items-center space-x-3'>
+										<div className='rounded-lg bg-yellow-500/20 p-2'>
+											<Crown className='h-5 w-5 text-yellow-400' />
+										</div>
+										<span className='text-lg font-bold bg-gradient-to-r from-yellow-400 to-purple-400 bg-clip-text text-transparent'>
+											Maximum Level Achieved!
+										</span>
+									</div>
+									<span className='text-sm text-gray-400'>
+										Total XP: {totalXP.toLocaleString()}
+									</span>
+								</div>
 							) : (
-								<Progress
-									value={(totalXP / xpForLevelUp) * 100}
-									className='h-2 bg-gray-700'
-								/>
+								<>
+									<div className='flex justify-between text-sm'>
+										<span className='text-gray-300 font-medium'>
+											Progress to Next Level
+										</span>
+										<span className='text-gray-400'>{progressPercentage}%</span>
+									</div>
+									{isLoading ? (
+										<Skeleton className='h-3 w-full bg-gray-700' />
+									) : (
+										<div className='relative h-3 w-full overflow-hidden rounded-full bg-gray-800/50'>
+											
+											<Progress value={progressPercentage} />
+										</div>
+									)}
+									<div className='flex justify-between text-xs'>
+										<span className='text-gray-400'>
+											Total XP: {totalXP.toLocaleString()}
+										</span>
+										<span className='text-gray-400'>
+											{xpForNextLevel.toLocaleString()} XP to level{' '}
+											{currentLevel + 1}
+										</span>
+									</div>
+								</>
 							)}
-							<div className='flex justify-between text-xs text-gray-500'>
-								<span>Total XP: {totalXP.toLocaleString()}</span>
-								<span>
-									{xpForNextLevel.toLocaleString()} XP to level{' '}
-									{currentLevel + 1}
-								</span>
-							</div>
-						</>
-					)}
+						</motion.div>
+					</AnimatePresence>
 				</div>
 			</motion.div>
 		</GradientBorder>

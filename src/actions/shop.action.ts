@@ -6,7 +6,6 @@ import { avatars, powerPassPacks } from '../constants/shop-items';
 import { responseMessages } from '../constants/messages';
 import { LevelInfo } from '../types/gameState';
 import { calculateExchangeValues, calculateLevel } from '../lib/utils';
-import { inGameItems } from '../constants/powerUps';
 import { token } from '../constants/app-config';
 
 export const purchaseAvatar = async (
@@ -73,6 +72,7 @@ export const purchaseAvatar = async (
 					description: avatarInfo.description,
 					photoUrl: avatarInfo.href,
 					xpBoost: 1,
+					currentBenefit: '',
 				},
 			});
 

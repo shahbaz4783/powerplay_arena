@@ -10,6 +10,12 @@ import { NAVIGATION_LINKS } from '@/src/constants/app-config';
 const Navigation = () => {
 	const pathname = usePathname();
 
+	const isActiveRoute = (href: string) => {
+		if (pathname === href) return true;
+		if (href !== '/miniapp' && pathname.startsWith(href)) return true;
+		return false;
+	};
+
 	return (
 		<motion.nav
 			initial={{ y: 100 }}
@@ -31,11 +37,11 @@ const Navigation = () => {
 								className={cn(
 									'flex flex-col items-center justify-center relative',
 									'transition-all duration-200 ease-in-out',
-									pathname === item.href ? 'scale-105' : 'scale-100'
+									isActiveRoute(item.href) ? 'scale-105' : 'scale-100'
 								)}
 							>
 								{/* Active Background Glow */}
-								{pathname === item.href && (
+								{isActiveRoute(item.href) && (
 									<motion.div
 										layoutId='navGlow'
 										className='absolute -inset-1 bg-gradient-to-b from-blue-500/20 to-blue-500/0 blur-md rounded-xl'
@@ -49,7 +55,7 @@ const Navigation = () => {
 										'relative flex items-center justify-center',
 										'rounded-xl p-1.5',
 										'transition-colors duration-200',
-										pathname === item.href
+										isActiveRoute(item.href)
 											? 'text-blue-400'
 											: 'text-gray-400 hover:text-gray-300'
 									)}
@@ -57,7 +63,7 @@ const Navigation = () => {
 									<item.icon
 										className={cn(
 											'h-5 w-5 transition-all duration-200',
-											pathname === item.href && 'scale-110'
+											isActiveRoute(item.href) && 'scale-110'
 										)}
 									/>
 								</div>
@@ -67,14 +73,14 @@ const Navigation = () => {
 									className={cn(
 										'text-[10px] font-medium mt-1',
 										'transition-colors duration-200',
-										pathname === item.href ? 'text-blue-400' : 'text-gray-400'
+										isActiveRoute(item.href) ? 'text-blue-400' : 'text-gray-400'
 									)}
 								>
 									{item.title}
 								</span>
 
 								{/* Active Indicator Dot */}
-								{pathname === item.href && (
+								{isActiveRoute(item.href) && (
 									<motion.div
 										layoutId='navIndicator'
 										className='absolute -top-1 w-1 h-1 rounded-full bg-blue-400'

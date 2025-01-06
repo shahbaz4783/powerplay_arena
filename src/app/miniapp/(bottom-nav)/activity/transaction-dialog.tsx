@@ -96,8 +96,8 @@ export const TransactionDialog = ({ transaction }: { transaction: Transaction })
 						/>
 						<InfoCard
 							title='Voucher'
-							amount={transaction.voucherAmount}
-							color={transaction.voucherAmount >= 0 ? 'teal' : 'red'}
+							amount={transaction.starAmount}
+							color={transaction.starAmount >= 0 ? 'teal' : 'red'}
 						/>
 					</div>
 					{transaction.description && (

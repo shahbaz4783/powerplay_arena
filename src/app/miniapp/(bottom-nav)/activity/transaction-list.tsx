@@ -24,10 +24,10 @@ const getTransactionIcon = (type: string) =>
 	}[type] || <ShoppingCart className='w-4 h-4' />);
 
 const getDisplayAmount = (tx: Transaction) => {
-	if (tx.voucherAmount !== 0) {
+	if (tx.starAmount !== 0) {
 		return {
 			icon: <Gift className='size-3' />,
-			amount: tx.voucherAmount,
+			amount: tx.starAmount,
 			type: 'voucher',
 		};
 	}
@@ -53,7 +53,7 @@ const getDisplayAmount = (tx: Transaction) => {
 
 const TransactionCard = ({ tx }: { tx: Transaction }) => {
 	const displayAmount = getDisplayAmount(tx);
-	const isDebit = tx.coinAmount + tx.passAmount + tx.voucherAmount < 0;
+	const isDebit = tx.coinAmount + tx.passAmount + tx.starAmount < 0;
 
 	return (
 		<div className='pb-2 border-b-[1px] border-slate-700/50'>

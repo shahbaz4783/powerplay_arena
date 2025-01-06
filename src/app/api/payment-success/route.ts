@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 			const transaction = await prisma.transaction.create({
 				data: {
 					telegramId,
-					voucherAmount: -amount,
+					starAmount: -amount,
 					type: 'PURCHASE',
 					description: `Paid telegram stars to purchase ${title}`,
 					metadata: {

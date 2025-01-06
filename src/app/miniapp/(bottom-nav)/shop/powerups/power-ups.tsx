@@ -30,7 +30,7 @@ export function PowerUps() {
 		data: userInventory,
 		isPending,
 		refetch: refetchInventory,
-	} = useUserInventory(telegramId); // Added refetch method
+	} = useUserInventory(telegramId);
 
 	const availablePowerUps =
 		userInventory?.powerUps && !isPending
@@ -40,7 +40,7 @@ export function PowerUps() {
 							(item) => item.powerUpId === powerup.powerUp_Id
 						)
 			  )
-			: []; // Default empty array during loading
+			: [];
 
 	const [showNotification, setShowNotification] = useState(false);
 	const [notificationMessage, setNotificationMessage] = useState('');
@@ -59,9 +59,8 @@ export function PowerUps() {
 					setNotificationSuccess(mintResult.success);
 					setShowNotification(true);
 
-					// Trigger a refresh of the inventory after successful minting
 					if (mintResult.success) {
-						await refetchInventory(); // Refresh the inventory
+						await refetchInventory();
 					}
 
 					return {
@@ -107,10 +106,8 @@ export function PowerUps() {
 
 	return (
 		<main className='space-y-4'>
-			{/* Show loading overlay while loading user data */}
 			{(isLoading || isPending) && <LoadingOverlay scene='purchase' />}
 
-			{/* Show power-ups if available */}
 			{!isPending &&
 				availablePowerUps.map((item) => (
 					<ItemCard
@@ -122,10 +119,8 @@ export function PowerUps() {
 					/>
 				))}
 
-			{/* Show "AllPowerUpsOwned" only when inventory is fully loaded */}
 			{!isPending && availablePowerUps.length === 0 && <AllPowerUpsOwned />}
 
-			{/* Notification Dialog */}
 			{showNotification && (
 				<NotificationDialog
 					message={notificationMessage}

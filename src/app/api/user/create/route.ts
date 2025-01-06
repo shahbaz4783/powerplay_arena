@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
 						referredId: newUser.telegramId,
 						totalEarnedCoins: 500,
 						totalEarnedPasses: 10,
-						totalEarnedVouchers: 0,
+						totalEarnedStars: 0,
 						expiresAt: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000),
 					},
 				});

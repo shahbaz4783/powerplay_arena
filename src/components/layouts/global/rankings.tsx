@@ -49,7 +49,7 @@ export const Leaderboard = () => {
 							{getRankIcon(index + 1) || index + 1}
 						</div>
 						<Avatar className='h-10 w-10'>
-							<AvatarImage src={ranking.user.avatarUrl} />
+							<AvatarImage src={ranking.user.avatarUrl!} />
 							<AvatarFallback>
 								{ranking.user.firstName.charAt(0)}
 							</AvatarFallback>

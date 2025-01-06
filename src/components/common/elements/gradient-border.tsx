@@ -17,3 +17,12 @@ export function GradientBorder({ className, children }: GradientBorderProps) {
 		</section>
 	);
 }
+
+export const GlowingBorder: React.FC<{ children: React.ReactNode }> = ({
+	children,
+}) => (
+	<div className='relative rounded-2xl p-[1px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500'>
+		<div className='absolute inset-0 blur-xl bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-pink-500/30' />
+		{children}
+	</div>
+);

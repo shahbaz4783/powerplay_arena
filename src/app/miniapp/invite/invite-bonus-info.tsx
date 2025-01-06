@@ -40,7 +40,7 @@ export function OverallEarnings() {
 		(acc, referral) => ({
 			coins: acc.coins + referral.totalEarnedCoins,
 			passes: acc.passes + referral.totalEarnedPasses,
-			vouchers: acc.vouchers + referral.totalEarnedVouchers,
+			vouchers: acc.vouchers + referral.totalEarnedStars,
 		}),
 		{ coins: 0, passes: 0, vouchers: 0 }
 	);
@@ -80,7 +80,7 @@ export function OverallEarnings() {
 					<InfoCard
 						key='star-voucher'
 						icon={<Star className='w-5 h-5' />}
-						title='Star Voucher'
+						title='Stars'
 						amount={totalEarnings.vouchers}
 						color='purple'
 					/>

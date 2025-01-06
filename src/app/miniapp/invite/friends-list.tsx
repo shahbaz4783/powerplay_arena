@@ -46,7 +46,7 @@ interface User {
 	expiresAt: Date;
 	totalEarnedCoins: number;
 	totalEarnedPasses: number;
-	totalEarnedVouchers: number;
+	totalEarnedStars: number;
 }
 
 const calculateMaxCap = (extensionWeeks: number): number => {
@@ -137,7 +137,7 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
 						<div className='flex items-center'>
 							<Star className='w-4 h-4 text-purple-500 mr-1' />
 							<span className='text-sm font-semibold text-purple-500'>
-								{user.totalEarnedVouchers}
+								{user.totalEarnedStars}
 							</span>
 						</div>
 					</div>
@@ -187,7 +187,7 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
 
 			<ExtendBenefitsModal
 				isOpen={isExtendModalOpen}
-				currentVouchers={user.totalEarnedVouchers}
+				currentVouchers={user.totalEarnedStars}
 				referredId={user.id}
 				onClose={() => setIsExtendModalOpen(false)}
 				userId={user.referrerId}

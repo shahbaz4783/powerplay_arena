@@ -8,13 +8,14 @@ import {
 	TabsList,
 	TabsTrigger,
 } from '@/src/components/ui/tabs';
+import { PageHeader } from '@/src/components/layouts/global/page-header';
 
 export default function AchievementPage() {
 	return (
-		<div className='space-y-6'>
-			<Header
+		<div className='space-y-6 px-3'>
+			<PageHeader
 				title='Milestones'
-				subtitle='Push your limits and unlock exclusive rewards'
+				description='Push your limits and unlock exclusive rewards'
 			/>
 			<Tabs defaultValue='challenges' className='w-full'>
 				<TabsList className='grid grid-cols-3 mb-8 gap-4 rounded-xl bg-slate-400 h-auto'>

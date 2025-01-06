@@ -79,7 +79,7 @@ export function InGameExchange() {
 
 	if (!profile) {
 		return (
-			<div className='flex items-center justify-center p-4'>
+			<div className='flex items-center justify-center'>
 				<Card className='w-full max-w-md bg-gray-800/50 border-2 border-red-400/50 text-white backdrop-blur-md'>
 					<CardHeader className='text-center'>
 						<CardTitle className='text-2xl font-bold text-red-400'>
@@ -98,7 +98,7 @@ export function InGameExchange() {
 		calculateExchangeValues(passesToExchange);
 
 	return (
-		<main className='main-card mx-3'>
+		<main className='main-card'>
 			<section className='space-y-4'>
 				<SectionHeader
 					title='Exchange'

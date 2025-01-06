@@ -3,10 +3,10 @@ import { PageHeader } from '@/src/components/layouts/global/page-header';
 
 export default function ResourceBankPage() {
 	return (
-		<div className='space-y-4'>
+		<div className='space-y-4 px-3'>
 			<PageHeader
-				title='Resource Bank'
-				description='Stock up on resources for endless play'
+				title='Resource Depot'
+				description='Fuel your progress with an endless supply of essential resources.'
 			/>
 			<ConsumableItemCard />
 		</div>

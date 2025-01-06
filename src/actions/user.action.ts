@@ -129,10 +129,6 @@ export async function extendBenefits(
 				where: { telegramId: referrerId },
 			});
 
-			if (!userInventory || userInventory.starVoucher < cost) {
-				throw new Error('Insufficient vouchers');
-			}
-
 			// Calculate new expiry date
 			const newExpiryDate = new Date(referralRecord.expiresAt);
 			newExpiryDate.setDate(newExpiryDate.getDate() + duration * 7);
@@ -145,19 +141,10 @@ export async function extendBenefits(
 				},
 			});
 
-			// Deduct vouchers from user's inventory
-			await tx.userInventory.update({
-				where: { telegramId: referrerId },
-				data: {
-					starVoucher: { decrement: cost },
-				},
-			});
-
 			// Create a transaction record
 			await tx.transaction.create({
 				data: {
 					telegramId: referrerId,
-					voucherAmount: -cost,
 					type: 'EXCHANGE',
 					description: `Extended referral benefits for ${duration} weeks`,
 					metadata: {

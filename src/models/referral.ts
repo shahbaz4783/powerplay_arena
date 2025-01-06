@@ -64,7 +64,6 @@ export const getDetailedReferralInfo = async (referralId: string) => {
 		},
 		include: {
 			referredUser: true,
-			voucherRewards: true,
 		},
 	});
 };

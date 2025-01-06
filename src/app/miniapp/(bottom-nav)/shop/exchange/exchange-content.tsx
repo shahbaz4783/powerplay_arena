@@ -32,7 +32,7 @@ export const ExchangeContent = ({
 			: netPassSaleAmount + exchangeFee;
 
 	return (
-		<div className=' space-y-3'>
+		<div className='space-y-3'>
 			{/* Amount Display */}
 			<div className='space-y-3 sub-card'>
 				<div className='flex justify-between items-baseline'>
@@ -106,7 +106,7 @@ export const ExchangeContent = ({
 					</div>
 					<div className='grid grid-cols-8 items-baseline'>
 						<p className='text-xs text-slate-500 mt-1 col-span-5'>
-							Exchange fees: 3%
+							Exchange fees: ~3%
 						</p>
 						<p className='text-xs font-exo2 text-slate-300 col-span-3 text-right'>
 							{direction === 'buyPasses' ? '+' : '-'}

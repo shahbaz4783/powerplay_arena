@@ -21,7 +21,7 @@ import { SubmitButton } from '../buttons/submit-button';
 import { cn } from '@/src/lib/utils';
 import { updateAvatar } from '@/src/actions/user.action';
 import { MessageCard } from '../cards/message-card';
-import { cloudinary_url } from '@/src/constants/app-config';
+
 
 interface AvatarData {
 	id: string;
