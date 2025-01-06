@@ -36,12 +36,12 @@ export function AvatarStore() {
 		refetch: refetchInventory,
 	} = useUserInventory(telegramId);
 
-	const availablePowerUps =
-		userInventory?.powerUps && !isPending
-			? powerUps.filter(
-					(powerup) =>
-						!userInventory.powerUps.some(
-							(item) => item.powerUpId === powerup.powerUp_Id
+	const availableAvatar =
+		userInventory?.avatars && !isPending
+			? allAvatars.filter(
+					(avatar) =>
+						!userInventory.avatars.some(
+							(item) => item.avatarId === avatar.avatar_id
 						)
 			  )
 			: [];
@@ -113,7 +113,7 @@ export function AvatarStore() {
 			{(isLoading || isPending) && <LoadingOverlay scene='purchase' />}
 
 			{!isPending &&
-				allAvatars.map((item) => (
+				availableAvatar.map((item) => (
 					<ItemCard
 						key={item.avatar_id}
 						id={item.avatar_id}
@@ -123,7 +123,7 @@ export function AvatarStore() {
 					/>
 				))}
 
-			{!isPending && availablePowerUps.length === 0 && <AllPowerUpsOwned />}
+			{!isPending && availableAvatar.length === 0 && <AllPowerUpsOwned />}
 
 			{showNotification && (
 				<NotificationDialog
