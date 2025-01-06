@@ -170,10 +170,10 @@ const pageConfigs: Record<PageType, PageConfig> = {
 
 const GlowingOrb = ({ delay = 0, color }: { delay: number; color: string }) => (
 	<motion.div
-		className={`absolute w-3 h-3 rounded-full bg-${color}-400`}
+		className={`absolute w-3 h-3 rounded-full bg-${color}-400 opacity-70`}
 		animate={{
 			scale: [1, 1.5, 1],
-			opacity: [0.5, 1, 0.5],
+			opacity: [0.5, 0.8, 0.5],
 		}}
 		transition={{
 			duration: 2,
@@ -220,16 +220,16 @@ export const PageLoadingScreen: React.FC<PageLoadingScreenProps> = ({
 
 	return (
 		<div
-			className={`fixed inset-0 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 flex flex-col items-center justify-center p-4`}
+			className='fixed inset-0 bg-gradient-to-b from-gray-800 via-gray-900 to-gray-800 flex flex-col items-center justify-center p-4'
 			style={{ height: '100svh' }}
 		>
 			{/* Background Effects */}
-			<div className='absolute inset-0 opacity-30'>
+			<div className='absolute inset-0'>
 				<div
-					className={`absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-${config.primaryColor}-500/20 via-transparent to-transparent`}
+					className={`absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-${config.primaryColor}-500/30 via-transparent to-transparent`}
 				/>
 				<div
-					className={`absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-${config.secondaryColor}-500/20 via-transparent to-transparent animate-pulse`}
+					className={`absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-${config.secondaryColor}-500/30 via-transparent to-transparent animate-pulse`}
 				/>
 			</div>
 
@@ -237,7 +237,7 @@ export const PageLoadingScreen: React.FC<PageLoadingScreenProps> = ({
 			<div className='relative w-full max-w-md aspect-square mb-8'>
 				{/* Orbital Rings */}
 				<motion.div
-					className={`absolute inset-0 rounded-full border-2 border-${config.primaryColor}-500/20`}
+					className={`absolute inset-0 rounded-full border-2 border-${config.primaryColor}-400/40`}
 					animate={{
 						rotate: [0, 360],
 						scale: [1, 1.05, 1],
@@ -248,7 +248,7 @@ export const PageLoadingScreen: React.FC<PageLoadingScreenProps> = ({
 					}}
 				/>
 				<motion.div
-					className={`absolute inset-4 rounded-full border-2 border-${config.secondaryColor}-500/20`}
+					className={`absolute inset-4 rounded-full border-2 border-${config.secondaryColor}-400/40`}
 					animate={{
 						rotate: [360, 0],
 						scale: [1.05, 1, 1.05],
@@ -259,7 +259,7 @@ export const PageLoadingScreen: React.FC<PageLoadingScreenProps> = ({
 					}}
 				/>
 
-				{/* Center Icon */}
+				{/* Center Icon with Glow Effect */}
 				<div className='absolute inset-0 flex items-center justify-center'>
 					<motion.div
 						animate={{
@@ -270,6 +270,10 @@ export const PageLoadingScreen: React.FC<PageLoadingScreenProps> = ({
 							duration: 4,
 							repeat: Infinity,
 							ease: 'easeInOut',
+						}}
+						className={`p-6 rounded-full bg-${config.primaryColor}-500/10 backdrop-blur-sm`}
+						style={{
+							boxShadow: `0 0 20px 0 var(--tw-colors-${config.primaryColor}-500/20)`,
 						}}
 					>
 						{config.icon}
@@ -285,10 +289,10 @@ export const PageLoadingScreen: React.FC<PageLoadingScreenProps> = ({
 
 				{/* Sparkle Effects */}
 				<Sparkles
-					className={`absolute top-1/4 left-1/4 w-6 h-6 text-${config.primaryColor}-300/60`}
+					className={`absolute top-1/4 left-1/4 w-6 h-6 text-${config.primaryColor}-300`}
 				/>
 				<Sparkles
-					className={`absolute bottom-1/4 right-1/4 w-6 h-6 text-${config.primaryColor}-300/60`}
+					className={`absolute bottom-1/4 right-1/4 w-6 h-6 text-${config.primaryColor}-300`}
 				/>
 			</div>
 
@@ -303,7 +307,7 @@ export const PageLoadingScreen: React.FC<PageLoadingScreenProps> = ({
 					className='text-center space-y-4'
 				>
 					<motion.h1
-						className={`text-4xl font-bold bg-gradient-to-r from-${config.primaryColor}-200 via-${config.primaryColor}-300 to-${config.primaryColor}-200 bg-clip-text text-transparent`}
+						className={`text-4xl text-white font-bold bg-gradient-to-r from-${config.primaryColor}-300 via-${config.primaryColor}-200 to-${config.primaryColor}-300 bg-clip-text text-transparent`}
 						animate={{
 							backgroundPosition: ['0% center', '100% center'],
 						}}
@@ -315,20 +319,18 @@ export const PageLoadingScreen: React.FC<PageLoadingScreenProps> = ({
 					>
 						{config.title}
 					</motion.h1>
-					<p className={`text-xl text-${config.secondaryColor}-200/80`}>
-						{currentMessage}
-					</p>
+					<p className='text-xl text-white/90'>{currentMessage}</p>
 				</motion.div>
 			</AnimatePresence>
 
 			{/* Loading Indicator */}
 			<motion.div
-				className={`mt-8 flex items-center space-x-2 px-6 py-3 rounded-full bg-gray-800/50 backdrop-blur-sm`}
+				className={`mt-8 flex items-center space-x-2 px-6 py-3 rounded-full bg-${config.primaryColor}-500/20 backdrop-blur-sm`}
 				animate={{
 					boxShadow: [
-						`0 0 0 0 rgba(${config.primaryColor}, 0)`,
-						`0 0 0 8px rgba(${config.primaryColor}, 0.1)`,
-						`0 0 0 0 rgba(${config.primaryColor}, 0)`,
+						`0 0 0 0 rgba(var(--${config.primaryColor}-rgb), 0)`,
+						`0 0 20px 4px rgba(var(--${config.primaryColor}-rgb), 0.3)`,
+						`0 0 0 0 rgba(var(--${config.primaryColor}-rgb), 0)`,
 					],
 				}}
 				transition={{
@@ -340,9 +342,7 @@ export const PageLoadingScreen: React.FC<PageLoadingScreenProps> = ({
 				<Loader2
 					className={`w-5 h-5 text-${config.primaryColor}-400 animate-spin`}
 				/>
-				<span className={`text-${config.secondaryColor}-200/80 text-lg`}>
-					Loading...
-				</span>
+				<span className='text-white text-lg'>Loading...</span>
 			</motion.div>
 		</div>
 	);

@@ -12,6 +12,7 @@ import {
 	Info,
 	GamepadIcon,
 	ShoppingCart,
+	Star,
 } from 'lucide-react';
 import { TransactionDialog } from './transaction-dialog';
 import { Transaction } from '@prisma/client';
@@ -26,7 +27,7 @@ const getTransactionIcon = (type: string) =>
 const getDisplayAmount = (tx: Transaction) => {
 	if (tx.starAmount !== 0) {
 		return {
-			icon: <Gift className='size-3' />,
+			icon: <Star className='size-3' />,
 			amount: tx.starAmount,
 			type: 'voucher',
 		};

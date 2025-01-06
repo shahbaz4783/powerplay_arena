@@ -14,6 +14,8 @@ import InventoryLoadingFallback from '@/src/components/layouts/feedback/inventor
 import EmptyInventoryState from '@/src/components/layouts/feedback/empty-inventory';
 import { motion } from 'framer-motion';
 import { PageHeader } from '@/src/components/layouts/global/page-header';
+import { ResourceCard } from './resource';
+import { AvatarCard } from './avatar';
 
 export default function InventoryPage() {
 	const { telegramId } = useCurrentUser();
@@ -21,7 +23,7 @@ export default function InventoryPage() {
 
 	const powerUps = data?.powerUps;
 	const avatars = data?.avatars;
-	const resources = data?.avatars;
+	const resources = data?.resources;
 
 	return (
 		<div className='text-gray-100 backdrop-blur-sm'>
@@ -66,7 +68,9 @@ export default function InventoryPage() {
 					{avatars?.length === 0 && <EmptyInventoryState type='avatars' />}
 					<div className='grid grid-cols-2 gap-4'>
 						{avatars?.map((avatar) => (
-							<div key={avatar.avatarId}>{avatar.title}</div>
+							<div key={avatar.avatarId}>
+								<AvatarCard avatar={avatar} />
+							</div>
 						))}
 					</div>
 				</TabsContent>
@@ -75,7 +79,9 @@ export default function InventoryPage() {
 					{resources?.length === 0 && <EmptyInventoryState type='resources' />}
 					<div className='grid grid-cols-2 gap-4'>
 						{resources?.map((resource) => (
-							<div key={resource.avatarId}>{resource.title}</div>
+							<div key={resource.id}>
+								<ResourceCard resource={resource} />
+							</div>
 						))}
 					</div>
 				</TabsContent>

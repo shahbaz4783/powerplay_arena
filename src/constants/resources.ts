@@ -1,5 +1,5 @@
 export interface RepeatablePurchaseItem {
-	id: string;
+	resource_id: string;
 	title: string;
 	description: string;
 	image: string;
@@ -11,7 +11,7 @@ export interface RepeatablePurchaseItem {
 
 export const inGameResources: RepeatablePurchaseItem[] = [
 	{
-		id: 'stellar-boost-bundle',
+		resource_id: 'stellar-boost-bundle',
 		title: 'Stellar Boost Bundle',
 		description:
 			'A dynamic combo of coins and passes to accelerate your progress!',
@@ -21,7 +21,7 @@ export const inGameResources: RepeatablePurchaseItem[] = [
 		passes: 500,
 	},
 	{
-		id: 'upgrad-bundle',
+		resource_id: 'upgrad-bundle',
 		title: 'Upgrade Bundle',
 		description:
 			'A combo of coins and passes to upgrade your powerup to legendary!',
@@ -31,7 +31,7 @@ export const inGameResources: RepeatablePurchaseItem[] = [
 		passes: 500,
 	},
 	{
-		id: 'treasure-vault',
+		resource_id: 'treasure-vault',
 		title: 'Treasure Vault',
 		description: 'A bountiful reserve of coins to enhance your gameplay!',
 		image: 'v1732874370/0bbe8c70-2d0a-4661-852f-b7b584a8b9a6_z0hbxn.jpg',
@@ -39,7 +39,7 @@ export const inGameResources: RepeatablePurchaseItem[] = [
 		coins: 5000,
 	},
 	{
-		id: 'pass-stash',
+		resource_id: 'pass-stash',
 		title: 'Pass Stash',
 		description: 'A collection of game passes for uninterrupted play!',
 		image: 'v1732874370/acdb409d-a9e5-44cb-a4e7-dd365c2c13b0_mdo6y2.jpg',

@@ -23,11 +23,9 @@ export const TransactionHeader: React.FC<HeaderProps> = ({
 		<motion.header
 			initial={{ opacity: 0, y: -20 }}
 			animate={{ opacity: 1, y: 0 }}
-			className='sub-card'
+			className='sub-cad'
 		>
-			<div className='absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-2xl filter blur-xl opacity-50' />
-
-			<div className='relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+			<div className='relative flex flex-col gap-4'>
 				<motion.div
 					initial={{ opacity: 0, x: -20 }}
 					animate={{ opacity: 1, x: 0 }}
@@ -49,17 +47,17 @@ export const TransactionHeader: React.FC<HeaderProps> = ({
 					<InfoCard
 						title={token.name}
 						amount={dailyTotals.coins}
-						color={dailyTotals.coins < 0 ? 'red' : 'green'}
+						color={dailyTotals.coins < 0 ? 'orange' : 'teal'}
 					/>
 					<InfoCard
 						title={token.pass}
 						amount={dailyTotals.pass}
-						color={dailyTotals.pass < 0 ? 'red' : 'green'}
+						color={dailyTotals.pass < 0 ? 'orange' : 'teal'}
 					/>
 					<InfoCard
-						title='Voucher'
+						title='TG Stars'
 						amount={dailyTotals.voucher}
-						color={dailyTotals.voucher < 0 ? 'red' : 'green'}
+						color={dailyTotals.voucher < 0 ? 'orange' : 'teal'}
 					/>
 				</motion.div>
 			</div>

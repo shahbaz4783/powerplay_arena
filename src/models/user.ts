@@ -67,6 +67,7 @@ export const getUserInventoryById = async (telegramId: string) => {
 				avatars: true,
 				powerUps: true,
 				badge: true,
+				resources: { where: { isRedeem: false } },
 			},
 		});
 	} catch (error) {
